@@ -1,0 +1,77 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": null,
+  "installCommand": null,
+  "outputDirectory": "public",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/consumables",  "destination": "/consumables.html" },
+    { "source": "/devices",      "destination": "/devices.html" },
+    { "source": "/international", "destination": "/international.html" },
+    { "source": "/greekglass",    "destination": "/greekglass.html" },
+    { "source": "/lookah",        "destination": "/lookah.html" },
+    { "source": "/vaporizers",    "destination": "/vaporizers.html" },
+    { "source": "/combustion",    "destination": "/combustion.html" },
+    { "source": "/arcade",        "destination": "/arcade.html" },
+    { "source": "/kit",           "destination": "/kit.html" },
+    { "source": "/burned-at-a-funeral", "destination": "/burned-at-a-funeral.html" },
+    { "source": "/terms", "destination": "/terms.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/wholesale", "destination": "/wholesale.html" },
+    { "source": "/library", "destination": "/library.html" },
+    { "source": "/the-body-was-listening", "destination": "/the-body-was-listening.html" },
+    { "source": "/a-word-for-the-plant", "destination": "/a-word-for-the-plant.html" },
+    { "source": "/the-seam", "destination": "/the-seam.html" },
+    { "source": "/club-des-hashischins", "destination": "/club-des-hashischins.html" },
+    { "source": "/what-the-certificates-say", "destination": "/what-the-certificates-say.html" },
+    { "source": "/reels", "destination": "/reels.html" },
+    { "source": "/coldwater", "destination": "/coldwater.html" },
+    { "source": "/coldwater-guide", "destination": "/coldwater-guide.html" },
+    { "source": "/coldwater-collect", "destination": "/coldwater-collect.html" },
+    { "source": "/lookah-preview", "destination": "/lookah-preview.html" },
+    { "source": "/ambassador", "destination": "/ambassador.html" },
+    { "source": "/api/market", "destination": "/api/coldwater" },
+    { "source": "/api/market/ingest", "destination": "/api/coldwater-ingest" },
+    { "source": "/api/coldwater/ingest", "destination": "/api/coldwater-ingest" },
+    { "source": "/p/theloudpack", "destination": "/theloudpack" },
+    { "source": "/p/(.*)", "destination": "/api/share?id=$1" },
+    { "source": "/admin", "destination": "/api/admin/home" },
+    { "source": "/admin/sign-in", "destination": "/api/admin/sign-in" },
+    { "source": "/admin/operating-model", "destination": "/api/admin/model" },
+    { "source": "/admin/gear-avail", "destination": "/api/admin/gear" }
+  ],
+  "redirects": [
+    { "source": "/consumable",     "destination": "/consumables",  "permanent": true },
+    { "source": "/coldwater-list", "destination": "/trip",         "permanent": true },
+    { "source": "/(index.html)",   "destination": "/",             "permanent": true }
+  ],
+  "crons": [
+    { "path": "/api/products?refresh=1",   "schedule": "0 6 * * *" },
+    { "path": "/api/price-history?record=1", "schedule": "20 8 * * *" }
+  ],
+  "functions": {
+    "api/concierge.js": { "maxDuration": 60 },
+    "api/ig-research.js": { "maxDuration": 60 },
+    "api/price-history.js": { "maxDuration": 300 }
+  },
+  "headers": [
+    { "source": "/api/overrides",  "headers": [{ "key": "Cache-Control", "value": "public, s-maxage=60, stale-while-revalidate=300" }] },
+    { "source": "/og-image.png",   "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] },
+    { "source": "/sitemap.xml",    "headers": [{ "key": "Content-Type", "value": "application/xml" }] },
+    { "source": "/manifest.webmanifest", "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }] },
+    { "source": "/engine.js", "headers": [
+      { "key": "Content-Type", "value": "application/javascript; charset=utf-8" },
+      { "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }
+    ] },
+    { "source": "/sw.js",          "headers": [
+      { "key": "Content-Type", "value": "application/javascript" },
+      { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
+      { "key": "Service-Worker-Allowed", "value": "/" }
+    ] },
+    { "source": "/install.js",     "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }] },
+    { "source": "/assets/(.*)",    "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }] },
+    { "source": "/(.*)",           "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }] }
+  ]
+}

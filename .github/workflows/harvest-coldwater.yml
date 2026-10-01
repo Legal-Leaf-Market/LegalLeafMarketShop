@@ -1,0 +1,160 @@
+# Scheduled headless lane.
+#
+# Runs tools/harvest-coldwater.mjs on GitHub's hardware, so the shelf refreshes
+# with no VPS to keep alive and no home machine that has to stay awake. The
+# browser lives here, in CI, and never in api/ -- which is what keeps the site's
+# `dependencies` empty and the no-build-step rule intact (CLAUDE.md sections 1
+# and 11).
+#
+# WHY NOT A VERCEL CRON. vercel.json already schedules /api/products?refresh=1,
+# and that works because it is a handful of cheap HTTP calls. A browser is not:
+# Chromium plus a real page render is ~300MB and 10-20s per store, which is past
+# any serverless limit long before the store list is. Different tool, different
+# machine.
+#
+# SETUP (one time):
+#   Settings -> Secrets and variables -> Actions
+#     LL_ADMIN_TOKEN   the same token /api/coldwater/ingest checks
+#     LL_SITE          e.g. https://legal-leafmarket.com   (a variable, not a secret)
+#
+# The token is a SECRET and is passed through the environment, never on the
+# command line -- an argument is visible in the process list and in any log that
+# echoes the command.
+
+name: Harvest Coldwater menus
+
+on:
+  schedule:
+    # 07:10 UTC — after midnight across all US timezones, so a run always reads
+    # the day the shop is actually trading, and off the hour because that is
+    # when every other cron on the platform fires.
+    - cron: "10 7 * * *"
+  workflow_dispatch:
+    inputs:
+      market:
+        description: "City slug, or 'live' for every market api/markets.js calls live"
+        required: false
+        default: "live"
+      only:
+        description: "Comma-separated store keys (blank = all)"
+        required: false
+        default: ""
+      clear:
+        description: "Comma-separated store keys to EMPTY on the shelf, then stop"
+        required: false
+        default: ""
+      dry:
+        description: "Harvest and report, post nothing"
+        type: boolean
+        required: false
+        default: false
+
+# Never two harvests at once. They would post to the same lane for the same
+# stores, and the later one would simply overwrite -- wasted requests against
+# shops we have promised to be light on.
+concurrency:
+  group: harvest-coldwater
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    # A stuck page should not burn an hour of runner time. The harvester has its
+    # own per-store caps; this is the backstop for the whole sweep.
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # 22, NOT 20. launch() talks to Chrome over `new globalThis.WebSocket`,
+          # which is a global only from Node 22 -- so on 20 this job dies the
+          # moment it reaches the browser, with an error that reads like Chrome
+          # rather than like the runtime. It has never actually got that far
+          # (see the token note below), so the bug sat behind a louder one; the
+          # tests workflow hit it thirteen times at once and named it.
+          node-version: "22"
+          # No cache key: `dependencies` is empty by design, so there is nothing
+          # to install and nothing to cache.
+
+      - name: Locate Chromium
+        id: chrome
+        run: |
+          # ubuntu-latest ships Chrome preinstalled. Prefer it over apt, which
+          # would add ~40s to every run for a binary already on the disk.
+          for p in /usr/bin/google-chrome /usr/bin/chromium-browser /usr/bin/chromium; do
+            if [ -x "$p" ]; then echo "path=$p" >> "$GITHUB_OUTPUT"; echo "using $p"; exit 0; fi
+          done
+          echo "No Chromium on the runner; installing." >&2
+          sudo apt-get update -qq && sudo apt-get install -y -qq chromium-browser
+          echo "path=/usr/bin/chromium-browser" >> "$GITHUB_OUTPUT"
+
+      - name: Harvest
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.path }}
+          LL_ADMIN_TOKEN: ${{ secrets.LL_ADMIN_TOKEN }}
+          LL_SITE: ${{ vars.LL_SITE }}
+          ONLY: ${{ inputs.only }}
+          DRY: ${{ inputs.dry }}
+          MARKET: ${{ inputs.market }}
+          CLEAR: ${{ inputs.clear }}
+        run: |
+          set -uo pipefail
+          SITE="${LL_SITE:-https://legal-leafmarket.com}"
+
+          # EVERY LIVE CITY, NOT THE PILOT. This ran with no --market at all, so
+          # the harvester took its default and the nightly lane covered
+          # Coldwater and nothing else -- which was invisible while Coldwater
+          # was the only city and becomes a silently half-done job the moment it
+          # is not. The list comes from api/markets.js, so a city added there is
+          # harvested without touching this file.
+          # CLEARING IS NOT HARVESTING, so it runs alone and stops. One market at
+          # a time, deliberately: a key like "jars-detroit" only means anything
+          # inside the namespace it was stored in.
+          if [ -n "${CLEAR:-}" ]; then
+            if [ -z "${LL_ADMIN_TOKEN:-}" ]; then
+              echo "clear needs LL_ADMIN_TOKEN." >&2; exit 1
+            fi
+            node tools/harvest-coldwater.mjs --site "$SITE" \
+              --market "${MARKET:-coldwater}" --token "$LL_ADMIN_TOKEN" --clear "$CLEAR"
+            exit $?
+          fi
+
+          MK="${MARKET:-live}"
+          if [ "$MK" = "live" ] || [ -z "$MK" ]; then
+            MARKETS="$(node -e '
+              import("./api/markets.js").then(m => {
+                const live = Object.values(m.MARKETS).filter(x => x.status === "live").map(x => x.slug);
+                console.log(live.join(" "));
+              });
+            ')"
+          else
+            MARKETS="$MK"
+          fi
+          echo "Harvesting: $MARKETS"
+
+          # --dry needs no token; a scheduled run does.
+          if [ "${DRY:-false}" != "true" ] && [ -z "${LL_ADMIN_TOKEN:-}" ]; then
+            echo "LL_ADMIN_TOKEN is not set. Add it under Settings -> Secrets, or run with dry=true." >&2
+            exit 1
+          fi
+
+          # ONE CITY FAILING IS NOT THE RUN FAILING, for the same reason one
+          # walled store is not: this lane is expected to be partial. The exit
+          # code is kept and reported at the end so a total failure is still red.
+          rc=0
+          for m in $MARKETS; do
+            echo "::group::$m"
+            ARGS=(--site "$SITE" --market "$m" --concurrency 3 --spacing 1500)
+            if [ "${DRY:-false}" = "true" ]; then ARGS+=(--dry); else ARGS+=(--token "$LL_ADMIN_TOKEN"); fi
+            if [ -n "${ONLY:-}" ]; then ARGS+=(--only "$ONLY"); fi
+            node tools/harvest-coldwater.mjs "${ARGS[@]}" || rc=$?
+            echo "::endgroup::"
+          done
+          exit $rc
+
+      # The harvester exits non-zero only when EVERY store failed, because a
+      # partial sweep is the normal state of this lane -- walled stores are
+      # expected, and one shop redesigning its menu must not read as an outage.
+      # A red run here means the lane itself is broken.

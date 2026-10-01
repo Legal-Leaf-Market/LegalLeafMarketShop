@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reels: short video from the Legal-Leaf family | Legal-Leaf Market</title>
+<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed and the page content
+     stays in the DOM behind the overlay so a crawler still sees a full page. See
+     public/js/age-gate.js for the reasoning. Anchored after </title>, same as every page. -->
+<script src="/js/age-gate.js"></script>
+<meta name="description" content="Short video from the Legal-Leaf family on Instagram: @legal_leaf_market, @legalleafjacob, @herbal_leaf_market, @nicotia_market and @stomp_box_world. Education in thirty seconds, deals explained, no hype. Adults 21+.">
+<link rel="canonical" href="https://legal-leafmarket.com/reels">
+<meta name="theme-color" content="#080f14">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:title" content="Reels: Legal-Leaf Market">
+<meta property="og:description" content="Short video from the Legal-Leaf family of Instagram accounts. Education first, thirty seconds at a time. Adults 21+.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://legal-leafmarket.com/reels">
+<meta property="og:site_name" content="Legal-Leaf Market">
+<meta property="og:image" content="https://legal-leafmarket.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://legal-leafmarket.com/og-image.png">
+<meta name="rating" content="adult">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "https://legal-leafmarket.com/reels#page",
+      "url": "https://legal-leafmarket.com/reels",
+      "name": "Reels, Legal-Leaf Market",
+      "about": "Short educational video from the Legal-Leaf family of Instagram accounts.",
+      "isPartOf": { "@id": "https://legal-leafmarket.com/#website" }
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://legal-leafmarket.com/reels#accounts",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "url": "https://www.instagram.com/legal_leaf_market/",  "name": "Legal Leaf Market on Instagram" },
+        { "@type": "ListItem", "position": 2, "url": "https://www.instagram.com/legalleafjacob/",     "name": "Legal Leaf Jacob on Instagram" },
+        { "@type": "ListItem", "position": 3, "url": "https://www.instagram.com/herbal_leaf_market/", "name": "Herbal Leaf Market on Instagram" },
+        { "@type": "ListItem", "position": 4, "url": "https://www.instagram.com/nicotia_market/",     "name": "Nicotia Market on Instagram" },
+        { "@type": "ListItem", "position": 5, "url": "https://www.instagram.com/stomp_box_world/",    "name": "Stomp Box World on Instagram" }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Cormorant+Garamond:ital,wght@1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/library.css">
+<!-- The objects the words sit on. MUST load after library.css: it wins by order,
+     not by weight, and moving it above silently restores the old surface. -->
+<link rel="stylesheet" href="/css/plate.css">
+<style>
+/* Reels-page-only styles. Scaffold (shell/story/st-hero/eyebrow/st-*) comes from
+   library.css and the card surfaces from plate.css, so this page reads as family;
+   everything below is the rl- layer, and it deliberately sets no background, border
+   or shadow on .rl-card / .rl-acct -- those are plate.css's and an inline <style>
+   in this head would out-order the linked file and win without saying so.
+   The [hidden] rule is load-bearing: .rl-err sets display, and an author display
+   beats the UA stylesheet's hidden handling, so without this the error shows always. */
+[hidden]{display:none!important}
+.rl-note{color:var(--muted);font-family:var(--sans);font-size:14.5px;line-height:1.55;max-width:70ch}
+.rl-h2{font-family:var(--display);color:var(--text);font-size:clamp(21px,3vw,27px);margin:38px 0 6px}
+.rl-sub{color:var(--dim);font-family:var(--sans);font-size:13.5px;margin:0 0 16px}
+.rl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin:14px 0 8px}
+/* The SURFACE of these two is plate.css's: the metal, the chrome edge, the deck
+   and the press. What stays here is what a reels card IS rather than what it looks
+   like -- a window with an embed in it. The 3px is the printed margin plate.css
+   draws its silkscreen into; an iframe bleeds to its own edges, so on this page the
+   hairline has to be a frame around the video rather than a line ruled across it. */
+.rl-card,.rl-acct{border-radius:var(--r);overflow:hidden;padding:3px}
+.rl-frame iframe,.rl-pframe iframe{display:block;width:100%;border:0;background:#fff}
+.rl-frame iframe{height:620px}
+.rl-pframe iframe{height:430px}
+.rl-meta{padding:10px 14px 12px;font-family:var(--sans)}
+.rl-meta .rl-by{color:var(--leaf);text-decoration:none;font-weight:600;font-size:13.5px}
+.rl-meta .rl-by:hover{text-decoration:underline}
+.rl-meta p{margin:4px 0 8px;color:var(--muted);font-size:13.5px;line-height:1.45}
+.rl-watch{color:var(--gold);text-decoration:none;font-size:13px}
+.rl-watch:hover{text-decoration:underline}
+.rl-acct header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px 14px}
+.rl-acct .rl-name{font-family:var(--sans);font-weight:600;color:var(--text);font-size:15px;margin:0}
+.rl-acct .rl-handle{display:inline-block;margin-top:2px;color:var(--leaf);text-decoration:none;
+  font-family:var(--sans);font-size:13px}
+.rl-acct .rl-handle:hover{text-decoration:underline}
+.rl-acct .rl-tag{margin:6px 0 0;color:var(--muted);font-family:var(--sans);font-size:13px;line-height:1.45}
+.rl-follow{flex:0 0 auto;font-family:var(--sans);font-size:13px;font-weight:600;color:#04202b;
+  background:var(--leaf);border-radius:999px;padding:7px 15px;text-decoration:none;white-space:nowrap}
+.rl-follow:hover{background:var(--leaf2)}
+.rl-err{display:block;margin:16px 0;color:var(--red);font-family:var(--sans);font-size:14px}
+@media (max-width:560px){.rl-frame iframe{height:580px}}
+</style>
+<!-- Analytics. One tag, four sites; see /js/analytics.js for the taxonomy and for why
+     this is not Vercel custom events (they are Pro-only and capped at 2 props). -->
+<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+</head>
+<body>
+
+<main class="shell story">
+  <a class="sbacklink" href="/">&larr; Back to the market</a>
+
+  <header class="st-hero">
+    <svg class="st-mark" viewBox="0 0 60 72" aria-hidden="true">
+      <path d="M30 4 C46 15 52 36 43 54 C39 63 34 68 30 70 C26 68 21 63 17 54 C8 36 14 15 30 4 Z"
+            fill="#4ec9ff" opacity="0.20"/>
+      <path d="M30 4 C46 15 52 36 43 54 C39 63 34 68 30 70 C26 68 21 63 17 54 C8 36 14 15 30 4 Z"
+            fill="none" stroke="#4ec9ff" stroke-width="1.9" stroke-linejoin="round"/>
+      <path d="M24 30 L24 46 L38 38 Z" fill="#f0b93c"/>
+    </svg>
+    <p class="eyebrow">The reels</p>
+    <h1><span class="st-lead">the market,</span>in motion</h1>
+    <p class="st-standfirst">
+      The rest of this site is a number. These are the thirty-second versions: what THCa
+      actually is, why price per gram is the only honest way to rank an ounce, what a lab
+      certificate does and does not tell you. Five accounts, one habit. The grids below are
+      live from Instagram and update themselves; when a reel deserves the top of the page,
+      we pin it there by hand.
+    </p>
+  </header>
+
+  <span class="rl-err" id="rlErr" hidden>Couldn't load the reel list. Refresh to try again,
+    or find us on Instagram at @legal_leaf_market.</span>
+
+  <!-- Featured reels. Curated in /reels.json (the `featured` array) — the section stays
+       hidden until at least one entry exists, so an empty list never ships as an empty
+       shelf. How to add one: REELS.md at the repo root. -->
+  <section id="rlFeatured" hidden>
+    <h2 class="rl-h2">Featured reels</h2>
+    <p class="rl-sub">Hand-picked. The rest of each account is in the grids further down.</p>
+    <div class="rl-grid" id="rlFeatGrid"></div>
+  </section>
+
+  <section id="rlAccounts">
+    <h2 class="rl-h2">The accounts</h2>
+    <p class="rl-sub">Each grid is served live by Instagram, newest posts first. If a grid
+      asks you to log in (some regions, some browsers), the follow button still works.</p>
+    <div class="rl-grid" id="rlAcctGrid"></div>
+  </section>
+
+  <p class="rl-note" style="margin-top:26px">
+    Made something worth pinning? Tag <b>@legal_leaf_market</b> on the reel and it gets seen.
+    Reels here are chosen for whether they teach something, not for whether they sell something,
+    same rule as the rest of the site.
+  </p>
+
+  <noscript>
+    <p class="rl-note">This page renders the reels with JavaScript. The accounts themselves:
+      <a href="https://www.instagram.com/legal_leaf_market/">@legal_leaf_market</a>,
+      <a href="https://www.instagram.com/legalleafjacob/">@legalleafjacob</a>,
+      <a href="https://www.instagram.com/herbal_leaf_market/">@herbal_leaf_market</a>,
+      <a href="https://www.instagram.com/nicotia_market/">@nicotia_market</a>,
+      <a href="https://www.instagram.com/stomp_box_world/">@stomp_box_world</a>.</p>
+  </noscript>
+
+  <footer class="st-sources">
+    <p class="st-fine">
+      Legal-Leaf Market is a price comparison service. We hold no stock and sell nothing.
+      The videos on this page are Instagram embeds: they play from instagram.com, belong to
+      the accounts that posted them, and are subject to Instagram's own terms. Nothing here
+      is medical or legal advice. Adults 21+ only.
+    </p>
+  </footer>
+</main>
+
+<script>
+/* /reels renderer. Data lives in /reels.json — accounts (the five profiles, each a live
+   Instagram profile embed) and featured (hand-picked reel URLs). No Instagram API and no
+   token anywhere: profile and post embeds are the two things Instagram serves without
+   either, which is what keeps this page inside the repo's zero-dependency rule. */
+(function () {
+  function $(s) { return document.querySelector(s) }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+    })
+  }
+  // Accepts instagram.com/reel/CODE, /reels/CODE, /p/CODE, /tv/CODE, with or without a
+  // leading /<username>/ segment and with any query string. Everything embeds through
+  // /p/<code>/embed/captioned/ — Instagram serves reels there too, and the captioned
+  // variant keeps the educational text under the video.
+  function shortcode(u) {
+    var m = /instagram\.com\/(?:[A-Za-z0-9_.]+\/)?(?:reels?|p|tv)\/([A-Za-z0-9_-]+)/i.exec(String(u || ""))
+    return m ? m[1] : null
+  }
+  function profileUrl(h) { return "https://www.instagram.com/" + encodeURIComponent(h) + "/" }
+  function track(ev, props) {
+    try { window.LL && window.LL.track && window.LL.track(ev, props || {}) } catch (e) { }
+  }
+
+  var ALLOW = "autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+
+  function featCard(f) {
+    var code = shortcode(f.url)
+    var by = String(f.by || "").replace(/^@/, "")
+    var html = '<article class="rl-card">'
+    if (code) {
+      html += '<div class="rl-frame"><iframe loading="lazy" scrolling="no" allowfullscreen ' +
+        'allow="' + ALLOW + '" title="Instagram reel' + (by ? " by @" + esc(by) : "") + '" ' +
+        'src="https://www.instagram.com/p/' + encodeURIComponent(code) + '/embed/captioned/"></iframe></div>'
+    }
+    html += '<div class="rl-meta">'
+    if (by) html += '<a class="rl-by" data-rl="@' + esc(by) + '" target="_blank" rel="noopener" href="' +
+      profileUrl(by) + '">@' + esc(by) + '</a>'
+    if (f.title) html += '<p>' + esc(f.title) + '</p>'
+    html += '<a class="rl-watch" data-rl="reel" target="_blank" rel="noopener" href="' +
+      esc(f.url) + '">Watch on Instagram &#x2197;</a></div></article>'
+    return html
+  }
+
+  function acctCard(a) {
+    var h = String(a.handle || "").replace(/^@/, "")
+    if (!h) return ""
+    return '<article class="rl-acct"><header><div>' +
+      '<p class="rl-name">' + esc(a.label || h) + '</p>' +
+      '<a class="rl-handle" data-rl="@' + esc(h) + '" target="_blank" rel="noopener" href="' +
+      profileUrl(h) + '">@' + esc(h) + '</a>' +
+      (a.tag ? '<p class="rl-tag">' + esc(a.tag) + '</p>' : "") +
+      '</div><a class="rl-follow" data-rl="@' + esc(h) + '" target="_blank" rel="noopener" href="' +
+      profileUrl(h) + '">Follow</a></header>' +
+      '<div class="rl-pframe"><iframe loading="lazy" scrolling="no" allow="' + ALLOW + '" ' +
+      'title="Latest from @' + esc(h) + '" src="' + profileUrl(h) + 'embed/"></iframe></div></article>'
+  }
+
+  fetch("/reels.json", { cache: "no-store" })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json() })
+    .then(function (data) {
+      var feats = (data && data.featured || []).filter(function (f) { return f && f.url })
+      if (feats.length) {
+        $("#rlFeatGrid").innerHTML = feats.map(featCard).join("")
+        $("#rlFeatured").hidden = false
+      }
+      $("#rlAcctGrid").innerHTML = (data && data.accounts || []).map(acctCard).join("")
+      track("reels_view", { featured: feats.length })
+    })
+    .catch(function () { $("#rlErr").hidden = false })
+
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest && e.target.closest("a[data-rl]")
+    if (a) track("reels_out", { to: a.getAttribute("data-rl") })
+  })
+})()
+</script>
+
+</body>
+</html>

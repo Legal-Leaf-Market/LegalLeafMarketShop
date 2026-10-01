@@ -1,0 +1,335 @@
+# Every suite, on every push and pull request.
+#
+# WHY THIS DID NOT EXIST UNTIL NOW, AND WHAT IT COST. There were 34 suites and
+# one workflow, and that workflow harvested menus -- nothing ran the tests. So
+# `main` could be red and stay red: test-coldwater-variants.mjs failed for at
+# least eight commits with six assertions down and a crash, and it was found by
+# somebody running it by hand. A suite nobody runs is documentation with a
+# `.mjs` extension.
+#
+# ZERO DEPENDENCIES, AND THAT IS WHAT MAKES THIS CHEAP. `dependencies` is empty
+# by design (CLAUDE.md sections 1 and 11), so there is no install step, no lock
+# file, no cache. Checkout, point at a browser, run node. The browser is already
+# on GitHub's image.
+#
+# THE SPLIT IS BY COST, NOT BY SUBJECT, and that part is unchanged: the node
+# suites boot nothing and run as one job, the browser suites each drive real
+# Chromium over raw CDP. A failing parser is still reported in under a minute
+# instead of behind a browser queue, and a flaky page still cannot mark the
+# arithmetic red.
+#
+# WHAT CHANGED IS THAT THE BROWSER HALF IS SHARDED, NOT ONE JOB PER SUITE, AND
+# THE REASON IS BILLING RATHER THAN TASTE. Actions bills per JOB, rounded up to
+# the minute. Twenty-nine browser jobs therefore cost twenty-nine minutes before
+# a single assertion runs -- and measured on this repo the suites total 7m33s of
+# actual work, while the fixed cost of a job (provision, checkout, setup-node,
+# locate Chromium) is ~40s. Twenty-nine of those is ~19 minutes of setup to run
+# seven and a half minutes of tests. On a PRIVATE repo, which this is, that is
+# metered, and it is what exhausted this account's included minutes around
+# 21 Aug: every workflow in the repo then failed in 3-5 seconds with no logs for
+# three days, which reads exactly like a GitHub outage and is not one.
+#
+# THREE SHARDS, BALANCED ON MEASURED TIME, not on suite count. Longest-processing
+# -time over the real durations puts them at 150s / 151s / 152s. The saving is
+# ~36 billed minutes down to ~14, and the wall clock goes from ~2 minutes to
+# ~3.5 -- which is the whole trade, stated plainly.
+#
+# fail-fast IS OFF on purpose, and now it has to be enforced TWICE. Across shards
+# it is the strategy flag. WITHIN a shard it is the runner loop below, which must
+# run every suite even after one fails and name all of them at the end. A loop
+# that stopped at the first failure would be strictly worse than the old matrix:
+# you would learn about one broken suite per run, having given up the isolation
+# that made that acceptable.
+#
+# ONE SUITE PER RUNNER USED TO HIDE A REAL BUG. Thirteen browser suites hardcoded
+# ports that eight other suites also claimed -- free while each had a machine to
+# itself, fatal the moment two share one. They are renumbered, and
+# test-ci-ports.mjs holds them apart; it also asserts the shards partition the
+# suite list exactly, since a suite listed in two shards costs double and one in
+# none is the condition this whole workflow exists to end.
+
+name: Tests
+
+# PUSH ONLY ON main, PLUS every pull request. `branches: ["**"]` fired BOTH
+# triggers on a PR branch, so every commit ran the fourteen jobs twice -- same
+# sha, same result, double the runner minutes, and two sets of checks on the PR
+# for a reader to reconcile. main is covered because a merge is a push to it,
+# and anything not yet in a PR is covered the moment one is opened.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# A second push to the same branch supersedes the first. Nothing here writes
+# anywhere, so cancelling an in-flight run is free -- unlike the harvest
+# workflow, which must never be cancelled mid-post.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+# NO SUITE CALLS A REAL DISPENSARY FROM HERE, and this is a promise rather than
+# a preference. Several suites boot the real server.mjs and ask the feed to
+# refresh. In the containers this repo is written in, the egress proxy refuses
+# every shop host instantly, so that call falls through to stored captures and
+# nobody notices what it is asking for. A GitHub runner has ordinary network
+# access -- so the same line fetches an actual shop's menu on every push, on
+# every branch, which is the exact opposite of the courtesies api/coldwater.js
+# promises in its own header (one request per store per refresh, cached, spaced,
+# with a contact url).
+#
+# api/coldwater.js honours this at its single fetch chokepoint and REPORTS the
+# refusal in meta.stores[].err rather than returning a silent empty store. Each
+# suite also sets it for itself, so a local run and a CI run are the same run;
+# this is the backstop for the one that forgets.
+env:
+  LL_NO_STORE_FETCH: "1"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # The fast half: parsers, merge rules, registries, the architecture guards.
+  # No browser, no network, no environment. If this is red the repo is broken in
+  # a way no amount of rendering will explain.
+  node:
+    name: node suites
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Syntax before behaviour. A parse error in api/ makes every suite that
+      # imports it fail with the same unhelpful stack, so it is worth one second
+      # to say which file it actually is.
+      - name: Syntax check every module
+        run: |
+          set -euo pipefail
+          fail=0
+          for f in api/*.js api/**/*.js tools/*.mjs server.mjs; do
+            [ -e "$f" ] || continue
+            node --check "$f" || { echo "::error file=$f::syntax error"; fail=1; }
+          done
+          exit $fail
+
+      - name: Run the node suites
+        run: |
+          set -uo pipefail
+          # Listed explicitly rather than globbed, because a glob would also
+          # sweep in the browser suites too. A new suite is one line here -- and if you forget
+          # it, `unlisted suites` below says so rather than letting it rot.
+          SUITES="
+            test-ambassador.mjs
+            test-brand.mjs
+            test-collector-build.mjs
+            test-comments.mjs
+            test-capture-merge.mjs
+            test-capture-guards.mjs
+            test-catrow-pictures.mjs
+            test-virtual-cats.mjs
+            test-cbdhempdirect.mjs
+            test-chrome-path.mjs
+            test-ci-ports.mjs
+            test-coldwater-categories.mjs
+            test-coldwater-colour.mjs
+            test-coldwater-deals.mjs
+            test-coldwater-grams.mjs
+            test-coldwater-lume.mjs
+            test-coldwater-merge.mjs
+            test-coldwater-rsc.mjs
+            test-coldwater-towns.mjs
+            test-coldwater-variants.mjs
+            test-concierge.mjs
+            test-descriptions.mjs
+            test-dude-remix.mjs
+            test-heat.mjs
+            test-img.mjs
+            test-price-history.mjs
+            test-feed-host.mjs
+            test-scene.mjs
+            test-server-routes.mjs
+            test-kit.mjs
+            test-ig-research.mjs
+            test-ingest-partial-drop.mjs
+            test-library-style.mjs
+            test-lineage-terps.mjs
+            test-market-add.mjs
+            test-neon.mjs
+            test-one-core.mjs
+            test-overrides-markets.mjs
+            test-product-page.mjs
+            test-providers.mjs
+            test-size-labels.mjs
+            test-specs.mjs
+            test-stores.mjs
+            test-synthetics.mjs
+          "
+          fail=0
+          for f in $SUITES; do
+            echo "::group::$f"
+            if node "$f"; then echo "PASS $f"; else echo "::error file=$f::suite failed"; fail=1; fi
+            echo "::endgroup::"
+          done
+          exit $fail
+
+      # A suite that exists and is in neither list is a suite nobody runs, which
+      # is the condition this whole workflow exists to end. Warn rather than
+      # fail: adding a suite and a workflow entry in one commit is the happy
+      # path, and a hard failure here would punish the commit that ADDS a test.
+      - name: Unlisted suites
+        if: always()
+        run: |
+          set -uo pipefail
+          LISTED="$(grep -oE 'test-[a-z0-9-]+\.mjs' .github/workflows/tests.yml | sort -u)"
+          for f in test-*.mjs; do
+            echo "$LISTED" | grep -qx "$f" || echo "::warning file=$f::suite is in no CI list"
+          done
+
+  # ---------------------------------------------------------------------------
+  # The slow half: each of these boots Chromium and drives a real page.
+  #
+  # SHARDED BY MEASURED TIME. The three lists below are longest-processing-time
+  # over real durations, which lands them within 2 seconds of each other; sorting
+  # by suite COUNT instead would put test-coldwater-collect (53s) beside
+  # test-lookah (2s) and leave one shard running twice as long as the others for
+  # the same money. Re-measure and re-balance if a suite's cost changes a lot --
+  # the numbers beside each entry are what the split was computed from.
+  browser:
+    name: browser · shard ${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: "1"          # ~236s of suite time
+            suites: >-
+              test-shelf-back.mjs
+              test-concierge-shelf.mjs
+              test-concierge-pin-depth.mjs
+              test-coldwater-collect.mjs
+              test-collector-autopage.mjs
+              test-concierge-browser.mjs
+              test-detroit-live.mjs
+              test-arcade.mjs
+              test-collector-batch.mjs
+              test-collector-deals.mjs
+              test-ig-studio.mjs
+              test-gear-categories.mjs
+              test-checkout-links.mjs
+          - shard: "2"          # ~182s of suite time
+            suites: >-
+              test-feed-cache.mjs
+              test-coldwater-page.mjs
+              test-collector-remix.mjs
+              test-cart-label.mjs
+              test-collector-banzen.mjs
+              test-card-flip.mjs
+              test-shelves.mjs
+              test-harvest-coldwater.mjs
+              test-coldwater.mjs
+              test-collector-url.mjs
+              test-lookah.mjs
+              test-strain-drop-flip.mjs
+          - shard: "3"          # ~189s of suite time
+            suites: >-
+              test-shelf-shuffle.mjs
+              test-shelf-return.mjs
+              test-collector-jane.mjs
+              test-collector-directory.mjs
+              test-rails.mjs
+              test-shelf-defaults.mjs
+              test-kit-page.mjs
+              test-coldwater-list.mjs
+              test-collector-iframe.mjs
+              test-price-history-card.mjs
+              test-collector-apollo.mjs
+              test-strain-facet.mjs
+    steps:
+      - uses: actions/checkout@v4
+      # NODE 22, NOT 20, AND THIS IS THE FIRST THING THIS WORKFLOW CAUGHT.
+      # Every CDP suite talks to the browser over `new globalThis.WebSocket`,
+      # which is a GLOBAL only from Node 22 -- so on 20 all thirteen died with
+      # "globalThis.WebSocket is not a constructor" about eight seconds in,
+      # after Chrome had started perfectly. Thirteen identical failures that
+      # each look like a browser problem and are a runtime problem.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # A one-line check ahead of a long shard, because the failure it catches
+      # arrives late, once per suite, wearing a browser's clothes.
+      - name: The runtime has the WebSocket these suites drive CDP over
+        run: |
+          node -e '
+            if (typeof globalThis.WebSocket !== "function") {
+              console.error("Node " + process.version + " has no global WebSocket. " +
+                            "The CDP suites need >= 22.");
+              process.exit(1);
+            }
+            console.log("node " + process.version + ", global WebSocket ok");
+          '
+
+      - name: Locate Chromium
+        id: chrome
+        run: |
+          # IT HAS TO ANSWER, NOT MERELY EXIST. This tested `-x` and trusted it,
+          # and three of sixteen jobs failed one run with "Chromium did not
+          # start" -- sixteen seconds in, before any assertion, while the same
+          # suites passed locally and thirteen sibling jobs passed on the same
+          # commit. The failing and passing jobs reported different git
+          # versions, so the matrix had landed on different runner images and
+          # some of those ship a google-chrome that exists, is executable, and
+          # dies on launch. `--version` is the cheapest thing that tells them
+          # apart. tools/chrome-path.mjs applies the same rule for local runs.
+          #
+          # Worth more now than it was: this step used to run twenty-nine times
+          # per push and now runs three times, so a bad image is caught for a
+          # third of the cost -- but a shard that draws one loses ten suites
+          # rather than one, which is why it still installs rather than failing.
+          for p in /usr/bin/google-chrome /usr/bin/chromium-browser /usr/bin/chromium; do
+            if [ -x "$p" ] && "$p" --version >/dev/null 2>&1; then
+              echo "path=$p" >> "$GITHUB_OUTPUT"; echo "using $p ($("$p" --version 2>&1))"; exit 0
+            fi
+            [ -x "$p" ] && echo "::warning::$p is executable but would not run: $("$p" --version 2>&1 | head -1)"
+          done
+          echo "No working Chromium on the runner; installing." >&2
+          sudo apt-get update -qq && sudo apt-get install -y -qq chromium-browser
+          echo "path=/usr/bin/chromium-browser" >> "$GITHUB_OUTPUT"
+
+      - name: Run shard ${{ matrix.shard }}
+        env:
+          # tools/chrome-path.mjs reads this first, before every guessed path.
+          # Without it the suites would look for /opt/pw-browsers, which exists
+          # in the dev container and on no CI runner -- that mismatch is why the
+          # browser suites could not run here until the resolver was shared.
+          CHROME_PATH: ${{ steps.chrome.outputs.path }}
+        run: |
+          set -uo pipefail
+          # EVERY SUITE RUNS, EVEN AFTER ONE FAILS. This is the within-shard half
+          # of fail-fast:false, and it is the thing that makes sharding cost
+          # nothing in diagnostic power: the old matrix told you which suites
+          # were red by showing you red jobs, and this tells you by naming them.
+          # Stop at the first failure and you learn about one breakage per run,
+          # having already given up the isolation that made that tolerable.
+          failed=""
+          for f in ${{ matrix.suites }}; do
+            echo "::group::$f"
+            start=$(date +%s)
+            if node "$f"; then
+              echo "PASS $f ($(( $(date +%s) - start ))s)"
+            else
+              echo "::error file=$f::suite failed"
+              failed="$failed $f"
+            fi
+            echo "::endgroup::"
+          done
+          # A named summary outside the collapsed groups, so a reader does not
+          # have to expand ten of them to find out which one went red.
+          if [ -n "$failed" ]; then
+            echo "::error::shard ${{ matrix.shard }} failed:$failed"
+            { echo "### browser shard ${{ matrix.shard }}: failed"; for f in $failed; do echo "- \`$f\`"; done; } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "shard ${{ matrix.shard }}: every suite passed"

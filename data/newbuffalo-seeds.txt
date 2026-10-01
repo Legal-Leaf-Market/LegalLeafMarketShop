@@ -1,0 +1,120 @@
+# New Buffalo seed list — LEADS, NOT A ROSTER.
+#
+# Every line here is a name and a url that has to be FETCHED before it means
+# anything. That makes each one a `candidate` in api/markets.js terms: "a lead.
+# It is never fetched on the live path and never shown." Nothing in this file
+# may go into api/market-stores.js until tools/discover-market.mjs has fetched
+# it and its own page has named the city. That is the standard the Coldwater
+# seven were built to and it does not move because the market got bigger.
+#
+# ------------------------------------------------------------------------------
+# THE PROVENANCE OF THIS FILE IS WEAKER THAN DETROIT'S OR GRAND RAPIDS', AND
+# THAT HAS TO BE SAID HERE RATHER THAN DISCOVERED FROM THE 404 RATE.
+#
+# Those two say "a name and a url from public search". This one could not be:
+# the container it was written in has no route to the open web at all. The
+# egress gateway answers 403 to CONNECT for every host tried, dispensary and
+# otherwise -- lume.com, dutchie.com, michigan.gov and example.com alike -- so
+# there was no search to do and no page to read.
+#
+# So, line by line, this file holds exactly two kinds of thing:
+#
+#   ATTESTED IN THIS REPO   one line. Lume New Buffalo, whose store-page url
+#                           pattern api/coldwater.js already carries verbatim in
+#                           its diag table and api/market-stores.js already
+#                           builds through lumeStore(). That is evidence from
+#                           this codebase, not from a search.
+#
+#   RECALLED, UNVERIFIED    everything else: operators believed to trade in this
+#                           market, with a url guessed from each chain's own
+#                           url shape elsewhere on this roster. Not read off a
+#                           directory. Not read off anything. The Michigan market
+#                           lost 550+ businesses since 2019 and is still
+#                           contracting (MICHIGAN_EXPANSION.md §2), so a
+#                           remembered shop is a weaker claim here than in almost
+#                           any other retail category.
+#
+# THE SWEEP IS WHAT MAKES THIS SAFE, and it is why the weak provenance is
+# tolerable rather than reckless: discover-market.mjs promotes a lead only when
+# the fetched page NAMES THE CITY, and it refuses to guess. A wrong line here
+# costs a 404 in a log. A wrong line in api/market-stores.js costs a shopper a
+# drive. Those are not the same mistake and this file is the cheap side of it.
+#
+# ------------------------------------------------------------------------------
+# THE NEW BUFFALO TRAP, WHICH IS DETROIT'S HAMTRAMCK PROBLEM IN A SMALL TOWN.
+#
+# THE CITY OF NEW BUFFALO AND NEW BUFFALO TOWNSHIP ARE TWO MUNICIPALITIES.
+# Separate councils, separate opt-in decisions, separate licences and separate
+# lines in the Treasury distribution. Michigan's FY2025 payout counted 114
+# cities, 39 villages and 81 townships as distinct recipients precisely because
+# they are distinct (api/markets.js). A shop out on Red Arrow Highway or La
+# Porte Road can carry a New Buffalo mailing address, advertise itself as New
+# Buffalo, rank for New Buffalo, and still be a Township licence rather than a
+# City one.
+#
+# This is the East Lansing lesson and the Grand Rapids ring at their closest
+# range yet, and the cityOnPage guard does NOT save you: a Township shop's own
+# page says "New Buffalo" everywhere, because that is genuinely its address.
+# That guard was built to catch a chain's national site, not a neighbour two
+# miles down the highway.
+#
+# WHAT THAT MEANS FOR WHOEVER PROMOTES THESE. Decide first whether this market
+# is the CITY or the two together, write the decision into api/markets.js as
+# data, and then check each street address against it. Do not let the answer be
+# settled implicitly by which shops happened to get confirmed. Coldwater never
+# had to answer this question; every market from here on does.
+#
+# THE RING, written down so nobody re-adds them as New Buffalo:
+#   New Buffalo Township, MI  — Red Arrow Hwy / La Porte Rd, own payout line
+#   Three Oaks, MI            — village, ~8 miles east, own opt-in
+#   Bridgman, MI              — own city, up the lakeshore
+#   Buchanan, MI              — own city, several shops, distinct market
+#   Niles, MI                 — own city, the other Berrien border market
+#   Berrien Springs, MI       — village, own line
+#   Chikaming Twp / Harbert   — township, Red Arrow Hwy again
+#
+# ------------------------------------------------------------------------------
+# WHY THIS MARKET AT ALL, since api/markets.js argues the other way in writing.
+#
+# The registry's note on the three cities says New Buffalo "out-sells all three
+# on border traffic" but is "a place people drive THROUGH", and calls that a
+# different product. MICHIGAN_EXPANSION.md §6 tier 3 argues the opposite side:
+# "Border towns first -- New Buffalo and Monroe are border markets for a reason,
+# and out-of-state traffic is already price-shopping before it drives."
+#
+# Both are in this repo and they disagree. The owner asked for this one on
+# 2026-09-07, which settles it, and the tier-3 argument is the one that carries:
+# a shopper who is already comparing before they leave Indiana is the shopper
+# this site is for. api/coldwater.js has the size: #1 city in the state,
+# $45.9M in Jan-Feb 2026 alone.
+#
+# NO STORE COUNT IS CLAIMED. Detroit, Grand Rapids and Lansing each carry a
+# `stores` figure derived from the state's own cheque. New Buffalo's FY2025
+# payout is in the Treasury distribution PDF and michigan.gov is one of the
+# hosts this container cannot reach, so the figure is absent rather than
+# estimated. MICHIGAN_EXPANSION.md §7 already lists that PDF as the open gap.
+
+# --- attested in this repo ----------------------------------------------------
+Lume Cannabis New Buffalo | https://www.lume.com/stores/new-buffalo-mi-dispensary
+
+# --- recalled, unverified: chains this roster already knows in other towns -----
+# The url shape for each is copied from that chain's existing entry in
+# api/market-stores.js or data/grandrapids-seeds.txt, with the town swapped. If
+# the chain does not trade here the fetch 404s and the lead dies, which is the
+# cheapest possible way to find that out.
+JARS Cannabis New Buffalo | https://jarscannabis.com/michigan/new-buffalo/
+Cloud Cannabis New Buffalo | https://cloudcannabis.com/new-buffalo-order-online/
+Nirvana Center New Buffalo | https://nirvanacenter.com/new-buffalo/
+Green Stem New Buffalo | https://greenstemnb.com/
+Dispo New Buffalo | https://dispo.com/new-buffalo/
+
+# --- recalled, unverified: chain front doors, for a store-locator read ---------
+# A bare chain domain cannot name a shop on its own -- that is the Sapura /
+# Exclusive failure that put 693 rows under the wrong name. These are here ONLY
+# so the sweep can read each chain's store list and find whether it has a New
+# Buffalo path. None may be promoted on a bare domain; give it the path that
+# names this shop or leave it a candidate.
+Skymint | https://skymint.com/
+Exclusive | https://exclusivemi.com/
+House of Dank | https://shophod.com/
+Pincanna | https://pincanna.com/

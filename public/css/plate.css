@@ -1,0 +1,370 @@
+/* ============================================================
+   plate.css -- Legal-Leaf Market. The OBJECTS, not the words.
+                Load AFTER tokens.css and library.css.
+   ------------------------------------------------------------
+   WHY THIS FILE EXISTS.
+
+   library.css says in its own header that it was "ported from
+   nicotiamarket.com's app.css story block so the three sister libraries
+   are the same object in three colours". That was a good trade and the
+   owner has now ruled against half of it: "the reels and library need to
+   match the rest of the site in their own way ... it currently has the
+   Nicotia market styling, and I don't want any part of that."
+
+   So the port is cut where it was doing harm and kept where it was doing
+   work, along one line:
+
+       library.css sets the WORDS.  plate.css sets the OBJECTS
+       the words sit on.
+
+   A reading column is a reading column at all three sites -- the measure,
+   the chapter rhythm, the pull quote, the ladder. That stays portable and
+   stays in library.css, where a fix travels to the sisters for free. What
+   a CARD looks like is this site's own and is not portable, so it is here
+   and it is Legal-Leaf's alone.
+
+   ------------------------------------------------------------
+   WHERE THE OBJECT LANGUAGE COMES FROM.
+
+   stompbox.world, the family's fourth site and the only one of the four
+   with a physical vocabulary worth borrowing. Its globals.css argues five
+   rules; each one arrives here as something:
+
+     1. THE EDGE IS CHROME, AND CHROME IS AN EDGE -- never a fill. One
+        hairline border, plus one silkscreen hairline printed inside it,
+        exactly as a pedal is printed. Cards here are DRAWN, not filled.
+     2. METAL IS BRIGHTER THAN THE GROUND. This is the one structural
+        insight and it is the reason these pages stop reading as flat: an
+        object reads as lit when it sits brighter than the room. This
+        site's --bg is near-black, so the plates are a cold-blue metal
+        gradient above it, light at the top, dark at the bottom.
+     3. ONE BRIGHT THING, RESERVED FOR WHAT IS LIT. Stompbox has an LED.
+        This site inherits GOLD from the family, and gold earns its keep
+        by being scarce: one pilot dot per card, dim at rest, lit under
+        the pointer. The moment a second thing on this page glows, the
+        dot stops meaning anything.
+     4. TRAVEL IS SMALL. 2px on press, and the bottom edge collapses
+        under it, so it reads as a switch bottoming out rather than a box
+        falling over. Which also means HOVER DOES NOT MOVE ANYTHING --
+        library.css lifts a card 2px on hover and that is overridden
+        below, because a thing that moves when you approach it has
+        nowhere left to go when you press it.
+     5. NOTHING SPINS, BOUNCES OR GLOWS ON IDLE. A shelf at rest is
+        still.
+
+   WHAT IS DELIBERATELY NOT BORROWED: the skeuomorphism. Stompbox draws
+   literal die-cast boxes with knurled knobs and footswitches because that
+   site is about die-cast boxes. This one is about sentences and a number,
+   so the vocabulary comes down to the PLATE -- a machined surface with a
+   printed edge -- and the knobs stay where they mean something. A library
+   page with a footswitch on it is a costume.
+
+   ------------------------------------------------------------
+   A PLATE IS A CONTROL.
+
+   Everything that lifts off this page can be pressed. A chapter box does
+   NOT lift, because there is nothing to press it for; it gets the
+   silkscreen hairline so it reads as the same family, and nothing else.
+   That single rule is what stops the page becoming a pile of buttons --
+   the same argument stompbox makes about not lighting six LEDs at once.
+
+   ------------------------------------------------------------
+   TWO THINGS THAT WILL BREAK SILENTLY IF YOU CHANGE THEM.
+
+   THIS FILE WINS BY ORDER, NOT BY WEIGHT. Every selector below is written
+   at the same specificity as the rule it replaces in library.css, so the
+   two are readable side by side and neither needs !important. That only
+   holds while the <link> order does. Move plate.css above library.css and
+   nothing errors -- the pages just quietly go back to looking like
+   Nicotia's. test-library-style.mjs asserts the order on every page that
+   loads both.
+
+   THE SELECTORS ARE NAMED HERE, NOT SPRINKLED AS A CLASS. The obvious
+   design is a .plate class applied in the markup, and it is wrong for
+   this repo: these pages are twelve static HTML files plus two JS
+   templates, and a class is a thing eleven of them can carry and the
+   twelfth can forget -- which looks exactly like a page nobody styled.
+   The set of objects here is closed and short, so it is listed once. A
+   bare .plate is honoured too, as the extension point for anything new.
+   ============================================================ */
+
+:root{
+  /* --- the plate: cold-blue machined metal, BRIGHTER than the ground ---
+         Rule 2 above. --bg is #080f14; every step here is above it. The
+         gradient runs light at the top because that is what gives a
+         surface its dimension, and it is the same three-stop shape
+         stompbox uses on an enclosure. */
+  --plate-hi:#123a52;
+  --plate:#0c2a3d;
+  --plate-lo:#071a26;
+  --plate-deck:#04121a;      /* the object's own thickness, under the bottom edge */
+
+  /* --- chrome: the edge, and only ever the edge (rule 1) ---
+         Muted at rest, because a page of eight cards must not be a page of
+         eight bright rings; full chrome is what hover buys. */
+  --chrome:#dbeeff;
+  --chrome-rgb:219,238,255;
+  --edge:rgba(var(--chrome-rgb),.20);
+  --edge-lit:rgba(var(--chrome-rgb),.58);
+  --silk:rgba(var(--chrome-rgb),.10);   /* the hairline printed inside the edge */
+
+  /* --- the one lit thing (rule 3). Gold, and nothing else. --- */
+  --pilot:240,185,60;
+}
+
+/* ------------------------------------------------------------
+   THE ROOM
+   A deep saturated ground with a colour of its own, rather than a void.
+   library.css lit two corners; this lights the top of the page as well,
+   so the plates below have something to be lit objects ON. Written as
+   background-image so it replaces library.css's list wholesale rather
+   than layering a second set of washes under it.
+   ------------------------------------------------------------ */
+body{
+  background-image:
+    radial-gradient(130% 62% at 50% -14%,rgba(var(--accent-rgb),.11),transparent 62%),
+    radial-gradient(circle at 7% 8%,rgba(var(--accent-rgb),.085),transparent 44%),
+    radial-gradient(circle at 93% 16%,rgba(var(--chrome-rgb),.05),transparent 42%),
+    radial-gradient(circle at 74% 97%,rgba(var(--pilot),.035),transparent 48%);
+}
+
+/* ------------------------------------------------------------
+   THE PLATE
+   ------------------------------------------------------------ */
+.plate,
+.lib-item,.lib-next,
+.trio-card,
+.rl-card,.rl-acct{
+  position:relative;
+  background:linear-gradient(180deg,var(--plate-hi),var(--plate) 54%,var(--plate-lo));
+  /* Two inset lines give the surface its top light and bottom shade; the
+     0 3px 0 is the object's own thickness, which is what the press has
+     somewhere to travel to. */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -1px 0 rgba(0,0,0,.42),
+    0 3px 0 var(--plate-deck),
+    0 10px 26px rgba(0,0,0,.40);
+  transition:border-color .18s,background .18s,transform .11s,box-shadow .11s;
+}
+
+/* THE EDGE IS SET SIDE BY SIDE, NEVER AS THE SHORTHAND, and that is not
+   fussiness. .tc-leaf / .tc-ember / .tc-terra and .lib-next each own a
+   3px COLOURED LEFT BORDER, and they sit at the same specificity as the
+   rules here in a file that loads earlier -- so one `border:1px solid`
+   below would win outright and delete the only thing distinguishing the
+   three sister cards from each other. Left is deliberately absent. */
+.plate,.lib-item,.trio-card,.rl-card,.rl-acct,.lib-next{
+  border-top:1px solid var(--edge);
+  border-right:1px solid var(--edge);
+  border-bottom:1px solid var(--edge);
+}
+.plate,.lib-item,.rl-card,.rl-acct{border-left:1px solid var(--edge)}
+
+/* The silkscreen: one hairline printed inside the edge, the detail that
+   makes a drawn object read as a manufactured one. Radius follows the
+   host's own, hence the --plate-r hook rather than a hardcoded number. */
+.plate::after,.lib-item::after,.lib-next::after,.trio-card::after,
+.trio::after,.st-hilite::after,.st-cosmic::after,.st-warn::after,
+.st-manifesto::after{
+  content:"";position:absolute;inset:3px;pointer-events:none;
+  border:1px solid var(--silk);
+  border-radius:calc(var(--plate-r,var(--r)) - 3px);
+}
+.trio-card{--plate-r:var(--r-sm)}
+
+/* Hover lights the edge to full chrome and lifts the surface a step. It
+   does NOT move the card (rule 4) -- library.css translates it -2px and
+   that is undone here, because a card that has already risen has nowhere
+   to travel when it is pressed. */
+.plate:hover,.lib-item:hover,.lib-next:hover,.trio-card:hover,
+.rl-card:hover,.rl-acct:hover{
+  transform:none;
+  background:linear-gradient(180deg,#17475f,#10334a 54%,#0a2130);
+  border-top-color:var(--edge-lit);
+  border-right-color:var(--edge-lit);
+  border-bottom-color:var(--edge-lit);
+}
+.plate:hover,.lib-item:hover,.rl-card:hover,.rl-acct:hover{border-left-color:var(--edge-lit)}
+
+/* Two pixels, and the deck collapses under it. */
+a.plate:active,a.lib-item:active,a.lib-next:active,a.trio-card:active{
+  transform:translateY(2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    inset 0 -1px 0 rgba(0,0,0,.5),
+    0 1px 0 var(--plate-deck),
+    0 4px 12px rgba(0,0,0,.45);
+}
+
+/* ------------------------------------------------------------
+   THE PILOT LIGHT
+   One per card, and the only saturated thing on the page (rule 3). It sits
+   on the kicker because that is the first line of the card, which is where
+   an indicator belongs on a real face: beside the legend, not floating.
+   ------------------------------------------------------------ */
+.lib-kind{position:relative;padding-left:15px}
+.lib-kind::before{
+  content:"";position:absolute;left:0;top:.28em;width:6px;height:6px;border-radius:50%;
+  background:rgb(var(--pilot));opacity:.40;
+  transition:opacity .18s,box-shadow .18s;
+}
+.lib-item:hover .lib-kind::before,.lib-next:hover .lib-kind::before{
+  opacity:1;box-shadow:0 0 7px rgba(var(--pilot),.75);
+}
+
+/* ------------------------------------------------------------
+   THE HERO
+   A lit horizon rather than a rule. The division between the masthead and
+   the shelf below it is drawn as a chrome hairline that fades at both ends
+   with a single gold spark on the midpoint -- the same silkscreen idea,
+   applied to the page instead of to a card.
+   ------------------------------------------------------------ */
+.st-hero{border-bottom:0}
+.st-hero::before{opacity:.26;height:420px}
+.st-hero::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--edge) 18%,var(--edge-lit) 40%,
+             rgb(var(--pilot)) 50%,var(--edge-lit) 60%,var(--edge) 82%,transparent);
+  opacity:.6;
+}
+
+/* LOTS OF BLUES, and the gold is the tail rather than the middle.
+   background-IMAGE, never the `background` shorthand: library.css sets
+   -webkit-background-clip:text on this element AFTER its own background
+   declaration, and the shorthand resets background-clip to border-box --
+   which paints a gradient rectangle behind transparent letters instead of
+   through them. Nothing errors; the headline simply disappears. */
+.st-hero h1{
+  background-image:linear-gradient(96deg,var(--chrome) 0%,var(--accent) 36%,
+                                   var(--leaf2) 60%,var(--amber) 88%,var(--gold) 100%);
+}
+
+/* ------------------------------------------------------------
+   THE BACK LINK
+   A ghost plate: the edge and the type, no enclosure. Stompbox's
+   .stomp-ghost, and for the same reason -- it is a way out of the page,
+   not an action on it, so it must not compete with the cards.
+   ------------------------------------------------------------ */
+.sbacklink{
+  margin:22px 0 0;padding:7px 15px;border-radius:999px;
+  border:1px solid var(--edge);background:rgba(var(--chrome-rgb),.03);
+  transition:color .16s,border-color .16s,background .16s;
+}
+.sbacklink:hover{color:var(--chrome);border-color:var(--edge-lit);
+  background:rgba(var(--chrome-rgb),.07)}
+
+/* ------------------------------------------------------------
+   THE ONE FILLED CONTROL PER PAGE
+   Stompbox's .stomp-go: a bright enclosure with a chrome edge, used once
+   per view because two of these on one screen is a fairground. Keeps its
+   accent fill -- it is the primary action -- and gains the edge, the deck
+   and the travel so it presses like everything else here.
+   ------------------------------------------------------------ */
+.st-cta,.rl-follow{
+  border:1px solid var(--edge-lit);
+  box-shadow:0 2px 0 rgba(0,0,0,.45),0 6px 18px rgba(var(--accent-rgb),.18);
+  transition:background .16s,color .16s,transform .11s,box-shadow .11s;
+}
+.st-cta:active,.rl-follow:active{
+  transform:translateY(2px);
+  box-shadow:0 0 0 rgba(0,0,0,.45),0 3px 10px rgba(var(--accent-rgb),.14);
+}
+
+/* ------------------------------------------------------------
+   THE BOXES THAT ARE NOT CONTROLS
+   Silkscreen only, no gradient, no deck, no travel. See "A PLATE IS A
+   CONTROL" above: these are places to read, not things to press, and the
+   hairline is the whole of what they inherit.
+   ------------------------------------------------------------ */
+.trio,.st-hilite,.st-cosmic,.st-warn,.st-manifesto{position:relative}
+
+/* ------------------------------------------------------------
+   THE SISTER CARDS
+   The three coloured left edges are the only place another site's colour
+   belongs on this page, and they survive the side-by-side border rule
+   above. What changes is which one is engaged: "you are here" is the card
+   that is ON, so it takes the pilot colour on its edge and keeps its
+   light, instead of being dimmed to 62% like something switched off.
+   Stompbox's bypassed enclosure keeps its shape and loses its light; this
+   is that language pointed the other way.
+   ------------------------------------------------------------ */
+.trio-card.is-here{
+  opacity:1;
+  border-top-color:rgba(var(--pilot),.34);
+  border-right-color:rgba(var(--pilot),.34);
+  border-bottom-color:rgba(var(--pilot),.34);
+}
+.trio-card.is-here .tc-name::after{color:rgb(var(--pilot));opacity:.85}
+
+/* ------------------------------------------------------------
+   THE REELS CARDS
+   An embed bleeds to its own edges, so these get the silkscreen as a
+   PRINTED WINDOW rather than as a hairline: 3px of plate showing all the
+   way round the frame, which is what the border of a silkscreened panel
+   physically is. A 1px line ruled across a white Instagram embed would
+   read as a rendering fault.
+   ------------------------------------------------------------ */
+.rl-frame,.rl-pframe{
+  border:1px solid var(--silk);border-radius:calc(var(--r) - 4px);overflow:hidden;
+}
+
+@media (max-width:640px){
+  /* The deck is the one thing that does not scale down: at 3px on a phone
+     it is the whole reason the card reads as an object rather than a
+     rectangle, and it costs three pixels. */
+  .st-hero::before{height:300px}
+}
+
+/* ------------------------------------------------------------
+   THE SHELF
+   ------------------------------------------------------------
+   The index was one 64ch ribbon down the middle of a 1500px shell, which is
+   the right measure for PROSE and the wrong one for a list of six things --
+   at a laptop width it is a column of cards in a field of nothing. So the
+   reading measure stays exactly where it belongs (.st-body, .st-standfirst,
+   .st-sources are untouched) and the INDEX becomes a shelf, which is what the
+   rest of this site is.
+
+   The lead piece spans both columns. Not decoration: six identical tiles say
+   nothing about which one to read first, and an index whose top item is the
+   same size as its last is a list rather than an edit. Its dek is still capped
+   at a readable measure -- a card can be 1100px wide, a sentence cannot.
+
+   ONLY WHERE THERE IS AN INDEX. .trio is widened through `.lib-list ~ .trio`
+   rather than on its own, because the same block sits at the foot of every
+   STORY page under a 64ch column, and a family footer wider than the article
+   above it reads as a broken container. The sibling combinator is the whole
+   test: an index page has a .lib-list and a story page does not.
+   ------------------------------------------------------------ */
+@media (min-width:1080px){
+  .lib-list{max-width:min(1180px,94vw);grid-template-columns:1fr 1fr;gap:18px}
+  .lib-list .lib-item:first-child{grid-column:1 / -1}
+  .lib-list .lib-item:first-child .lib-title{font-size:clamp(1.7rem,2.7vw,2.4rem)}
+  .lib-list .lib-item:first-child .lib-dek,
+  .lib-list .lib-item:first-child .lib-tag{max-width:70ch}
+  .lib-list ~ .trio{max-width:min(1180px,94vw)}
+}
+
+/* Three sisters, three columns, at every width that can hold them. The
+   auto-fit minimum was 200px against a ~544px inner width, so the third card
+   dropped to a row of its own and the family read as two shops and an
+   afterthought -- which is the one thing the block's own comment in library.css
+   says it exists not to do. */
+.trio-grid{grid-template-columns:repeat(auto-fit,minmax(158px,1fr))}
+
+/* "you are here" is a state, not part of the shop's name, and inside a third
+   of a column it wrapped through the middle of the phrase. Its own line. */
+.trio-card.is-here .tc-name::after{display:block;margin-top:5px}
+
+/* THE ORPHAN. The lead spans, so the remaining n-1 tile two-up and the last row
+   holds one card whenever n-1 is odd -- which is exactly whenever n is even.
+   `:last-child:nth-child(even)` says that and nothing else: at six pieces the
+   closing item spans and the shelf bookends, at seven it does not and the grid
+   is already square. Written as arithmetic rather than as a count, because the
+   count changes every time somebody writes a piece. */
+@media (min-width:1080px){
+  .lib-list .lib-item:last-child:nth-child(even){grid-column:1 / -1}
+  .lib-list .lib-item:last-child:nth-child(even) .lib-dek,
+  .lib-list .lib-item:last-child:nth-child(even) .lib-tag{max-width:70ch}
+}

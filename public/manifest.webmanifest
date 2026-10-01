@@ -1,0 +1,64 @@
+{
+  "name": "Legal-Leaf Market — compare hemp by price per gram",
+  "short_name": "Legal-Leaf",
+  "description": "Compare legal hemp deals across trusted stores — THCA flower, Delta-8/9, CBD, vapes, edibles and glass — ranked by price per gram.",
+  "id": "/",
+  "start_url": "/?src=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait",
+  "background_color": "#0b120d",
+  "theme_color": "#0b120d",
+  "categories": [
+    "shopping",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "My trip",
+      "url": "/trip"
+    },
+    {
+      "name": "Coldwater menus",
+      "url": "/coldwater"
+    },
+    {
+      "name": "Consumables",
+      "url": "/consumables"
+    },
+    {
+      "name": "Devices & Misc",
+      "url": "/devices"
+    },
+    {
+      "name": "International",
+      "url": "/international"
+    },
+    {
+      "name": "Greek Glass",
+      "url": "/greekglass"
+    }
+  ]
+}

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wholesale: bulk hemp by the pound, priced per gram | Legal-Leaf Market</title>
+<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any product is
+     rendered, and the page content stays in the DOM behind the overlay so a crawler still
+     sees a full page. See public/js/age-gate.js for why an attestation gate is the right
+     shape here and what it deliberately does not do.
+     Anchored after </title> because three of these pages (consumables, devices,
+     international) have no explicit </head> at all -- an anchor that works on twelve of
+     fifteen pages is how a gate ends up missing from the ones that sell things. -->
+<script src="/js/age-gate.js"></script>
+<meta name="description" content="A live preview of the bulk hemp already listed across the stores we track: half-pound to multi-kilo lots, priced per gram at every tier, with each lot's lab status shown honestly. Under construction: nothing here is orderable through us. Register interest for the B2B side. Adults 21+.">
+<link rel="canonical" href="https://legal-leafmarket.com/wholesale">
+<meta name="theme-color" content="#080f14">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:title" content="Wholesale: bulk hemp, priced per gram">
+<meta property="og:description" content="Half-pound to multi-kilo lots across every store we track, priced per gram at every tier, lab status shown honestly. Under construction.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://legal-leafmarket.com/wholesale">
+<meta property="og:site_name" content="Legal-Leaf Market">
+<meta property="og:image" content="https://legal-leafmarket.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Wholesale: bulk hemp, priced per gram">
+<meta name="twitter:description" content="The bulk supply already on the site, priced the only way that lets you compare it. Under construction.">
+<meta name="twitter:image" content="https://legal-leafmarket.com/og-image.png">
+<meta name="rating" content="adult">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://legal-leafmarket.com/wholesale#page",
+      "url": "https://legal-leafmarket.com/wholesale",
+      "name": "Wholesale, Legal-Leaf Market",
+      "description": "A preview of bulk hemp lots listed across tracked retailers, normalised to price per gram at every weight tier, with per-lot laboratory status. Not a transactional marketplace.",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://legal-leafmarket.com/wholesale#crumbs",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Legal-Leaf Market", "item": "https://legal-leafmarket.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Wholesale", "item": "https://legal-leafmarket.com/wholesale" }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Cormorant+Garamond:ital,wght@1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/library.css">
+<!-- The objects the words sit on. MUST load after library.css: it wins by order,
+     not by weight, and moving it above silently restores the old surface. -->
+<link rel="stylesheet" href="/css/plate.css">
+<link rel="stylesheet" href="/css/wholesale.css">
+<!-- Analytics. One tag, four sites; see /js/analytics.js for the taxonomy and for why
+     this is not Vercel custom events (they are Pro-only and capped at 2 props). -->
+<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+</head>
+<body>
+
+<main class="shell story">
+  <a class="sbacklink" href="/">&larr; Back to the market</a>
+
+  <div class="uc-band">
+    <span class="uc-tag">Under construction &middot; not open</span>
+    <p>
+      <b>You cannot buy anything through this page, and there is nothing to order yet.</b>
+      The table below is real and live. It is the bulk supply already visible to us
+      across the stores we track, priced the only way that lets you compare it. What does not
+      exist yet is any of the rest of it: no accounts, no reservations, no terms, no payment,
+      no contracts. Every link goes to the seller, exactly as it does on the retail side.
+      If a B2B side is worth building, the form at the bottom is how we will find out.
+    </p>
+  </div>
+
+  <header class="st-hero">
+    <p class="eyebrow">Wholesale &middot; preview</p>
+    <h1><span class="st-lead">by the pound,</span>priced per gram</h1>
+    <p class="st-tagline">
+      <span class="st-tag-en">The only number that lets you compare a lot to a lot.</span>
+      <span class="st-tag-sub">half a pound to forty-five kilos, from every shop we can reach</span>
+    </p>
+    <p class="st-standfirst">
+      Retail hides bulk. A shop lists a half pound next to an eighth and the shelf price tells
+      you nothing about which is the better buy. We already compute price per gram for every
+      listing on this site; this page simply stops throwing away the part of that work that
+      applies to people buying by the pound. <em>Everything here is scraped from public
+      product pages. We hold no stock and sell nothing.</em>
+    </p>
+  </header>
+
+  <div class="wl-stats" id="wlStats"></div>
+
+  <section style="max-width:64ch;margin:46px auto 0">
+    <div class="wl-tools">
+      <div class="wl-field">
+        <label for="wlMin">Minimum lot</label>
+        <select id="wlMin">
+          <option value="225">Half pound (225 g)</option>
+          <option value="450">One pound (450 g)</option>
+          <option value="2250">5 lb (2.25 kg)</option>
+          <option value="112">Quarter pound (112 g)</option>
+        </select>
+      </div>
+      <div class="wl-field">
+        <label for="wlSort">Sort</label>
+        <select id="wlSort">
+          <option value="pg">Cheapest per gram</option>
+          <option value="size">Largest lot</option>
+          <option value="thca">Strongest (measured)</option>
+          <option value="total">Lowest lot price</option>
+        </select>
+      </div>
+      <div class="wl-field">
+        <label for="wlLab">Lab status</label>
+        <select id="wlLab">
+          <option value="all">Everything</option>
+          <option value="num">Measured potency only</option>
+        </select>
+      </div>
+    </div>
+    <p class="wl-note" id="wlNote">Loading live inventory&hellip;</p>
+    <div class="wl-wrap">
+      <table class="wl-table">
+        <thead>
+          <tr>
+            <th>Lot</th><th>Best tier</th><th>Per gram</th><th>Lot price</th>
+            <th>Lab</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="wlBody">
+          <tr><td colspan="6" class="wl-empty">Loading&hellip;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <article class="st-body" style="margin-top:52px">
+    <section class="st-chapter">
+      <span class="st-num">I</span>
+      <p class="st-when">what you are looking at</p>
+      <h2>This is a lens, not a marketplace</h2>
+      <p>
+        Everything in that table already existed. It is the same catalogue the retail side
+        reads, filtered to lots at or above the weight you chose, with the price-per-gram we
+        already compute shown at every tier the seller publishes rather than only the one they
+        put on the shelf.
+      </p>
+      <p>
+        That last part is the whole trick. A seller listing 7 g / 14 g / 28 g / 112 g / 225 g /
+        450 g <b>is</b> publishing a degressive price ladder. They just are not calling
+        it one, and no retail interface shows it. The rungs under each lot are that ladder,
+        with the best per-gram tier marked.
+      </p>
+      <p class="st-pull">
+        Nobody built a wholesale catalogue.<br>
+        It was already here, priced by the eighth.
+      </p>
+    </section>
+
+    <section class="st-chapter st-warn">
+      <span class="st-num">II</span>
+      <p class="st-when">read this bit twice</p>
+      <h2>What this is not</h2>
+      <p>
+        <b>It is not an offer to sell.</b> We hold no stock, take no payment, set no prices and
+        are not a party to any transaction. Every link goes to the seller's own product page
+        and every term of sale is theirs.
+      </p>
+      <p>
+        <b>It is not a compliance check.</b> Whether a given lot may lawfully be bought, sold,
+        shipped or received depends on your state and sometimes your city, on licensing, and on
+        rules that differ on whether they measure delta-9 or total THC. A lot appearing here is
+        never a statement that it is legal for you. That is the subject of
+        <a href="/the-seam">The Seam</a>, and a per-state view of it is the thing we would need
+        to build next and will not publish without a lawyer.
+      </p>
+      <p>
+        <b>The lab column is deliberately three-valued.</b> <i>Measured</i> means we parsed a
+        certificate for that specific product and its own arithmetic checks out.
+        <i>Document</i> means a certificate exists but is a store-level sheet or an index page
+        rather than a test of that lot. <i>None</i> means no report we could read. We do not
+        merge the second into the first, and at these order sizes that distinction is the
+        entire point. The method is written up in
+        <a href="/what-the-certificates-say">What the Certificates Say</a>.
+      </p>
+      <p>
+        <b>And prices move.</b> These are scraped from public pages and can be stale, wrong, or
+        out of stock by the time you click. Confirm everything with the seller.
+      </p>
+    </section>
+  </article>
+
+  <section class="wl-form">
+    <p class="eyebrow">Register interest</p>
+    <h2>Tell us whether this is worth building</h2>
+    <p class="lede">
+      No spam, no drip sequence, no sales call. One email when there is something real to look
+      at, and nothing before that. The volume and state fields are the ones that actually
+      decide whether this gets built, leave them blank if you would rather not say.
+    </p>
+    <form id="wlForm" novalidate>
+      <div class="wl-grid">
+        <div class="full">
+          <label for="wlEmail">Email *</label>
+          <input type="email" id="wlEmail" name="email" required autocomplete="email"
+                 placeholder="you@company.com">
+        </div>
+        <div>
+          <label for="wlCompany">Company</label>
+          <input type="text" id="wlCompany" name="company" autocomplete="organization"
+                 placeholder="Optional">
+        </div>
+        <div>
+          <label for="wlState">State</label>
+          <input type="text" id="wlState" name="state" maxlength="40"
+                 placeholder="Where you'd take delivery">
+        </div>
+        <div>
+          <label for="wlVolume">Rough monthly volume</label>
+          <select id="wlVolume" name="volume">
+            <option value="">Prefer not to say</option>
+            <option>Under 1 lb</option>
+            <option>1–10 lb</option>
+            <option>10–50 lb</option>
+            <option>50–200 lb</option>
+            <option>200 lb+</option>
+          </select>
+        </div>
+        <div>
+          <label for="wlSide">You are</label>
+          <select id="wlSide" name="side">
+            <option value="">Prefer not to say</option>
+            <option>Buying</option>
+            <option>Selling</option>
+            <option>Both</option>
+          </select>
+        </div>
+      </div>
+      <label class="wl-consent">
+        <input type="checkbox" id="wlConsent" checked>
+        <span>I am 21 or over, this is a business enquiry, and I am happy to be emailed about
+          it. We will not pass your address to any seller.</span>
+      </label>
+      <button class="wl-submit" type="submit" id="wlSubmit">Register interest</button>
+      <p class="wl-msg" id="wlMsg" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="trio">
+    <p class="eyebrow">Three shops, one habit</p>
+    <h2>Same standard, three appetites</h2>
+    <p class="lede">
+      One honest unit, computed across every seller, and never a number we cannot show our
+      working for. <b>That rule is the whole business.</b>
+    </p>
+    <div class="trio-grid">
+      <div class="trio-card tc-leaf is-here">
+        <span class="tc-name">Legal-Leaf Market</span>
+        <span class="tc-tag">Priced per gram</span>
+        <span class="tc-dek">Hemp and cannabinoid flower, retail and now bulk.</span>
+      </div>
+      <a class="trio-card tc-ember" href="https://nicotiamarket.com" rel="noopener" target="_blank">
+        <span class="tc-name">Nicotia Market</span>
+        <span class="tc-tag">Priced per pouch, per puff, per ml</span>
+        <span class="tc-dek">Nicotine, with a library of its own.</span>
+      </a>
+      <a class="trio-card tc-terra" href="https://herballeafmarket.com" rel="noopener" target="_blank">
+        <span class="tc-name">Herbal Leaf Market</span>
+        <span class="tc-tag">The closest we come to quitting</span>
+        <span class="tc-dek">Smokable botanicals with nothing scheduled in them.</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="st-sources">
+    <p class="st-fine">
+      Legal-Leaf Market is a price comparison service. We hold no stock, sell nothing, take no
+      payment and are not a party to any transaction between you and a seller. Prices and
+      availability are scraped from public product pages and may be out of date. Nothing on
+      this page is legal, medical or business advice, and nothing on it is a statement that any
+      product is lawful to buy, sell, ship or receive where you are. Adults 21+ only.
+    </p>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var MIN = 225, SORT = 'pg', LABF = 'all', LOTS = [];
+  var $ = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+  var money = function(n){ return '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var wt = function(g){ return g>=1000 ? (g/1000).toFixed(g%1000?1:0)+' kg' : g+' g'; };
+
+  // ---- build one row per PRODUCT, headlined by its cheapest qualifying tier -------------
+  // A row per (product x tier) would list the same flower three times and bury the ladder,
+  // which is the thing worth showing. Instead: best qualifying tier as the headline, every
+  // tier the seller publishes as the ladder underneath.
+  function build(products){
+    var out = [];
+    for (var i=0;i<products.length;i++){
+      var p = products[i], sizes = p.sizes || [];
+      var tiers = [], qual = [];
+      for (var j=0;j<sizes.length;j++){
+        var s = sizes[j], price = +s[1], g = +s[2], avail = s[4] !== false;
+        if (!(price>0) || !(g>0)) continue;
+        tiers.push({g:g, price:price, pg:price/g, avail:avail});
+        if (avail && g >= MIN) qual.push(tiers[tiers.length-1]);
+      }
+      if (!qual.length) continue;
+      // A seller often lists the same weight more than once (different variants of one
+      // pack size). Collapse to one rung per weight, keeping the cheapest, or the ladder
+      // repeats itself and reads like a rendering fault.
+      // Availability beats price when collapsing: keeping the cheapest variant at a weight
+      // silently dropped that whole rung whenever the cheapest one happened to be sold out,
+      // which cost 9 lots and an entire seller off the table.
+      var byW = {};
+      for (var t=0;t<tiers.length;t++){
+        var g0 = tiers[t].g, cur = byW[g0], cand = tiers[t];
+        if (!cur) { byW[g0] = cand; continue; }
+        if (cand.avail !== cur.avail) { if (cand.avail) byW[g0] = cand; continue; }
+        if (cand.pg < cur.pg) byW[g0] = cand;
+      }
+      tiers = Object.keys(byW).map(function(k){ return byW[k]; })
+                    .sort(function(a,b){ return a.g - b.g; });
+      qual = tiers.filter(function(x){ return x.avail && x.g >= MIN; });
+      if (!qual.length) continue;
+      // biggest must come from the WEIGHTS, not from qual after it has been price-sorted --
+      // taking the last element of a pg-sorted list returned the dearest tier, which quietly
+      // dropped the 22.5 kg and 45 kg lots out of the mass total.
+      var biggest = qual.reduce(function(m,x){ return x.g > m ? x.g : m; }, 0);
+      qual.sort(function(a,b){ return a.pg - b.pg; });
+      var lab = p.lab || null;
+      var status = lab ? 'num' : (p.coa ? 'doc' : 'none');
+      out.push({
+        name: p.name || '(unnamed)', store: p.store || '', url: p.url || '',
+        best: qual[0], tiers: tiers, biggest: biggest,
+        status: status, thca: lab && typeof lab.thca === 'number' ? lab.thca : null,
+        scope: p.coaScope || '', coa: p.coa || ''
+      });
+    }
+    return out;
+  }
+
+  function render(){
+    var rows = LOTS.filter(function(r){ return r.best.g >= MIN; });
+    if (LABF === 'num') rows = rows.filter(function(r){ return r.status === 'num'; });
+    rows.sort(function(a,b){
+      if (SORT === 'size')  return b.biggest - a.biggest;
+      if (SORT === 'total') return a.best.price - b.best.price;
+      if (SORT === 'thca')  return (b.thca||-1) - (a.thca||-1);
+      return a.best.pg - b.best.pg;
+    });
+
+    var mass = 0, measured = 0;
+    for (var k=0;k<rows.length;k++){ mass += rows[k].biggest; if (rows[k].status==='num') measured++; }
+    $('wlStats').innerHTML =
+      stat(rows.length, 'lots listed') +
+      stat((mass/1000).toFixed(1) + ' kg', 'bulk mass listed') +
+      stat(measured + '/' + rows.length, 'with measured potency') +
+      stat(new Set(rows.map(function(r){return r.store;})).size, 'sellers');
+
+    $('wlNote').textContent = rows.length
+      ? rows.length + ' lots at ' + wt(MIN) + ' or more, in stock right now. Scraped from public product pages, confirm everything with the seller.'
+      : 'No lots at that size are in stock right now.';
+
+    if (!rows.length){
+      $('wlBody').innerHTML = '<tr><td colspan="6" class="wl-empty">Nothing in stock at that size today. Try a smaller minimum.</td></tr>';
+      return;
+    }
+    var html = '';
+    for (var i=0;i<rows.length;i++){
+      var r = rows[i];
+      var ladder = '';
+      for (var t=0;t<r.tiers.length;t++){
+        var x = r.tiers[t];
+        ladder += '<span class="wl-rung' + (x===r.best?' is-best':'') + '">' +
+                  wt(x.g) + ' &middot; $' + x.pg.toFixed(3) + '</span>';
+      }
+      var labTxt = r.status==='num' ? 'Measured' : r.status==='doc' ? 'Document' : 'None';
+      var labCls = r.status==='num' ? ' is-num' : r.status==='doc' ? ' is-doc' : '';
+      var labExtra = r.status==='num' && r.thca!=null
+        ? '<span class="wl-thca">' + r.thca.toFixed(2) + '% THCa</span>'
+        : (r.status==='doc' ? '<span class="wl-thca">' + esc(r.scope||'not this lot') + '</span>' : '');
+      html += '<tr>' +
+        '<td><span class="wl-strain">' + esc(r.name) + '</span>' +
+            '<span class="wl-store">' + esc(r.store) + '</span>' +
+            '<div class="wl-ladder">' + ladder + '</div></td>' +
+        '<td class="wl-size">' + wt(r.best.g) + '</td>' +
+        '<td class="wl-pg">$' + r.best.pg.toFixed(3) + '</td>' +
+        '<td class="wl-price">' + money(r.best.price) + '</td>' +
+        '<td><span class="wl-lab' + labCls + '">' + labTxt + '</span>' + labExtra + '</td>' +
+        '<td>' + (r.url ? '<a class="wl-go" href="' + esc(r.url) + '" target="_blank" rel="noopener nofollow sponsored">at seller &rarr;</a>' : '') + '</td>' +
+      '</tr>';
+    }
+    $('wlBody').innerHTML = html;
+  }
+  function stat(v,l){ return '<div class="wl-stat"><b>' + esc(v) + '</b><span>' + esc(l) + '</span></div>'; }
+
+  $('wlMin').addEventListener('change', function(){ MIN = +this.value; render(); });
+  $('wlSort').addEventListener('change', function(){ SORT = this.value; render(); });
+  $('wlLab').addEventListener('change', function(){ LABF = this.value; render(); });
+
+  fetch('/api/products', {headers:{accept:'application/json'}})
+    .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(d){
+      LOTS = build((d && d.products) || []);
+      render();
+    })
+    .catch(function(){
+      $('wlNote').textContent = 'Live inventory is not reachable right now. Nothing below is current.';
+      $('wlBody').innerHTML = '<tr><td colspan="6" class="wl-empty">Could not load live inventory. Please try again shortly.</td></tr>';
+    });
+
+  // ---- interest form -------------------------------------------------------------------
+  var form = $('wlForm');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var msg = $('wlMsg'), btn = $('wlSubmit');
+    var email = $('wlEmail').value.trim();
+    msg.className = 'wl-msg';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){
+      msg.className = 'wl-msg err'; msg.textContent = 'That email does not look right.';
+      $('wlEmail').focus(); return;
+    }
+    if (!$('wlConsent').checked){
+      msg.className = 'wl-msg err'; msg.textContent = 'We need that box ticked before we can email you.';
+      return;
+    }
+    btn.disabled = true; msg.textContent = 'Sending…';
+    fetch('/api/subscribe', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        email: email,
+        name: $('wlCompany').value.trim(),
+        consent: true,
+        site: 'legal-leaf-wholesale',
+        tz: (Intl.DateTimeFormat().resolvedOptions().timeZone || ''),
+        meta: {
+          form: 'wholesale-interest',
+          company: $('wlCompany').value.trim(),
+          state: $('wlState').value.trim(),
+          volume: $('wlVolume').value,
+          side: $('wlSide').value
+        }
+      })
+    })
+    .then(function(r){ return r.json().catch(function(){ return {ok:r.ok}; }); })
+    .then(function(j){
+      if (j && j.ok){
+        form.innerHTML = '<p class="wl-msg ok" style="font-size:1rem">Thank you. You are on the list. ' +
+          'You will hear from us once when there is something real to look at, and not before.</p>';
+      } else {
+        msg.className = 'wl-msg err';
+        msg.textContent = 'That did not go through. Try again, or email hello@legal-leafmarket.com.';
+        btn.disabled = false;
+      }
+    })
+    .catch(function(){
+      msg.className = 'wl-msg err';
+      msg.textContent = 'That did not go through. Try again, or email hello@legal-leafmarket.com.';
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
+</body>
+</html>

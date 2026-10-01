@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Seam: the 0.3% line this whole shop stands on | Legal-Leaf Market</title>
+<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any product is
+     rendered, and the page content stays in the DOM behind the overlay so a crawler still
+     sees a full page. See public/js/age-gate.js for why an attestation gate is the right
+     shape here and what it deliberately does not do.
+     Anchored after </title> because three of these pages (consumables, devices,
+     international) have no explicit </head> at all -- an anchor that works on twelve of
+     fifteen pages is how a gate ends up missing from the ones that sell things. -->
+<script src="/js/age-gate.js"></script>
+<meta name="description" content="The AMA argued against cannabis prohibition in 1937 and lost. In 1970 the plant became Schedule I. In 2018 a farm bill drew one line: 0.3% delta-9 THC by dry weight: and created the product category this shop sells. An honest account of the seam, including the parts that are unsettled. Not legal advice. Adults 21+.">
+<link rel="canonical" href="https://legal-leafmarket.com/the-seam">
+<meta name="theme-color" content="#080f14">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:title" content="The Seam">
+<meta property="og:description" content="0.3%, dry weight, delta-9 only. Everything sold here lives inside that sentence, and the sentence is doing more work than it looks like.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://legal-leafmarket.com/the-seam">
+<meta property="og:site_name" content="Legal-Leaf Market">
+<meta property="og:image" content="https://legal-leafmarket.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Seam">
+<meta name="twitter:description" content="One decimal place in a 2018 farm bill created an entire industry. Here is how, and where it is still argued about.">
+<meta name="twitter:image" content="https://legal-leafmarket.com/og-image.png">
+<meta name="rating" content="adult">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "@id": "https://legal-leafmarket.com/the-seam#article",
+      "url": "https://legal-leafmarket.com/the-seam",
+      "headline": "The Seam",
+      "description": "A history of the legal line separating hemp from marijuana in United States law, from the Marihuana Tax Act of 1937 through the Controlled Substances Act of 1970 to Section 10113 of the Agriculture Improvement Act of 2018, and the unresolved question of THCA versus delta-9 THC.",
+      "image": "https://legal-leafmarket.com/og-image.png",
+      "inLanguage": "en",
+      "articleSection": "Law and policy",
+      "about": [
+        { "@type": "Thing", "name": "Agriculture Improvement Act of 2018",
+          "description": "United States farm bill whose Section 10113 defines hemp as cannabis containing not more than 0.3 percent delta-9 tetrahydrocannabinol on a dry weight basis." },
+        { "@type": "Thing", "name": "Marihuana Tax Act of 1937" },
+        { "@type": "Thing", "name": "Controlled Substances Act" },
+        { "@type": "Thing", "name": "Tetrahydrocannabinolic acid",
+          "description": "The acidic precursor of THC in the living plant, which converts to delta-9 THC on heating." }
+      ],
+      "mentions": [
+        { "@type": "Person", "name": "Harry J. Anslinger" },
+        { "@type": "Person", "name": "William C. Woodward" },
+        { "@type": "Organization", "name": "American Medical Association" }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://legal-leafmarket.com/the-seam#crumbs",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Legal-Leaf Market", "item": "https://legal-leafmarket.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Library", "item": "https://legal-leafmarket.com/library" },
+        { "@type": "ListItem", "position": 3, "name": "The Seam", "item": "https://legal-leafmarket.com/the-seam" }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Cormorant+Garamond:ital,wght@1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/library.css">
+<!-- The objects the words sit on. MUST load after library.css: it wins by order,
+     not by weight, and moving it above silently restores the old surface. -->
+<link rel="stylesheet" href="/css/plate.css">
+<!-- Analytics. One tag, four sites; see /js/analytics.js for the taxonomy and for why
+     this is not Vercel custom events (they are Pro-only and capped at 2 props). -->
+<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+</head>
+<body>
+
+<main class="shell story">
+  <a class="sbacklink" href="/library">&larr; The library</a>
+
+  <header class="st-hero">
+    <p class="eyebrow">Law &amp; policy</p>
+    <h1><span class="st-lead">the</span>seam</h1>
+    <p class="st-tagline">
+      <span class="st-tag-en">0.3%, dry weight, delta-9 only.</span>
+      <span class="st-tag-sub">an entire industry balanced on one decimal place</span>
+    </p>
+    <p class="st-standfirst">
+      Every product on this site exists because of one sentence in a 2018 farm bill. Not
+      because of a court ruling, not because of a change of heart about cannabis, and not
+      because anybody in Congress intended to create this market. A definition was written to
+      revive an agricultural crop, and the definition turned out to have a doorway in it.
+      <em>This is an explanation, not a defence, and it is certainly not legal advice.</em>
+    </p>
+  </header>
+
+  <article class="st-body">
+
+    <section class="st-chapter">
+      <span class="st-num">I</span>
+      <p class="st-when">1937</p>
+      <h2>The doctor who showed up to object</h2>
+      <p>
+        The Marihuana Tax Act of 1937 is usually told as a story about
+        <b>Harry J. Anslinger</b>, the first commissioner of the Federal Bureau of Narcotics,
+        and the press campaign that preceded it. That part is real. The part worth rescuing is
+        that the medical profession turned up and said no.
+      </p>
+      <p>
+        <b>Dr. William C. Woodward</b>, legislative counsel to the
+        <b>American Medical Association</b>, testified against the bill. His objections were
+        not romantic. He complained that the AMA had been given almost no notice; that the
+        evidence being offered consisted largely of newspaper stories rather than data; that
+        nobody had established the harm the bill claimed to address; and that the statute
+        would obstruct legitimate medical and scientific use of a substance then still listed
+        in the pharmacopoeia.
+      </p>
+      <p>
+        He was, in substance, told that he was unhelpful. The Act passed. Whatever else you
+        think about cannabis policy, the founding American statute on it was enacted over the
+        stated objection of the country's largest body of physicians, on the grounds that the
+        evidence had not been produced.
+      </p>
+      <p class="st-pull">
+        The first thing the record shows is a doctor asking to see the evidence,<br>
+        and being moved along.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">II</span>
+      <p class="st-when">1970</p>
+      <h2>Schedule I, provisionally, and then permanently</h2>
+      <p>
+        The Tax Act was struck down on Fifth Amendment grounds in 1969, and Congress replaced
+        the whole architecture with the <b>Controlled Substances Act of 1970</b>. Cannabis
+        went into <b>Schedule I</b>: the category reserved for substances with high abuse
+        potential, no currently accepted medical use, and no accepted safety profile even
+        under supervision.
+      </p>
+      <p>
+        The detail people forget is that this placement was framed at the time as
+        <i>interim</i>. A commission was to study the question and report back, the National
+        Commission on Marihuana and Drug Abuse, generally called the <b>Shafer Commission</b>
+        after its chairman. It reported in <b>1972</b> and recommended that personal
+        possession be decriminalised.
+      </p>
+      <p>
+        The recommendation was rejected. The interim classification stayed. It is the reason
+        that for the next forty-six years American cannabis research had to be conducted
+        through a permitting regime designed for substances with no accepted use, which is a
+        circular problem: the schedule says there is no accepted medical use, and the schedule
+        is what makes it hardest to run the studies that would establish one.
+      </p>
+      <p class="st-aside">
+        Twice now the same shape: a body is asked for evidence, produces a recommendation, and
+        the recommendation is set aside. This is a policy history, not a science history.
+      </p>
+    </section>
+
+    <section class="st-chapter st-hilite">
+      <span class="st-num">III</span>
+      <p class="st-when">20 December 2018</p>
+      <h2>One sentence, written for farmers</h2>
+      <p>
+        The <b>Agriculture Improvement Act of 2018</b>, the farm bill, was not a drug reform
+        statute. It was a large piece of agricultural legislation, and buried in it at
+        <b>Section 10113</b> was a definition intended to let American farmers grow industrial
+        hemp for fibre, seed and CBD.
+      </p>
+      <p>
+        It defined <b>hemp</b> as the plant <i>Cannabis sativa</i> L. and any part of it,
+        including its derivatives, extracts and cannabinoids, with a
+        <b>delta-9 tetrahydrocannabinol concentration of not more than 0.3 percent on a dry
+        weight basis</b>. Anything meeting that definition was carved out of the Controlled
+        Substances Act's definition of marihuana.
+      </p>
+      <p>
+        Read that again with a chemist's eye, because three separate decisions are doing all
+        the work:
+      </p>
+      <ul>
+        <li><b>0.3 percent</b>, a threshold inherited from mid-century taxonomic literature
+          about distinguishing fibre hemp from drug cannabis. It was a botanist's convenience,
+          not a pharmacological line.</li>
+        <li><b>dry weight basis</b>, a measurement convention, which matters enormously for
+          anything that is not dry flower.</li>
+        <li><b>delta-9 THC</b>, one named molecule. Not "THC". Not total potency. Not
+          "intoxicating cannabinoids". One specific isomer.</li>
+      </ul>
+      <p class="st-manifesto">
+        The law named a molecule.<br>
+        The plant makes more than one.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">IV</span>
+      <p class="st-when">the actual mechanism</p>
+      <h2>THCA is not delta-9 THC until you set it on fire</h2>
+      <p>
+        Here is the chemistry that the entire THCA flower category rests on, stated plainly
+        because a shopper deserves to understand what they are holding.
+      </p>
+      <p>
+        In the living plant, almost none of the THC exists as THC. It exists as
+        <b>tetrahydrocannabinolic acid</b>, <b>THCA</b>, the acid precursor, which carries an
+        extra carboxyl group. THCA is not intoxicating in the way delta-9 THC is. Apply heat
+        and the carboxyl group leaves as carbon dioxide, and THCA becomes delta-9 THC. That
+        reaction is called <b>decarboxylation</b>, and it is what a lighter, an oven or a
+        vaporiser does.
+      </p>
+      <p>
+        So a flower can be genuinely, testably under 0.3% <i>delta-9 THC</i> while carrying
+        25% or more <i>THCA</i>, and become strongly intoxicating the moment it is heated. On
+        the statutory definition, that flower is hemp. In the hand of the person smoking it,
+        it is not behaving like hemp at all.
+      </p>
+      <h3>The 0.877, and why every certificate has it</h3>
+      <p>
+        Because a lab needs to report what a sample <i>will</i> be, not only what it currently
+        is, certificates carry a figure called <b>Total THC</b>, and it is computed like this:
+      </p>
+      <p class="st-pull">
+        Total THC = (THCA &times; 0.877) + delta-9 THC
+      </p>
+      <p>
+        The <b>0.877</b> is not a fudge factor or a safety margin. It is a mass ratio. THC has
+        a molar mass of about 314.5 and THCA about 358.5, and 314.5 &divide; 358.5 = 0.877. It
+        is simply the proportion of THCA's weight that remains once the carboxyl group has
+        boiled off. Every gram of THCA becomes 0.877 grams of THC, and the rest leaves as gas.
+      </p>
+      <p>
+        We use that equation for something the labs did not intend: <b>as a checksum</b>. If a
+        certificate's three numbers do not satisfy it, we have read one of them wrong or the
+        certificate is inconsistent, and we throw the record away rather than publish it. That
+        is the subject of
+        <a href="/what-the-certificates-say">its own piece in this library</a>.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">V</span>
+      <p class="st-when">where it is genuinely unsettled</p>
+      <h2>The two-rulebook problem</h2>
+      <p>
+        This is the part most retailers will not put on their own website, so we will.
+      </p>
+      <p>
+        There are effectively <b>two different tests</b> in play, and they do not agree.
+      </p>
+      <p>
+        The <b>statutory product definition</b> in Section 10113 names delta-9 THC. But the
+        USDA rules governing <b>hemp production</b> require compliance testing on a
+        post-decarboxylation basis, that is, on <i>total</i> THC, THCA included. A crop can
+        therefore fail as an agricultural product while a package derived from similar material
+        can be argued to meet the statutory definition of hemp on a delta-9 reading.
+      </p>
+      <p>
+        On top of that, <b>states diverge sharply</b>. Some have adopted total-THC limits for
+        finished products, some cap milligrams per package or per serving, some have banned
+        smokable hemp flower outright while permitting other hemp derivatives, and some have
+        moved specifically against intoxicating hemp cannabinoids. A product that is
+        unambiguously lawful in one state is unambiguously not in another, and the shipping
+        address is what decides.
+      </p>
+      <p>
+        Congress has repeatedly considered narrowing or closing the delta-9 reading, and the
+        federal position has been actively contested for years. <b>This is a moving target.</b>
+        We are not going to pretend otherwise, and we are not going to tell you what the law
+        says where you live.
+      </p>
+      <p class="st-plain">
+        <b>Reviewed August 2026.</b> If you are reading this well after that date, assume the
+        federal and state position has moved and check a current primary source. We would
+        rather this page be visibly dated than quietly wrong.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">VI</span>
+      <p class="st-when">our position</p>
+      <h2>What we do and do not do about it</h2>
+      <p>
+        We are a comparison engine. We hold no stock, we ship nothing, and we take no
+        position on whether you should buy any of this.
+      </p>
+      <p>
+        What we <b>do</b> do is refuse to launder the uncertainty. Concretely:
+      </p>
+      <ul>
+        <li>We publish the lab numbers we can actually verify, and we publish the fact when we
+          cannot. A product with no readable certificate of its own does not get a potency
+          figure from us, and it stays out of the strength sorting and filters entirely.</li>
+        <li>We distinguish between a certificate <i>for this product</i>, a store's general
+          compliance sheet hung on many products at once, and a link to a lab-results page.
+          Those are three different things and the card says which one it is.</li>
+        <li>We do not print "lab-tested" on a card where the store has published nothing.</li>
+        <li>We do not tell you a THCA flower is non-intoxicating because its delta-9 figure is
+          under 0.3%. That would be technically defensible and functionally a lie.</li>
+      </ul>
+      <p>
+        The last one is the whole point. This industry exists inside a seam in a definition.
+        Living in a seam legally is fine. Using the seam to mislead the person holding the
+        product is not, and the temptation to do it is exactly proportional to how confusing
+        the law is.
+      </p>
+      <p class="st-pull">
+        A legal technicality is a reason you may sell something.<br>
+        It is never an explanation you may give the buyer instead of the truth.
+      </p>
+    </section>
+
+    <section class="st-chapter st-final">
+      <span class="st-num">VII</span>
+      <p class="st-when">1937 &rarr; now</p>
+      <h2>Ninety years of getting the question wrong</h2>
+      <p>
+        Step back and the shape is almost comic. In 1937 the medical profession asked for
+        evidence and was brushed aside. In 1972 a federal commission produced a
+        recommendation and was overruled. In 2018 an agriculture committee wrote a definition
+        for fibre farmers and unintentionally opened a national market in intoxicating flower.
+      </p>
+      <p>
+        At no point in that sequence did anyone sit down and decide, on the evidence, what the
+        rules for this plant should be. The current legal landscape is not a policy. It is the
+        accumulated residue of ninety years of avoiding the question.
+      </p>
+      <p>
+        We benefit from that residue. This shop would not exist without it. Saying so out loud
+        seems like the least we can do.
+      </p>
+      <a class="st-cta" href="/what-the-certificates-say">Next: what the certificates actually say &rarr;</a>
+    </section>
+
+  </article>
+
+  <a class="lib-next" href="/what-the-certificates-say">
+    <span class="lib-kind">Next in the library</span>
+    <span class="lib-title">What the Certificates Say</span>
+    <span class="lib-dek">
+      Notes from reading 1,400 lab reports in a row: the sum that has to come out right, the
+      single sheet doing duty for forty-two products across thirty-seven strains, and the lab
+      that reused one analysis for two unrelated cultivars.
+    </span>
+    <span class="lib-go">Read &rarr;</span>
+  </a>
+
+  <footer class="st-sources">
+    <h2>Sources</h2>
+    <ol>
+      <li>Marihuana Tax Act of 1937, Pub. L. 75&ndash;238. Hearings before the Committee on Ways
+        and Means, House of Representatives, 75th Congress, on H.R. 6385, including the
+        statement of Dr. William C. Woodward, legislative counsel, American Medical
+        Association.</li>
+      <li>Comprehensive Drug Abuse Prevention and Control Act of 1970 (Controlled Substances
+        Act), Pub. L. 91&ndash;513.</li>
+      <li>National Commission on Marihuana and Drug Abuse. <i>Marihuana: A Signal of
+        Misunderstanding</i>. 1972.</li>
+      <li>Agriculture Improvement Act of 2018, Pub. L. 115&ndash;334, &sect;10113, definition
+        of hemp.</li>
+      <li>United States Department of Agriculture, Domestic Hemp Production Program final rule
+        (2021), on post-decarboxylation / total THC compliance testing.</li>
+      <li>Molar masses used for the 0.877 conversion: &Delta;<sup>9</sup>-THC
+        &asymp;&nbsp;314.5&nbsp;g/mol; THCA &asymp;&nbsp;358.5&nbsp;g/mol.</li>
+    </ol>
+    <p class="st-fine">
+      <b>Not legal advice.</b> Legal-Leaf Market is a price comparison service; we hold no
+      stock and sell nothing. This page describes the general shape of United States federal
+      law and the fact that state law diverges from it. It does not tell you what is lawful
+      where you are, and it is not a substitute for advice from a lawyer in your jurisdiction.
+      Reviewed August 2026. Adults 21+ only.
+    </p>
+  </footer>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+# Nightly price recorder — "cheapest we've seen".
+#
+# ONE POST, and that is the whole job. /api/price-history reads the site's own
+# feed and folds today's prices into a per-product summary: lowest ever and
+# when, highest ever and when, current, and how many days we have looked. There
+# is no browser here and nothing to install; it is one authenticated request.
+#
+# WHY THIS IS SCHEDULED AT ALL, when the site already re-reads the shelf on its
+# own: because reading is not recording. Every night the catalogue is scraped
+# and the numbers are thrown away, and a price you did not record is gone --
+# there is no backfill. That is the entire argument for starting this before
+# the features that can begin empty and fill up later.
+#
+# THE SCHEDULE MOVED TO VERCEL (25 Aug 2026) AND THIS IS THE MANUAL LEVER NOW.
+# It ran twice, on 24 and 25 Aug, and died in four seconds both times: Actions
+# minutes are exhausted on this private repo, so a runner is assigned and the
+# job cannot begin (see CLAUDE.md section 10). Nothing was ever recorded. A
+# nightly job whose value is destroyed by waiting must not sit behind a billing
+# ceiling, so vercel.json schedules it instead, at the same 08:20 UTC.
+#
+# THE ARGUMENT AGAINST A VERCEL CRON WAS TRUE WHEN WRITTEN AND IS NOT NOW. It
+# said the write is gated on LL_ADMIN_TOKEN, that the secret already sits in
+# this repo's Actions settings, and that putting it in a second place is a
+# credential in two places. But LL_ADMIN_TOKEN was already in Vercel -- it has
+# to be, because the endpoint reads it to CHECK a write -- so there was never a
+# second place to put it. The cron proves itself with CRON_SECRET, which Vercel
+# sends on its own scheduled calls, so no credential moved at all.
+#
+# KEPT, ON workflow_dispatch, because a hand-run is worth having: to seed the
+# record without waiting for 08:20, or to record from a laptop on a day the
+# platform cron is in doubt. It is safe to run beside the Vercel schedule -- the
+# fold counts DAYS rather than calls, so a second run in one day cannot
+# manufacture history (see fold() in api/price-history.js).
+#
+# SETUP (one time, and identical to the harvest workflow's):
+#   Settings -> Secrets and variables -> Actions
+#     LL_ADMIN_TOKEN   secret   the same token /api/overrides checks
+#     LL_SITE          variable e.g. https://legal-leafmarket.com
+#
+# The token is passed through the environment and never on the command line: an
+# argument is visible in the process list and in any log that echoes it.
+
+name: Record prices
+
+on:
+  # NO `schedule:` HERE ANY MORE. vercel.json owns the 08:20 UTC run. Two
+  # schedules would not corrupt anything -- the fold is per day, not per call --
+  # but it would spend Actions minutes on work that already happened and leave
+  # two places to look when a night goes missing.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Fold today's shelf into the record
+        env:
+          LL_ADMIN_TOKEN: ${{ secrets.LL_ADMIN_TOKEN }}
+          LL_SITE: ${{ vars.LL_SITE || 'https://legal-leafmarket.com' }}
+        run: |
+          set -euo pipefail
+          if [ -z "${LL_ADMIN_TOKEN}" ]; then
+            echo "LL_ADMIN_TOKEN is not set — nothing recorded."
+            echo "The endpoint fails closed on purpose, so this is a no-op rather than a silent write."
+            exit 0
+          fi
+          # --fail-with-body so a 4xx/5xx ends the step AND prints what the
+          # endpoint said. Plain --fail hides the body, which is where the
+          # reason lives, and no flag at all exits 0 on a 500.
+          curl --fail-with-body -sS -X POST \
+            -H "x-ll-admin-token: ${LL_ADMIN_TOKEN}" \
+            -H "content-type: application/json" \
+            --max-time 120 \
+            "${LL_SITE}/api/price-history" | tee /tmp/out.json
+          echo
+          # A run that stores nothing is a failed run even at HTTP 200 -- an
+          # empty catalogue or a lost backend both look like success otherwise.
+          node -e '
+            const r = JSON.parse(require("fs").readFileSync("/tmp/out.json","utf8"));
+            if (!r.ok) { console.error("endpoint did not report ok"); process.exit(1); }
+            console.log(`recorded ${r.products} products · seen ${r.seen} · new lows ${r.newLow} · new highs ${r.newHigh}`);
+            if (!r.products) { console.error("nothing was recorded"); process.exit(1); }
+          '

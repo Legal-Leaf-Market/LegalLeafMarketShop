@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>The Arcade | Legal-Leaf Market</title>
+<script src="/js/age-gate.js"></script>
+<!-- NOINDEX, IN NO NAV, IN NO SITEMAP, AND THAT IS THE POINT FOR NOW.
+     Two of the three cabinets are Brayton's (Dean's) games, and the owner said
+     plainly that they do not have his full sign-off yet -- "I'm not gonna
+     promote it yet". So this page exists, works, and is advertised to nobody:
+     reachable by someone with the link, invisible to a crawler. Every unlisted
+     entry in arcade-games.js says the same thing in data. Flipping a game to
+     listed:true and putting this page in the nav is the step that should wait
+     on Brayton actually saying yes. -->
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="theme-color" content="#080f14"/>
+<meta name="color-scheme" content="dark"/>
+<meta name="description" content="A few cabinets in the corner of the shop."/>
+<link rel="icon" href="/favicon.svg"/>
+<link rel="stylesheet" href="/css/tokens.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Jost:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ---------------------------------------------------------------------------
+   PORTABLE BY CONSTRUCTION. Every colour reaches for a token, and all five
+   sister sites already ship their own tokens.css -- so copying this page to
+   Nicotia or Herbal-Leaf gets the local palette with no per-site branch. The
+   only literal is the scanline black, which is a texture rather than a colour.
+   ------------------------------------------------------------------------ */
+:root{ --ar-pixel:'Press Start 2P',ui-monospace,'Cascadia Mono','Courier New',monospace; }
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--text);min-height:100vh;
+  font-family:'Jost',var(--sans),-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background-image:
+    radial-gradient(60rem 40rem at 12% -12%, rgba(var(--accent-rgb),.11), transparent 60%),
+    radial-gradient(48rem 32rem at 92% 0%, rgba(240,185,60,.06), transparent 60%);
+  background-attachment:fixed;
+}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--leaf);outline-offset:2px}
+body::after{
+  content:"";position:fixed;inset:0;z-index:60;pointer-events:none;
+  background:repeating-linear-gradient(rgba(0,0,0,.16) 0 1px, transparent 1px 3px);
+  mix-blend-mode:multiply;
+}
+@media (prefers-reduced-motion:reduce){ body::after{display:none} }
+
+.ar-wrap{max-width:1080px;margin:0 auto;padding:26px 16px 60px}
+.ar-top{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.ar-top h1{font-family:var(--ar-pixel);font-size:17px;line-height:1.8;margin:0;color:var(--text);
+  text-shadow:0 0 16px rgba(var(--accent-rgb),.3)}
+.ar-top a{margin-left:auto;font-family:var(--ar-pixel);font-size:8px;color:var(--dim);
+  border:1px solid var(--line);border-radius:3px;padding:9px 12px;background:#0d1720}
+.ar-top a:hover{color:var(--text);border-color:rgba(var(--accent-rgb),.5)}
+.ar-lede{color:var(--muted);font-size:15px;line-height:1.65;max-width:62ch;margin:0 0 26px}
+
+/* ---- the wall ------------------------------------------------------------ */
+.ar-wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.ar-cab{
+  display:flex;flex-direction:column;text-align:left;cursor:pointer;
+  background:linear-gradient(180deg,#0d1720,#0a131b);
+  border:1px solid var(--line);border-radius:5px;overflow:hidden;padding:0;
+  color:inherit;font:inherit;transition:border-color .14s,transform .08s;
+}
+.ar-cab:hover{border-color:var(--leaf)}
+.ar-cab:active{transform:translateY(1px)}
+.ar-cab[disabled]{cursor:default;opacity:.62}
+.ar-cab[disabled]:hover{border-color:var(--line)}
+.ar-screen{position:relative;aspect-ratio:4/3;background:#04090d;display:grid;place-items:center;overflow:hidden}
+.ar-screen img{width:100%;height:100%;object-fit:cover;opacity:.55}
+.ar-screen .ar-glyph{font-family:var(--ar-pixel);font-size:24px;color:var(--leaf);opacity:.5}
+.ar-slot{position:absolute;top:8px;left:9px;font-family:var(--ar-pixel);font-size:8px;color:var(--gold);text-shadow:0 1px 4px #000}
+.ar-soon{position:absolute;top:8px;right:9px;font-family:var(--ar-pixel);font-size:7px;color:var(--dim);
+  border:1px solid var(--line);background:#04090d;padding:4px 5px;border-radius:2px}
+.ar-meta{padding:13px 13px 14px;display:flex;flex-direction:column;gap:7px;flex:1}
+.ar-meta h2{font-family:var(--ar-pixel);font-size:10px;line-height:1.6;margin:0;color:var(--text)}
+.ar-by{font-size:12px;color:var(--gold);letter-spacing:.02em}
+.ar-blurb{font-size:13.5px;line-height:1.5;color:var(--muted);flex:1}
+.ar-weight{font-family:var(--ar-pixel);font-size:7px;color:var(--dim)}
+
+/* ---- the cabinet, opened ------------------------------------------------- */
+.ar-play{margin-top:26px;border:1px solid var(--line);border-radius:5px;overflow:hidden;background:#0a131b}
+.ar-play[hidden]{display:none}
+.ar-bar{display:flex;align-items:center;gap:12px;padding:11px 13px;background:#0d1720;border-bottom:1px solid var(--line)}
+.ar-bar strong{font-family:var(--ar-pixel);font-size:9px;font-weight:400;color:var(--text)}
+.ar-bar em{font-style:normal;font-size:12px;color:var(--gold)}
+.ar-bar button{margin-left:auto;font-family:var(--ar-pixel);font-size:8px;cursor:pointer;
+  background:#111e29;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:9px 11px}
+.ar-bar button:hover{color:var(--text);border-color:rgba(var(--accent-rgb),.5)}
+.ar-stage{padding:16px;display:grid;place-items:center;background:#04090d;min-height:200px}
+.ar-canvaswrap{width:100%;max-width:520px}
+.ar-canvaswrap canvas{width:100%;height:auto;display:block;image-rendering:pixelated;
+  background:var(--bg);border:1px solid var(--line);border-radius:3px}
+.ar-hint{font-family:var(--ar-pixel);font-size:7px;line-height:1.9;color:var(--dim);text-align:center;margin:12px 0 0}
+.ar-stage iframe{width:100%;max-width:960px;aspect-ratio:16/10;border:1px solid var(--line);
+  border-radius:3px;background:#000;display:block}
+.ar-note{color:var(--muted);font-size:14px;line-height:1.6;text-align:center;max-width:50ch;padding:24px 8px}
+
+.ar-foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);
+  font-size:12.5px;line-height:1.7;max-width:70ch}
+@media (max-width:640px){ .ar-top h1{font-size:13px} }
+</style>
+</head>
+<body>
+<div class="ar-wrap">
+  <div class="ar-top">
+    <h1>The Arcade</h1>
+    <a href="/">&larr; back to the shop</a>
+  </div>
+  <p class="ar-lede">A few cabinets in the corner, for while you are deciding. Nothing here
+    tracks you, nothing here costs anything, and nothing loads until you press it.</p>
+
+  <div class="ar-wall" id="arWall"></div>
+
+  <section class="ar-play" id="arPlay" hidden aria-live="polite">
+    <div class="ar-bar">
+      <strong id="arTitle"></strong><em id="arBy"></em>
+      <button type="button" id="arClose">Close</button>
+    </div>
+    <div class="ar-stage" id="arStage"></div>
+  </section>
+
+  <p class="ar-foot">Games are their authors' own work and are credited on the cabinet.
+    Copying this arcade to a sister site is three files and a folder &mdash; see the note at
+    the top of <code>arcade-games.js</code>.</p>
+</div>
+
+<script src="/js/arcade-games.js"></script>
+<script src="/js/arcade-invaders.js"></script>
+<script src="/js/arcade-play.js"></script>
+</body>
+</html>

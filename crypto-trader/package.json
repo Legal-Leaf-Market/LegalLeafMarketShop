@@ -1,0 +1,15 @@
+{
+  "name": "popping-crypto",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Six coins, a stake, a stopwatch. A momentum screen for a small crypto stake: static site + zero-dependency Vercel functions.",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "dev:sample": "CT_FIXTURE=1 node server.mjs",
+    "test": "node test-strategy.mjs && node test-push.mjs && node test-api.mjs",
+    "icons": "node tools/make-icons.mjs",
+    "vapid": "node tools/vapid-keys.mjs"
+  },
+  "engines": { "node": ">=18" }
+}

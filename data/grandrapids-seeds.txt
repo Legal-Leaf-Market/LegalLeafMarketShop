@@ -1,0 +1,74 @@
+# Grand Rapids seed list — LEADS, NOT A ROSTER.
+#
+# Every line here is a name and a url from public search. That makes each one a
+# `candidate` in api/markets.js terms: "a lead. It is never fetched on the live
+# path and never shown." Nothing here may go into api/market-stores.js until
+# tools/discover-market.mjs has FETCHED it and its own page has NAMED THE CITY.
+# That is the standard the Coldwater seven were built to and it does not move
+# because the roster got bigger.
+#
+# THE STATE SAYS 27. Grand Rapids' FY2025 payout was $1,458,461.70, which is 27
+# licences at $54,017.10 -- arithmetic on the state's own cheque. Directories
+# answered "close to 20" and "16 active" to the same question in one sitting.
+# So this file is short of 27 on purpose and the gap is the honest reading:
+# what could be named with a url attached, not what exists.
+#
+# ------------------------------------------------------------------------------
+# THE GRAND RAPIDS TRAP IS NOT DETROIT'S, AND IT IS EASIER TO MISS.
+#
+# There is no enclave here -- no Hamtramck sitting inside the city. What there
+# is instead is a RING OF SEPARATE MUNICIPALITIES that a directory, a mailing
+# address and a shop's own marketing all call "Grand Rapids": WYOMING,
+# KENTWOOD, WALKER, GRANDVILLE, COMSTOCK PARK, EAST GRAND RAPIDS and GRAND
+# RAPIDS TOWNSHIP. Each has its own council, its own opt-in decision and its own
+# line in the Treasury distribution, so none of their shops is one of the 27.
+#
+# Comstock Park and Grand Rapids Township are the two that catch people, because
+# both carry "Grand Rapids" in the postal address. An Alpine Avenue shop may be
+# in the city or in Walker depending on which side of the line it sits.
+#
+# The sweep's cityOnPage guard does NOT save you here, because a Wyoming shop's
+# page says "Grand Rapids" all over it -- that guard was built for a chain's
+# national site, not for a neighbour three miles away. Check the street address
+# against the city limits before promoting anything on this list.
+#
+# ------------------------------------------------------------------------------
+# CHAINS WITH SHOPS IN MORE THAN ONE OF OUR CITIES need a url whose PATH names
+# this shop, not the chain's front door. House of Dank, Exclusive, JARS and Gage
+# are all in this position now, and a bare chain domain leaves the collector
+# unable to tell two shops apart -- it will name neither and say so, which is
+# right but useless. See the directory projection in api/coldwater-ingest.js.
+# ------------------------------------------------------------------------------
+
+# --- on the roster already, listed here so a re-sweep re-confirms them --------
+House of Dank Grand Rapids | https://shophod.com/stores/house-of-dank-grand-rapids
+Fluresh Grand Rapids | https://fluresh.com/store/
+Skymint Grand Rapids Division | https://skymint.com/grand-rapids-division
+Skymint Grand Rapids Plainfield | https://skymint.com/grand-rapids-plainfield
+Pharmhouse Wellness | https://pharmhousewellness.com/menu/grand-rapids
+Exclusive Grand Rapids | https://exclusivemi.com/dispensaries/grand-rapids/
+JARS Cannabis Grand Rapids Alpine | https://jarscannabis.com/
+Gage Cannabis Grand Rapids | https://gagecannabis.com/
+NOXX Grand Rapids | https://noxx.com/
+Greenhouse Provisions | https://greenhouseprovisions.com/
+Meds Cafe Grand Rapids | https://medscafe.com/
+
+# --- leads still to be confirmed ---------------------------------------------
+# Named in directories for Grand Rapids; url is a best guess and the sweep will
+# confirm or drop each one. A 404 here costs nothing; a wrong row on the shelf
+# costs a shopper a drive.
+Lume Cannabis Grand Rapids | https://www.lume.com/stores/grand-rapids-mi-dispensary
+Cloud Cannabis Grand Rapids | https://cloudcannabis.com/grand-rapids-order-online/
+Green Pharm Grand Rapids | https://greenpharmmi.com/
+The Cannabis Company | https://thecannabiscompanymi.com/
+Herbology Grand Rapids | https://shophcc.com/
+Pincanna Grand Rapids | https://pincanna.com/
+
+# --- NOT Grand Rapids: the ring, written down so nobody re-adds them ----------
+# Every one of these is a separate municipality with its own licences.
+# Wyoming, MI          — several shops, own opt-in, own payout line
+# Kentwood, MI         — 28th Street corridor
+# Walker, MI           — Alpine Avenue north of the city line
+# Grandville, MI       — Rivertown
+# Comstock Park, MI    — "Grand Rapids" postal address, Plainfield Township
+# East Grand Rapids    — the name is the whole trap

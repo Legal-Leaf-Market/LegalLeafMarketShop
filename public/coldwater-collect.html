@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Collector — Coldwater Cannabis</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Operator tool: capture a Coldwater dispensary menu from your own browser.">
+<!--
+  /coldwater-collect — the install page for public/coldwater-collector.js.
+
+  WHY A PAGE AND NOT JUST THE FILE. A bookmarklet has to be DRAGGED to a
+  bookmarks bar, which means it needs a real anchor whose href is the
+  javascript: URL. It cannot be typed reliably and it cannot be built by the
+  person using it. This page also has to answer the two questions that stop the
+  workflow dead: which shop key goes with which site, and whether what you
+  captured actually stuck.
+
+  NOTHING HERE IS HARDCODED THAT LIVES ELSEWHERE. The shop roster comes from
+  /api/coldwater?debug&slim and the capture state from /api/coldwater/ingest, so
+  this page cannot drift out of step with STORES the way vercel.json and
+  server.mjs once did (CLAUDE.md section 3).
+
+  NO TOKEN ON THIS PAGE, ever. LL_ADMIN_TOKEN is prompted for by the collector,
+  in the tab where the capture happens, and kept in sessionStorage for that tab
+  only. Putting it here would put it in a static file (CLAUDE.md section 6).
+
+  noindex because this is an operator tool, not a shopper page.
+-->
+<style>
+  :root{
+    --leaf:#4ec9ff; --bg:#080f14; --panel:#0d1720; --line:#1e2f3a;
+    --ink:#eaf2f6; --dim:#93a9b8; --warn:#ffb454; --good:#7ee787; --bad:#ff8459;
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f8fb; --panel:#ffffff; --line:#d5e2ec; --ink:#0d1720; --dim:#4a5f6e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:32px 20px 72px;-webkit-text-size-adjust:100%}
+  .wrap{max-width:820px;margin:0 auto}
+  h1{font-size:clamp(24px,5vw,34px);margin:0 0 6px;letter-spacing:-.02em}
+  h2{font-size:19px;margin:34px 0 10px;color:var(--leaf);letter-spacing:-.01em}
+  p{margin:0 0 12px;color:var(--dim)}
+  a{color:var(--leaf)}
+  code,kbd{background:#00000040;border:1px solid var(--line);border-radius:5px;
+    padding:1px 6px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0}
+  .lede{color:var(--ink);font-size:17px}
+  .bm{display:inline-block;background:var(--leaf);color:#06202b;font-weight:700;
+    text-decoration:none;padding:12px 22px;border-radius:999px;cursor:grab;font-size:16px}
+  .bm:active{cursor:grabbing}
+  button{font:inherit;font-weight:700;border:0;border-radius:999px;padding:10px 18px;cursor:pointer;
+    background:transparent;color:var(--leaf);border:1px solid var(--line)}
+  button.pri{background:var(--leaf);color:#06202b;border-color:var(--leaf)}
+  button:disabled{opacity:.5;cursor:default}
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--dim);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+  .pill.on{background:#0d3a24;color:var(--good)}
+  .pill.off{background:#3a2410;color:var(--warn)}
+  .pill.cap{background:#0d2c3a;color:var(--leaf)}
+  ol{padding-left:22px;color:var(--dim)}
+  ol li{margin:6px 0}
+  .note{border-left:3px solid var(--warn);padding:10px 14px;background:#ffb4540f;border-radius:0 8px 8px 0;margin:14px 0}
+  .note b{color:var(--warn)}
+  .muted{font-size:13.5px;color:var(--dim)}
+  #status{font-size:14px}
+</style>
+</head>
+<body>
+<script>
+/* Said at the top, in words, because the two bookmarklets look identical and a
+   capture on the wrong shelf would be found by a shopper rather than by us. */
+document.addEventListener("DOMContentLoaded", function(){
+  /* WHICH SHELF, SAID IN WORDS AT THE TOP. Every bookmarklet this page builds
+     looks identical, so the only thing standing between an operator and a
+     capture on the wrong city's shelf is this sentence. "llm" is the national
+     mail-order hemp feed; anything else is a city slug, defaulting to the
+     pilot so an existing bookmarklet keeps writing where it always has. */
+  /* NOT ON THE RELAY TAB. ?receive=1 replaces this page's whole body with a
+     one-purpose "Receiving a capture" screen; it is not the install page and
+     has no shelf to announce. Without this guard the async lookup below lands
+     a second later and rewrites that screen's <h1> into a collector heading --
+     which is not cosmetic, because the operator is watching that exact line to
+     see whether their capture arrived. */
+  if (/[?&]receive=1/.test(location.search)) return;
+  var m = location.search.match(/[?&]market=([a-z0-9-]+)/i);
+  var slug = m ? m[1].toLowerCase() : "coldwater";
+  var llm = slug === "llm";
+  var b = document.createElement("div");
+  b.id = "ll-market-banner";
+  b.style.cssText = "margin:0 0 14px;padding:10px 12px;border-radius:9px;font-size:13.5px;" +
+    (llm ? "background:rgba(216,178,90,.12);color:#d8b25a;border:1px solid rgba(216,178,90,.35)"
+         : "background:rgba(143,211,154,.10);color:#8fd39a;border:1px solid rgba(143,211,154,.3)");
+  b.textContent = llm
+    ? "Legal-Leaf (mail-order hemp) mode - captures made with this bookmarklet go to /api/products."
+    : "Dispensary mode, " + slug + " - captures go to that city's shelf. Add ?market=<city> to this page's URL to switch, or ?market=llm for the hemp side.";
+  var host = document.querySelector("main") || document.body;
+  host.insertBefore(b, host.firstChild);
+
+  /* The city's real name, from the one registry rather than a copy of it: the
+     feed resolves the slug and prints the market string back. A slug nobody
+     registered comes back as the pilot, which is the resolver being honest --
+     and the banner then says so, rather than inventing a place. */
+  if (!llm) {
+    fetch("/api/market?town=" + encodeURIComponent(slug), { headers: { accept: "application/json" } })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        var mk = j && j.meta && j.meta.market, town = j && j.meta && j.meta.town;
+        if (!mk) return;
+        b.textContent = "Dispensary mode, " + mk + " - captures go to this city's shelf." +
+          (town !== slug ? "  (\u201C" + slug + "\u201D is not a registered city, so this fell back to " + town + ".)" : "") +
+          "  Add ?market=<city> to switch, or ?market=llm for the hemp side.";
+        var h = document.querySelector("h1");
+        if (h) h.textContent = mk.replace(/,\s*[A-Z]{2}$/, "") + " collector";
+      })
+      .catch(function(){ /* the slug in the banner is already enough to act on */ });
+  }
+});
+</script>
+<div class="wrap">
+
+  <h1>Coldwater collector</h1>
+  <p class="lede">Reads the dispensary menu <em>you</em> are looking at and sends it to
+  <code>/api/coldwater</code>. It automates “copy what is on my screen” — it does not go
+  anywhere your browser was not already taken.</p>
+
+  <h2>1 · Install</h2>
+  <div class="card">
+    <p>Drag this to your bookmarks bar:</p>
+    <a class="bm" id="bm" href="#">Grab menu</a>
+    <p class="muted" style="margin-top:14px">On a phone, or if you cannot drag: use the console
+    method below. It works everywhere.</p>
+
+    <hr style="border:0;border-top:1px solid var(--line,#26343d);margin:18px 0"/>
+
+    <p><b>Blocked on Dutchie?</b> Drag this one instead:</p>
+    <a class="bm" id="bm2" href="#">Grab menu (self-contained)</a>
+    <p class="muted" style="margin-top:14px" id="bm2note">Building&hellip;</p>
+    <p class="muted">The one above loads the collector from this site when you click it, and a
+    shop with a strict <code>script-src</code> refuses that &mdash; Dutchie does, which is why
+    nothing happens there. This one carries the whole collector inside the bookmark, so there is
+    nothing to load and nothing to block.</p>
+    <!-- A SNAPSHOT THAT CANNOT SAY IT IS ONE is how a fixed shop gets reported
+         as broken. The Dude Abides came back at five products months after the
+         tier-table fix, from a bookmark dragged before it: the reader was old,
+         the numbers were plausible, and nothing on screen said so. The panel on
+         the shop page prints its build; this prints the current one; and the
+         collector now asks for itself where the shop's connect-src allows it. -->
+    <p class="warn" style="margin-top:14px;padding:11px 13px;border:1px solid var(--gold,#f0b93c);
+       border-radius:10px;color:var(--gold,#f0b93c)">
+      <b>This bookmark is a snapshot.</b> It carries the collector as it is <em>today</em> and
+      never updates itself. Current build: <b><span id="curbuild">&hellip;</span></b> &mdash; the
+      collector&rsquo;s panel prints its own build on the shop page. <b>If the two differ, re-drag
+      this button.</b> A stale reader does not fail; it returns a smaller menu that looks fine.
+    </p>
+  </div>
+
+  <h2>2 · Capture</h2>
+  <ol>
+    <li>Open a shop’s menu from the table below and <b>let it finish loading</b> — scroll to the
+      bottom so lazy-loaded rows are really on the page.</li>
+    <li>Click the <b>Grab menu</b> bookmark.</li>
+    <li>Check the count in the panel, confirm the store key, paste your admin token, press
+      <b>Send</b>.</li>
+    <li>Come back here and press <b>Refresh</b> to confirm it landed.</li>
+  </ol>
+
+  <div class="note">
+    <b>Dutchie menus sit in a cross-origin iframe.</b> A bookmarklet on the shop’s own page
+    cannot read inside one, and that is the same-origin policy doing its job rather than a bug to
+    work around. Right-click the menu → <b>This Frame → Open Frame in New Tab</b>, then run the
+    bookmarklet there.
+  </div>
+
+  <h2>3 · Shops</h2>
+  <div class="card">
+    <div id="status" class="muted">Loading roster…</div>
+    <div class="scroll"><table id="tbl"><tbody></tbody></table></div>
+    <p style="margin-top:14px"><button class="pri" id="refresh">Refresh</button></p>
+  </div>
+
+  <h2>Console method</h2>
+  <div class="card">
+    <p>Open the menu, press <kbd>F12</kbd> → <b>Console</b>, paste, <kbd>Enter</kbd>. Some sites
+    block pasting until you type <code>allow pasting</code> first.</p>
+    <p><button id="copy">Copy collector source</button>
+       <span id="copied" class="muted"></span></p>
+    <p class="muted">This copies the whole script rather than a one-line loader on purpose: a
+    loader still has to fetch from another origin, which is exactly what a strict CSP forbids.
+    Pasted source has nothing left to block.</p>
+  </div>
+
+  <h2>Where captures are stored</h2>
+  <div class="card">
+    <p id="storage" class="muted">Checking…</p>
+    <p class="muted">A capture replaces that shop’s rows rather than adding to them, so running it
+    twice is safe. Nothing here is public until it is on the shelf at
+    <a href="/coldwater">/coldwater</a>.</p>
+  </div>
+
+  <p class="muted" style="margin-top:34px"><a href="/coldwater">← back to Coldwater Cannabis</a></p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
+
+  /* ---- the bookmarklet ----------------------------------------------------
+     Built at load time from location.origin so a preview deploy produces a
+     bookmarklet pointing at that preview, not at production. The cache-buster
+     matters: a bookmarklet is kept for months and a stale collector is the
+     hardest kind of bug to see.
+
+     The setTimeout is the CSP detector. A blocked cross-origin script fires no
+     error event in most browsers -- it simply never runs -- so onerror alone
+     would report nothing at all. Waiting for the flag the collector sets is
+     what turns silence into a sentence. No apostrophes in the strings: this
+     whole thing lives in a double-quoted HTML attribute. */
+  /* WHICH SHELF THIS BOOKMARKLET WRITES TO. ?market=llm on THIS page builds a
+     bookmarklet for the national mail-order hemp feed behind /api/products;
+     without it you get the Coldwater dispensary shelf, which is what every
+     bookmarklet already installed does and must keep doing. The market rides in
+     the script's own src so the collector reads it with no extra plumbing. */
+  var MARKET = (function(){
+    var m = location.search.match(/[?&]market=([a-z0-9-]+)/i);
+    return m ? m[1].toLowerCase() : "coldwater";
+  })();
+  /* The market rides in the script's own src, and it is stamped for EVERY
+     market except the historical default -- a Detroit bookmarklet that carried
+     no market would capture Detroit's menus onto Coldwater's shelf, which is
+     silent and is found by a shopper. Omitted only for coldwater itself, so
+     the bookmarklets already installed keep building the identical url. */
+  var SRC = location.origin + "/coldwater-collector.js" +
+    (MARKET === "coldwater" ? "" : "?market=" + encodeURIComponent(MARKET));
+  /* The cache-buster's separator has to follow the market param, not assume it
+     is absent. An llm bookmarklet was being built as "...js?market=llm?1755…",
+     whose query string is the single key "market" with the value "llm?1755…".
+     It works today only because the collector reads it with /market=([a-z]+)/,
+     which stops at the "?" -- so the market survives by luck, and the first
+     time that pattern is tightened every hemp capture starts landing on the
+     Coldwater shelf with nothing to show it moved. */
+  var CODE = "javascript:(function(){" +
+    "var d=document,s=d.createElement('script');" +
+    "s.src='" + SRC + (SRC.indexOf("?") > -1 ? "&" : "?") + "'+Date.now();" +
+    "s.onerror=function(){alert('Could not load the collector from " + location.host + ".');};" +
+    "d.body.appendChild(s);" +
+    "setTimeout(function(){if(!window.__LL_COLLECTOR__){" +
+    "alert('The collector did not run. This shop blocks scripts from other origins, which " +
+    "is what Dutchie does. Go back to the install page and use the self-contained bookmarklet, " +
+    "or the console method.');}},2500);" +
+    "})();";
+  $("bm").setAttribute("href", CODE);
+
+  /* ---- the self-contained build -------------------------------------------
+     A BOOKMARKLET IS EXEMPT FROM CSP; WHAT IT LOADS IS NOT. The javascript: URL
+     itself runs because clicking a bookmark is a user action, but the <script
+     src> the one above injects is an ordinary cross-origin script and a shop
+     with a strict script-src refuses it. Dutchie does, and the failure is
+     silent by design -- a blocked script fires no error event -- which is why
+     it reads as "the bookmarklet will not open" rather than as a refusal.
+
+     So this build carries the collector INSIDE the URL. Nothing is fetched at
+     click time, so there is nothing for a policy to refuse. Same reasoning as
+     the Instagram sender in tools/: a bookmarklet cannot fetch its own payload,
+     so the payload travels with it.
+
+     BUILT HERE RATHER THAN COMMITTED. This page is same-origin with the
+     collector, so it can read the live file and assemble the URL on the spot --
+     which means the drag is always current, and there is no 180 KB duplicate in
+     the repo to go stale. The cost is that it is a SNAPSHOT once dragged, and
+     the note says so.
+
+     THE ORIGIN PREAMBLE IS NOT OPTIONAL. The collector reads its market and its
+     API origin from document.currentScript.src, and an inlined program has no
+     currentScript -- so without this line it would default to production and to
+     the Coldwater shelf whatever page built it. Same line the Copy button
+     prepends, for the same reason, so the three install methods cannot disagree
+     about where a capture lands. */
+  (function(){
+    var note = $("bm2note"), btn = $("bm2");
+    btn.addEventListener("click", function(e){
+      e.preventDefault();
+      alert("Drag this to your bookmarks bar. Clicking it here would only run it on this page, which has no menu to read.");
+    });
+    fetch(SRC + (SRC.indexOf("?") > -1 ? "&" : "?") + Date.now())
+      .then(function(r){ if (!r.ok) throw new Error("http " + r.status); return r.text(); })
+      .then(function(src){
+        var preamble = "window.__LL_COLLECTOR_SRC__=" + JSON.stringify(SRC) + ";";
+        /* encodeURIComponent, not a template: a # anywhere in the source would
+           truncate the URL and leave a program ending mid-statement, with no
+           error. The Instagram sender paid for that one already. */
+        var url = "javascript:" + encodeURIComponent("(function(){" + preamble + src + "})();");
+        btn.setAttribute("href", url);
+        var kb = Math.round(url.length / 1024);
+        /* THE BUILD, READ OUT OF THE FILE THIS PAGE JUST FETCHED. One source of
+           truth: the collector's own constant, not a number typed twice. It is
+           printed here so the string on this page and the string in the panel on
+           the shop page can be compared by eye -- which is the whole diagnostic
+           for a snapshot bookmark, and there was no way to do it before. */
+        var bm = src.match(/var BUILD = "([^"]+)"/);
+        var build = bm ? bm[1] : "";
+        if (build) { var t = document.getElementById("curbuild"); if (t) t.textContent = build; }
+        note.textContent = "Ready \u00b7 " + kb + " KB" + (build ? " \u00b7 build " + build : "") +
+          ". Long bookmarks are fine in Chrome, Edge and Firefox; " +
+          "Safari can refuse very long ones, and the console method below is the fallback there.";
+      })
+      .catch(function(err){
+        note.textContent = "Could not build it: " + (err && err.message ? err.message : err) +
+          ". Use the console method below.";
+      });
+  })();
+  $("bm").addEventListener("click", function(e){
+    e.preventDefault();
+    alert("Drag this button to your bookmarks bar -- clicking it here would only run it on this page, which has no menu to read.");
+  });
+
+  /* ---- copy the source ---------------------------------------------------- */
+  $("copy").addEventListener("click", function(){
+    var btn = this;
+    btn.disabled = true;
+    fetch(SRC + "?" + Date.now()).then(function(r){ return r.text(); }).then(function(t){
+      /* BAKE IN WHERE THIS CAME FROM. The collector reads both its market and
+         its API origin off document.currentScript.src, and pasted source has no
+         currentScript -- so a console paste defaulted to the Coldwater shelf and
+         to production, whatever page it was copied from. Console paste is the
+         method this page RECOMMENDS under a strict CSP, which made the path most
+         likely to be used on a difficult shop the one most likely to file the
+         capture on the wrong shelf.
+
+         One line, prepended, carrying the same absolute src the bookmarklet on
+         this page would have loaded -- so the two install methods cannot
+         disagree about market or origin. */
+      var head = "window.__LL_COLLECTOR_SRC__ = " + JSON.stringify(location.origin + SRC.replace(location.origin, "")) + ";\n";
+      var payload = head + t;
+      return navigator.clipboard.writeText(payload).then(function(){
+        $("copied").textContent = "Copied " + Math.round(payload.length / 1024) + " KB (" +
+          (MARKET === "llm" ? "Legal-Leaf hemp" : MARKET) +
+          " shelf). Paste it into the console on the shop page.";
+      });
+    }).catch(function(e){
+      /* Clipboard writes need a secure context and can be refused outright, so
+         say what to do instead rather than leaving a dead button. */
+      $("copied").innerHTML = 'Could not copy automatically — <a href="' + esc(SRC) + '" target="_blank" rel="noopener">open the file</a> and copy it by hand.';
+    }).then(function(){ btn.disabled = false; });
+  });
+
+  /* ---- relay: receive a capture from a site that forbids the POST ---------
+     Some shops ship a Content-Security-Policy whose connect-src excludes this
+     site, so the collector can read their menu and then not send it. That is
+     the page's decision and this does not argue with it -- it uses a route CSP
+     does not govern instead. The collector opens this page in a tab (a
+     NAVIGATION, not a connection) and hands over the capture with postMessage;
+     from here the POST is same-origin, so there is no cross-origin request left
+     for anyone to forbid.
+
+     Both ends pin the origin. The token arrives in the message because the API
+     needs it, is used for exactly one request, and is never stored or shown. */
+  if (/[?&]receive=1/.test(location.search)) {
+    document.querySelector(".wrap").innerHTML =
+      '<h1>Receiving a capture</h1><p id="relay-msg" class="lede">Waiting for the collector\u2026</p>' +
+      '<div class="card"><p class="muted">This tab opened because the shop\u2019s site does not permit a direct send. ' +
+      'It closes itself when the capture has landed.</p></div>';
+    var msg = document.getElementById("relay-msg");
+
+    window.addEventListener("message", function (ev) {
+      if (ev.origin !== location.origin) return;      // only our own collector tab
+      var d = ev.data || {};
+      if (d.type !== "ll-capture" || !d.payload) return;
+      msg.textContent = "Sending " + ((d.payload.products || []).length) + " products\u2026";
+
+      fetch("/api/coldwater/ingest", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-ll-admin-token": String(d.token || "") },
+        body: JSON.stringify(d.payload),
+      })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, result: j }; }); })
+        .then(function (out) {
+          msg.textContent = out.ok
+            ? "Stored " + out.result.stored + " products. You can close this tab."
+            : "Rejected: " + (out.result.error || "unknown");
+          if (ev.source) ev.source.postMessage({ type: "ll-relay-result", ok: out.ok, result: out.result }, ev.origin);
+        })
+        .catch(function (e) {
+          msg.textContent = "Failed: " + (e.message || e);
+          if (ev.source) ev.source.postMessage({ type: "ll-relay-result", ok: false, error: String(e.message || e) }, ev.origin);
+        });
+    });
+
+    /* The collector is listening for this before it will send. */
+    try { if (window.opener) window.opener.postMessage({ type: "ll-relay-ready" }, "*"); } catch (e) {}
+    return;
+  }
+
+  /* ---- paste a capture by hand -------------------------------------------
+     The floor under everything: no policy can stop a clipboard. The collector
+     offers "Copy capture" when both the direct send and the relay fail. */
+  var pasteBox = document.createElement("div");
+  pasteBox.className = "card";
+  pasteBox.innerHTML =
+    '<h2 style="margin-top:0">Paste a capture</h2>' +
+    '<p class="muted">If a shop blocked both sending and the relay tab, press <b>Copy capture</b> in the collector and paste it here.</p>' +
+    '<textarea id="paste" rows="4" style="width:100%;background:#06121a;color:var(--ink);border:1px solid var(--line);' +
+    'border-radius:8px;padding:9px;font:12px ui-monospace,monospace" placeholder="{&quot;storeKey&quot;:&quot;sapura&quot;,&quot;products&quot;:[...]}"></textarea>' +
+    '<p><input id="paste-token" type="password" placeholder="admin token" ' +
+    'style="padding:9px;border-radius:8px;border:1px solid var(--line);background:#06121a;color:var(--ink)"> ' +
+    '<button class="pri" id="paste-send">Send</button> <span id="paste-msg" class="muted"></span></p>';
+  document.querySelector(".wrap").appendChild(pasteBox);
+  $("paste-send").addEventListener("click", function () {
+    var raw = $("paste").value.trim(), body;
+    try { body = JSON.parse(raw); } catch (e) { $("paste-msg").textContent = "That is not valid JSON."; return; }
+    fetch("/api/coldwater/ingest", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-ll-admin-token": $("paste-token").value.trim() },
+      /* Stamped from the page rather than trusted from the paste: a capture
+         copied out of the other shelf's collector would otherwise carry its
+         market along with it. */
+      body: JSON.stringify(Object.assign({}, body, { market: MARKET })),
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (o) {
+        $("paste-msg").textContent = o.ok ? "Stored " + o.j.stored + " products (" + o.j.total + " total)." : "Rejected: " + (o.j.error || "unknown");
+        if (o.ok) load();
+      })
+      .catch(function (e) { $("paste-msg").textContent = "Failed: " + (e.message || e); });
+  });
+
+  /* ---- roster + capture state --------------------------------------------
+     Two sources, joined on the store key: /api/coldwater?debug&slim knows which
+     shops exist and which are wired, /api/coldwater/ingest knows what has been
+     captured. Neither is duplicated into this page. */
+  /* THE BUTTON HAS TO ANSWER THE CLICK, even when the answer takes a minute.
+     Reported as "refresh doesn't work on the main collect page for llm, it just
+     doesn't click", and the handler was bound correctly the whole time -- what
+     was missing was any sign it had fired. On the llm shelf this reads
+     /api/products?debug&slim, which on a cold cache scrapes nineteen stores; a
+     cold call has been measured past 60 seconds. So the click did fire, and the
+     page sat there looking dead until it came back, which is indistinguishable
+     from a dead button and is worse than one because you keep clicking it.
+
+     Three things, none of them about the fetch: say it started, refuse to start
+     twice, and give up out loud rather than hanging forever. */
+  var loading = false;
+  function load(){
+    if (loading) return;
+    loading = true;
+    var btn = $("refresh");
+    if (btn) { btn.disabled = true; btn.textContent = "Refreshing…"; }
+    $("status").textContent = "Loading roster…";
+    /* A minute is generous for a warm read and short of the point where anyone
+       would still be waiting. Aborting is what turns "hung" into "failed", and
+       only one of those can be acted on. */
+    var ctl = null, timer = null;
+    try {
+      ctl = new AbortController();
+      timer = setTimeout(function(){ try { ctl.abort(); } catch (e) {} }, 60000);
+    } catch (e) {}
+    var done = function(){
+      loading = false;
+      if (timer) clearTimeout(timer);
+      if (btn) { btn.disabled = false; btn.textContent = "Refresh"; }
+    };
+    Promise.all([
+      /* WHICHEVER SHELF THIS PAGE IS IN. Both feeds publish a roster of the
+         same shape, so one code path renders either -- the alternative was a
+         second table to keep in step, which is how the four whitelists that
+         swallowed `description` happened. */
+      /* ?roster, not ?debug&slim. This page needs the shop list and what has
+         been captured; ?debug&slim computes every diagnostic in that file and,
+         cold, scrapes nineteen stores first -- which is why Refresh read as a
+         dead button. The roster is static config and answers immediately. */
+      /* THE TOWN IS IN THE URL, and without it this page showed the pilot's
+         shops while its bookmarklet captured a different city -- a roster and a
+         capture target that disagree, on the one page whose whole job is
+         pointing an operator at the right shop. */
+      fetch(MARKET === "llm" ? "/api/products?roster"
+                             : "/api/market?debug&slim&town=" + encodeURIComponent(MARKET),
+            ctl ? { signal: ctl.signal } : undefined)
+        .then(function(r){ return r.json(); }).catch(function(){ return null; }),
+      fetch("/api/market/ingest" + (MARKET === "coldwater" ? "" : "?market=" + encodeURIComponent(MARKET)),
+            ctl ? { signal: ctl.signal } : undefined)
+        .then(function(r){ return r.json(); }).catch(function(){ return null; })
+    ]).catch(function(){ return [null, null]; }).then(function(res){
+      done();
+      var dbg = res[0], ing = res[1];
+      var FEED = MARKET === "llm" ? "/api/products?debug&slim"
+                                  : "/api/market?debug&slim&town=" + encodeURIComponent(MARKET);
+      if (!dbg || !dbg.roster) {
+        /* Named rather than generic: a timeout and a broken feed need different
+           responses, and "could not read" covers both while helping with
+           neither. */
+        $("status").innerHTML = 'Could not read the roster from <code>' + esc(FEED) + '</code>. ' +
+          'If the hemp feed was cold it may have taken longer than a minute &mdash; press Refresh again.';
+        return;
+      }
+
+      var caps = (ing && ing.stores) || {};
+      var rows = dbg.roster.map(function(s){
+        var cap = caps[s.key];
+        var target = s.menuUrl || s.site;
+        /* "NOT CONNECTED" WAS THE WRONG WORDS, and it was reading them off the
+           wrong fact. `enabled` says whether an automated lane pulls this shop;
+           for a Dutchie or Jane menu the answer is permanently no, and that is
+           not a fault -- the operator's own browser is the TOP lane here
+           (CLAUDE.md, the lane ladder), so a shop waiting for a visit is the
+           normal state of a working city, not a broken integration. Said in the
+           language of a failed connection it sends whoever reads it to look for
+           a connection to fix. */
+        var state = cap
+          ? '<span class="pill cap">' + cap.products + ' captured</span>'
+          : (s.enabled ? '<span class="pill on">reads live</span>'
+                       : '<span class="pill off">yours to capture</span>');
+        var when = cap && cap.capturedAt ? '<div class="muted">' + esc(String(cap.capturedAt).replace("T", " ").slice(0, 16)) + ' UTC</div>' : "";
+        /* Name the collections captured so far. A total alone cannot tell the
+           operator whether the last capture ADDED a section or replaced one,
+           which is precisely what went wrong before captures accumulated. */
+        if (cap && cap.collections && cap.collections.length) {
+          when += '<div class="muted">' + esc(cap.collections.join(", ")) + '</div>';
+        }
+        return '<tr>' +
+          '<td><b>' + esc(s.name) + '</b>' + (s.note ? '<div class="muted">' + esc(s.note) + '</div>' : "") + '</td>' +
+          '<td><code>' + esc(s.key) + '</code><div class="muted">' + esc(s.platform) + '</div></td>' +
+          '<td>' + state + when + '</td>' +
+          '<td>' + (target ? '<a href="' + esc(target) + '" target="_blank" rel="noopener noreferrer">open menu</a>' : '<span class="muted">no url</span>') +
+            /* A capture can be wrong as well as stale -- a menu stored under the
+               wrong shop, or rows whose names turned out to be size options.
+               Re-capturing REPLACES a collection but cannot remove one, so
+               without this the only way to unpublish a bad capture was to
+               hand-write a POST. */
+            (cap ? ' <button class="clear-store" data-clear="' + esc(s.key) + '" ' +
+                   'style="padding:4px 10px;font-size:12px;margin-left:8px">Clear</button>' : "") +
+          '</td>' +
+          '</tr>';
+      }).join("");
+
+      $("tbl").innerHTML = '<thead><tr><th>Shop</th><th>Store key</th><th>State</th><th></th></tr></thead><tbody>' + rows + '</tbody>';
+      var live = dbg.meta && dbg.meta.demo === false;
+      $("status").innerHTML = dbg.roster.length + ' shops · ' +
+        (live ? '<b style="color:var(--good)">the page is serving real menus</b>'
+              : '<b style="color:var(--warn)">the page is still on the sample catalogue</b>') +
+        /* No count until something has actually read the catalogue. A zero here
+           reads as an empty shelf, which is a different and alarming claim. */
+        (dbg.meta && dbg.meta.total != null ? ' · ' + esc(String(dbg.meta.total)) + ' rows' : '');
+
+      if (ing) {
+        $("storage").innerHTML = 'Backend: <code>' + esc(ing.storage) + '</code>. ' +
+          (ing.persistent
+            ? 'Captures persist across deploys and cold starts.'
+            : '<b style="color:var(--warn)">Not persistent.</b> Captures live in one lambda instance, so a capture can appear to send fine and then vanish — attach an Upstash KV store or set <code>DATABASE_URL</code> (Neon).') +
+          (ing.writable ? '' : ' <b style="color:var(--bad)">LL_ADMIN_TOKEN is unset, so sending is disabled entirely.</b>');
+      } else {
+        $("storage").textContent = "Could not reach /api/coldwater/ingest.";
+      }
+    });
+  }
+  /* Delegated: the table is rebuilt on every refresh, so a per-button listener
+     would die with the old nodes. */
+  document.addEventListener("click", function(e){
+    var b = e.target && e.target.closest ? e.target.closest("[data-clear]") : null;
+    if (!b) return;
+    var key = b.getAttribute("data-clear");
+    if (!window.confirm("Clear every captured collection for " + key + "?\n\nThis cannot be undone from here \u2014 the shop has to be captured again.")) return;
+    var token = window.prompt("Admin token");
+    if (!token) return;
+    b.disabled = true;
+    b.textContent = "Clearing\u2026";
+    fetch("/api/coldwater/ingest", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-ll-admin-token": token.trim() },
+      /* THE MARKET IS NOT OPTIONAL HERE. Without it a Clear on the hemp page
+         would reset the COLDWATER store of the same key -- the endpoint
+         defaults to coldwater by design, which is right for a capture and
+         catastrophic for a wipe. */
+      body: JSON.stringify({ storeKey: key, market: MARKET, reset: true }),
+    }).then(function(r){ return r.json().then(function(j){ return { ok: r.ok, j: j }; }); })
+      .then(function(o){
+        if (o.ok) load();
+        else { b.disabled = false; b.textContent = "Clear"; alert("Refused: " + (o.j.error || "unknown")); }
+      })
+      .catch(function(err){ b.disabled = false; b.textContent = "Clear"; alert("Failed: " + (err.message || err)); });
+  });
+
+  $("refresh").addEventListener("click", load);
+  load();
+})();
+</script>
+</body>
+</html>

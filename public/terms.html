@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terms: what this site is, and what it is not | Legal-Leaf Market</title>
+<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any product is
+     rendered, and the page content stays in the DOM behind the overlay so a crawler still
+     sees a full page. See public/js/age-gate.js for why an attestation gate is the right
+     shape here and what it deliberately does not do.
+     Anchored after </title> because three of these pages (consumables, devices,
+     international) have no explicit </head> at all -- an anchor that works on twelve of
+     fifteen pages is how a gate ends up missing from the ones that sell things. -->
+<script src="/js/age-gate.js"></script>
+<meta name="description" content="Legal-Leaf Market compares prices across hemp retailers. We hold no stock, sell nothing, take no payment and are not a party to any sale. What the numbers mean, how we make money, and what we do not promise. Written plainly rather than in legal language.">
+<link rel="canonical" href="https://legal-leafmarket.com/terms">
+<meta name="theme-color" content="#080f14">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:title" content="Terms: Legal-Leaf Market">
+<meta property="og:description" content="We compare prices. We hold no stock, sell nothing, and are not a party to any sale. Here is exactly what that means.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://legal-leafmarket.com/terms">
+<meta property="og:site_name" content="Legal-Leaf Market">
+<meta property="og:image" content="https://legal-leafmarket.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://legal-leafmarket.com/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Cormorant+Garamond:ital,wght@1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/library.css">
+<!-- The objects the words sit on. MUST load after library.css: it wins by order,
+     not by weight, and moving it above silently restores the old surface. -->
+<link rel="stylesheet" href="/css/plate.css">
+<!-- Analytics. One tag, four sites; see /js/analytics.js for the taxonomy and for why
+     this is not Vercel custom events (they are Pro-only and capped at 2 props). -->
+<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+</head>
+<body>
+
+<main class="shell story">
+  <a class="sbacklink" href="/">&larr; Back to the market</a>
+
+  <header class="st-hero">
+    <p class="eyebrow">Terms</p>
+    <h1><span class="st-lead">what this is,</span>and what it is not</h1>
+    <p class="st-standfirst">
+      Written in plain English rather than in legal language, because a page nobody can read
+      protects nobody. <em>Last updated 8 August 2026.</em>
+    </p>
+  </header>
+
+  <article class="st-body">
+
+    <section class="st-chapter st-hilite">
+      <span class="st-num">I</span>
+      <p class="st-when">the whole thing in one paragraph</p>
+      <h2>We are a price list, not a shop</h2>
+      <p>
+        Legal-Leaf Market reads the public product pages of hemp retailers and works out what
+        each listing actually costs <b>per gram</b>. That is the entire service.
+      </p>
+      <p>
+        <b>We hold no stock. We sell nothing. We take no payment. We ship nothing. We set no
+        prices.</b> When you buy, you buy from that shop, on their site, under their terms,
+        and your contract is with them and not with us. If something goes wrong with an order (it never arrives, it is not what was
+        described, you want a refund) that is between you and the seller. We can sometimes help you find the right contact, and
+        we have no power beyond that.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">II</span>
+      <p class="st-when">how we get paid</p>
+      <h2>Affiliate links, stated plainly</h2>
+      <p>
+        Most links out of this site carry a referral tag. If you buy after following one, the
+        shop may pay us a commission. <b>It costs you nothing extra</b>, and any coupon shown
+        is yours whether or not we earn anything.
+      </p>
+      <p>
+        What that money does not buy is placement. The default sort is cheapest per gram, and
+        it is computed from the scraped price. A shop cannot pay to appear higher, because
+        there is no mechanism by which they could. The ordering is arithmetic.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">III</span>
+      <p class="st-when">the numbers</p>
+      <h2>What the prices and lab figures mean, and do not</h2>
+      <p>
+        <b>Prices are scraped and can be wrong.</b> They come from public product pages and
+        may be stale, mid-change, or out of stock by the time you click. Shipping estimates
+        are for comparison only and are not quotes. Always confirm the real price at checkout
+        on the seller's site. If our number and theirs disagree, theirs is the real one.
+      </p>
+      <p>
+        <b>Lab figures are read from the seller's own published certificates.</b> Where a card
+        shows a potency figure, we parsed a certificate for that specific product and checked
+        that the report's own arithmetic reconciles. Where we could not, the card shows no
+        figure rather than a guess.
+      </p>
+      <p>
+        The card also says <i>what kind</i> of document is behind it, a certificate for
+        that product, a store-wide compliance sheet, or a link to the shop's lab-results page.
+        Those are three different things and we do not merge them. The method is written up in
+        <a href="/what-the-certificates-say">What the Certificates Say</a>.
+      </p>
+      <p class="st-pull">
+        We report what the lab said.<br>
+        We do not vouch for the product.
+      </p>
+      <p>
+        We are not a laboratory and we do not test anything ourselves. A figure here is a
+        faithful reading of a document the seller published, not our own verification of what
+        is in the bag.
+      </p>
+    </section>
+
+    <section class="st-chapter st-warn">
+      <span class="st-num">IV</span>
+      <p class="st-when">read this bit twice</p>
+      <h2>What we do not promise</h2>
+      <p>
+        <b>Nothing here is a health claim.</b> We make no statement that any product treats,
+        prevents or cures anything, or that it is safe for you. Nothing on this site is
+        medical advice. If you have a medical question, ask a doctor.
+      </p>
+      <p>
+        <b>Nothing here is legal advice, and a product appearing on this site is not a
+        statement that it is lawful where you are.</b> What may be bought, sold, shipped or
+        received varies by state and sometimes by city, and it changes. Working out what
+        applies to you is your responsibility, and if the answer matters, ask a lawyer in your
+        state. The background is set out in <a href="/the-seam">The Seam</a>, which is history
+        and explanation, not advice, and not a compliance check.
+      </p>
+      <p>
+        <b>You must be 21 or over</b> to use this site. You are asked to confirm it on your first
+        visit, and that is a confirmation, not a verification: we take your word for it and we are
+        not pretending otherwise. If you are under 21, this is not for you.
+      </p>
+      <p>
+        <b>The site is provided as it is.</b> We do our best to keep it accurate and running,
+        and we cannot promise it will be either. We are not liable for losses arising from
+        relying on a price, a lab figure, an availability flag or anything else here,
+        which is the honest position for a free service that reads other people's websites,
+        not a clause we are hiding behind.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">V</span>
+      <p class="st-when">the boring but real bits</p>
+      <h2>Content, conduct and the rest</h2>
+      <p>
+        <b>Our writing is ours.</b> The library pieces, the code and the comparison data are
+        ours. Quote us with a link and we will be pleased. Republish a piece wholesale and we
+        will ask you to stop.
+      </p>
+      <p>
+        <b>Product names, images, brands and certificates belong to the shops and brands they
+        came from</b>, and appear here to identify what is being compared.
+      </p>
+      <p>
+        <b>Do not scrape us into a competing price list, and do not hammer the site.</b> Ironic,
+        given what we do, so to be fair about it: if you want the data for something
+        non-commercial, email and ask. We will probably say yes.
+      </p>
+      <p>
+        <b>The wholesale page is a preview.</b> It is not an offer to sell, there is nothing to
+        order, and it may change or disappear.
+      </p>
+      <p>
+        <b>If we change these terms</b>, we will change this page and move the date at the top.
+      </p>
+    </section>
+
+    <section class="st-chapter st-final">
+      <span class="st-num">VI</span>
+      <p class="st-when">saying hello</p>
+      <h2>Contact</h2>
+      <p>
+        Everything, questions, corrections, takedowns, data requests, a price we have
+        got wrong, goes to
+        <a href="mailto:hello@legal-leafmarket.com">hello@legal-leafmarket.com</a>.
+      </p>
+      <p>
+        Corrections are genuinely welcome. This site's only asset is that its numbers are
+        right, so telling us one is wrong is doing us a favour, not picking a fight.
+      </p>
+      <a class="st-cta" href="/privacy">Privacy: what we collect &rarr;</a>
+    </section>
+
+  </article>
+
+  <footer class="st-sources">
+    <p class="st-fine">
+      Legal-Leaf Market is a price comparison service. We hold no stock and sell nothing.
+      This page is a plain statement of how we operate, written by the people who run the
+      site, and is not legal advice. See also <a href="/privacy">Privacy</a>. Adults 21+ only.
+    </p>
+  </footer>
+</main>
+
+</body>
+</html>

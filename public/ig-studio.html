@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>IG Studio — carousel slides</title>
+<!--
+  public/ig-studio.html — edit the carousel copy, see it render, download the PNGs.
+  Served at /ig-studio. noindex, not in the sitemap, not in any nav: this is an
+  operator tool, same posture as /coldwater-collect.
+
+  IT SHARES ITS COPY AND ITS CSS WITH THE CLI RENDERER, and that is the whole
+  design. Both this page and tools/make-ig-slides.mjs import
+  public/js/ig-slides-data.js; neither restates a string. A studio that drew
+  slides from its own copy of the deck would be the twins problem this repo keeps
+  paying for (storeCheckoutUrl four times, rscRoots twice, overrides.js porting
+  _applyOv by hand) -- except worse, because the two halves here render pictures
+  that LOOK right independently and disagree about a vote count.
+
+  THE PREVIEW IS AN IFRAME, NOT A DIV, and that is not fussiness. The slide CSS
+  styles bare h1/p/.num selectors at 250px; dropped into this page it would eat
+  the editor's own chrome. The iframe is fed the EXACT document the CLI writes to
+  disk, so preview fidelity is not a resemblance, it is the same file.
+
+  EXPORT IS SVG foreignObject -> canvas -> PNG, which needs no library and no
+  server. Three things about it are load bearing:
+    - the markup must be well-formed XML or the image silently never loads, so it
+      goes through XMLSerializer rather than being hand-patched (<br> alone would
+      break it);
+    - nothing external is referenced -- no webfont, no image -- so the canvas is
+      never tainted and toBlob() is allowed;
+    - the browser rasterises with ITS fonts. The deck is set in Liberation Sans
+      with Arial in the stack, and those two are metric-compatible, so line breaks
+      land identically even though a Windows machine will actually draw Arial. If
+      a display face is ever added, this stops being true and the export has to
+      embed it as a data: URI.
+
+  EDITS LIVE IN localStorage AND NOWHERE ELSE. This is a static site; a page
+  cannot write to the repo. So "Copy data for the repo" hands back a block to
+  paste into ig-slides-data.js, which is the only way an edit becomes permanent
+  and reaches the CLI, CI and the next person. Until then it is one browser's
+  private draft -- the same bargain the category console makes with
+  localStorage["ll_manual_cat"], and worth saying out loud for the same reason.
+-->
+<style>
+  :root{
+    --bg:#0b120d; --panel:#101a13; --line:#223029; --text:#eaf3ec;
+    --muted:#9fb6a6; --dim:#7d9488; --leaf:#4ade80; --gold:#f0b93c; --red:#ef5350;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+  header{
+    position:sticky; top:0; z-index:5; background:rgba(11,18,13,.94);
+    border-bottom:1px solid var(--line); padding:14px 20px;
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+    backdrop-filter:blur(6px);
+  }
+  h1{font-size:17px; margin:0; letter-spacing:.02em}
+  h1 span{color:var(--leaf)}
+  select,button{
+    font:inherit; color:var(--text); background:#17231b;
+    border:1px solid var(--line); border-radius:8px; padding:8px 13px; cursor:pointer;
+  }
+  button:hover,select:hover{border-color:var(--leaf)}
+  button.primary{background:var(--leaf); color:#06210f; border-color:var(--leaf); font-weight:700}
+  button.ghost{background:transparent}
+  .spacer{flex:1}
+  .note{color:var(--dim); font-size:13px}
+  main{padding:20px; display:flex; flex-direction:column; gap:18px; max-width:1220px}
+  .slide-row{
+    display:grid; grid-template-columns:288px 1fr; gap:20px;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px;
+  }
+  @media (max-width:860px){ .slide-row{grid-template-columns:1fr} }
+  .preview-wrap{
+    width:270px; height:337px; overflow:hidden; border-radius:8px;
+    border:1px solid var(--line); background:#000; position:relative;
+  }
+  /* 270/1080 = 0.25 exactly, so the preview is a true quarter-scale of the file. */
+  .preview-wrap iframe{
+    width:1080px; height:1350px; border:0; transform:scale(.25);
+    transform-origin:0 0; pointer-events:none;
+  }
+  .fields{display:flex; flex-direction:column; gap:10px; min-width:0}
+  .fields label{font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:var(--dim)}
+  input[type=text],textarea{
+    width:100%; font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
+    color:var(--text); background:#0c150f; border:1px solid var(--line);
+    border-radius:8px; padding:9px 11px; resize:vertical;
+  }
+  input[type=text]:focus,textarea:focus{outline:0; border-color:var(--leaf)}
+  textarea{min-height:150px}
+  .row-actions{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+  .num{color:var(--dim); font-size:13px; min-width:64px}
+  .edited{color:var(--gold); font-size:12px}
+  dialog{
+    background:var(--panel); color:var(--text); border:1px solid var(--line);
+    border-radius:12px; max-width:min(860px,92vw); padding:18px;
+  }
+  dialog::backdrop{background:rgba(0,0,0,.65)}
+  dialog textarea{min-height:420px}
+  .err{color:var(--red)}
+  .ok{color:var(--leaf)}
+  #claims{margin:20px 20px 0; max-width:1220px}
+  .claimbox{background:var(--panel); border:1px solid var(--gold); border-radius:12px; padding:16px}
+  .claimbox.clear{border-color:var(--leaf)}
+  .claimbox h3{margin:0 0 4px; font-size:15px}
+  .claim{display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-top:1px solid var(--line)}
+  .claim input{margin-top:4px}
+  .claim a{color:var(--leaf); font-size:12px}
+  .claim .txt{flex:1; min-width:0}
+  .conf{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim)}
+  .conf.low{color:var(--red)}
+  .finding{border-top:1px solid var(--line); padding:12px 0}
+  .finding h4{margin:0 0 4px; font-size:15px}
+  .finding p{margin:0 0 6px; color:var(--muted); font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>IG <span>Studio</span></h1>
+  <select id="post"></select>
+  <button id="dlAll" class="primary">Download all PNGs</button>
+  <button id="copyData" class="ghost">Copy data for the repo</button>
+  <button id="research" class="ghost">Research&hellip;</button>
+  <button id="reset" class="ghost">Reset edits</button>
+  <div class="spacer"></div>
+  <span class="note" id="status">1080&times;1350 &middot; edits are saved in this browser only</span>
+</header>
+
+<div id="claims"></div>
+<main id="rows"></main>
+
+<dialog id="researchDlg">
+  <h2 style="margin:0 0 4px;font-size:16px">Research</h2>
+  <p class="note" style="margin:0 0 12px">
+    Leave the box empty to sweep the last 10 days of federal hemp policy and Michigan action,
+    or type an angle to chase instead. Findings come back with sources; nothing is drafted until
+    you pick one.
+  </p>
+  <input type="text" id="topic" placeholder="e.g. what payment processors have done since Square, or leave empty">
+  <div class="row-actions" style="margin:12px 0">
+    <button id="runResearch" class="primary">Find what&rsquo;s happening</button>
+    <button onclick="document.getElementById('researchDlg').close()" class="ghost">Close</button>
+    <span class="note" id="rStatus"></span>
+  </div>
+  <div id="findings"></div>
+</dialog>
+
+<dialog id="dataDlg">
+  <p style="margin:0 0 10px">
+    Paste this over the matching post in <code>public/js/ig-slides-data.js</code>, then commit.
+    Until you do, these edits exist only in this browser.
+  </p>
+  <textarea id="dataOut" readonly></textarea>
+  <div class="row-actions" style="margin-top:12px">
+    <button id="dataCopy" class="primary">Copy to clipboard</button>
+    <button onclick="document.getElementById('dataDlg').close()" class="ghost">Close</button>
+  </div>
+</dialog>
+
+<script type="module">
+import { W, H, CSS, POSTS } from "/js/ig-slides-data.js";
+
+const LS = "ll_ig_studio";
+const $  = (s, r = document) => r.querySelector(s);
+
+/* Overrides are stored per post/slide/field rather than as a whole copy of POSTS,
+   so a slide nobody edited keeps following the repo when the repo changes. A
+   wholesale snapshot would silently pin the entire deck to whatever it looked
+   like the day somebody first opened this page. */
+let edits = {};
+try { edits = JSON.parse(localStorage.getItem(LS) || "{}"); } catch {}
+const save = () => localStorage.setItem(LS, JSON.stringify(edits));
+
+/* DRAFTS ARE A SEPARATE STORE FROM EDITS, because they are a different kind of
+   thing. An edit is a delta against copy that exists in the repo and can be
+   reverted to it; a draft has no repo baseline at all -- it came back from a model
+   half an hour ago and may never be committed. Keeping them in one bag would mean
+   "revert to repo" had nothing to revert to, silently. */
+const LS_DRAFTS = "ll_ig_drafts";
+let drafts = {};
+try { drafts = JSON.parse(localStorage.getItem(LS_DRAFTS) || "{}"); } catch {}
+const saveDrafts = () => localStorage.setItem(LS_DRAFTS, JSON.stringify(drafts));
+const isDraft = k => !!drafts[k];
+const P = k => POSTS[k] || drafts[k];
+
+/* A DRAFT IS UNVERIFIED UNTIL EVERY CLAIM IS TICKED, and export is blocked on it.
+   The model researches; the editor publishes. A slide carrying an unchecked vote
+   count is the one failure this whole tool must not make easy. */
+const claimsClear = k => {
+  const d = drafts[k]; if (!d) return true;                 // repo posts are already verified
+  const list = d.claims || []; if (!list.length) return false;   // a draft asserting nothing sourced is not cleared
+  return list.every((_, i) => d.verified?.[i]);
+};
+
+const adminToken = () => {
+  let t = sessionStorage.getItem("ll_admin_token");
+  if (!t) { t = prompt("Admin token (LL_ADMIN_TOKEN). Kept for this tab only."); if (t) sessionStorage.setItem("ll_admin_token", t); }
+  return t;
+};
+
+const val = (postKey, i, field) =>
+  (edits[postKey]?.[i]?.[field]) ?? P(postKey).slides[i][field];
+const isEdited = (postKey, i, field) => edits[postKey]?.[i]?.[field] !== undefined;
+
+/* ANYTHING ABOVE ASCII BECOMES A NUMERIC ENTITY ON THE WAY IN. The data module is
+   entities-only by rule (its header says why: two toolchains read it, neither
+   re-encodes it, and this repo has already merged a commit that mangled every
+   non-ASCII byte in index.html because mojibake still looks like text in a diff).
+   Nobody typing here will remember that, and pasting a sentence out of a document
+   brings smart quotes and em dashes with it. Encoding at the door means the copy
+   block this page hands back is ASCII whatever was pasted in, and the rendered
+   slide is identical either way. */
+const toEntities = str => str.replace(/[\u0080-\uFFFF]/g, c => `&#${c.charCodeAt(0)};`);
+
+function setVal(postKey, i, field, v) {
+  v = toEntities(v);
+  if (isDraft(postKey)) {                    // a draft has no baseline: edit it in place
+    drafts[postKey].slides[i][field] = v; saveDrafts(); return;
+  }
+  if (v === P(postKey).slides[i][field]) {          // back to the original = not an edit
+    if (edits[postKey]?.[i]) { delete edits[postKey][i][field];
+      if (!Object.keys(edits[postKey][i]).length) delete edits[postKey][i];
+      if (!Object.keys(edits[postKey]).length) delete edits[postKey]; }
+  } else {
+    edits[postKey] ??= {}; edits[postKey][i] ??= {}; edits[postKey][i][field] = v;
+  }
+  save();
+}
+
+/* THE SAME DOCUMENT THE CLI WRITES. Keep this in step with page() in
+   tools/make-ig-slides.mjs -- it is the one piece of markup that genuinely lives
+   in two files, because one side writes it to disk and the other feeds it to an
+   iframe, and neither can import the other's runtime. */
+function slideDoc(postKey, i) {
+  const total = P(postKey).slides.length;
+  const dots = Array.from({ length: total }, (_, j) =>
+    `<span class="dot${j === i ? " on" : ""}"></span>`).join("");
+  return `<!doctype html><html><head><meta charset="utf-8"><style>${CSS}</style></head>
+<body><div class="slide">
+  <div class="eyebrow">${val(postKey, i, "eyebrow")}</div>
+  <div class="body-area">${val(postKey, i, "body")}</div>
+  <div class="foot">
+    <span class="handle">@legal_leaf_market</span>
+    <span class="dots">${dots}</span>
+    <span>${i + 1} / ${total}</span>
+  </div>
+</div></body></html>`;
+}
+
+/* ---- PNG export -------------------------------------------------------------
+   The slide is drawn into an SVG foreignObject and rasterised by the browser.
+   XMLSerializer does the well-formedness work: the copy contains <br> and other
+   HTML-legal-but-not-XML markup, and an SVG carrying that never fires onload --
+   it fails silently, which is why this rejects on error rather than resolving to
+   a blank canvas. */
+function slideToPng(postKey, i) {
+  return new Promise((resolve, reject) => {
+    const doc = new DOMParser().parseFromString(slideDoc(postKey, i), "text/html");
+    const root = doc.body.firstElementChild;
+    root.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+    const styleEl = doc.createElement("style");
+    styleEl.textContent = CSS;
+
+    const xhtml = new XMLSerializer().serializeToString(root);
+    const css   = new XMLSerializer().serializeToString(styleEl);
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">` +
+      `<foreignObject width="100%" height="100%">` +
+      `<div xmlns="http://www.w3.org/1999/xhtml">${css}${xhtml}</div>` +
+      `</foreignObject></svg>`;
+
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      c.width = W; c.height = H;
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#0b120d"; ctx.fillRect(0, 0, W, H);   // the SVG has no page background
+      ctx.drawImage(img, 0, 0);
+      c.toBlob(b => b ? resolve(b) : reject(new Error("canvas produced no blob")), "image/png");
+    };
+    img.onerror = () => reject(new Error(
+      "the slide markup is not well-formed enough to rasterise — check for an unclosed tag"));
+    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  });
+}
+
+/* A handle for the suites, the same seam window.__LL_COLLECT__ and window.LL_admin
+   already are. Declared HERE rather than at the end of the module on purpose: the
+   collector's handle once sat below an early return, so it was missing on exactly
+   the pages where the distinction mattered and read as a broken injection. */
+window.__IG_STUDIO__ = { slideDoc, slideToPng, get edits() { return edits; } };
+
+function download(blob, name) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+const status = (msg, bad) => {
+  const el = $("#status"); el.textContent = msg; el.className = bad ? "note err" : "note";
+};
+
+/* ---- rendering the editor --------------------------------------------------- */
+const sel = $("#post");
+function fillPosts() {
+  const cur = sel.value;
+  sel.innerHTML = Object.entries(POSTS).map(([k, p]) => `<option value="${k}">${k} \u2014 ${p.title}</option>`).join("")
+    + Object.entries(drafts).map(([k, p]) => `<option value="${k}">draft \u2014 ${p.title}</option>`).join("");
+  if (cur && P(cur)) sel.value = cur;
+}
+fillPosts();
+
+function paintPreview(frame, postKey, i) { frame.srcdoc = slideDoc(postKey, i); }
+
+function render() {
+  const postKey = sel.value;
+  const rows = $("#rows");
+  rows.innerHTML = "";
+  P(postKey).slides.forEach((_, i) => {
+    const row = document.createElement("div");
+    row.className = "slide-row";
+    row.innerHTML = `
+      <div class="preview-wrap"><iframe title="slide ${i + 1} preview"></iframe></div>
+      <div class="fields">
+        <div class="row-actions">
+          <span class="num">Slide ${i + 1}</span>
+          <span class="edited" data-edited></span>
+        </div>
+        <label>Eyebrow</label>
+        <input type="text" data-field="eyebrow">
+        <label>Body (HTML)</label>
+        <textarea data-field="body" spellcheck="false"></textarea>
+        <div class="row-actions">
+          <button data-dl>Download this slide</button>
+          <button data-revert class="ghost">Revert to repo</button>
+        </div>
+      </div>`;
+    const frame = $("iframe", row);
+    const eye   = $('[data-field="eyebrow"]', row);
+    const body  = $('[data-field="body"]', row);
+    const flag  = $("[data-edited]", row);
+
+    const sync = () => {
+      eye.value = val(postKey, i, "eyebrow");
+      body.value = val(postKey, i, "body");
+      flag.textContent =
+        (isEdited(postKey, i, "eyebrow") || isEdited(postKey, i, "body")) ? "edited" : "";
+      paintPreview(frame, postKey, i);
+    };
+    sync();
+
+    let t;
+    const onInput = (field, el) => {
+      setVal(postKey, i, field, el.value);
+      flag.textContent = "edited";
+      clearTimeout(t); t = setTimeout(() => paintPreview(frame, postKey, i), 220);
+    };
+    eye.addEventListener("input", () => onInput("eyebrow", eye));
+    body.addEventListener("input", () => onInput("body", body));
+
+    $("[data-dl]", row).addEventListener("click", async () => {
+      if (!claimsClear(postKey)) { status("every claim has to be ticked before this exports", true); return; }
+      status(`rendering slide ${i + 1}\u2026`);
+      try {
+        download(await slideToPng(postKey, i), `${postKey}-slide-${i + 1}.png`);
+        status(`slide ${i + 1} downloaded`);
+      } catch (e) { status(e.message, true); }
+    });
+    $("[data-revert]", row).addEventListener("click", () => {
+      if (edits[postKey]) { delete edits[postKey][i];
+        if (!Object.keys(edits[postKey]).length) delete edits[postKey]; save(); }
+      sync();
+    });
+    rows.appendChild(row);
+  });
+}
+
+sel.addEventListener("change", render);
+
+$("#dlAll").addEventListener("click", async () => {
+  const postKey = sel.value, n = P(postKey).slides.length;
+  if (!claimsClear(postKey)) { status("every claim has to be ticked before this exports", true); return; }
+  for (let i = 0; i < n; i++) {
+    status(`rendering ${i + 1} of ${n}…`);
+    try { download(await slideToPng(postKey, i), `${postKey}-slide-${i + 1}.png`); }
+    catch (e) { status(`slide ${i + 1}: ${e.message}`, true); return; }
+    /* Browsers throttle a burst of downloads and drop the tail silently, so these
+       are spaced rather than fired in a loop. */
+    await new Promise(r => setTimeout(r, 320));
+  }
+  status(`${n} slides downloaded`);
+});
+
+$("#copyData").addEventListener("click", () => {
+  const postKey = sel.value, p = P(postKey);
+  const esc = s => s.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${");
+  const body = p.slides.map((_, i) =>
+    `      { eyebrow: \`${esc(val(postKey, i, "eyebrow"))}\`, body: \`${esc(val(postKey, i, "body"))}\` },`
+  ).join("\n");
+  $("#dataOut").value =
+    `  ${postKey}: {\n    title: ${JSON.stringify(p.title)},\n    slides: [\n${body}\n    ],\n  },`;
+  $("#dataDlg").showModal();
+});
+$("#dataCopy").addEventListener("click", async () => {
+  const ta = $("#dataOut");
+  try { await navigator.clipboard.writeText(ta.value); $("#dataCopy").textContent = "Copied"; }
+  catch { ta.select(); document.execCommand("copy"); $("#dataCopy").textContent = "Copied"; }
+  setTimeout(() => ($("#dataCopy").textContent = "Copy to clipboard"), 1600);
+});
+
+$("#reset").addEventListener("click", () => {
+  if (!confirm("Discard every edit in this browser and go back to what is in the repo?")) return;
+  edits = {}; save(); render(); status("edits cleared");
+});
+
+/* ---- the claims panel -------------------------------------------------------
+   Only drawn for drafts. It is the gate, not a summary: nothing exports while a
+   box is unticked, and the boxes are per-claim rather than one "I checked it all"
+   button, because a single button is a thing people click without reading. */
+function paintClaims() {
+  const k = sel.value, box = $("#claims");
+  const d = drafts[k];
+  if (!d) { box.innerHTML = ""; return; }
+  const list = d.claims || [];
+  const clear = claimsClear(k);
+  box.innerHTML = `
+    <div class="claimbox${clear ? " clear" : ""}">
+      <h3>${clear ? "Verified \u2014 this can be exported" : "Unverified draft \u2014 export is blocked"}</h3>
+      <p class="note" style="margin:0 0 8px">
+        ${list.length
+          ? "Open each source and tick it only if the slide says what the source says."
+          : "This draft came back with no sourced claims, so there is nothing to check against. Treat every number on it as unconfirmed and rewrite from a source you trust."}
+      </p>
+      ${list.map((c, i) => `
+        <label class="claim">
+          <input type="checkbox" data-claim="${i}" ${d.verified?.[i] ? "checked" : ""}>
+          <span class="txt">
+            <b>Slide ${c.slide ?? "?"}</b> &middot; ${c.claim || ""}
+            <span class="conf ${String(c.confidence).toLowerCase() === "low" ? "low" : ""}">${c.confidence || "?"}</span>
+            <br>${c.source ? `<a href="${c.source}" target="_blank" rel="noopener">${c.source}</a>` : "<span class=\"err\">no source given</span>"}
+          </span>
+        </label>`).join("")}
+    </div>`;
+  box.querySelectorAll("[data-claim]").forEach(cb => cb.addEventListener("change", () => {
+    const i = cb.getAttribute("data-claim");
+    d.verified ??= {}; d.verified[i] = cb.checked; saveDrafts(); paintClaims();
+  }));
+}
+
+/* ---- research --------------------------------------------------------------- */
+async function callResearch(payload) {
+  const t = adminToken();
+  if (!t) throw new Error("no admin token, so nothing can be researched");
+  const r = await fetch("/api/ig-research", {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-ll-admin-token": t },
+    body: JSON.stringify(payload)
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || `http ${r.status}`);
+  return j;
+}
+
+$("#research").addEventListener("click", () => $("#researchDlg").showModal());
+
+$("#runResearch").addEventListener("click", async () => {
+  const st = $("#rStatus");
+  st.textContent = "reading\u2026 this takes a minute";
+  st.className = "note";
+  $("#findings").innerHTML = "";
+  try {
+    const j = await callResearch({ mode: "findings", topic: $("#topic").value.trim() });
+    st.textContent = `${j.findings.length} findings \u00b7 ${j.model} \u00b7 $${(j.usd ?? 0).toFixed(4)}`;
+    $("#findings").innerHTML = j.findings.map((f, i) => `
+      <div class="finding">
+        <h4>${f.headline || ""}</h4>
+        <p>${f.what || ""}</p>
+        <p><b>Why it matters:</b> ${f.why || ""}</p>
+        <p class="conf ${String(f.confidence).toLowerCase() === "low" ? "low" : ""}">
+          ${f.confidence || "?"} confidence &middot; ${f.date || "undated"}</p>
+        <p>${(f.sources || []).map(u => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`).join("<br>")}</p>
+        <button data-draft="${i}">Draft this</button>
+      </div>`).join("");
+    $("#findings").querySelectorAll("[data-draft]").forEach(btn => btn.addEventListener("click", async () => {
+      const f = j.findings[Number(btn.getAttribute("data-draft"))];
+      btn.disabled = true; st.textContent = "drafting\u2026"; st.className = "note";
+      try {
+        const d = await callResearch({ mode: "draft", finding: f });
+        const id = "draft" + Date.now().toString(36);
+        drafts[id] = {
+          title: d.draft.title, slides: d.draft.slides, claims: d.claims || [],
+          caption: d.caption || "", hashtags: d.hashtags || [], verified: {}
+        };
+        saveDrafts(); fillPosts(); sel.value = id; render(); paintClaims();
+        st.textContent = `drafted \u00b7 $${(d.usd ?? 0).toFixed(4)} \u00b7 check its claims before exporting`;
+        $("#researchDlg").close();
+      } catch (e) { st.textContent = e.message; st.className = "note err"; btn.disabled = false; }
+    }));
+  } catch (e) { st.textContent = e.message; st.className = "note err"; }
+});
+
+const _render = render;
+render = function () { _render(); paintClaims(); };
+
+render();
+</script>
+</body>
+</html>

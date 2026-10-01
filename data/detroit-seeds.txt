@@ -1,0 +1,88 @@
+# Detroit seed list — LEADS, NOT A ROSTER.
+#
+# Every line here is a name and a url from public search. That makes each one a
+# `candidate` in api/markets.js terms: "a lead. It is never fetched on the live
+# path and never shown." Nothing in this file may go into api/market-stores.js
+# until tools/discover-market.mjs has FETCHED it and its own page has named the
+# city. That is the standard the Coldwater seven were built to and it does not
+# move because the roster got bigger.
+#
+# THE STATE SAYS 61. Detroit's FY2025 payout was $3,295,043.10, which is 61
+# licences at $54,017.10 -- arithmetic on the state's own cheque. Asked the same
+# question in one sitting, directories answered 49 and 13. So this file is
+# deliberately short of 61 and the gap is the honest reading: what is here is
+# what could be named with a url attached, not what exists.
+#
+# ------------------------------------------------------------------------------
+# THE DETROIT-SPECIFIC TRAP, AND IT IS WORSE HERE THAN ANYWHERE ELSE IN MICHIGAN.
+#
+# HAMTRAMCK and HIGHLAND PARK are separate cities completely surrounded by
+# Detroit. Own councils, own ordinances, own licences, own line in the Treasury
+# distribution. A shop on Caniff Street has a Detroit mailing address, shows up
+# under "Detroit" on every directory, and is NOT one of Detroit's 61.
+#
+# This is the East Lansing lesson at closer range -- close enough that a human
+# reading an address cannot tell, which is exactly why the confirm step reads the
+# shop's OWN page for the city name rather than trusting the address. Same for
+# the ring: Ferndale, Hazel Park, Oak Park, Dearborn, Redford, River Rouge,
+# Ecorse, Lincoln Park, Melvindale, Warren, Harper Woods and the Grosse Pointes
+# all sit against the city line and all sell under "Detroit" on a directory.
+#
+# Lines below that are known to be in an enclave or a suburb are marked and
+# commented OUT, not deleted -- the `dead` state exists so the next sweep does
+# not rediscover and re-add them.
+# ------------------------------------------------------------------------------
+#
+# FIRST LIVE SWEEP, 17 Aug 2026 (workflow run 32059070669): 9 confirmed, 1
+# refused, 0 dead, 0 unreachable. Every confirmed entry's own page named
+# Detroit -- that is the promotion bar, and it is what separates these from
+# the Hamtramck shops below. Seven of the nine are Dutchie.
+#
+# Format: Name|url    (deduped by HOST, so a chain's location page and its menu
+# page collapse to one shop)
+#
+#   node tools/discover-market.mjs --market detroit --seeds data/detroit-seeds.txt \
+#        --probe --out data/detroit.json
+#
+# From this container that produces nothing: the egress proxy refuses every one
+# of these hosts, and discover-market.mjs says so on its first line rather than
+# leaving a wall of failures to imply it. Run it where there is a network --
+# .github/workflows/discover-market.yml does exactly that on a runner.
+
+# ---- chains with a first-party site, which is the shape this repo reads best --
+House of Dank|https://shophod.com/stores/house-of-dank-recreational-cannabis-8-mile
+Liberty Cannabis|https://libertycannabis.com/shop/detroit/
+Cloud Cannabis|https://cloudcannabis.com/detroit-order-online/
+King of Budz|https://kingofbudz.com/
+
+DACUT|https://dacut.com/mi/detroit-dispensary/
+Ascend|https://letsascend.com/locations/michigan/detroit/
+
+# ---- single-site Detroit shops ------------------------------------------------
+# REFUSED an automated client with a 403 on the first live sweep (run
+# 32059070669). That is NOT a finding that the shop is gone -- it is open,
+# licensed and written up in the Metro Times -- so it stays a lead on the
+# manual lane rather than being filed `dead`, which is the one status this
+# tool makes sticky on purpose. The sweep used to call this dead; see the
+# REFUSAL set in tools/discover-market.mjs.
+Utopia Gardens|https://utopiagardens.com/
+Green Genie Cannabis|https://geniecannabis.com/
+420 Factory|https://420factorydetroit.com/
+High Club|https://shophighclub.com/
+
+# ---- ENCLAVE / SUBURB: listed under "Detroit" and not Detroit's --------------
+#
+# Kept, commented, with the reason -- the `dead` state exists so the next sweep
+# recognises these rather than rediscovering and re-adding them.
+#
+# PLEASANTREES IS THE CASE THAT PROVES THE TRAP, and it is worth reading twice:
+# the menu platform's own slug is `pleasantrees-detroit`, and the shop is in
+# HAMTRAMCK -- their own site lists it that way. So the url says Detroit, the
+# directory says Detroit, the mailing address says Detroit, and the Treasury
+# pays Hamtramck. Nothing short of the shop's own page settles it, which is
+# exactly what discover-market.mjs checks and why it checks that and not the
+# address.
+# Pleasantrees (HAMTRAMCK)|https://enjoypleasantrees.com/menu/
+# Quality Roots (HAMTRAMCK)|https://getqualityroots.com/locations/detroit/
+# Skymint (HAZEL PARK)|https://skymint.com/
+# Nirvana Center (CENTER LINE)|https://nirvanacenter.com/

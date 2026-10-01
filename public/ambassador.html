@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Bring your town onto Legal-Leaf</title>
+<meta name="description" content="Apply to be your town's Legal-Leaf ambassador: get your local dispensaries compared by price per gram, and keep the menus fresh."/>
+<link rel="manifest" href="/manifest.webmanifest"/>
+<meta name="theme-color" content="#0b1418"/>
+<link rel="icon" href="/favicon.svg"/>
+<meta property="og:title" content="Bring your town onto Legal-Leaf"/>
+<meta property="og:description" content="Every town on this site has somebody local keeping it honest. Apply to be yours."/>
+<meta property="og:type" content="website"/>
+<style>
+/* THE ROLE IS THE HARD PART, NOT THE PAGE. A town goes live because somebody
+   local keeps its menus fresh -- the collector runs in their own browser, on
+   pages they already have open, which is what keeps this clean and is also
+   exactly why it cannot be automated away. So this page sells the work
+   honestly rather than pitching a badge: somebody who applies expecting a title
+   and finds a chore quits in a fortnight and the town goes stale, which is
+   worse than never having launched it. */
+:root{--bg:#0b1418;--bg2:#101b21;--line:#26343d;--ink:#dbe7ee;--dim:#8fa6b3;--gold:#d8b25a;--good:#8fd39a;--bad:#e2707a}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{padding:max(18px,env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom))}
+main{max-width:660px;margin:0 auto}
+a{color:var(--gold)}
+h1{font-size:26px;line-height:1.25;margin:0 0 6px}
+.lede{color:var(--dim);margin:0 0 22px}
+h2{font-size:16px;margin:26px 0 8px}
+ul{margin:0 0 8px;padding-left:20px}
+li{margin:5px 0}
+.card{border:1px solid var(--line);background:var(--bg2);border-radius:12px;padding:16px;margin:18px 0}
+label{display:block;margin:13px 0 0;font-size:13.5px;color:var(--dim)}
+input,textarea,select{width:100%;margin-top:5px;padding:11px 12px;border-radius:9px;
+  border:1px solid var(--line);background:var(--bg);color:var(--ink);font:15px/1.45 inherit}
+textarea{min-height:96px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px}
+.row{display:flex;gap:10px}
+.row>*{flex:1;min-width:0}
+.check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;color:var(--ink);font-size:14px}
+.check input{width:21px;height:21px;flex:none;margin-top:2px;accent-color:var(--gold)}
+button{margin-top:18px;width:100%;padding:13px 16px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--gold);background:transparent;color:var(--gold);font:700 15px/1 inherit}
+button[disabled]{opacity:.55;cursor:default}
+/* The honeypot: never shown, never announced to a screen reader, never tabbed
+   into. A human cannot fill it; a bot fills everything. */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.msg{margin-top:14px;padding:12px;border-radius:9px;font-size:14.5px;display:none}
+.msg.ok{display:block;background:rgba(143,211,154,.10);color:var(--good);border:1px solid rgba(143,211,154,.3)}
+.msg.err{display:block;background:rgba(226,112,122,.10);color:var(--bad);border:1px solid rgba(226,112,122,.3)}
+footer{margin-top:30px;color:var(--dim);font-size:12px;line-height:1.65}
+</style>
+</head>
+<body>
+<main>
+<h1>Bring your town onto Legal-Leaf</h1>
+<p class="lede">
+  We compare every dispensary in a town by price per gram, side by side, and show
+  which shop is actually cheapest for the thing you were going to buy anyway.
+  <a href="/coldwater">Coldwater, Michigan</a> is the first one.
+</p>
+
+<h2>What an ambassador actually does</h2>
+<p style="margin:0 0 8px">
+  This is a real job, not a badge, and it is worth being straight about it before
+  you apply. A town stays on this site because somebody local keeps it fresh.
+</p>
+<ul>
+  <li>Run the menu collector once or twice a week. It is a bookmarklet: you open
+    each shop&rsquo;s own menu in your own browser, tap it, and it reads what is on
+    the page and sends it over. A full town takes about ten minutes.</li>
+  <li>Tell us when a shop opens, closes, moves, or changes its menu system.</li>
+  <li>Flag prices that look wrong. You know the shops; we only know their HTML.</li>
+</ul>
+<p style="margin:8px 0 0">
+  We meet first, properly &mdash; a call or in person. Partly so you can ask what
+  you are signing up for, and partly because putting a town live and letting it
+  go stale is worse than never launching it at all.
+</p>
+
+<h2>What we are not asking for</h2>
+<ul>
+  <li>No money, ever. It costs you nothing to bring your town on.</li>
+  <li>No relationship with the shops. We are not affiliated with any dispensary
+    or brand, we take nothing from them, and no shop can pay to rank higher.
+    You are not selling anything to anybody.</li>
+</ul>
+
+<div class="card">
+  <h2 style="margin-top:0">Apply</h2>
+  <form id="f" novalidate>
+    <label>Your name
+      <input name="name" autocomplete="name" required/></label>
+    <label>Email
+      <input name="email" type="email" inputmode="email" autocomplete="email" required/></label>
+    <label>Phone <span style="opacity:.7">(optional, if you would rather we call)</span>
+      <input name="phone" type="tel" inputmode="tel" autocomplete="tel"/></label>
+    <div class="row">
+      <label>Town
+        <input name="town" autocomplete="address-level2" required/></label>
+      <label>State
+        <input name="state" autocomplete="address-level1" required/></label>
+    </div>
+    <label>Which shops are there? <span style="opacity:.7">(names are enough)</span>
+      <textarea name="shops" style="min-height:70px"></textarea></label>
+    <label>Anything about you or the town we should know
+      <textarea name="why"></textarea></label>
+
+    <div class="hp" aria-hidden="true">
+      <label>Website<input name="website" tabindex="-1" autocomplete="off"/></label>
+    </div>
+
+    <label class="check">
+      <input type="checkbox" name="confirm" required/>
+      <span>I am 21 or over, and happy for Legal-Leaf to contact me about this.</span>
+    </label>
+
+    <button type="submit" id="go">Send application</button>
+    <div class="msg" id="msg" role="status"></div>
+  </form>
+</div>
+
+<footer>
+  We store your name, email, town and whatever you write above, and we use it to
+  contact you about bringing your town onto the site. Nothing else, and we do not
+  sell it or pass it to any dispensary or brand. Ask us any time and we will
+  delete it.
+  <br/><br/>
+  Legal-Leaf Market is not affiliated with, endorsed by, sponsored by or connected
+  to any dispensary, brand or product listed on this site. Must be 21+.
+</footer>
+</main>
+
+<script>
+(function(){
+  var f = document.getElementById("f"), msg = document.getElementById("msg"), go = document.getElementById("go");
+
+  function say(kind, text){ msg.className = "msg " + kind; msg.textContent = text; }
+
+  /* Asked BEFORE anybody types, so a misconfigured deploy says so at the top of
+     the form rather than after somebody has written three paragraphs. An
+     application accepted into a void is the failure this whole endpoint is
+     shaped around. */
+  fetch("/api/ambassador", { headers: { accept: "application/json" } })
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (j && j.accepting === false) {
+        say("err", "Our form is down at the moment, and we would rather tell you than lose your "
+          + "application. Please email jake@nicotiamarket.com with your town and we will pick it up there.");
+        go.disabled = true;
+      }
+    })
+    .catch(function(){ /* the form still works; the POST answers for itself */ });
+
+  f.addEventListener("submit", function(e){
+    e.preventDefault();
+    var d = new FormData(f), body = {};
+    d.forEach(function(v, k){ body[k] = v; });
+    body.confirm = !!f.querySelector('[name=confirm]').checked;
+
+    go.disabled = true;
+    var was = go.textContent;
+    go.textContent = "Sending...";
+    fetch("/api/ambassador", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    })
+      .then(function(r){ return r.json().then(function(j){ return { ok: r.ok, j: j }; }); })
+      .then(function(out){
+        if (out.ok && out.j && out.j.ok) {
+          f.style.display = "none";
+          say("ok", "Thanks - that is in. We will email you to set up a proper conversation about "
+            + (out.j.town ? out.j.town + (out.j.state ? ", " + out.j.state : "") : "your town") + ".");
+        } else {
+          go.disabled = false; go.textContent = was;
+          say("err", (out.j && out.j.error) || "That did not go through. Please try again, or email jake@nicotiamarket.com.");
+        }
+      })
+      .catch(function(){
+        go.disabled = false; go.textContent = was;
+        say("err", "That did not go through - you may be offline. Please try again, or email jake@nicotiamarket.com.");
+      });
+  });
+})();
+</script>
+</body>
+</html>

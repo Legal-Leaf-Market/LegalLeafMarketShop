@@ -1,0 +1,86 @@
+/* public/css/photo-view.css -- the expand control and the full-screen viewer.
+ *
+ * Lifted verbatim out of tools/make-coldwater.mjs (cw-expand-style and
+ * cw-photo-zoom-style) alongside public/js/photo-view.js; see that file's
+ * header for why.
+ */
+/* THE HOVER WASH IS BLUE HERE, NOT PINK. index.html paints
+   #grid .card .cimg::after with rgba(255,64,146,.44) -- a hot pink ported from
+   Nicotia, deliberately a local literal on every surface that flips rather than
+   a shared token. On this page it is the one warm thing on a cold-blue shelf
+   and it reads as an alert: "it's red and that makes me feel uncomfortable".
+   Same wash, same job, this page's own accent. */
+#grid .card .cimg::after{background:rgba(78,201,255,.42)!important;
+  color:#04202b!important;text-shadow:0 1px 10px rgba(255,255,255,.35)!important}
+
+/* EXPAND TO FULL VIEW, and it needs to be a BUTTON.
+   The photo used to open the viewer on any click, which stole the card's flip:
+   tapping a picture is how you read the details, and it was zooming instead.
+   So the whole photo flips the card -- what it always did -- and one explicit
+   control opens the picture, the way a video gives you a fullscreen corner
+   rather than making the frame itself mean two things. */
+#grid .card .cimg{position:relative}
+#grid .card .cw-expand{position:absolute;right:8px;bottom:8px;z-index:7;
+  width:36px;height:36px;border-radius:10px;cursor:zoom-in;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,.34);background:rgba(6,20,28,.62);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+  color:#eaf6ff;opacity:0;transition:opacity .15s ease,background .15s ease}
+#grid .card:hover .cw-expand,#grid .card .cw-expand:focus-visible{opacity:1}
+#grid .card .cw-expand:hover{background:rgba(78,201,255,.8);color:#04202b}
+#grid .card .cw-expand svg{width:17px;height:17px;display:block;pointer-events:none}
+/* A thumb has no hover, so on touch it is simply always there. 36px is the
+   smallest square a thumb hits without also hitting the card behind it. */
+@media(hover:none){#grid .card .cw-expand{opacity:.92}}
+/* Flipped, the photo is not on screen and neither is its control. */
+#grid .card.on .cw-expand{opacity:0;pointer-events:none}
+
+/* THE PHOTO IS THE PRODUCT. On a dispensary shelf the picture is most of what a
+   shopper has to judge with -- trichome coverage, cure, whether "small buds"
+   means smalls or means shake -- and a 150px card thumbnail cannot answer any
+   of it. So the picture opens full screen, on a phone and on a desktop, and can
+   be zoomed into once it is there.
+
+   MARKUP-AGNOSTIC BY DESIGN. The card is rendered inside the base64 engine and
+   its class names are not ours to depend on (CLAUDE.md 5), so this binds to any
+   <img> inside a card rather than to a selector that a re-cut would silently
+   break. The cost is one closest() per click; the alternative is a feature that
+   stops working with no error the day the engine changes a class.
+
+   NOT the COA modal. That one is the engine's and it renders lab sheets; this
+   is additive and independent, and it deliberately sits ABOVE it so a COA image
+   can be opened full screen too. */
+#cwZoom{position:fixed;inset:0;z-index:2147483000;display:none;
+  background:rgba(4,10,14,.94);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+  padding:calc(58px + env(safe-area-inset-top)) 12px calc(62px + env(safe-area-inset-bottom));
+  /* pinch-zoom is the platform's, and it is better than anything written here.
+     The overlay only has to stay out of its way. */
+  touch-action:pinch-zoom;overscroll-behavior:contain}
+#cwZoom.on{display:flex}
+/* WIDTH AND HEIGHT, NOT max-width AND max-height. An <img> sized only by
+   max-* never grows past its INTRINSIC size, and a dispensary menu serves
+   thumbnails -- so a 240px jpeg opened "full screen" rendered at 240px, which
+   is smaller than the card that launched it, because the card stretches its
+   copy to the card width. object-fit:contain keeps the aspect ratio while the
+   box is finally allowed to be the whole viewport. hiRes() below asks the CDN
+   for a bigger original first, so the upscale is usually not needed at all. */
+#cwZoom img{width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;
+  border-radius:10px;box-shadow:0 24px 80px rgba(0,0,0,.6);
+  transition:transform .18s ease;transform-origin:center center;cursor:zoom-in;
+  /* A photo on a dark ground reads better with a hair of its own light behind
+     it than floating on nothing. */
+  background:#0d1720}
+#cwZoom img.zoomed{cursor:zoom-out;transform:scale(2.2)}
+#cwZoomWrap{width:100%;height:100%;max-width:1600px;display:flex;align-items:center;justify-content:center;
+  overflow:auto;overscroll-behavior:contain}
+#cwZoomCap{position:fixed;left:0;right:0;bottom:0;padding:14px 18px calc(14px + env(safe-area-inset-bottom));
+  color:#eaf2f6;font:14px/1.4 system-ui,-apple-system,sans-serif;text-align:center;
+  background:linear-gradient(to top,rgba(4,10,14,.92),rgba(4,10,14,0));pointer-events:none}
+#cwZoomX{position:fixed;top:calc(12px + env(safe-area-inset-top));right:12px;
+  width:44px;height:44px;border-radius:50%;border:1px solid #2b3b45;background:rgba(13,23,32,.9);
+  color:#eaf2f6;font-size:22px;line-height:1;cursor:pointer;z-index:1}
+#cwZoomX:hover{background:#16242f}
+/* 44px is the smallest thing a thumb hits reliably; anything less is a close
+   button that closes the wrong thing. */
+@media(max-width:560px){#cwZoom{padding:calc(54px + env(safe-area-inset-top)) 6px calc(58px + env(safe-area-inset-bottom))}}

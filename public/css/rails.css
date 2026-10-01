@@ -1,0 +1,376 @@
+/* public/css/rails.css -- the look of the three rails, shared by every page.
+ *
+ * Lifted verbatim out of tools/make-coldwater.mjs (cw-logorow-style) alongside
+ * public/js/rails.js; see that file's header for why. NicotiaMarket's class
+ * names are kept deliberately -- .logorow/.lrhead/.lrwrap/.lrscroll/.lchip/
+ * .limg -- so the two sites' strips stay recognisably one component.
+ */
+/* SHOP BY STORE, ported from NicotiaMarket's logo strip.
+   Copied rather than reinvented so the two sister sites read as one family:
+   same class names (.logorow/.lrhead/.lrwrap/.lrscroll/.lchip/.limg), same
+   circular white plate, same monogram fallback, same edge-fade-plus-arrows
+   affordance, same gold selected state. --gold is a shared family token, which
+   is why the selected chip stays gold on a cold-blue page instead of drifting
+   to the local accent.
+
+   The white plate is load bearing rather than decorative: a shop's mark is
+   drawn for light backgrounds and vanishes on ours. */
+.logorow{padding:14px 0 4px}
+/* TWO FACETS SIDE BY SIDE, WITH THE PAGE'S MIDDLE DRAWN BETWEEN THEM.
+   Which shop and what kind of thing are the two questions a walk-in shopper
+   actually asks, and stacking them as two full-width rails pushed the second one
+   under the fold on a laptop -- so the one a shopper wanted was the one they had
+   to scroll for.
+   The divider is its own 1px GRID TRACK rather than a border on either rail, so
+   it lands on the shell's exact midpoint and cannot drift when one side's chips
+   are wider than the other's. min-width:0 on the columns is load bearing: a grid
+   child sizes to min-content by default, and a rail of 104px chips would widen
+   its own track instead of scrolling inside it -- which is the horizontal
+   overflow test-coldwater-page.mjs asserts against at 390px. */
+.lrpair{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 22px;align-items:start}
+.lrpair>.lrpair-col{min-width:0}
+/* BRIGHTER THAN THIS PAGE'S OTHER HAIRLINES, on purpose. At --glass-line's own
+   0.22 alpha the rule was there and nobody could see it, which makes it furniture
+   rather than a divider: the whole job is to say "these are two different
+   questions". The accent at 0.42 with a soft bloom reads as drawn at a glance and
+   still is not louder than the chips it separates. */
+.lrsplit{align-self:stretch;width:1px;margin:16px 0 8px;position:relative;
+  background:linear-gradient(180deg,transparent,
+    rgba(var(--accent-rgb,120,180,215),.42) 10%,
+    rgba(var(--accent-rgb,120,180,215),.42) 90%,transparent);
+  box-shadow:0 0 9px rgba(var(--accent-rgb,120,180,215),.20)}
+/* A dot on the midpoint, so the line reads as drawn on purpose rather than as a
+   seam between two panels that failed to meet. */
+.lrsplit::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;
+  margin:-3px 0 0 -3px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 0 4px var(--bg),0 0 10px rgba(240,185,60,.45)}
+@media(max-width:900px){
+  /* One column, and the divider TURNS WITH IT rather than being deleted: without
+     a rule between them the two rails read as one long row of unrelated circles,
+     which is exactly the confusion the divider exists to prevent. */
+  .lrpair{grid-template-columns:1fr;gap:0}
+  .lrsplit{width:auto;height:1px;margin:12px 0 4px;
+    background:linear-gradient(90deg,transparent,
+      rgba(var(--accent-rgb,120,180,215),.42) 10%,
+      rgba(var(--accent-rgb,120,180,215),.42) 90%,transparent)}
+}
+.lrhead{display:flex;align-items:baseline;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.lrhead h2{font-weight:900;font-size:13.5px;letter-spacing:.06em;text-transform:uppercase;margin:0}
+.lrhead small{font-size:11.5px;color:var(--dim)}
+.lrclear{margin-left:auto;background:none;border:none;color:var(--gold);cursor:pointer;
+  font-size:11.5px;letter-spacing:.04em;text-decoration:underline;padding:0}
+.lrwrap{position:relative}
+/* TRULY SCROLLABLE, not a slideshow with two buttons. Three things were
+   stopping it and all three are CSS:
+     - scroll-behavior:smooth applies to the USER's wheel and drag as well as to
+       the arrows, so every flick was animated and the rail felt like it was
+       paging rather than following the hand. The arrows pass behavior:"smooth"
+       in their own scrollBy call, so they keep the animation and nothing else
+       gets it.
+     - scroll-snap-type fought a free drag: let go between chips and the rail
+       pulled back to a chip, which reads as the rail refusing to be scrolled.
+     - the scrollbar was hidden outright, so nothing on screen said the rail
+       scrolls at all. It is a slim tinted one now rather than none: on a
+       trackpad or a touchscreen it is the only affordance there is. */
+.lrscroll{display:flex;gap:10px;overflow-x:auto;padding:2px 0 6px;
+  scroll-snap-type:none;
+  /* Momentum on iOS, and CONTAIN so a horizontal flick cannot chain into the
+     page or trigger the browser's back-swipe -- which is the single most
+     annoying thing a carousel does on a phone. */
+  -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+  /* Snap targets stop clear of the fade rather than under it. */
+  scroll-padding-left:2px;scroll-padding-right:74px;
+  cursor:grab}
+.lrscroll.dragging{cursor:grabbing;scroll-behavior:auto;scroll-snap-type:none}
+.lrscroll.dragging *{pointer-events:none}
+/* NO SCROLLBAR. A visible one was the first attempt at saying "this scrolls"
+   and it is the wrong answer: a 6px grey rule under a row of circular photo
+   plates is the only square-edged thing on the page, it sits there permanently
+   whether or not anyone is looking at the rail, and on a Mac it is invisible
+   until you touch the trackpad anyway -- so it is ugly on the platforms that
+   show it and absent on the ones that do not.
+   The FADE is the affordance instead, and it is a better one: content visibly
+   running under a soft edge says "there is more that way" without drawing a
+   control, and it disappears by itself at each end because the class driving it
+   is computed from the real scroll position. */
+.lrscroll{scrollbar-width:none;-ms-overflow-style:none}
+.lrscroll::-webkit-scrollbar{display:none;width:0;height:0}
+/* No snap alignment either: this pairs with scroll-snap-type:none above, and
+   leaving the per-child rule behind is how a rail that "should" scroll freely
+   still tugs on some engines. */
+/* Fades read as "more this way" rather than as a clipped image, and are the
+   affordance now the scrollbar is gone. Pointer-events off or they eat clicks
+   on the end chips. */
+/* FADE THE RAIL, DO NOT PAINT OVER IT.
+   Reported as "a plain black block behind it, looks clunky -- make it curved and
+   fade at the edges where the joint is." The block was real and its cause was
+   not the shape: these were two strips filled with var(--bg) and gradient-faded
+   sideways, and var(--bg) is the PAGE's background while the rail actually sits
+   on a lighter panel. So the "fade" was painting something DARKER than its own
+   surroundings -- a black rectangle by construction. No amount of rounding or
+   softening the edges could have fixed that, because the COLOUR was wrong before
+   the shape was.
+
+   Masking the scroller itself has no colour in it at all. The chips fade to
+   transparent and whatever is genuinely behind them shows through, on any panel,
+   in any theme, with no token to keep in step. It is also softer than an overlay
+   can be, because there is no second surface to have an edge.
+
+   THE JOINTS LIVE IN .lrwrap, OUTSIDE THE MASK, so they stay fully opaque while
+   the chips dissolve underneath them -- which is what puts the fade "at the edges
+   where the joint is" rather than over the joint.
+
+   Sided, off the same can-prev/can-next the arrows already read, so the fade and
+   the lit joint can never disagree about which way there is more to see. */
+.lrscroll{--fade-l:0px;--fade-r:0px;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--fade-l),
+    #000 calc(100% - var(--fade-r)),transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0,#000 var(--fade-l),
+    #000 calc(100% - var(--fade-r)),transparent 100%)}
+.lrwrap.can-prev .lrscroll{--fade-l:74px}
+.lrwrap.can-next .lrscroll{--fade-r:74px}
+
+/* WHERE MASKS ARE UNAVAILABLE the overlay is still the best answer going, so it
+   is kept -- but only there, and with the shape it should always have had: an
+   ellipse anchored to the edge, fading in every direction rather than a strip
+   with square top and bottom corners. */
+@supports not ((mask-image: linear-gradient(#000, transparent)) or (-webkit-mask-image: linear-gradient(#000, transparent))){
+  .lrwrap::before,.lrwrap::after{content:"";position:absolute;top:-4px;bottom:2px;width:78px;
+    pointer-events:none;opacity:0;transition:opacity .22s;z-index:1;background:var(--bg)}
+  .lrwrap::before{left:0}
+  .lrwrap::after{right:0}
+  .lrwrap.can-prev::before{opacity:1}
+  .lrwrap.can-next::after{opacity:1}
+}
+/* ------------------------------------------------------------------------
+   ARROWS ARE BACK ON DESKTOP, AND THEY ARE JOINTS.
+
+   This block used to read "NO ARROWS", and the argument was that a pair of
+   nudge buttons is a control the rail does not need -- its presence makes
+   people press it instead of discovering that the thing scrolls under the
+   hand, so a fade plus drag-to-scroll says "there is more that way" without
+   drawing anything. That was the right call for an invisible control.
+
+   The owner's call reverses it, and the reason it is not the same trade is
+   that these arrows are not invisible: "I don't want them scrollable on
+   desktop at all -- just arrows on either side that get brighter as you hover,
+   so it's obvious it's a button." A lit joint that starts smoking under the
+   cursor is the loudest affordance on the page. The old objection was that
+   nobody could tell the rail moved; nobody can miss this.
+
+   SO ON DESKTOP THE RAIL DOES NOT SCROLL. Not "scrolls and also has buttons" --
+   the buttons are the only way across, which is what was asked for. Touch keeps
+   the swipe, because taking that away from a phone would be a worse rail for no
+   reason, and the gate is a WIDTH rather than `pointer:fine`: headless Chrome
+   reports pointer:none, so a pointer query would silently disable this in every
+   browser suite while looking like working code (the card-flip work found that
+   the hard way and it is written up in CLAUDE.md).
+   ------------------------------------------------------------------------ */
+/* The button itself: no plate, no circle, no border. The joint IS the control,
+   so anything drawn behind it is furniture competing with it. */
+.lrjoint{position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+  display:none;align-items:center;justify-content:center;
+  width:76px;height:52px;padding:0;border:0;background:none;cursor:pointer;
+  /* BRIGHT ENOUGH TO BE SEEN AT REST. It sat at .34, which read as furniture --
+     "make them bigger and brighter at the start". Still visibly dimmer than the
+     hover state, because the brightening is what says "this is a button". */
+  opacity:.62;transition:opacity .22s ease,transform .14s ease}
+.lrjoint-prev{left:-16px}
+.lrjoint-next{right:-16px}
+/* Mirrored, so the lit tip and the smoke always lead the way the rail moves.
+   One source image, pointing right, flipped for the other side -- two files
+   would be two things to keep in step. */
+/* THE TWO SOURCES FACE OPPOSITE WAYS, so they are flipped on opposite sides.
+   The drawn SVG is authored pointing LEFT; the photograph is a real joint shot
+   pointing RIGHT. Mirroring both on the same selector is how the arrows ended up
+   inverted -- the left button pointing right and the right button pointing left,
+   which still looks like a working pair of arrows until you read them. Stated as
+   two rules rather than one clever one, because the next person to swap either
+   asset needs to see which way its own base faces. */
+.lrjoint-next svg{transform:scaleX(-1)}
+.lrjoint-prev .lrj-img{transform:scaleX(-1)}
+.lrj-img{display:block;width:100%;height:auto;pointer-events:none}
+
+/* THE PUFF, drawn even when the button is a photograph. Smoke baked into a
+   picture cannot move, and "it starts blowing out smoke as you hover" was the
+   brief -- so this sits over the burning tip, invisible at rest and animated on
+   hover. Removed outright when the drawing is used instead, because the drawing
+   carries its own smoke and two sets would read as a chimney. */
+.lrj-puff{position:absolute;left:0;top:-16px;width:26px;height:32px;
+  overflow:visible;pointer-events:none}
+.lrjoint-next .lrj-puff{left:auto;right:0}
+.lrj-puff .lrj-smoke{animation:none;opacity:0}
+.lrjoint:hover .lrj-puff .lrj-smoke,.lrjoint:focus-visible .lrj-puff .lrj-smoke{
+  animation:ll-smoke-puff 1.6s ease-out infinite;opacity:0}
+.lrjoint:hover .lrj-puff .lrj-s2,.lrjoint:focus-visible .lrj-puff .lrj-s2{animation-duration:1.9s;animation-delay:.18s}
+.lrjoint:hover .lrj-puff .lrj-s3,.lrjoint:focus-visible .lrj-puff .lrj-s3{animation-duration:2.2s;animation-delay:.36s}
+/* A PHOTOGRAPH GETS BRIGHTNESS, NOT A FILL SWAP. The ember rules below reach
+   into the SVG and do nothing to an <img>, so the lit-on-hover half of the brief
+   has to come from a filter when the button is a picture. */
+.lrjoint.lrj-photo .lrj-img{filter:brightness(.92) saturate(.9);transition:filter .22s ease}
+.lrjoint.lrj-photo:hover .lrj-img,.lrjoint.lrj-photo:focus-visible .lrj-img{
+  filter:brightness(1.12) saturate(1.15) drop-shadow(0 0 6px rgba(255,122,41,.55))}
+/* Guarded to real hover capability, the way nicotiamarket.com guards its own
+   lane arrows: without it a tap on iOS Safari leaves :hover stuck on the button
+   -- lit and scaled -- until something else is touched, which reads as a second
+   control glued to the first. */
+@media(hover:hover){
+  .lrjoint:hover{opacity:1;transform:translateY(-50%) scale(1.08)}
+}
+.lrjoint:focus-visible{opacity:1;outline:2px solid var(--gold);outline-offset:3px}
+/* :active covers touch, since the guard above means a tap never fires :hover. */
+.lrjoint:active{opacity:1;transform:translateY(-50%) scale(.94)}
+/* BOTH JOINTS STAY, ALWAYS, FOR AS LONG AS THE RAIL CAN SCROLL.
+   "I don't ever want the arrows to go away -- as long as the rail is there I
+   want an arrow on the left and the right."
+
+   This went through both wrong answers first. It dimmed a spent joint to .07,
+   which read as a grease mark on the screen; then it hid one per side, which
+   made the pair flicker in and out under the shopper's own scrolling and left
+   them reaching for a control that had gone. A control that disappears as you
+   use it is worse than one that is briefly a no-op.
+
+   The ONE case they still go is a rail with nothing to scroll -- both classes
+   absent, meaning the chips already fit -- because then there is genuinely no
+   rail to work. Written as :not(.can-prev):not(.can-next) rather than as a
+   third class, so it cannot drift from what sync() actually computes. */
+.lrwrap:not(.can-prev):not(.can-next) .lrjoint{display:none}
+
+/* THE DESKTOP SWITCH GOES *AFTER* THE BASE RULES, not before, and this is not a
+   style preference. `.lrjoint{display:none}` above and `.lrjoint{display:flex}`
+   here are the same specificity, so the later one wins -- written the other way
+   round the media query loses, the joints never appear at any width, and the
+   only symptom is a rail with no arrows on a desktop. Nothing errors and the
+   buttons still work if you find them: measured as `display:none` at 1280px
+   while a synthetic click still scrolled the rail, which is the most misleading
+   pair of facts this could have produced. */
+@media (min-width: 900px){
+  .lrscroll{overflow-x:hidden;cursor:default;scroll-behavior:smooth}
+  .lrwrap{padding:0 52px}
+  .lrjoint{display:flex}
+}
+
+/* The ember: warm, and it BREATHES rather than blinks -- a burning tip pulses
+   slowly as the paper takes air, and a hard flash would read as an error state. */
+.lrj-ember{fill:#ff7a29;transition:fill .22s ease}
+.lrjoint:hover .lrj-ember,.lrjoint:focus-visible .lrj-ember{fill:#ffb347}
+.lrj-glow{opacity:.28;transition:opacity .22s ease}
+.lrjoint:hover .lrj-glow,.lrjoint:focus-visible .lrj-glow{opacity:.85;
+  animation:ll-ember 1.7s ease-in-out infinite}
+@keyframes ll-ember{0%,100%{opacity:.55}50%{opacity:1}}
+
+/* THE SMOKE. Three ribbons, drawn as strokes rather than blobs, each on its own
+   clock so they never march in step -- smoke that loops visibly is worse than no
+   smoke. transform-box:fill-box is load bearing: without it the transform origin
+   is the SVG's viewport rather than the path, and the ribbons swing across the
+   whole icon instead of drifting from the tip. */
+.lrj-smoke{fill:none;stroke:#cfe6f2;stroke-width:1.3;stroke-linecap:round;
+  transform-box:fill-box;transform-origin:center;
+  opacity:0;animation:ll-smoke 4.2s ease-out infinite}
+.lrj-s2{animation-duration:5.1s;animation-delay:.9s;stroke-width:1.2}
+.lrj-s3{animation-duration:3.6s;animation-delay:1.9s;stroke-width:1}
+/* Hovering is the press indicator: the joint is pulled on, so it gives off more
+   smoke, faster, and it blows the way the rail is about to move. */
+.lrjoint:hover .lrj-smoke,.lrjoint:focus-visible .lrj-smoke{
+  animation-name:ll-smoke-puff;animation-duration:1.6s}
+.lrjoint:hover .lrj-s2,.lrjoint:focus-visible .lrj-s2{animation-duration:1.9s;animation-delay:.18s}
+.lrjoint:hover .lrj-s3,.lrjoint:focus-visible .lrj-s3{animation-duration:2.2s;animation-delay:.36s}
+
+/* THE DRIFT IS IN SVG USER UNITS, NOT SCREEN PIXELS. A CSS transform on an SVG
+   child is resolved in the element's own coordinate system, so on a 44-unit
+   viewBox `translate(-6px,-11px)` moves the ribbon a QUARTER of the icon --
+   which is why the first cut had smoke floating detached in the corner with a
+   visible gap above the ember. It reads as two drawings rather than one object,
+   and it gets worse the larger the icon is drawn. These numbers are a nudge. */
+@keyframes ll-smoke{
+  0%  {opacity:0;   transform:translate(0,0) scale(.6)}
+  18% {opacity:.34}
+  60% {opacity:.24}
+  100%{opacity:0;   transform:translate(-1.6px,-3.4px) scale(1.12)}
+}
+@keyframes ll-smoke-puff{
+  0%  {opacity:0;   transform:translate(0,0) scale(.55)}
+  15% {opacity:.95}
+  55% {opacity:.55}
+  100%{opacity:0;   transform:translate(-3.4px,-5.6px) scale(1.3)}
+}
+
+/* NOTHING MOVES FOR SOMEBODY WHO ASKED FOR STILLNESS, and the joint still works:
+   the brightness change is the affordance, the smoke was only ever the flourish.
+   Held at a visible mid-curl rather than at 0% opacity, or reduced motion would
+   mean no smoke at all rather than still smoke. */
+@media (prefers-reduced-motion: reduce){
+  .lrj-smoke,.lrjoint:hover .lrj-smoke,.lrjoint:focus-visible .lrj-smoke{
+    animation:none;opacity:.26}
+  .lrjoint:hover .lrj-glow,.lrjoint:focus-visible .lrj-glow{animation:none;opacity:.85}
+  .lrscroll{scroll-behavior:auto}
+}
+.lrctl{margin-left:auto;display:flex;align-items:center;gap:7px}
+.lrctl .lrclear{margin-left:0}
+@media(prefers-reduced-motion:reduce){.lrscroll{scroll-behavior:auto}}
+.lchip{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:8px;
+  width:104px;padding:13px 8px 11px;border:1px solid var(--line);background:var(--panel);
+  border-radius:14px;cursor:pointer;transition:all .16s;position:relative}
+.lchip{transition:transform .18s cubic-bezier(.2,.7,.3,1),border-color .16s,background .16s}
+.lchip:hover{border-color:var(--glass-line);transform:translateY(-2px)}
+.lchip .limg{transition:transform .22s cubic-bezier(.2,.7,.3,1)}
+.lchip:hover .limg{transform:scale(1.06)}
+.lchip:active{transform:translateY(-1px) scale(.985)}
+@media(prefers-reduced-motion:reduce){
+  .lchip,.lchip .limg{transition:none}
+  .lchip:hover{transform:none}
+  .lchip:hover .limg{transform:none}
+}
+.lchip.on{border-color:var(--gold);background:rgba(240,185,60,.07)}
+.lchip.on::after{content:"\2713";position:absolute;top:6px;right:8px;color:var(--gold);
+  font-size:11px;font-weight:700}
+.limg{width:54px;height:54px;border-radius:50%;background:#fff;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;flex:none;
+  box-shadow:0 2px 10px rgba(0,0,0,.28)}
+.limg img{width:100%;height:100%;object-fit:contain;padding:7px}
+/* A real letter on a real plate, tinted per store, so a logo-less row still
+   reads as distinct shops rather than as a column of blanks. */
+.limg.mono{background:linear-gradient(150deg,var(--mono-a,#2b3630),var(--mono-b,#1a221d))}
+/* A BRAND HAS NO FAVICON, because it has no domain in this feed. Its own
+   product photo is the picture, laid over the monogram plate so a failed
+   load uncovers the initials instead of leaving a hole. object-fit:cover
+   rather than contain: a product shot is a photo, not a logo on white. */
+/* The drawn category mark: contained and padded like a logo, never cropped
+   like a photograph -- .bimg above is object-fit:cover on purpose and would
+   cut the edges off a 64-viewBox drawing. */
+.limg .cimg{width:100%;height:100%;object-fit:contain;padding:11px;border-radius:0}
+.limg.cat{background:linear-gradient(150deg,var(--mono-a,#2b3630),var(--mono-b,#1a221d))}
+.limg.cat::after{content:none}
+@media(max-width:560px){.limg .cimg{padding:9px}}
+.limg .bimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;padding:0;border-radius:50%}
+/* The favicon sits OVER the monogram and is invisible until it has decoded, so
+   a slow third-party lookup never shows as a blank white disc. It carries its
+   own white backing because a shop's mark is drawn for light grounds. */
+.limg .fimg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:7px;
+  background:#fff;border-radius:50%;opacity:0;transition:opacity .18s ease}
+.limg .fimg.ok{opacity:1}
+@media(prefers-reduced-motion:reduce){.limg .fimg{transition:none}}
+.limg{position:relative}
+.limg.mono::after{content:attr(data-letter);font-weight:900;font-size:22px;color:#fff;letter-spacing:.02em}
+/* TWO LINES ARE ALWAYS RESERVED, EVEN FOR A ONE-LINE NAME, and that is what
+   makes the two rails the same height. Reported as "the category rail needs to
+   be taller to match so the arrows in the middle line up vertically": store
+   names wrap ("CBD Hemp Direct", "Nothing But Canna") and category names mostly
+   do not ("Vaporizers", "Edibles"), so the two columns of .lrpair ended up
+   different heights -- and the joints are positioned at top:50% of their own
+   rail, so they sat at two different midpoints with the divider running between
+   them. Equalising the CHIP is the fix rather than propping up one rail: it
+   holds for any pair of rails, in any order, whatever names arrive tomorrow.
+   2.5em is exactly the two lines -webkit-line-clamp already caps this at, so
+   nothing is reserved that the text could not use. */
+.lname{font-weight:600;font-size:11.5px;line-height:1.25;text-align:center;color:var(--muted);
+  max-width:100%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  min-height:2.5em}
+.lchip.on .lname{color:var(--text)}
+.lcount{font-size:10px;letter-spacing:.04em;color:var(--dim)}
+.lchip.on .lcount{color:var(--gold)}
+@media(max-width:560px){
+  .lchip{width:86px;padding:11px 6px 9px}
+  .limg{width:46px;height:46px}
+  .limg.mono::after{font-size:19px}
+}

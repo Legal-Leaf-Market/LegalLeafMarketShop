@@ -1,0 +1,72 @@
+/* ============================================================
+   tokens.css — the Leaf Market family design system,
+                Legal-Leaf's edition
+   ------------------------------------------------------------
+   These values are NOT invented. The palette block below is lifted
+   verbatim out of this site's own :root in public/index.html, so the
+   library pages and the market pages cannot drift apart.
+
+   AND THEY HAD DRIFTED, WHICH IS WHY THIS NOTE IS LONGER THAN IT WAS.
+   The market pages were recoloured from leaf green to cold blue and this
+   file was not, so /library and /reels went on painting themselves in the
+   old family green -- reported as "the reels and library need to match
+   the rest of the site ... it currently has the Nicotia market styling
+   and I don't want any part of that". Nothing errored. A stylesheet that
+   claims in its own header to be a copy of another file, and is not, is
+   the exact failure this repo keeps writing up: the two disagree and
+   only a person looking at both can tell.
+   IF YOU RECOLOUR public/index.html, RECOLOUR THIS. test-library-style.mjs
+   asserts the two agree token for token, so the next drift is a red run
+   rather than a page that quietly looks like somebody else's site.
+
+     --bg:#080f14  --leaf:#4ec9ff  --gold:#f0b93c  --red:#ef5350
+     --chip:#15242e  --radius:16px
+
+   SHARED ACROSS ALL THREE SISTER SITES — do not drift these:
+     --gold  --red  and the three font families.
+
+   OURS ALONE:
+     --leaf as the accent, and on this site --leaf is a COLD BLUE rather
+     than a green. Nicotia uses --ember (tobacco amber) in the same slot
+     and Herbal-Leaf uses --terracotta. Everything in library.css that
+     reaches for an accent reaches for --accent, so this one line is what
+     makes these pages read as Legal-Leaf's:
+
+         --accent: var(--leaf)
+
+   The Google Fonts request in the library pages is byte-identical to the
+   sisters' on purpose: a visitor crossing between them gets a cache hit.
+   ============================================================ */
+
+:root{
+  /* --- lifted from index.html's :root — keep in sync --- */
+  --bg:#080f14;
+  --panel:rgba(16,27,35,.72); --panel2:rgba(8,16,22,.85);
+  --glass:rgba(12,24,32,.42); --glass-line:rgba(120,180,215,.22);
+  --line:#22303a;
+  --text:#eaf2f6; --muted:#9fb4c2; --dim:#7d94a2;
+  --leaf:#4ec9ff; --leaf2:#22a8e8; --leaf3:#1787c4;
+  --gold:#f0b93c; --amber:#e8a33d; --red:#ef5350;
+  --chip:#15242e;
+
+  /* --- the sisters' shared names, mapped onto ours so component CSS
+         can be copied between the three sites unchanged --- */
+  --sage:var(--leaf); --sage-dk:var(--leaf2);
+  --gold-dk:#c8922a;
+
+  /* --- the accent slot. This is the whole difference between the three
+         sites' library pages. --- */
+  --accent:var(--leaf);
+  --accent-dk:var(--leaf3);
+  --accent-rgb:78,201,255;          /* for rgba() tints of the accent */
+
+  /* --- type --- */
+  --display:'Fraunces',Georgia,serif;
+  --script:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+
+  /* --- metrics --- */
+  --shell:min(1500px,94vw);
+  --r:16px; --r-sm:10px; --r-lg:22px;
+  --shadow:0 10px 40px rgba(0,0,0,.35);
+}

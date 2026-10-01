@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<!-- Neutral, and filled in by the script once it knows which town's trip this
+     is. A static city name here would flash the pilot's on every other city's
+     list. This page is noindex (below), so nothing is lost by deferring it. -->
+<title>My trip</title>
+<meta name="description" content="Your dispensary trip plan, grouped by shop, brand or category, with multi-buy deals tracked."/>
+<!-- NOINDEX: this page is one person's own list. There is nothing here for a
+     search engine, and a shared URL would be a stranger's shopping list. -->
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="manifest" href="/manifest.webmanifest"/>
+<meta name="theme-color" content="#0b1418"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="icon" href="/favicon.svg"/>
+<style>
+/* THE TRIP PLAN.
+   The pilot town has seven dispensaries and the whole proposition is
+   "the ounce is cheapest here and the cart is cheapest there" -- so the
+   deliverable is a ROUTE, not a basket, and there is exactly ONE of them for
+   the whole town rather than one per shop.
+
+   THE LIST IS THE ENGINE'S CART, AND THAT IS THE BUG THIS PAGE WAS BUILT WITH.
+   Every card's button is the engine's own .addbtn, which writes localStorage
+   "ll_cart" -- namespaced to "ll_cw:<town>:ll_cart" on a city page by its cw-cart-isolate
+   block so a dispensary item never lands in the hemp site's cart. This page used
+   to read a SECOND key, "ll_cw_list", written only by a parallel set of .cwl-add
+   buttons that the one-button-one-wording pass left orphaned. Both halves worked
+   perfectly and never met: six items in the cart, an empty list, nothing logged
+   anywhere. There is one key now, and it is the one the button writes.
+
+   That spelling is read LITERALLY here and on the city page alike. The isolate
+   shim only rewrites keys matching /^ll_cart/, so the namespaced spelling passes
+   through it untouched and means the same thing on both pages. Do not "simplify"
+   this to "ll_cart" -- on this page there is no shim, so that would read the hemp
+   cart instead.
+
+   THE PAGE BODY IS THE EXPORT. What is on screen is the same model that paints
+   the JPEG, prints to PDF and copies as text, so a shopper can see the thing
+   they are about to save rather than a text dump of it. One model, four
+   renderers: change the model and all four move together. */
+:root{
+  --bg:#0b1418; --bg2:#101b21; --card:#0e181e; --line:#26343d; --ink:#dbe7ee;
+  --dim:#8fa6b3; --gold:#d8b25a; --good:#8fd39a; --accent:#4ec9ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-text-size-adjust:100%}
+body{padding:max(14px,env(safe-area-inset-top)) 14px calc(28px + env(safe-area-inset-bottom))}
+a{color:var(--gold)}
+.wrap{max-width:680px;margin:0 auto}
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.top h1{font-size:19px;margin:0;letter-spacing:.01em;flex:1;min-width:0}
+.back{font:600 12.5px/1 inherit;color:var(--dim);text-decoration:none;padding:9px 11px;
+  border:1px solid var(--line);border-radius:9px;white-space:nowrap}
+.back:hover{color:var(--ink);border-color:var(--ink)}
+
+/* Controls sit OUTSIDE the card, because the card is the thing being exported
+   and a segmented control has no business in a photograph. */
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--dim);font:600 12.5px/1 inherit;
+  padding:10px 13px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:rgba(78,201,255,.13);color:var(--accent)}
+.menu{position:relative;margin-left:auto}
+.menu>button{border:1px solid var(--gold);background:transparent;color:var(--gold);
+  border-radius:10px;padding:10px 14px;font:700 12.5px/1 inherit;cursor:pointer}
+.menu ul{position:absolute;right:0;top:calc(100% + 6px);z-index:20;margin:0;padding:6px;
+  list-style:none;min-width:232px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:11px;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.menu ul[hidden]{display:none}
+.menu li button{width:100%;text-align:left;border:0;background:transparent;color:var(--ink);
+  font:500 13px/1.25 inherit;padding:10px 10px;border-radius:8px;cursor:pointer}
+.menu li button:hover{background:rgba(255,255,255,.06)}
+.menu li button small{display:block;color:var(--dim);font-size:11px;margin-top:2px}
+
+/* ---- THE CARD: this is what gets photographed, printed and saved ---- */
+#card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:18px 16px;overflow:hidden}
+.hd{display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid var(--line);
+  padding-bottom:12px;margin-bottom:12px}
+.hd .ttl{flex:1;min-width:0}
+.hd h2{margin:0;font-size:16px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold)}
+.hd .meta{color:var(--dim);font-size:12.5px;margin-top:3px}
+.hd .grand{text-align:right;white-space:nowrap}
+.hd .grand b{display:block;font-size:19px;font-variant-numeric:tabular-nums}
+.hd .grand span{color:var(--dim);font-size:11.5px}
+
+.grp{border-top:1px solid rgba(38,52,61,.75);padding-top:12px;margin-top:12px}
+.grp:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.grp h3{margin:0;font-size:14.5px}
+.grp .where{color:var(--dim);font-size:12.5px;margin:3px 0 8px}
+.grp .where a{text-decoration:none}
+
+.item{display:flex;gap:10px;align-items:flex-start;padding:7px 0;
+  border-top:1px solid rgba(38,52,61,.5)}
+.item:first-of-type{border-top:0}
+.item input{width:21px;height:21px;flex:none;margin:2px 0 0;accent-color:var(--gold)}
+.item .nm{flex:1;min-width:0}
+.item .nm b{font-weight:600}
+.item .sub{color:var(--dim);font-size:12px;margin-top:2px}
+.item.done .nm{opacity:.45;text-decoration:line-through}
+.item .pr{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.item .pr small{display:block;color:var(--dim);font-size:11px;font-weight:400}
+.item .rm{border:0;background:transparent;color:var(--dim);cursor:pointer;
+  font-size:19px;line-height:1;padding:0 2px;flex:none}
+.item .rm:hover{color:#e2707a}
+
+/* The unlock line is the reason this is a list and not a notes app: a
+   mix-and-match price is only true once the group is actually satisfied. */
+.mix{margin-top:8px;font-size:12.5px;padding:7px 9px;border-radius:8px;
+  background:rgba(216,178,90,.10);color:var(--gold)}
+.mix.ok{background:rgba(143,211,154,.10);color:var(--good)}
+.sub-t{display:flex;justify-content:space-between;margin-top:9px;padding-top:8px;
+  border-top:1px solid var(--line);font-weight:700;font-variant-numeric:tabular-nums}
+.was{color:var(--dim);font-weight:400;text-decoration:line-through;margin-right:7px}
+.fine{margin-top:14px;padding-top:11px;border-top:1px solid var(--line);
+  color:var(--dim);font-size:11px;line-height:1.55}
+
+.empty{border:1px dashed var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--dim)}
+footer{margin-top:20px;color:var(--dim);font-size:11.5px;line-height:1.6}
+
+/* The saved image, shown so it can be long-pressed on a phone where the share
+   sheet is not offered. A download link is useless on iOS Safari; an <img> is
+   the path that actually reaches Photos. */
+#shot{position:fixed;inset:0;z-index:50;background:rgba(4,9,12,.94);
+  display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;padding:18px}
+#shot[hidden]{display:none}
+#shot img{max-width:min(100%,520px);max-height:70vh;border-radius:12px;
+  border:1px solid var(--line);background:#fff}
+#shot .hint{color:var(--dim);font-size:12.5px;text-align:center;max-width:420px}
+#shot .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#shot button,#shot a{padding:11px 15px;border-radius:10px;border:1px solid var(--line);
+  background:transparent;color:var(--ink);font:600 12.5px/1 inherit;cursor:pointer;text-decoration:none}
+#shot .pri{border-color:var(--gold);color:var(--gold)}
+
+#out{width:100%;margin-top:12px;min-height:180px;background:var(--bg);color:var(--ink);
+  border:1px solid var(--line);border-radius:9px;padding:10px;
+  font:12px/1.5 ui-monospace,Menlo,Consolas,monospace}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:70;
+  background:var(--bg2);border:1px solid var(--gold);color:var(--gold);
+  padding:10px 15px;border-radius:999px;font:600 12.5px/1 inherit}
+.toast[hidden]{display:none}
+
+/* PRINT IS THE PDF PATH. No dependency generates a PDF here (CLAUDE.md section 1
+   keeps `dependencies` empty), and the browser's own "Save as PDF" produces a
+   better one than any hand-rolled writer would -- provided the printed page is
+   the card and nothing else. On white paper the dark card would waste a
+   cartridge, so it inverts. */
+@media print{
+  @page{margin:12mm}
+  html,body{background:#fff;color:#111}
+  .top,.bar,#shot,#out,footer,.item .rm,.item input,.toast{display:none!important}
+  .wrap{max-width:none}
+  #card{background:#fff;border:1px solid #ccc;border-radius:0;padding:0}
+  #card h2{color:#8a6a12}
+  .hd,.sub-t,.fine,.grp,.item{border-color:#ddd!important}
+  .hd .meta,.grp .where,.item .sub,.item .pr small,.fine{color:#555}
+  .mix{background:#faf3e2;color:#7a5c12}
+  .mix.ok{background:#eef7ef;color:#2f6b3a}
+  .grp{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>My trip</h1>
+    <!-- Filled in from the resolved market below; "/" is the neutral default,
+         and this page does not render at all without its script anyway. -->
+    <a class="back" href="/" id="back">&larr; Add more</a>
+  </div>
+
+  <div class="bar" id="bar" hidden>
+    <div class="seg" role="group" aria-label="Group by">
+      <button type="button" data-mode="store"    aria-pressed="true">By shop</button>
+      <button type="button" data-mode="brand"    aria-pressed="false">By brand</button>
+      <button type="button" data-mode="category" aria-pressed="false">By category</button>
+    </div>
+    <div class="menu">
+      <button type="button" id="exp" aria-haspopup="true" aria-expanded="false">Save &amp; share</button>
+      <ul id="expmenu" hidden>
+        <li><button type="button" data-do="photo">Save to Photos<small>Renders the card as an image</small></button></li>
+        <li><button type="button" data-do="copy">Copy as text<small>Pastes into Notes or Messages</small></button></li>
+        <li><button type="button" data-do="pdf">Print / Save as PDF<small>Uses your browser&rsquo;s print dialog</small></button></li>
+        <li><button type="button" data-do="jpeg">Download JPEG<small>Save as a photo</small></button></li>
+        <li><button type="button" data-do="txt">Download text file<small>Plain text</small></button></li>
+        <li><button type="button" data-do="csv">Download for Excel<small>Spreadsheet</small></button></li>
+        <li><button type="button" data-do="clear">Clear the whole list<small>Cannot be undone</small></button></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="card"></div>
+
+  <footer>
+    Prices and availability are read from each shop&rsquo;s own public menu, can be out of
+    date or wrong, and are not an offer &mdash; always confirm with the shop before you
+    travel. This page is not affiliated with, endorsed by or connected to any dispensary
+    or brand shown on it. Must be 21+.
+    <br/><br/>
+    Your list is stored only in this browser. Nothing about it is sent anywhere, and
+    clearing your browser data clears it.
+  </footer>
+</div>
+
+<div id="shot" hidden>
+  <img id="shotimg" alt="Your trip plan"/>
+  <div class="hint" id="shothint"></div>
+  <div class="row">
+    <button type="button" class="pri" id="shotshare">Share / Save</button>
+    <button type="button" id="shotdl">Download</button>
+    <button type="button" id="shotclose">Close</button>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+  /* ---- WHICH TOWN'S TRIP THIS IS ---------------------------------------
+     THE PAGE USED TO BE THE PILOT'S, IN TWENTY PLACES, and one of them was not
+     cosmetic: every shop address was handed to Google Maps with ", Coldwater,
+     MI" appended, so a second city's trip would have routed a shopper to a
+     street of that name ninety miles away. The rest -- the title, the heading,
+     the share text, the download filenames, the back link -- were the kind of
+     wrong that a shopper reads as the site being confused about where they are.
+
+     THIS PAGE RESOLVES ITS CITY AT RUNTIME, which is the opposite of what
+     ONE_CORE.md section 3 decides for the city pages themselves, and the reason
+     is the noindex meta twelve lines up: those pages live or die on searches
+     like "coldwater dispensary prices", and this one is one person's shopping
+     list that nobody searches for. A JS-filled title costs nothing here.
+
+     Three sources, most specific first. The city page stamps the whole context
+     into ll_cw:ctx at build time (it is the only thing that links here), so the
+     query parameter is really only a disambiguator for somebody who has trips
+     in two towns. With no context at all the page still renders whatever is in
+     the default key and says nothing about a place -- an unlabelled list is a
+     small failure, a confidently mislabelled one is not. */
+  var CTX = (function(){
+    var q = (location.search.match(/[?&]market=([a-z0-9-]+)/i) || [])[1] || "";
+    var c = {};
+    try { c = JSON.parse(localStorage.getItem("ll_cw:ctx") || "{}") || {}; } catch (e) { c = {}; }
+    /* A parameter naming a DIFFERENT town than the one last visited wins, and
+       drops the stored labels with it rather than pairing this town's shops
+       with that town's name. */
+    if (q && c.slug !== q) c = { slug: q };
+    var slug = String(c.slug || "");
+    return {
+      slug:   slug,
+      label:  String(c.label || ""),
+      market: String(c.market || ""),
+      path:   slug ? "/" + slug : "/",
+    };
+  })();
+  /* "My Coldwater trip" where the town is known, "My trip" where it is not.
+     Every printed string below goes through one of these two. */
+  var IN = CTX.label ? " " + CTX.label : "";      /* " Coldwater" */
+  var OF = CTX.label ? CTX.label + " " : "";      /* "Coldwater " */
+  var FILE = (CTX.slug || "trip") + "-trip";      /* download filenames */
+
+  /* ONE KEY, and it is the one the add button writes. See the header comment.
+     NAMESPACED PER TOWN, because two cities are two trips and the old flat key
+     merged them into one route. The city page's cw-cart-isolate block writes
+     exactly this spelling; with no context resolved it falls back to the flat
+     key, which is what a pre-namespace list is still stored under. */
+  var KEY = CTX.slug ? "ll_cw:" + CTX.slug + ":ll_cart" : "ll_cw:ll_cart";
+  var DONE = "ll_cw_done", MODEKEY = "ll_cw_group";
+  document.title = "My" + IN + " trip";
+  (function(){
+    var b = document.getElementById("back");
+    if (b) b.href = CTX.path;
+    var h = document.querySelector("h1");
+    if (h) h.textContent = "My" + IN + " trip";
+    var s = document.getElementById("shotimg");
+    if (s) s.alt = "Your" + IN + " trip plan";
+  })();
+  var card = document.getElementById("card"), bar = document.getElementById("bar");
+  var ROSTER = [], BYID = {}, MODE = "store";
+
+  function raw(k, d){ try { return JSON.parse(localStorage.getItem(k) || d) || JSON.parse(d); } catch (e) { return JSON.parse(d); } }
+  function put(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function cart(){ var v = raw(KEY, "[]"); return Array.isArray(v) ? v : []; }
+  function doneSet(){ var v = raw(DONE, "{}"); return v && typeof v === "object" ? v : {}; }
+  function money(n){ return "$" + (Math.round(Number(n) * 100) / 100).toFixed(2); }
+  function esc(v){ return String(v == null ? "" : v).replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  function toast(m){
+    var t = document.getElementById("toast");
+    t.textContent = m; t.hidden = false;
+    clearTimeout(toast._t); toast._t = setTimeout(function(){ t.hidden = true; }, 2200);
+  }
+
+  /* ---- THE MODEL -------------------------------------------------------
+     Built once and handed to every renderer, so the card on screen, the
+     photograph, the print and the text file cannot disagree about what is on
+     the list. Metadata (brand, category, per-gram, deal) is joined from
+     /api/market BY ID -- the cart entry carries the feed's own product id,
+     which is stable where a printed title is not. Absent the feed the list
+     still renders from what the cart itself stored, which is why every item
+     carries its shop NAME and not only a key. */
+  function items(){
+    var c = cart(), byKey = {}, order = [];
+    for (var i = 0; i < c.length; i++) {
+      var e = c[i] || {};
+      var k = String(e.id || e.name || i) + "|" + String(e.size || "");
+      if (!byKey[k]) {
+        var m = BYID[e.id] || {};
+        byKey[k] = {
+          key: k, id: e.id || "", name: e.name || m.name || "(unnamed)",
+          store: e.store || m.store || "", storeKey: e.storeKey || m.storeKey || "",
+          size: e.size || "", price: e.price != null ? Number(e.price) : null, qty: 0,
+          brand: m.brand || "", category: m.category || "", type: m.type || "",
+          perG: m.perG != null ? m.perG : null, shelfPerG: m.shelfPerG != null ? m.shelfPerG : null,
+          deal: m.deal || "", mix: !!m.dealMix, group: m.dealGroup || "",
+          minQty: m.dealMinQty || 0, unit: m.dealPerUnit != null ? m.dealPerUnit : null,
+          url: e.url || m.url || ""
+        };
+        order.push(k);
+      }
+      byKey[k].qty++;
+    }
+    return order.map(function(k){ return byKey[k]; });
+  }
+
+  function whereOf(k){ for (var i = 0; i < ROSTER.length; i++) if (ROSTER[i].key === k) return ROSTER[i]; return null; }
+
+  /* GROUPING IS A VIEW, NOT A DIFFERENT LIST. By shop is the default because the
+     output is a driving route; brand and category are the other two questions a
+     shopper actually asks of the same items. The mix-and-match arithmetic is
+     always computed per SHOP regardless of the view, because that is where the
+     offer lives -- grouping by brand must not make a Sapura deal look satisfied
+     by an item bought at Lume. */
+  function model(){
+    var its = items(), shopGroups = {};
+    for (var i = 0; i < its.length; i++) {
+      var it = its[i];
+      if (!it.mix || !it.group) continue;
+      var gk = it.storeKey + " " + it.group;
+      var g = shopGroups[gk] || (shopGroups[gk] = { need: it.minQty || 0, unit: it.unit, have: 0, name: it.group, storeKey: it.storeKey });
+      g.have += it.qty;
+      if (it.minQty && (!g.need || it.minQty < g.need)) g.need = it.minQty;
+    }
+    function unlocked(it){
+      if (!it.mix || !it.group) return false;
+      var g = shopGroups[it.storeKey + " " + it.group];
+      return !!(g && g.have >= g.need && it.unit != null);
+    }
+    function lineTotal(it){
+      var p = unlocked(it) ? Number(it.unit) : (Number(it.price) || 0);
+      return p * it.qty;
+    }
+
+    var keyOf, labelOf;
+    if (MODE === "brand")       { keyOf = function(it){ return it.brand || " Unbranded"; };   labelOf = function(k){ return k === " Unbranded" ? "No brand listed" : k; }; }
+    else if (MODE === "category"){ keyOf = function(it){ return it.category || " Other"; };   labelOf = function(k){ return k === " Other" ? "Uncategorised" : k; }; }
+    else                         { keyOf = function(it){ return it.storeKey || it.store; };        labelOf = function(k, it){ return (it && it.store) || k; }; }
+
+    var groups = {}, order = [];
+    for (var j = 0; j < its.length; j++) {
+      var t = its[j], gk2 = keyOf(t);
+      if (!groups[gk2]) { groups[gk2] = { key: gk2, title: labelOf(gk2, t), items: [], shelf: 0, actual: 0, notes: [] }; order.push(gk2); }
+      var G = groups[gk2];
+      G.items.push(t);
+      G.shelf  += (Number(t.price) || 0) * t.qty;
+      G.actual += lineTotal(t);
+    }
+
+    /* The unlock lines belong to the shop that offers them, so in the shop view
+       they sit in their own group and in the other views they are collected at
+       the end -- never silently dropped, because a shopper one item short of a
+       deal is exactly who this page is for. */
+    var loose = [];
+    for (var gk3 in shopGroups) {
+      if (!Object.prototype.hasOwnProperty.call(shopGroups, gk3)) continue;
+      var sg = shopGroups[gk3], short = (sg.need || 0) - sg.have;
+      var line = short > 0
+        ? "Add " + short + " more from " + sg.name + " to unlock " + money(sg.unit) + " each (" + sg.have + " of " + sg.need + ")"
+        : sg.name + " deal unlocked: " + money(sg.unit) + " each, " + sg.have + " on the list";
+      var note = { text: line, ok: short <= 0, storeKey: sg.storeKey };
+      if (MODE === "store" && groups[sg.storeKey]) groups[sg.storeKey].notes.push(note);
+      else loose.push(note);
+    }
+
+    var out = order.map(function(k){ return groups[k]; });
+    if (MODE === "store") {
+      out.forEach(function(g){ var w = whereOf(g.key); g.addr = w && w.addr; g.phone = w && w.phone; });
+    }
+    var shelf = 0, actual = 0, n = 0, stops = {};
+    for (var q = 0; q < its.length; q++) {
+      shelf += (Number(its[q].price) || 0) * its[q].qty;
+      actual += lineTotal(its[q]);
+      n += its[q].qty;
+      if (its[q].storeKey) stops[its[q].storeKey] = 1;
+    }
+    return {
+      mode: MODE, groups: out, loose: loose, unlocked: unlocked, lineTotal: lineTotal,
+      count: n, stops: Object.keys(stops).length, shelf: shelf, actual: actual,
+      empty: its.length === 0
+    };
+  }
+
+  /* The sub-line under an item: everything we know that a shopper would want on
+     paper. Absent fields are simply absent rather than printed empty. */
+  function subOf(it){
+    var bits = [];
+    if (it.size) bits.push(it.size);
+    if (it.qty > 1) bits.push("x" + it.qty);
+    if (it.brand) bits.push(it.brand);
+    if (it.category) bits.push(it.category);
+    if (it.type) bits.push(it.type);
+    if (it.perG != null) bits.push(money(it.perG) + "/g");
+    return bits.join(" · ");
+  }
+
+  /* ---- HTML ------------------------------------------------------------- */
+  function render(){
+    var M = model(), done = doneSet();
+    if (M.empty) {
+      bar.hidden = true;
+      card.innerHTML = '<div class="empty">Nothing on your trip yet.<br/><br/>' +
+        '<a href="' + CTX.path + '">Browse the' + esc(IN) + ' menus</a> and tap ' +
+        '<b>Add to Shopping List</b> on anything worth the drive.</div>';
+      return;
+    }
+    bar.hidden = false;
+
+    var html = '<div class="hd"><div class="ttl"><h2>' + esc(OF) + 'trip plan</h2>' +
+      '<div class="meta">' + M.count + (M.count === 1 ? " item" : " items") + " across " +
+      M.stops + (M.stops === 1 ? " shop" : " shops") + " · " + dateLine() + '</div></div>' +
+      '<div class="grand"><b>' + money(M.actual) + '</b><span>' +
+      (M.actual < M.shelf - 0.005 ? "shelf " + money(M.shelf) : "estimated total") + '</span></div></div>';
+
+    for (var i = 0; i < M.groups.length; i++) {
+      var g = M.groups[i];
+      html += '<section class="grp"><h3>' + esc(g.title) + '</h3>';
+      if (g.addr || g.phone) {
+        var bits = [];
+        if (g.addr) bits.push('<a href="https://maps.google.com/?q=' +
+          encodeURIComponent(g.addr + (CTX.market ? ", " + CTX.market : "")) + '" target="_blank" rel="noopener">' + esc(g.addr) + '</a>');
+        if (g.phone) bits.push('<a href="tel:' + esc(String(g.phone).replace(/[^\d+]/g, "")) + '">' + esc(g.phone) + '</a>');
+        html += '<div class="where">' + bits.join(" &middot; ") + '</div>';
+      }
+      for (var j = 0; j < g.items.length; j++) {
+        var it = g.items[j], on = !!done[it.key], sub = subOf(it);
+        var line = M.lineTotal(it);
+        html += '<label class="item' + (on ? " done" : "") + '">' +
+          '<input type="checkbox" data-tick="' + esc(it.key) + '"' + (on ? " checked" : "") + '/>' +
+          '<span class="nm"><b>' + esc(it.name) + '</b>' +
+            (sub ? '<span class="sub">' + esc(sub) + '</span>' : "") + '</span>' +
+          '<span class="pr">' + (it.price != null ? money(line) : "&mdash;") +
+            (M.unlocked(it) ? '<small>deal price</small>' : (it.qty > 1 && it.price != null ? '<small>' + money(it.price) + " each</small>" : "")) +
+          '</span>' +
+          '<button class="rm" type="button" data-rm="' + esc(it.key) + '" aria-label="Remove ' + esc(it.name) + '">&times;</button>' +
+        '</label>';
+      }
+      for (var k = 0; k < g.notes.length; k++) {
+        html += '<div class="mix' + (g.notes[k].ok ? " ok" : "") + '">' + esc(g.notes[k].text) + '</div>';
+      }
+      html += '<div class="sub-t"><span>' + g.items.length + (g.items.length === 1 ? " line" : " lines") + '</span><span>' +
+        (g.actual < g.shelf - 0.005 ? '<span class="was">' + money(g.shelf) + '</span>' : "") + money(g.actual) +
+        '</span></div></section>';
+    }
+    for (var L = 0; L < M.loose.length; L++) {
+      html += '<div class="mix' + (M.loose[L].ok ? " ok" : "") + '">' + esc(M.loose[L].text) + '</div>';
+    }
+    html += '<div class="fine">Prices as published by each shop when this list was built. ' +
+      'Not an offer &mdash; confirm at the counter. legal-leafmarket.com' + CTX.path + '</div>';
+    card.innerHTML = html;
+  }
+
+  function dateLine(){
+    try {
+      return new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    } catch (e) { return ""; }
+  }
+
+  /* ---- TEXT and CSV ------------------------------------------------------
+     Plain text because it has to survive into a message, a notes app or a
+     partner's phone with nothing installed on either end. CSV because that is
+     what opens in Excel, Numbers and Sheets by double-click, with no writer to
+     maintain and no dependency to add (CLAUDE.md section 1). */
+  function asText(){
+    var M = model(), NL = String.fromCharCode(10), out = [];
+    out.push((OF + "trip plan").toUpperCase());
+    out.push(M.count + (M.count === 1 ? " item" : " items") + " across " + M.stops +
+             (M.stops === 1 ? " shop" : " shops") + "  " + dateLine());
+    out.push("");
+    for (var i = 0; i < M.groups.length; i++) {
+      var g = M.groups[i];
+      out.push(String(g.title).toUpperCase());
+      if (g.addr) out.push("  " + g.addr + (g.phone ? "  " + g.phone : ""));
+      for (var j = 0; j < g.items.length; j++) {
+        var it = g.items[j], sub = subOf(it);
+        out.push("  [ ] " + it.name + (sub ? "  (" + sub + ")" : "") +
+                 (it.price != null ? "  " + money(M.lineTotal(it)) : ""));
+      }
+      for (var k = 0; k < g.notes.length; k++) out.push("  * " + g.notes[k].text);
+      out.push("  Subtotal " + money(g.actual) + (g.actual < g.shelf - 0.005 ? "  (shelf " + money(g.shelf) + ")" : ""));
+      out.push("");
+    }
+    for (var L = 0; L < M.loose.length; L++) out.push("* " + M.loose[L].text);
+    if (M.loose.length) out.push("");
+    out.push("TOTAL " + money(M.actual) + (M.actual < M.shelf - 0.005 ? "   (shelf " + money(M.shelf) + ")" : ""));
+    out.push("");
+    out.push("Prices as published by each shop; confirm before you travel.");
+    out.push("legal-leafmarket.com" + CTX.path);
+    return out.join(NL);
+  }
+
+  function asCsv(){
+    var M = model(), NL = String.fromCharCode(13) + String.fromCharCode(10), rows = [];
+    /* A field is quoted always: a strain called 3.5g, 1/2 or anything with a
+       comma is ordinary here, and a bare number would be re-typed by the
+       spreadsheet as a date often enough to matter. */
+    function q(v){ return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; }
+    rows.push([q(M.mode === "store" ? "Shop" : M.mode === "brand" ? "Brand" : "Category"),
+               q("Product"), q("Size"), q("Qty"), q("Brand"), q("Category"), q("Strain type"),
+               q("Unit price"), q("Line total"), q("Price per gram"), q("Deal"), q("Link")].join(","));
+    for (var i = 0; i < M.groups.length; i++) {
+      var g = M.groups[i];
+      for (var j = 0; j < g.items.length; j++) {
+        var it = g.items[j];
+        rows.push([q(g.title), q(it.name), q(it.size), q(it.qty), q(it.brand), q(it.category),
+                   q(it.type), q(it.price != null ? it.price.toFixed(2) : ""),
+                   q(M.lineTotal(it).toFixed(2)), q(it.perG != null ? it.perG.toFixed(2) : ""),
+                   q(M.unlocked(it) ? "deal price applied" : (it.deal || "")), q(it.url)].join(","));
+      }
+    }
+    rows.push("");
+    rows.push([q("TOTAL"), q(""), q(""), q(M.count), q(""), q(""), q(""), q(""), q(M.actual.toFixed(2))].join(","));
+    return rows.join(NL);
+  }
+
+  /* ---- THE PHOTOGRAPH ----------------------------------------------------
+     Hand-drawn on a canvas rather than rasterised from the DOM, because every
+     DOM-to-image library is a dependency this repo does not take, and because a
+     remote product photo would taint the canvas and make toBlob throw -- so the
+     card is typographic on purpose and carries no images at all. Same model as
+     the HTML, so the picture is the page.
+
+     Two passes: lay out to get the height, then paint. Text wraps by
+     measurement rather than by a character count, since a strain name is as
+     likely to be "Grandaddy Purple #4" as "OG". */
+  function paint(){
+    var M = model(), W = 1080, PAD = 56, SCALE = 2;
+    var c = document.createElement("canvas");
+    var x = c.getContext("2d");
+    var INNER = W - PAD * 2;
+
+    function font(weight, size){ return weight + " " + size + "px ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"; }
+    function wrap(text, maxw){
+      var words = String(text).split(/\s+/), lines = [], cur = "";
+      for (var i = 0; i < words.length; i++) {
+        var t = cur ? cur + " " + words[i] : words[i];
+        if (x.measureText(t).width > maxw && cur) { lines.push(cur); cur = words[i]; }
+        else cur = t;
+      }
+      if (cur) lines.push(cur);
+      return lines;
+    }
+
+    var ops = [], y = PAD;
+    function text(s, tx, ty, f, colour, align){ ops.push({ k: "t", s: s, x: tx, y: ty, f: f, c: colour, a: align || "left" }); }
+    function rect(rx, ry, rw, rh, colour, r){ ops.push({ k: "r", x: rx, y: ry, w: rw, h: rh, c: colour, r: r || 0 }); }
+    function rule(ry, colour){ ops.push({ k: "r", x: PAD, y: ry, w: INNER, h: 1, c: colour || "#26343d", r: 0 }); }
+
+    x.font = font(700, 30);
+    text((OF + "trip plan").toUpperCase(), PAD, y + 30, font(700, 30), "#d8b25a");
+    x.font = font(700, 42);
+    text(money(M.actual), W - PAD, y + 34, font(700, 42), "#dbe7ee", "right");
+    y += 44;
+    text(M.count + (M.count === 1 ? " item" : " items") + " across " + M.stops +
+         (M.stops === 1 ? " shop" : " shops") + "  ·  " + dateLine(),
+         PAD, y + 18, font(400, 22), "#8fa6b3");
+    if (M.actual < M.shelf - 0.005) {
+      text("shelf " + money(M.shelf), W - PAD, y + 18, font(400, 20), "#8fa6b3", "right");
+    }
+    y += 40;
+    rule(y); y += 26;
+
+    for (var i = 0; i < M.groups.length; i++) {
+      var g = M.groups[i];
+      if (i) { rule(y - 12, "#1c2830"); y += 10; }
+      text(g.title, PAD, y + 22, font(700, 26), "#dbe7ee");
+      y += 34;
+      if (g.addr || g.phone) {
+        text([g.addr, g.phone].filter(Boolean).join("   ·   "), PAD, y + 16, font(400, 20), "#8fa6b3");
+        y += 28;
+      }
+      for (var j = 0; j < g.items.length; j++) {
+        var it = g.items[j];
+        var priceTxt = it.price != null ? money(M.lineTotal(it)) : "—";
+        x.font = font(600, 24);
+        var pw = x.measureText(priceTxt).width;
+        var nameW = INNER - pw - 30;
+        x.font = font(600, 24);
+        var lines = wrap(it.name, nameW);
+        for (var L = 0; L < lines.length; L++) {
+          text(lines[L], PAD, y + 22 + L * 28, font(600, 24), "#dbe7ee");
+        }
+        text(priceTxt, W - PAD, y + 22, font(600, 24), "#dbe7ee", "right");
+        y += 22 + (lines.length - 1) * 28;
+        var sub = subOf(it);
+        if (sub) { y += 24; text(sub, PAD, y, font(400, 19), "#8fa6b3"); }
+        y += 20;
+      }
+      for (var k = 0; k < g.notes.length; k++) {
+        var n = g.notes[k], col = n.ok ? "#8fd39a" : "#d8b25a";
+        x.font = font(500, 20);
+        var nl = wrap(n.text, INNER - 24);
+        rect(PAD, y + 2, INNER, nl.length * 26 + 16, n.ok ? "rgba(143,211,154,.10)" : "rgba(216,178,90,.10)", 8);
+        for (var m = 0; m < nl.length; m++) text(nl[m], PAD + 12, y + 26 + m * 26, font(500, 20), col);
+        y += nl.length * 26 + 26;
+      }
+      y += 6; rule(y, "#1c2830"); y += 8;
+      text(g.items.length + (g.items.length === 1 ? " line" : " lines"), PAD, y + 22, font(700, 22), "#8fa6b3");
+      text(money(g.actual), W - PAD, y + 22, font(700, 22), "#dbe7ee", "right");
+      y += 44;
+    }
+    for (var q = 0; q < M.loose.length; q++) {
+      var lo = M.loose[q], lcol = lo.ok ? "#8fd39a" : "#d8b25a";
+      x.font = font(500, 20);
+      var ll = wrap(lo.text, INNER - 24);
+      rect(PAD, y, INNER, ll.length * 26 + 16, lo.ok ? "rgba(143,211,154,.10)" : "rgba(216,178,90,.10)", 8);
+      for (var z = 0; z < ll.length; z++) text(ll[z], PAD + 12, y + 24 + z * 26, font(500, 20), lcol);
+      y += ll.length * 26 + 26;
+    }
+
+    rule(y); y += 8;
+    x.font = font(400, 18);
+    var fine = wrap("Prices as published by each shop when this list was built. Not an offer — confirm at the counter.", INNER);
+    for (var f = 0; f < fine.length; f++) text(fine[f], PAD, y + 20 + f * 24, font(400, 18), "#8fa6b3");
+    y += fine.length * 24 + 12;
+    text("legal-leafmarket.com" + CTX.path, PAD, y + 20, font(600, 19), "#d8b25a");
+    y += 34 + PAD;
+
+    c.width = W * SCALE; c.height = Math.ceil(y) * SCALE;
+    x.scale(SCALE, SCALE);
+    x.fillStyle = "#0b1418"; x.fillRect(0, 0, W, y);
+    x.fillStyle = "#0e181e";
+    roundRect(x, 20, 20, W - 40, y - 40, 22); x.fill();
+    x.strokeStyle = "#26343d"; x.lineWidth = 2;
+    roundRect(x, 20, 20, W - 40, y - 40, 22); x.stroke();
+    x.textBaseline = "alphabetic";
+    for (var o = 0; o < ops.length; o++) {
+      var op = ops[o];
+      if (op.k === "r") {
+        x.fillStyle = op.c;
+        if (op.r) { roundRect(x, op.x, op.y, op.w, op.h, op.r); x.fill(); }
+        else x.fillRect(op.x, op.y, op.w, op.h);
+      } else {
+        x.font = op.f; x.fillStyle = op.c; x.textAlign = op.a;
+        x.fillText(op.s, op.x, op.y);
+      }
+    }
+    x.textAlign = "left";
+    return c;
+  }
+
+  function roundRect(x, rx, ry, rw, rh, r){
+    x.beginPath();
+    x.moveTo(rx + r, ry);
+    x.arcTo(rx + rw, ry, rx + rw, ry + rh, r);
+    x.arcTo(rx + rw, ry + rh, rx, ry + rh, r);
+    x.arcTo(rx, ry + rh, rx, ry, r);
+    x.arcTo(rx, ry, rx + rw, ry, r);
+    x.closePath();
+  }
+
+  /* ---- doing things with it --------------------------------------------- */
+  function download(blob, name){
+    var u = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = u; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(u); }, 4000);
+  }
+  function showText(){
+    var ta = document.getElementById("out");
+    if (!ta) {
+      ta = document.createElement("textarea");
+      ta.id = "out"; ta.readOnly = true;
+      card.parentNode.insertBefore(ta, card.nextSibling);
+    }
+    ta.value = asText(); ta.focus(); ta.select();
+    return ta;
+  }
+  function copyText(){
+    var txt = asText();
+    /* A clipboard write can be refused by permission or by a non-secure
+       context, and a button that silently does nothing reads as broken. */
+    var fallback = function(){ showText(); toast("Select and copy"); };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(function(){ toast("Copied"); }).catch(fallback);
+      } else fallback();
+    } catch (e) { fallback(); }
+  }
+
+  var shot = document.getElementById("shot"), shotBlob = null;
+  function savePhoto(){
+    var c = paint();
+    c.toBlob(function(b){
+      if (!b) { toast("Could not build the image"); return; }
+      shotBlob = b;
+      document.getElementById("shotimg").src = URL.createObjectURL(b);
+      /* navigator.share with a FILE is the only route that reaches the iOS
+         Photos app directly; a download link there saves to Files instead. Where
+         it is unavailable the picture itself is the path, so the hint says so
+         rather than leaving a phone user with a button that does nothing. */
+      var canShare = false;
+      try { canShare = !!(navigator.canShare && navigator.canShare({ files: [new File([b], FILE + ".jpg", { type: "image/jpeg" })] })); } catch (e) {}
+      document.getElementById("shotshare").hidden = !canShare;
+      document.getElementById("shothint").textContent = canShare
+        ? "Share → Save Image puts this straight in your Photos."
+        : "Press and hold the picture to save it to your photos, or use Download.";
+      shot.hidden = false;
+    }, "image/jpeg", 0.92);
+  }
+
+  document.getElementById("shotshare").addEventListener("click", function(){
+    if (!shotBlob) return;
+    try {
+      navigator.share({ files: [new File([shotBlob], FILE + ".jpg", { type: "image/jpeg" })],
+                        title: "My" + IN + " trip" }).catch(function(){});
+    } catch (e) { toast("Sharing is not available here"); }
+  });
+  document.getElementById("shotdl").addEventListener("click", function(){
+    if (shotBlob) download(shotBlob, FILE + ".jpg");
+  });
+  document.getElementById("shotclose").addEventListener("click", function(){ closeShot(); });
+  function closeShot(){
+    shot.hidden = true;
+    var img = document.getElementById("shotimg");
+    if (img.src.indexOf("blob:") === 0) URL.revokeObjectURL(img.src);
+    img.src = ""; shotBlob = null;
+  }
+
+  /* ---- controls ---------------------------------------------------------- */
+  var expBtn = document.getElementById("exp"), expMenu = document.getElementById("expmenu");
+  function closeMenu(){ expMenu.hidden = true; expBtn.setAttribute("aria-expanded", "false"); }
+  expBtn.addEventListener("click", function(e){
+    e.stopPropagation();
+    expMenu.hidden = !expMenu.hidden;
+    expBtn.setAttribute("aria-expanded", expMenu.hidden ? "false" : "true");
+  });
+  document.addEventListener("click", function(e){
+    if (!expMenu.hidden && !expMenu.contains(e.target) && e.target !== expBtn) closeMenu();
+  });
+
+  expMenu.addEventListener("click", function(e){
+    var b = e.target && e.target.closest && e.target.closest("[data-do]");
+    if (!b) return;
+    var act = b.getAttribute("data-do");
+    closeMenu();
+    if (act === "copy") return copyText();
+    if (act === "photo") return savePhoto();
+    if (act === "pdf")  return window.print();
+    if (act === "txt")  return download(new Blob([asText()], { type: "text/plain;charset=utf-8" }), FILE + ".txt");
+    if (act === "csv")  return download(new Blob(["﻿" + asCsv()], { type: "text/csv;charset=utf-8" }), FILE + ".csv");
+    if (act === "jpeg") return paint().toBlob(function(bb){ if (bb) download(bb, FILE + ".jpg"); }, "image/jpeg", 0.92);
+    if (act === "clear") {
+      /* Destructive and one tap from the thumb, so it asks. */
+      if (!window.confirm("Clear your whole" + IN + " trip?")) return;
+      put(KEY, []); put(DONE, {}); render();
+    }
+  });
+
+  bar.addEventListener("click", function(e){
+    var b = e.target && e.target.closest && e.target.closest("[data-mode]");
+    if (!b) return;
+    MODE = b.getAttribute("data-mode");
+    try { localStorage.setItem(MODEKEY, MODE); } catch (err) {}
+    var all = bar.querySelectorAll("[data-mode]");
+    for (var i = 0; i < all.length; i++) all[i].setAttribute("aria-pressed", all[i] === b ? "true" : "false");
+    render();
+  });
+
+  document.addEventListener("change", function(e){
+    var t = e.target;
+    if (!t || !t.getAttribute) return;
+    var k = t.getAttribute("data-tick");
+    if (!k) return;
+    var d = doneSet();
+    if (t.checked) d[k] = 1; else delete d[k];
+    put(DONE, d);
+    var row = t.closest(".item");
+    if (row) row.classList.toggle("done", t.checked);
+  });
+
+  /* REMOVING WRITES THE ENGINE'S OWN KEY, so returning to the city page shows the
+     change: the engine reads its cart once at load and keeps it in a closure,
+     which is exactly why removal lives on this page and not in a panel floating
+     over the running engine. Every copy of a line goes, since the list shows
+     one row per product-and-size with a quantity. */
+  document.addEventListener("click", function(e){
+    var rm = e.target && e.target.closest && e.target.closest("[data-rm]");
+    if (!rm) return;
+    e.preventDefault(); e.stopPropagation();
+    var k = rm.getAttribute("data-rm");
+    var kept = cart().filter(function(x, i){
+      return (String(x && (x.id || x.name) || i) + "|" + String((x && x.size) || "")) !== k;
+    });
+    put(KEY, kept);
+    var d = doneSet(); delete d[k]; put(DONE, d);
+    render();
+  }, true);
+
+  /* ESCAPE GETS YOU OUT, at every depth, in the order a person expects: the
+     picture first, then the menu, then the page itself. A list you cannot leave
+     without hunting for a button is the complaint that produced this. */
+  document.addEventListener("keydown", function(e){
+    if (e.key !== "Escape" && e.key !== "Esc") return;
+    if (!shot.hidden) { closeShot(); return; }
+    if (!expMenu.hidden) { closeMenu(); expBtn.focus(); return; }
+    var ta = document.getElementById("out");
+    if (ta) { ta.remove(); return; }
+    window.location.href = CTX.path;
+  });
+
+  try { MODE = localStorage.getItem(MODEKEY) || "store"; } catch (e) {}
+  if (["store", "brand", "category"].indexOf(MODE) < 0) MODE = "store";
+  var pressed = bar.querySelectorAll("[data-mode]");
+  for (var p = 0; p < pressed.length; p++) {
+    pressed[p].setAttribute("aria-pressed", pressed[p].getAttribute("data-mode") === MODE ? "true" : "false");
+  }
+
+  render();
+
+  /* The feed supplies the addresses and the brand/category/per-gram metadata, so
+     the list is useful before it arrives and simply gains detail afterwards.
+     Offline this fetch fails and the list still renders -- which is why every
+     item carries its own name, shop and price rather than only an id. */
+  fetch("/api/market" + (CTX.slug ? "?town=" + encodeURIComponent(CTX.slug) : ""),
+         { headers: { accept: "application/json" } })
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      ROSTER = (j && j.roster) || [];
+      var ps = (j && j.products) || [];
+      for (var i = 0; i < ps.length; i++) if (ps[i] && ps[i].id) BYID[ps[i].id] = ps[i];
+      render();
+    })
+    .catch(function(){});
+
+  if ("serviceWorker" in navigator) {
+    try { navigator.serviceWorker.register("/sw.js"); } catch (e) {}
+  }
+})();
+</script>
+</body>
+</html>

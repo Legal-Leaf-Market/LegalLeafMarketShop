@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Popping</title>
+<meta name="description" content="Six coins, a stake, a stopwatch. A momentum screen for a small crypto stake: pick coins that are up and still moving, size them, set the exits, watch them live, get told when to sell.">
+<meta name="theme-color" content="#0b0f14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/#plan"><span class="mark">▲</span> Popping</a>
+  <div class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText">idle</span></div>
+</header>
+
+<div id="fixtureBanner" class="banner" hidden>
+  <strong>Sample data.</strong> <span id="fixtureWhy">The live price feeds were not reachable, so these are synthetic coins. Nothing here is a market.</span>
+</div>
+
+<main>
+<!-- ======================= PLAN ======================= -->
+<section id="tab-plan" class="tab">
+  <div class="card controls">
+    <div class="row"><label for="budget">Stake</label><output id="budgetOut">$30</output></div>
+    <input id="budget" type="range" min="5" max="500" step="5" value="30">
+    <div class="row"><label for="coins">Coins</label><output id="coinsOut">6</output></div>
+    <input id="coins" type="range" min="1" max="12" step="1" value="6">
+    <div class="row"><label for="horizon">Flip it in</label><output id="horizonOut">3 weeks</output></div>
+    <input id="horizon" type="range" min="0" max="9" step="1" value="5">
+    <div class="row"><label for="risk">Risk</label><output id="riskOut">Balanced</output></div>
+    <input id="risk" type="range" min="1" max="5" step="1" value="3">
+    <div class="row"><label for="fee">Where you buy</label></div>
+    <select id="fee">
+      <option value="coinbase_advanced_taker">Coinbase Advanced, market order (1.20%)</option>
+      <option value="coinbase_advanced_maker">Coinbase Advanced, limit order (0.60%)</option>
+      <option value="kraken_pro">Kraken Pro, market order (0.40%)</option>
+      <option value="coinbase_simple">Coinbase app, the simple Buy button</option>
+      <option value="zero">No fees (fantasy)</option>
+    </select>
+    <button id="pickBtn" class="primary">Pick my 6</button>
+    <p class="hint" id="riskHint"></p>
+  </div>
+
+  <div id="costCard" class="card cost" hidden></div>
+  <div id="picks" class="picks"></div>
+  <div id="planActions" class="actions" hidden>
+    <button id="trackBtn" class="primary">I bought these → start watching</button>
+    <p class="hint">Paper trade if you like: nothing here places an order. You buy on your exchange; this app watches the prices and tells you when the plan says sell.</p>
+  </div>
+  <details id="alsoRan" class="card" hidden><summary>Also looked at</summary><div id="alsoRanList"></div></details>
+  <p class="hint" id="screenMeta"></p>
+</section>
+
+<!-- ======================= LIVE ======================= -->
+<section id="tab-live" class="tab" hidden>
+  <div class="card feed">
+    <div class="row"><strong>Live feed</strong><span id="feedSource" class="pill">off</span></div>
+    <div class="row small"><span>Exchange → you</span><span id="lag">—</span></div>
+    <div class="row small"><span>Last tick</span><span id="lastTick">—</span></div>
+    <div class="btnrow">
+      <button id="notifyBtn">Enable alerts on this phone</button>
+      <button id="pushBtn" hidden>Enable background alerts</button>
+      <button id="trendBtn">Check the trends now</button>
+    </div>
+    <p class="hint" id="notifyHint">Alerts fire while this page (or the installed app) is open. Background alerts need the server side configured; see the Playbook.</p>
+  </div>
+  <div class="card total"><div class="row"><span>Your stake now</span><strong id="portfolioNow">—</strong></div><div class="row small"><span>Put in</span><span id="portfolioIn">—</span></div><div class="row small"><span>Sell-by</span><span id="portfolioSellBy">—</span></div></div>
+  <div id="positions" class="positions"></div>
+  <div class="card">
+    <div class="row"><strong>Alerts</strong><button id="clearAlerts" class="link">clear</button></div>
+    <ul id="alerts" class="alerts"></ul>
+    <p class="hint">Rules: the trend breaks on a daily close → sell. Disaster stop (trails up, never down) → sell. Target → sell half, stop to break-even. Horizon reached → close out. A move bigger than the coin's usual hour → "popping".</p>
+  </div>
+  <div class="btnrow"><button id="resetBtn" class="danger">Forget all positions</button></div>
+</section>
+
+<!-- ======================= TRADERS ======================= -->
+<section id="tab-traders" class="tab" hidden>
+  <div class="card">
+    <strong>The only top traders you can watch instead of believe.</strong>
+    <p class="hint">Hyperliquid settles every trade on-chain, so its leaderboard is a live query over real accounts, not a curated list. Ranked by 30-day profit. Tap one to see what it holds right now and its last fills. Read-only: this is a window, not a copy-trader.</p>
+    <div class="row"><label for="tradersBand">Account size</label></div>
+    <select id="tradersBand">
+      <option value="250000-5000000">$250k – $5M: people</option>
+      <option value="5000000-100000000">$5M – $100M: desks</option>
+      <option value="100000000-">over $100M: funds, market makers, vaults</option>
+      <option value="250000-">anything over $250k</option>
+    </select>
+  </div>
+  <div id="traders" class="traders"></div>
+  <div id="traderDetail" class="card" hidden></div>
+  <p class="hint" id="tradersMeta"></p>
+</section>
+
+<!-- ======================= TEST ======================= -->
+<section id="tab-test" class="tab" hidden>
+  <div class="card">
+    <strong>Would this have worked?</strong>
+    <p class="hint">Walks forward through the last months with the sliders above: every cycle re-runs the screen using only the days before it, buys at that close, exits by the same rules, pays the fees you chose both ways, and compounds into the next cycle. No peeking. If it says it lost, believe it over the Plan tab.</p>
+    <div class="row"><label for="months">Months</label><select id="months"><option>3</option><option selected>6</option><option>9</option><option>12</option></select></div>
+    <button id="btBtn" class="primary">Run the walk-forward</button>
+  </div>
+  <div id="btOut" hidden>
+    <canvas id="eq" class="chart" height="220"></canvas>
+    <div id="btStats" class="card stats"></div>
+    <div id="btCycles" class="card"></div>
+  </div>
+</section>
+</main>
+
+<nav class="tabs">
+  <a href="#plan" data-tab="plan">Plan</a>
+  <a href="#live" data-tab="live">Live <span id="liveBadge" class="badge" hidden></span></a>
+  <a href="#traders" data-tab="traders">Traders</a>
+  <a href="#test" data-tab="test">Test</a>
+  <a href="/playbook" class="ext">Playbook</a>
+</nav>
+
+<dialog id="trackDialog">
+  <form method="dialog">
+    <h3>What did you actually pay?</h3>
+    <p class="hint">Edit any price to what your exchange filled you at. The stop, the target and the sell-by date are set from these.</p>
+    <div id="trackRows"></div>
+    <div class="btnrow"><button value="cancel" class="link">Cancel</button><button value="ok" class="primary">Start watching</button></div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" hidden></div>
+<footer class="foot">Not advice. A screen and a stopwatch. Coins can go to zero and momentum reverses without asking. <a href="/playbook">How this works and where the rules come from.</a></footer>
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

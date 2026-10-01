@@ -1,0 +1,291 @@
+/* ============================================================
+   library.css — Legal-Leaf Market, the long-form pages only.
+   Design tokens live in tokens.css; load that FIRST.
+   ------------------------------------------------------------
+   Ported from nicotiamarket.com's app.css story block so the three
+   sister libraries are the same object in three colours. The only
+   systematic change is that every accent reference goes through
+   var(--accent) instead of Nicotia's hardcoded --ember, which is what
+   lets this file be copied back and forth without a find-and-replace.
+
+   AND THE PORT NOW STOPS AT THE WORDS. The owner ruled against the other
+   half of it -- "the reels and library need to match the rest of the site ...
+   it currently has the Nicotia market styling, and I do not want any part of
+   that" -- so what a CARD looks like moved to public/css/plate.css, which is this
+   site's own and is not portable to a sister. The line between the two:
+
+       library.css sets the WORDS.  plate.css sets the OBJECTS
+       the words sit on.
+
+   A reading column is a reading column at all three sites, so the measure, the
+   chapter rhythm, the pull quote and the ladder stay here and a fix to them
+   still travels for free. Every page that loads this file loads plate.css
+   AFTER it; plate.css wins by ORDER rather than by weight, so nothing here
+   needs !important and nothing there does either.
+
+   These pages deliberately do NOT load the market engine. A reading
+   page has no grid, no filters and no cart, so pulling in 250KB of
+   base64 to render a paragraph would be indefensible. That is also why
+   this lives in a normal reviewable stylesheet rather than inside the
+   blob (see CLAUDE.md 5 — additive is the house preference).
+   ============================================================ */
+
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);
+  font-size:16px;line-height:1.6;font-weight:400;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(circle at 12% 4%,rgba(var(--accent-rgb),.07),transparent 42%),
+                   radial-gradient(circle at 88% 12%,rgba(240,185,60,.05),transparent 44%)}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+.shell{width:var(--shell);margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.eyebrow{display:inline-block;font-family:var(--sans);font-weight:500;
+  text-transform:uppercase;font-size:.72rem;letter-spacing:.38em;color:var(--dim)}
+
+.sbacklink{display:inline-block;margin:22px 0 0;font-family:var(--sans);font-weight:600;
+  font-size:13px;letter-spacing:.02em;color:var(--dim);transition:color .16s}
+.sbacklink:hover{color:var(--gold)}
+
+/* ============================================================
+   LONG-FORM
+   ------------------------------------------------------------
+   A reading page, not a shelf: one narrow column, generous leading,
+   and the display face doing the work. Measure is capped at ~64ch
+   because the rest of this site is scannable and this is the only
+   part of it anybody reads top to bottom.
+   ============================================================ */
+.story{padding-bottom:80px}
+.st-hero{text-align:center;padding:26px 0 54px;border-bottom:1px solid var(--line);
+  margin-bottom:54px;position:relative;overflow:hidden}
+.st-hero::before{content:"";position:absolute;inset:-40% -20% auto;height:360px;
+  pointer-events:none;opacity:.16;
+  background:radial-gradient(60% 100% at 50% 0,var(--accent),transparent 70%)}
+.st-mark{width:56px;height:67px;display:block;margin:0 auto 18px;position:relative;z-index:2}
+.st-hero .eyebrow{position:relative;z-index:2}
+.st-hero h1{position:relative;z-index:2;margin:10px 0 0;font-family:var(--display);
+  font-weight:900;font-size:clamp(2.4rem,6.5vw,4.6rem);line-height:.92;letter-spacing:-.03em;
+  background:linear-gradient(96deg,var(--text) 0%,var(--gold) 48%,var(--accent) 90%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  color:var(--gold)}
+.st-lead{display:block;font-family:var(--script);font-style:italic;font-weight:600;
+  font-size:clamp(1.2rem,3.2vw,2rem);color:var(--accent);line-height:1;
+  margin-bottom:-.08em;-webkit-text-fill-color:var(--accent)}
+
+.st-tagline{position:relative;z-index:2;margin:20px 0 0;text-align:center}
+.st-tag-en{display:block;font-family:var(--script);font-style:italic;font-weight:600;
+  font-size:clamp(1.15rem,2.9vw,1.7rem);line-height:1.25;color:var(--gold);
+  letter-spacing:.01em;text-shadow:0 2px 20px rgba(240,185,60,.22)}
+.st-tag-sub{display:block;margin-top:7px;font-family:var(--script);font-style:italic;
+  font-size:clamp(.86rem,1.9vw,1.02rem);color:var(--accent);opacity:.78;letter-spacing:.03em}
+.st-tagline::before,.st-tagline::after{content:"";display:block;width:54px;height:1px;
+  margin:0 auto;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.st-tagline::before{margin-bottom:16px}
+.st-tagline::after{margin-top:16px}
+
+.st-standfirst{position:relative;z-index:2;max-width:60ch;margin:22px auto 0;
+  color:var(--muted);font-size:1.06rem;line-height:1.65}
+.st-standfirst em{color:var(--gold);font-style:italic;font-family:var(--script);
+  font-size:1.15em}
+
+.st-body{max-width:64ch;margin:0 auto}
+.st-chapter{position:relative;padding:0 0 52px 0;margin-bottom:52px;
+  border-bottom:1px solid var(--line)}
+.st-chapter:last-child{border-bottom:0}
+/* ...but a BOXED chapter is a box, so it keeps all four sides even when it lands last.
+   Without this, `:last-child` (0,2,0) out-specifies `.st-warn` (0,1,0) and the box renders
+   with three red sides and an open bottom. Caught on /burned-at-a-funeral, whose honesty
+   chapter is the final section. Restoring the width alone is not enough either: the
+   `border-bottom:0` shorthand also resets the colour to currentColor, so the edge came
+   back in text grey. Each box therefore re-declares its own bottom border in full. */
+.st-chapter.st-warn:last-child{border-bottom:1px solid rgba(239,83,80,.3)}
+.st-chapter.st-hilite:last-child{border-bottom:1px solid rgba(var(--accent-rgb),.24)}
+.st-chapter.st-cosmic:last-child{border-bottom:1px solid rgba(129,178,255,.24)}
+/* the numeral sits behind the text as a watermark rather than beside it,
+   so the column stays one measure on a phone */
+.st-num{position:absolute;top:-16px;left:-8px;z-index:0;pointer-events:none;
+  font-family:var(--display);font-weight:900;font-size:112px;line-height:1;
+  color:var(--accent);opacity:.09;user-select:none}
+.st-when{position:relative;z-index:1;font-family:var(--sans);font-size:11px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 8px}
+.st-chapter h2{position:relative;z-index:1;font-family:var(--display);font-weight:900;
+  font-size:clamp(1.5rem,3.6vw,2.1rem);line-height:1.15;letter-spacing:-.02em;
+  color:var(--text);margin:0 0 18px}
+.st-chapter h3{position:relative;z-index:1;font-family:var(--display);font-weight:600;
+  font-size:1.12rem;line-height:1.3;color:var(--gold);margin:26px 0 10px}
+.st-chapter p{position:relative;z-index:1;color:var(--muted);font-size:1.03rem;
+  line-height:1.75;margin:0 0 16px}
+.st-chapter b{color:var(--text);font-weight:600}
+.st-chapter i,.st-chapter em{color:var(--accent)}
+.st-chapter a:not(.st-cta):not(.lib-next){color:var(--gold);
+  border-bottom:1px solid rgba(240,185,60,.35)}
+.st-chapter a:not(.st-cta):not(.lib-next):hover{border-bottom-color:var(--gold)}
+.st-chapter ul{position:relative;z-index:1;color:var(--muted);font-size:1.03rem;
+  line-height:1.75;margin:0 0 16px;padding-left:22px}
+.st-chapter li{margin:0 0 8px}
+
+/* a step to the side: quieter, ruled off, never the argument */
+.st-aside{border-left:2px solid rgba(var(--accent-rgb),.4);padding:2px 0 2px 16px;
+  font-size:.95rem !important;color:var(--dim) !important;font-style:italic}
+/* the line worth stopping on */
+.st-pull{font-family:var(--display);font-weight:600;font-size:1.3rem !important;
+  line-height:1.45 !important;color:var(--gold) !important;text-align:center;
+  padding:18px 0;margin:22px 0 !important;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.st-quote{color:var(--accent);font-family:var(--script);font-style:italic;font-size:1.12em}
+
+/* the chapter the whole page exists for */
+.st-hilite{background:rgba(var(--accent-rgb),.05);border:1px solid rgba(var(--accent-rgb),.24);
+  border-radius:var(--r);padding:30px 26px;margin-bottom:52px}
+.st-hilite .st-num{top:-6px;left:6px}
+
+/* chapter 0: the deep-time ladder. Cool blue, deliberately not the house
+   accent — it is a different order of magnitude and should look like one. */
+.st-cosmic{border:1px solid rgba(129,178,255,.24);border-radius:var(--r);
+  padding:30px 26px;margin-bottom:52px;background:rgba(129,178,255,.04)}
+.st-cosmic .st-num,.st-cosmic .st-when{color:#9fc0ff}
+.st-cosmic .st-pull{color:#cddcff !important}
+
+.st-final{border-bottom:0}
+.st-manifesto{font-family:var(--display) !important;font-weight:900;
+  font-size:clamp(1.35rem,3.6vw,2rem) !important;line-height:1.3 !important;
+  color:var(--text) !important;text-align:center;margin:30px 0 !important;
+  padding:26px 18px;border-radius:var(--r);
+  background:linear-gradient(150deg,rgba(var(--accent-rgb),.14),rgba(240,185,60,.05));
+  border:1px solid rgba(240,185,60,.3)}
+/* the sign-off. Script face, because it is a toast and not a claim. */
+.st-viva{display:block;margin-top:16px;font-family:var(--script);font-style:italic;
+  font-weight:600;font-size:.72em;letter-spacing:.02em;color:var(--gold);
+  text-shadow:0 2px 18px rgba(240,185,60,.28)}
+/* the honesty paragraph is deliberately plain — dressing it up would be
+   the exact thing the page says we do not do */
+.st-plain{font-size:.92rem !important;color:var(--dim) !important;line-height:1.7 !important}
+.st-cta{display:inline-block;margin-top:14px;font-family:var(--sans);font-weight:700;
+  font-size:14px;letter-spacing:.02em;padding:14px 24px;border-radius:999px;
+  background:var(--accent);color:#04202b;transition:background .16s}
+.st-cta:hover{background:var(--gold);color:#160c06}
+
+/* a table, for the pieces that need to show numbers rather than describe them */
+.st-table{width:100%;border-collapse:collapse;margin:6px 0 20px;font-size:.93rem;
+  position:relative;z-index:1}
+.st-table th{text-align:left;font-family:var(--sans);font-weight:700;font-size:10.5px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  padding:0 12px 9px 0;border-bottom:1px solid var(--line)}
+.st-table td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);
+  color:var(--muted);vertical-align:top}
+.st-table tr:last-child td{border-bottom:0}
+.st-table td b{color:var(--text)}
+.st-num-cell{font-variant-numeric:tabular-nums;color:var(--gold) !important;font-weight:600}
+
+/* ---- the library index ----
+   Cards wide enough to carry a real dek. A headline alone tells nobody
+   whether a piece is worth ten minutes; the dek is what earns the click,
+   so it gets room rather than being truncated. */
+.lib-list{max-width:64ch;margin:0 auto;display:grid;gap:16px}
+.lib-item{display:block;padding:26px 26px 22px;border-radius:var(--r);
+  border:1px solid var(--line);background:rgba(255,255,255,.02);
+  transition:border-color .18s,transform .18s,background .18s}
+.lib-item:hover{border-color:var(--gold);transform:translateY(-2px);
+  background:rgba(240,185,60,.05)}
+.lib-kind{display:block;font-family:var(--sans);font-size:9.5px;font-weight:700;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:9px}
+.lib-title{display:block;font-family:var(--display);font-weight:900;letter-spacing:-.02em;
+  font-size:clamp(1.35rem,3.2vw,1.85rem);line-height:1.15;color:var(--text)}
+.lib-tag{display:block;margin-top:5px;font-family:var(--script);font-style:italic;
+  font-weight:600;font-size:1.02rem;color:var(--gold)}
+.lib-dek{display:block;margin-top:12px;font-size:.97rem;line-height:1.65;color:var(--muted)}
+.lib-go{display:inline-block;margin-top:15px;font-family:var(--sans);font-weight:700;
+  font-size:12.5px;letter-spacing:.02em;color:var(--accent)}
+.lib-item:hover .lib-go{color:var(--gold)}
+
+/* the next-article card at the foot of a piece — the moment somebody has
+   just finished reading is the only moment they will start another */
+.lib-next{display:block;max-width:64ch;margin:44px auto 0;padding:22px 24px;
+  border-radius:var(--r);border:1px solid var(--line);border-left:3px solid var(--accent);
+  background:rgba(var(--accent-rgb),.05);transition:border-color .18s,background .18s}
+.lib-next:hover{border-color:var(--gold);background:rgba(240,185,60,.07)}
+.lib-next .lib-title{font-size:1.35rem}
+.lib-next .lib-dek{margin-top:8px;font-size:.93rem}
+
+/* the honesty chapter, where a piece says what it is NOT claiming. Red rather than
+   the house accent on purpose: it should not read as more of the same argument. */
+.st-warn{background:rgba(239,83,80,.06);border:1px solid rgba(239,83,80,.3);
+  border-radius:var(--r);padding:30px 26px;margin-bottom:52px}
+.st-warn .st-num,.st-warn .st-when{color:var(--red)}
+
+/* ---- the deep-time ladder ----
+   A dated list where the gaps between the rungs are the point, so it is set as a
+   timeline with a rule down the left rather than as bullets. Last rung takes the
+   gold because it is always "now". */
+.st-ladder{list-style:none;margin:22px 0;padding:0;border-left:1px solid var(--glass-line);
+  position:relative;z-index:1}
+.st-ladder li{position:relative;padding:0 0 16px 22px;margin:0}
+.st-ladder li::before{content:"";position:absolute;left:-4.5px;top:8px;width:8px;height:8px;
+  border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--bg)}
+.st-ladder li:last-child::before{background:var(--gold)}
+.st-ladder b{display:block;font-size:.93rem;color:var(--text);margin-bottom:3px}
+.st-ladder span{display:block;color:var(--muted);font-size:.97rem;line-height:1.62}
+
+/* ---- verse ----
+   Centred, in the script face, ruled at the left. Poetry set in the body
+   font reads as a pull-quote; set like this it reads as a poem. */
+.verse{margin:22px 0 24px;padding:18px 22px;border-left:2px solid var(--gold);
+  background:rgba(240,185,60,.05);border-radius:0 var(--r-sm) var(--r-sm) 0;
+  font-family:var(--script);font-style:italic;font-weight:600;
+  font-size:1.28rem;line-height:1.55;color:var(--text);position:relative;z-index:1}
+.verse-by{display:block;margin-top:10px;font-family:var(--sans);font-style:normal;
+  font-weight:600;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim)}
+
+/* ---- sources ---- */
+.st-sources{max-width:64ch;margin:52px auto 0;padding-top:26px;
+  border-top:1px solid var(--line)}
+.st-sources h2{font-family:var(--display);font-weight:900;font-size:1.15rem;
+  color:var(--text);margin:0 0 14px}
+.st-sources ol{margin:0 0 20px;padding-left:20px;color:var(--dim);
+  font-size:.88rem;line-height:1.7}
+.st-sources li{margin:0 0 7px}
+.st-fine{color:var(--dim);font-size:.82rem;line-height:1.7;margin:0}
+
+/* ---- the three sites ----
+   Not a footer link farm. The claim is that these are three branches of
+   one habit, so they get equal weight in a row rather than one host site
+   plus two afterthoughts. */
+.trio{max-width:64ch;margin:52px auto 0;padding:30px 28px;border-radius:var(--r);
+  border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.trio h2{font-family:var(--display);font-weight:900;letter-spacing:-.02em;
+  font-size:clamp(1.4rem,3.4vw,1.95rem);color:var(--text);margin:8px 0 12px}
+.trio .lede{color:var(--muted);font-size:1rem;line-height:1.7;margin:0 0 22px}
+.trio .lede b{color:var(--text);font-weight:600}
+.trio-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.trio-card{display:block;padding:18px 18px 16px;border-radius:var(--r-sm);
+  border:1px solid var(--line);background:var(--chip);
+  transition:border-color .18s,transform .18s}
+.trio-card:hover{transform:translateY(-2px)}
+.trio-card .tc-name{display:block;font-family:var(--display);font-weight:900;
+  font-size:1.05rem;color:var(--text)}
+.trio-card .tc-tag{display:block;margin-top:5px;font-family:var(--script);
+  font-style:italic;font-weight:600;font-size:.98rem}
+.trio-card .tc-dek{display:block;margin-top:9px;font-size:.86rem;line-height:1.6;
+  color:var(--dim)}
+.tc-leaf{border-left:3px solid var(--leaf)}   .tc-leaf:hover{border-color:var(--leaf)}
+.tc-leaf .tc-tag{color:var(--leaf)}
+.tc-ember{border-left:3px solid #e0863f}      .tc-ember:hover{border-color:#e0863f}
+.tc-ember .tc-tag{color:#e0863f}
+.tc-terra{border-left:3px solid #e06b42}      .tc-terra:hover{border-color:#e06b42}
+.tc-terra .tc-tag{color:#e06b42}
+.trio-card.is-here{opacity:.62;pointer-events:none}
+.trio-card.is-here .tc-name::after{content:"· you are here";font-family:var(--sans);
+  font-weight:600;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim)}
+
+@media (max-width:640px){
+  .st-num{font-size:78px;top:-8px;left:-4px}
+  .st-hilite,.st-cosmic{padding:24px 18px}
+  .lib-item{padding:22px 20px 18px}
+  .trio{padding:24px 20px}
+  .st-table{font-size:.86rem}
+}

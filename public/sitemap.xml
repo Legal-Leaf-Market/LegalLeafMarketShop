@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://legal-leafmarket.com/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://legal-leafmarket.com/consumables</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/devices</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/international</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/greekglass</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/lookah</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/vaporizers</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/combustion</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/kit</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <!-- The prose. These are the pages with a reason to be linked to from
+       outside, which makes them the acquisition channel rather than an extra.
+       The library hub is ranked with the department pages; the pieces sit just
+       under it. -->
+  <url><loc>https://legal-leafmarket.com/burned-at-a-funeral</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://legal-leafmarket.com/wholesale</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/library</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://legal-leafmarket.com/reels</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://legal-leafmarket.com/the-body-was-listening</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/a-word-for-the-plant</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/the-seam</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/club-des-hashischins</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://legal-leafmarket.com/what-the-certificates-say</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <!-- Local guides. Same job as the prose above (linked to from outside, so an
+       acquisition channel rather than an extra), but aimed at a place rather
+       than a subject. Note: a double hyphen may not appear inside an XML
+       comment. One here silently invalidates the entire sitemap. -->
+  <url><loc>https://legal-leafmarket.com/coldwater</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <!-- Detroit, indexed from the day it went live rather than from the day a
+       shop is connected. Its grid is the demo fixture until somebody
+       captures one of the nine confirmed shops, and the page states that in
+       its own banner: "No Detroit dispensary is connected to this page yet
+       ... not any real shop's prices." So what is indexed is honest, not
+       complete. The judgement being made here is that owning the url early
+       is worth more than waiting, and it is the owner's to make. -->
+  <url><loc>https://legal-leafmarket.com/detroit</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://legal-leafmarket.com/coldwater-guide</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://legal-leafmarket.com/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://legal-leafmarket.com/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+</urlset>

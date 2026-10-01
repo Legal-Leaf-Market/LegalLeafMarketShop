@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Popping · Playbook</title>
+<meta name="description" content="Who actually makes money trading crypto, what of their methods is public, and how much of it fits in a thirty-dollar pocket.">
+<meta name="theme-color" content="#0b0f14">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/app.css">
+<style>
+.read{max-width:680px;margin:0 auto;padding:14px 16px 60px;font-size:16px;line-height:1.6}
+.read h1{font-size:28px;line-height:1.15;margin:8px 0 6px}.read h2{font-size:21px;margin:34px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.read h3{font-size:17px;margin:22px 0 6px}
+.read p{margin:10px 0}.read .lede{color:var(--dim);font-size:17px}
+.read .who{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:14px 0}.read .who h3{margin-top:0}
+.read .take{border-left:3px solid var(--up);padding:2px 12px;margin:10px 0;color:var(--ink)}
+.read .warn{border-left:3px solid var(--down);padding:2px 12px;margin:10px 0}
+.read code{background:var(--bg3);padding:1px 6px;border-radius:6px;font-size:14px}
+.read pre{background:var(--bg3);padding:12px;border-radius:10px;overflow:auto;font-size:13px;line-height:1.45}
+.read table{font-size:14px;margin:10px 0}.read td,.read th{padding:6px 8px 6px 0;vertical-align:top}
+.read ul{padding-left:20px}.read li{margin:4px 0}
+.read .src li{font-size:13px;color:var(--dim);word-break:break-all}
+.back{display:inline-block;margin:0 0 10px;color:var(--dim);text-decoration:none}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="/#plan"><span class="mark">▲</span> Popping</a><a class="back" href="/#plan">← back to the app</a></header>
+<main class="read">
+<h1>Who actually makes money in crypto, and how much of it fits in a $30 pocket</h1>
+<p class="lede">You asked for the top traders and their algorithms, automated with as little lag as possible. Here is the honest version: whose methods are public, which of them a small stake can run, and what this app does with them.</p>
+
+<h2>Read this first</h2>
+<p>There is no audited ranking of crypto traders, and nobody's private algorithm is downloadable. What <em>is</em> public comes in three forms: strategy families that quant firms describe in their own words; academic papers with the rules written out; and on-chain exchanges where every trade a wallet makes is visible to anyone. This page uses only those three, and says which is which.</p>
+<p>One number to keep in your pocket while reading: a widely cited two-year study of 1,551 day traders found that <strong>1.1%</strong> earned more than minimum wage from it. The people who reliably make money in this market mostly do not predict where prices go. They get paid for structure: spreads, fees, funding, and disciplined exits.</p>
+
+<h2>The five</h2>
+
+<div class="who"><h3>1. GCR, the anonymous one</h3>
+<p>Pseudonymous ("Gigantic-Cassocked-Rebirth"), reputed to have turned about $1,000 into hundreds of millions, and a regular on FTX's public top-trader leaderboard through 2021 and 2022. In March 2022 he offered Do Kwon a public $10M bet that LUNA would be lower in a year, then added another $10M of short exposure through LUNA perpetuals. LUNA went to nothing within two months. He went dark after FTX collapsed.</p>
+<p><strong>Method, as far as it is public:</strong> contrarian, reflexivity-driven, shorting altcoins whose narrative had outrun their token structure, sized on conviction, with hard risk control. That is judgment, not code.</p>
+<p class="take"><strong>What this app takes from him:</strong> the "already spiked this week" haircut in the score, so a coin that just went vertical is not bought at the top, and the refusal to hold a position past the point where its reason for existing has gone.</p></div>
+
+<div class="who"><h3>2. Peter Brandt, the fifty-year chartist</h3>
+<p>Trading since the 1970s, classical chart patterns, and, by his own account, more interested in risk management than in trade selection. He risks roughly 0.6% to 1% of his account per trade, sizes the position from the distance to his stop, wants a measured objective three or four times that distance before entering, and takes five to ten trades a month across fifty markets. Bitcoin gets "the exact same mechanics as feeder cattle".</p>
+<p class="take"><strong>What this app takes from him:</strong> a stop set from the coin's own range, a target expressed as a multiple of that risk, and a time stop, so a trade that goes nowhere is closed rather than nursed.</p>
+<p class="warn"><strong>The arithmetic a small account cannot escape:</strong> 1% risk per trade only works when position size can shrink to fit the stop. With $30 in six coins, one ticket is 17% of the account, so a 25% stop on a ticket loses about 4% of the stake. That is the honest cost of running his exits at this size. Fewer coins at the "Careful" setting is the closest a $30 stake gets to his book.</p></div>
+
+<div class="who"><h3>3. Wintermute, and the market makers who are the consistent money</h3>
+<p>Wintermute (Evgeny Gaevoy, founded 2017), Jump Crypto, GSR, Cumberland/DRW and a handful of others run the algorithms that trade around the clock on every major venue. Their own description: quantitative and machine-learning models for pricing, "strategies ranging from latency-sensitive short-term horizons to mid-term holding times", and connectivity across exchanges and chains. The core of it is market making: quote both sides, earn the spread, skew the quotes to shed inventory, and arbitrage the same coin across venues at latencies measured in microseconds.</p>
+<p><strong>The strategy family has a textbook name</strong>, Avellaneda–Stoikov quoting, and the formulas are published. What is not available to you is the fee tier: a market maker is <em>paid</em> a rebate to trade, while the lowest tier on Coinbase Advanced charges 1.20% to take. An algorithm whose whole edge is a few basis points cannot be run by someone paying 120 of them.</p>
+<p class="take"><strong>What this app takes from them:</strong> the lesson that you do not need to predict. Use limit orders (maker fee, half the taker fee), and read the "Exchange → you" milliseconds on the Live tab as what they are: proof that latency is <em>not</em> where your edge is. A three-week hold does not care about a millisecond. A market maker does, and that is why they win that game and you should not play it.</p></div>
+
+<div class="who"><h3>4. The Hyperliquid leaderboard: the only traders you can watch instead of believe</h3>
+<p>Hyperliquid settles every trade on its own chain, so its leaderboard is a live query over every account rather than a curated list. Anyone can read any wallet's open positions, margin, and fills through a public API with no key. In July 2026, per third-party trackers, the top wallet by 30-day profit had made <strong>+$10.99M on a $52.2M account (+27.7%)</strong>; another was up $5.6M on $105M; another $4.89M on $9.74M.</p>
+<p>This is the one place where "scrape the top traders' algorithms" is literally possible: you cannot read their code, but you can read every trade the moment it fills, and mirror it with seconds of lag. Copy-trading bots do exactly that.</p>
+<p class="take"><strong>What this app does with it:</strong> the Traders tab reads the same public endpoints and shows the top wallets, what they hold right now, and their last fills. Read-only, on purpose: a $52M account can sit through a 15% dip on a 5x bitcoin long; a $30 account is liquidated by it. The leaderboard also churns hard, which is what the next section is about.</p></div>
+
+<div class="who"><h3>5. The systematic trend and momentum researchers: the one algorithm that is actually public</h3>
+<p>This is the "algorithm" the app runs, because it is the only kind that is written down, back-tested by people who are not selling anything, and honest about when it fails.</p>
+<ul>
+<li><strong>Man AHL's trend signal</strong> (Baz, Granger, Harvey, Le Roux &amp; Rattray, 2015, "Dissecting Investment Strategies in the Cross Section and Time Series"): three pairs of exponential moving averages (8/24, 16/48, 32/96 days), each difference normalised by the 63-day price volatility and then by its own 252-day volatility, passed through the response <code>u = z·e<sup>−z²/4</sup>/0.89</code>, and averaged. Rohrbach, Suremann &amp; Osterrieder applied it to bitcoin. The response function is the clever part: it fades a trend that has run too long instead of chasing it.</li>
+<li><strong>Cross-sectional momentum in crypto</strong> (Liu, Tsyvinski &amp; Wu, <em>Journal of Finance</em> 2022, "Common Risk Factors in Cryptocurrency"): three factors, market, size and momentum, explain the cross-section of coin returns, and for one- to four-week momentum the average return rises with each quintile. In their earlier NBER paper the top quintile of one-week momentum averaged 11.22% a week against 2.60% for the bottom (Sharpe 0.45 vs 0.19), in an era of tiny coins. Treat the magnitude with suspicion and the direction with respect: coins that were up keep being up for a few weeks more often than chance.</li>
+<li><strong>A 2025 study from Vilnius University</strong> on eight major coins (Jan 2020 to Oct 2025) built momentum from short and long EMAs with volatility normalisation and found time-series momentum returned 31.96% a year in the sample. In-sample; the same caveat.</li>
+<li><strong>"Catching Crypto Trends"</strong> (Zarattini, Pagani &amp; Barbon, 2025): an ensemble of Donchian-channel trend models with lookbacks from 5 to 360 days, volatility-based position sizing, a universe of coins listed at least a year with a median $2M of daily volume, and a rotational portfolio of top coins that beat bitcoin after costs.</li>
+</ul>
+<p class="take"><strong>What this app takes:</strong> all of it. The Baz signal and the Donchian ensemble decide whether a coin is trending; a risk-adjusted return over a lookback of about 1.5× your horizon decides how strongly (Liu–Tsyvinski–Wu's horizon); the $2M liquidity floor and volatility-aware sizing come from Zarattini. The trend break, not a tight stop, is the exit that says the idea failed.</p></div>
+
+<div class="who"><h3>The cautionary tale: James Wynn</h3>
+<p>The most-watched wallet of 2025 opened 40x-leveraged bitcoin shorts on Hyperliquid from mid-March 2026, with notional sizes between $44,000 and $190,000. At 40x, a 2.5% move against the position closes it. By late March trackers counted at least 194 liquidations on his address; he was liquidated six times in two weeks, and on 6 April 2026 the account that had once shown $100M read <strong>$900</strong>.</p>
+<p class="warn">No signal survives 40x. This is also why the Traders tab is a window and not a copy button, and why the app never sizes beyond the cash you typed in.</p></div>
+
+<h3>The names people ask about</h3>
+<p>Cobie, Hsaka, Ansem, Pentoshi, DonAlt and CryptoCred (Technical Roundup), Michaël van de Poppe: charts, market commentary, narrative. Some are very good at it. None has an audited track record, and a public call is not a position. Read them as weather reports, not as a strategy.</p>
+
+<h2>What the app runs, in words</h2>
+<ol>
+<li><strong>Universe.</strong> The top coins by market cap that are actually tradable in USD on Coinbase, minus stablecoins and wrapped or staked duplicates. Daily bars from Coinbase are the only input to every indicator.</li>
+<li><strong>Gates, by risk setting.</strong> Market-cap rank, at least $1M to $20M a day traded, a volatility cap, up this week, trend signal positive, up over the lookback. Every refusal is printed as a sentence in "Also looked at".</li>
+<li><strong>Score.</strong> Return over the lookback divided by the noise you would expect over that lookback (so +20% on a coin that swings 200% a year does not outrank +12% on one that swings 40%), tilted by the share of Donchian windows pointing up and by the Baz signal, with a haircut for a blow-off week and for a 35% drawdown inside the month.</li>
+<li><strong>Sizing.</strong> Inverse-volatility at low risk (the calmest coin gets the most dollars), equal at high risk, blended in between.</li>
+<li><strong>Exits.</strong> The trend breaks on a daily close (fewer than half the Donchian windows still long, or the Baz signal clearly negative) → sell. A disaster stop, scaled to the coin's own range and your horizon, that trails up and never down → sell. Target at 2–3× the risk → sell half, stop to break-even. The horizon → close out.</li>
+<li><strong>"Popping".</strong> A move over the last hour larger than 2.5 standard deviations of the coin's usual hour, floored at 3%, with a 30-minute cooldown per coin.</li>
+<li><strong>The Test tab</strong> re-runs all of that through the past, one cycle at a time, using only the days before each decision, with your fees both ways and slippage on stops. If it says the settings lost money, believe it over the Plan tab.</li>
+</ol>
+
+<h2>What $30 can and cannot do</h2>
+<table>
+<tr><th>Where you buy</th><th>Per side</th><th>Round trip on six $5 tickets</th></tr>
+<tr><td>Coinbase app, the simple Buy button</td><td>$0.99 flat under $10, plus ~0.5% spread</td><td><strong>about $12, 40% of the stake</strong></td></tr>
+<tr><td>Coinbase Advanced, market order (lowest tier)</td><td>1.20%</td><td>$0.72, 2.4%</td></tr>
+<tr><td>Coinbase Advanced, limit order</td><td>0.60%</td><td>$0.36, 1.2%</td></tr>
+<tr><td>Kraken Pro, market order</td><td>0.40%</td><td>$0.24, 0.8%</td></tr>
+</table>
+<p>The first row is the single most important number on this site. The same app, the same account, the same coin; the button you press decides whether the trade starts 2% or 40% under water. Advanced Trade is a tab inside the Coinbase app.</p>
+<p><strong>Latency.</strong> The Live tab subscribes to Coinbase's own WebSocket, so a price reaches your phone within a few tens of milliseconds of the trade, with no server of ours in between. That is as fast as anyone gets without a rack in the exchange's building. It is also irrelevant to a three-week hold: your edge, if you have one, is the rule and the fee, never the speed.</p>
+<p><strong>The expected outcome, stated plainly.</strong> When momentum is working, a screen like this has historically earned a few percent a month gross across a basket; in choppy months it loses a few percent plus fees. Over a year the papers above report double-digit returns with 20–50% drawdowns, on portfolios far larger than $30. Coins go to zero; momentum reverses without notice. This is a screen and a stopwatch, not advice.</p>
+
+<h2>Background alerts</h2>
+<p>While the app is open (or installed to your home screen and left running), alerts fire on the phone from the live feed. For alerts with the app closed, the server needs three things, all free:</p>
+<pre>node tools/vapid-keys.mjs      → VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT
+Vercel → Storage → Upstash KV  → KV_REST_API_URL, KV_REST_API_TOKEN
+any long random string         → CRON_SECRET</pre>
+<p>With the keys alone, "Enable background alerts" sends a test push to prove the pipe. With storage, the server checks every open position every five minutes and pushes a sell alert. Without any of it, nothing fails silently: <code>/api/push</code> says exactly what is missing.</p>
+
+<h2>Sources</h2>
+<ul class="src">
+<li>The Block, "Trader doubles down on $10 million bet against Do Kwon through LUNA short position" — https://www.theblock.co/post/145739/trader-doubles-down-on-10-million-bet-against-do-kwon-by-shorting-luna</li>
+<li>Arkham Research, "Gigantic Rebirth: Top Crypto Traders (2026)" — https://info.arkm.com/research/gigantic-rebirth-crypto-trader</li>
+<li>Peter Brandt, "My trading as described by Grok" — https://brandtp.substack.com/p/my-trading-as-described-by-grok ; Chat With Traders ep. 329 — https://chatwithtraders.com/episode/329-peter-brandt ; Factor Trading, "The Four Key Pillars" — https://www.peterlbrandt.com/knowledge-center/four-key-pillars-factor/</li>
+<li>Wintermute, "Algorithmic trading" — https://www.wintermute.com/algorithmic-trading ; Messari, "Understanding Wintermute" — https://messari.io/copilot/share/understanding-wintermute-90b0f9d2-a259-4682-92e0-4dda8802946b</li>
+<li>Hyperliquid API docs, info endpoint — https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint ; HyperStats leaderboard — https://hyperstats.org/traders ; Higher.money leaderboard — https://higher.money/hyperliquid/leaderboard/</li>
+<li>Baz, Granger, Harvey, Le Roux &amp; Rattray, "Dissecting Investment Strategies in the Cross Section and Time Series" (2015) — https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2695101</li>
+<li>Rohrbach, Suremann &amp; Osterrieder, "Momentum and Trend Following Trading Strategies for Currencies and Bitcoin" — https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2949379</li>
+<li>Liu, Tsyvinski &amp; Wu, "Common Risk Factors in Cryptocurrency", Journal of Finance 77(2), 2022 — https://onlinelibrary.wiley.com/doi/abs/10.1111/jofi.13119 ; NBER w25882 — https://www.nber.org/system/files/working_papers/w25882/w25882.pdf</li>
+<li>"Momentum Trading in Cryptocurrencies: A Comparative …", Vilnius University (2025) — https://www.journals.vu.lt/BATP/en/article/download/44540/42590/138419</li>
+<li>Zarattini, Pagani &amp; Barbon, "Catching Crypto Trends; A Tactical Approach for Bitcoin and Altcoins" (2025) — https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5209907 ; summary — https://concretumgroup.com/catching-crypto-trends-a-tactical-approach-for-bitcoin-and-altcoins/</li>
+<li>James Wynn: Yahoo Finance, "James Wynn's Account Drops to $900 After Latest Bitcoin Liquidation on Hyperliquid" — https://finance.yahoo.com/markets/crypto/articles/james-wynn-account-drops-900-101235555.html ; DL News, "Hyperliquid trader James Wynn was liquidated nine times" — https://www.dlnews.com/articles/defi/hyperliquid-trader-james-wynn-liquidated-nine-times/</li>
+<li>Coinbase fees: BitDegree, "Coinbase Fees 2026" — https://www.bitdegree.org/crypto/tutorials/coinbase-fees ; Datawallet, "Coinbase Fees Explained" — https://www.datawallet.com/crypto/coinbase-fees</li>
+<li>Coinbase Exchange WebSocket feed — https://docs.cdp.coinbase.com/exchange/websocket-feed/overview</li>
+<li>The 1.1% figure: a study of 1,551 Brazilian day traders over two years, as summarised by thekollab.io, "Top 9 Crypto Traders to Follow in 2026" — https://thekollab.io/articles/best-crypto-trader/</li>
+</ul>
+<p class="hint">Numbers on this page were read from the sources above in September 2026; leaderboard and fee figures move.</p>
+</main>
+</body>
+</html>

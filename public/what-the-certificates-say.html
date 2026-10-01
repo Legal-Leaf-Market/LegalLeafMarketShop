@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What the Certificates Say: notes from reading 1,400 lab reports | Legal-Leaf Market</title>
+<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any product is
+     rendered, and the page content stays in the DOM behind the overlay so a crawler still
+     sees a full page. See public/js/age-gate.js for why an attestation gate is the right
+     shape here and what it deliberately does not do.
+     Anchored after </title> because three of these pages (consumables, devices,
+     international) have no explicit </head> at all -- an anchor that works on twelve of
+     fifteen pages is how a gate ends up missing from the ones that sell things. -->
+<script src="/js/age-gate.js"></script>
+<meta name="description" content="Every cannabis certificate of analysis contains a sum that has to come out right, which makes it possible to catch a bad one with arithmetic. Notes from parsing 1,550 lab reports: the sheet doing duty for 42 products across 37 strains, the lab that reused one analysis for two cultivars, and the 404 cards that said lab-tested when nothing had been published. Adults 21+.">
+<link rel="canonical" href="https://legal-leafmarket.com/what-the-certificates-say">
+<meta name="theme-color" content="#080f14">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:title" content="What the Certificates Say">
+<meta property="og:description" content="We read the paperwork on 1,550 lab reports. One sheet was doing duty for 42 products across 37 different strains. Here is what we do about that.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://legal-leafmarket.com/what-the-certificates-say">
+<meta property="og:site_name" content="Legal-Leaf Market">
+<meta property="og:image" content="https://legal-leafmarket.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What the Certificates Say">
+<meta name="twitter:description" content="Every COA carries a checksum. Most people never use it. We used it 1,550 times.">
+<meta name="twitter:image" content="https://legal-leafmarket.com/og-image.png">
+<meta name="rating" content="adult">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "@id": "https://legal-leafmarket.com/what-the-certificates-say#article",
+      "url": "https://legal-leafmarket.com/what-the-certificates-say",
+      "headline": "What the Certificates Say",
+      "description": "Original research from parsing 1,550 cannabis certificates of analysis: using the total-THC identity as a checksum, detecting store-level compliance sheets shared across unrelated strains, and the editorial rules that follow from both.",
+      "image": "https://legal-leafmarket.com/og-image.png",
+      "inLanguage": "en",
+      "articleSection": "Our own research",
+      "about": [
+        { "@type": "Thing", "name": "Certificate of analysis",
+          "description": "A laboratory report stating the cannabinoid content of a cannabis or hemp sample." },
+        { "@type": "Thing", "name": "Total THC",
+          "description": "A reported figure equal to THCA multiplied by 0.877 plus delta-9 THC, representing potency after decarboxylation." }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://legal-leafmarket.com/what-the-certificates-say#crumbs",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Legal-Leaf Market", "item": "https://legal-leafmarket.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Library", "item": "https://legal-leafmarket.com/library" },
+        { "@type": "ListItem", "position": 3, "name": "What the Certificates Say", "item": "https://legal-leafmarket.com/what-the-certificates-say" }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Cormorant+Garamond:ital,wght@1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/library.css">
+<!-- The objects the words sit on. MUST load after library.css: it wins by order,
+     not by weight, and moving it above silently restores the old surface. -->
+<link rel="stylesheet" href="/css/plate.css">
+<!-- Analytics. One tag, four sites; see /js/analytics.js for the taxonomy and for why
+     this is not Vercel custom events (they are Pro-only and capped at 2 props). -->
+<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+</head>
+<body>
+
+<main class="shell story">
+  <a class="sbacklink" href="/library">&larr; The library</a>
+
+  <header class="st-hero">
+    <p class="eyebrow">Our own research</p>
+    <h1><span class="st-lead">what the</span>certificates say</h1>
+    <p class="st-tagline">
+      <span class="st-tag-en">We read the paperwork. All of it.</span>
+      <span class="st-tag-sub">1,550 reports, and a sum that has to come out right</span>
+    </p>
+    <p class="st-standfirst">
+      Nobody writes this piece except a price comparison site, because nobody else has any
+      reason to read this many lab reports in a row. Shops publish their own. Buyers read one.
+      We had to read every certificate every store publishes, in order to put a number on a
+      card, and reading them in bulk shows you things that reading one never will.
+      <em>Some of it is very good. Some of it is not.</em>
+    </p>
+  </header>
+
+  <article class="st-body">
+
+    <section class="st-chapter st-hilite">
+      <span class="st-num">I</span>
+      <p class="st-when">the useful accident</p>
+      <h2>Every certificate carries a checksum, and almost nobody uses it</h2>
+      <p>
+        A cannabis certificate reports THCA, delta-9 THC, and a figure called Total THC. Those
+        three numbers are not independent. Total THC is <i>derived</i> from the other two, by
+        the decarboxylation mass ratio explained in <a href="/the-seam">The Seam</a>:
+      </p>
+      <p class="st-pull">
+        Total THC = (THCA &times; 0.877) + delta-9 THC
+      </p>
+      <p>
+        Which means a certificate has to <b>agree with itself</b>. And that turns a document
+        you would otherwise have to trust into a document you can <b>test</b>.
+      </p>
+      <p>
+        We apply that test to every record before it is allowed near a product card. If the
+        three numbers do not close to within a small tolerance, we do not publish a corrected
+        version and we do not publish our best guess. <b>We throw the record away.</b> The
+        product then shows no potency figure at all and drops out of the strength sorting and
+        filters entirely.
+      </p>
+      <p>
+        Across the corpus, the honest certificates close to a median deviation of about
+        <b>0.001 percentage points</b>. That is not "close enough". That is the labs' own
+        arithmetic being exactly right, which is what makes the handful of failures so
+        conspicuous.
+      </p>
+      <p class="st-manifesto">
+        You cannot argue with a sum.<br>
+        That is the entire reason we trust any of this.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">II</span>
+      <p class="st-when">the corpus</p>
+      <h2>What we are actually holding</h2>
+      <p>
+        Two bodies of certificates back what you see on the site, built at different times and by
+        different methods, because the stores publish in wildly different ways. A third is
+        archived: the store it came from was delisted, so its records no longer sit behind any
+        card. It is listed here because what it taught us about reading certificates still stands.
+      </p>
+      <table class="st-table">
+        <tr><th>corpus</th><th>records</th><th>how they were obtained</th></tr>
+        <tr>
+          <td><b>General</b></td>
+          <td class="st-num-cell">1,220</td>
+          <td>Certificates published per product, scraped from the stores' own images and PDFs.</td>
+        </tr>
+        <tr>
+          <td><b>Black Tie</b></td>
+          <td class="st-num-cell">146</td>
+          <td>Extracted from PDFs linked inside each product description.</td>
+        </tr>
+        <tr>
+          <td><b>Archived</b></td>
+          <td class="st-num-cell">184</td>
+          <td>A store that published nothing scrapeable at all, no COA link, no COA image, no
+            mention. This corpus came from the shop's own certificate folder, matched to
+            products by strain name. That store is no longer listed here, so these records back
+            nothing you can buy; they are kept for reference.</td>
+        </tr>
+      </table>
+      <p>
+        That last row is worth pausing on, delisted or not. <b>Sixty-four of those certificates
+        are scans or photographs with no text layer</b>, no machine-readable text to parse at
+        all. There was no optical character recognition available on the machine doing the work,
+        so they were rendered as images and read by eye, one at a time, and typed in.
+      </p>
+      <p>
+        Which sounds like exactly the kind of process you should not trust. And it would be,
+        except that every single one still had to satisfy the checksum in chapter I before it
+        was allowed to exist. A mis-read digit does not close the sum. Of those 64, the
+        transcriptions closed to a median deviation of <b>0.0014</b> and a worst case of
+        <b>0.0117</b>. The arithmetic is what makes hand-read numbers publishable; the care is
+        not sufficient on its own.
+      </p>
+      <p class="st-aside">
+        Those records were flagged on the card as read from a scan and carried a lower confidence
+        score, because how a number was obtained is part of what the number means. With that
+        corpus archived, nothing currently on the site carries a hand-read number: every figure
+        you see now came out of a machine-readable certificate.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">III</span>
+      <p class="st-when">the big one</p>
+      <h2>One sheet, forty-two products, thirty-seven different strains</h2>
+      <p>
+        This is the finding that changed how the whole site works.
+      </p>
+      <p>
+        A single certificate was attached to <b>42 products spanning 37 distinct strains</b>,
+        John Truffolta, Royal Gorilla, Skywalker OG, Sour Tangie, and thirty-three others. Every
+        one of them carrying the same sample name, the same date, and the same potency:
+        <b>30.84% THCA</b>.
+      </p>
+      <p>
+        That is not a lab result. Thirty-seven different cultivars do not test identically. It
+        is a <b>store-level compliance document</b>, one sheet the vendor hangs on many
+        listings, which is a perfectly normal thing for a vendor to hold and a completely
+        invalid basis for a potency claim about any individual strain.
+      </p>
+      <p>
+        And before we caught it, our own site was making that claim. The card said lab
+        verified. The number fed the strength sorting and the minimum-THC filter. All of it
+        wrong, and wrong in the direction of a specific, measured-sounding assertion about
+        potency, which is the worst direction to be wrong in.
+      </p>
+      <p class="st-pull">
+        A number with a lab's name on it is not a measurement.<br>
+        It is a measurement <i>of something</i>. The question is what.
+      </p>
+      <p>
+        The fix is mechanical rather than editorial. We group every record by the sheet it came
+        from, and if one sheet backs more than one distinct strain, it is a store document and
+        no product gets a potency figure from it. Several pack sizes of the <i>same</i> strain
+        sharing a sheet is legitimate and stays, which is why the test keys on the strain name
+        and not on the raw product count.
+      </p>
+      <p>
+        Across the live catalogue that currently demotes about <b>136 products</b>. They lose
+        the badge, the figure and their place in the sorting, and their panel says plainly that
+        no report has been tied to that listing. The certificate link stays, because the
+        document is real; it just is not about that flower.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">IV</span>
+      <p class="st-when">three kinds of document</p>
+      <h2>"Has a COA" is not one fact</h2>
+      <p>
+        When a shop says a product has a certificate, that can mean three genuinely different
+        things, and we found all three in quantity:
+      </p>
+      <table class="st-table">
+        <tr><th>kind</th><th>live count</th><th>what it actually is</th></tr>
+        <tr><td><b>product</b></td><td class="st-num-cell">1,273</td>
+          <td>A certificate for this item alone. The real thing.</td></tr>
+        <tr><td><b>store</b></td><td class="st-num-cell">117</td>
+          <td>One compliance sheet spread across many listings. See chapter III.</td></tr>
+        <tr><td><b>index</b></td><td class="st-num-cell">603</td>
+          <td>A link to the shop's lab-results <i>page</i>. A directory, not a result.</td></tr>
+      </table>
+      <p>
+        Before we separated these, the card printed "lab-tested" whenever a certificate link
+        was merely present. On <b>404 products</b> that produced a card face claiming lab
+        verification directly above a panel that truthfully said no report had been published
+        for that item. The page contradicted itself, and the flattering half was in the bigger
+        type.
+      </p>
+      <p>
+        Now the card says which of the three it is: <i>view COA</i>, <i>store COA</i>, or
+        <i>lab results</i>. Three words of honesty, and it cost nothing.
+      </p>
+      <h3>The one exception we allow</h3>
+      <p>
+        A shop that publishes a certificate for <b>every</b> product, and where we have
+        successfully parsed hundreds of them, has demonstrably tested its range. If we then
+        fail to match one particular strain to its sheet, that is a gap in <i>our</i> matching
+        rather than evidence the batch was never tested, so the badge stays, on the strength
+        of the store's record, while the numbers still do not. Three shops currently meet that
+        bar. Several conspicuously do not, including one with 107 certificate links from which
+        we have never once managed to parse a result.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">V</span>
+      <p class="st-when">the smaller landmines</p>
+      <h2>Things a lab report will do to you</h2>
+      <p>
+        A list, because each of these was a real bug that produced a real wrong number, and
+        each was caught by the checksum rather than by anybody being clever.
+      </p>
+      <ul>
+        <li><b>The same analyte printed twice.</b> One lab repeats its analyte table on a
+          later quality-control page with different figures. Reading the document
+          front-to-back returned a THCA of 3.72% for flower. Reading only the pages before
+          the quality-control heading moved the median from 1.54% to 26.90%.</li>
+        <li><b>Four numbers in a row, and the first one is not the answer.</b> Cannabinoid
+          rows often run limit-of-detection, limit-of-quantitation, percent, milligrams per
+          gram. Taking the first number gave a THCA of 0.0024% on sixteen reports.</li>
+        <li><b>Terpene tables have one fewer column than cannabinoid tables.</b> Which
+          published a limonene figure of 5.9% on a sample whose total terpenes were 1.97%, a
+          number that would be remarkable if it were real. The robust fix is to take the last
+          two numbers on the row and <i>require</i> that the milligrams-per-gram figure is ten
+          times the percentage. If it is not, the row has been misread.</li>
+        <li><b>Two-column layouts flattened into one line.</b> One lab's PDF interleaves two
+          columns, so an analyte name ends up glued to the summary figure from the other side
+          of the page. This one passed the ten-times check, because the pair it produced was a
+          genuine pair, from the wrong row.</li>
+        <li><b>An optional letter in a pattern.</b> Searching for "THCa" with an optional
+          final letter also matches a bare "THC", so on a line reading
+          <i>Delta9 THC 0.26% THCa 27.76%</i> it returned 0.26 as the THCA. Fifty-nine records
+          failed the checksum on that one, which is exactly what the checksum is for.</li>
+      </ul>
+      <p>
+        Every one of those is a way to publish a confident, specific, entirely wrong potency.
+        None of them was caught by looking at the output and thinking it seemed plausible,
+        because all of them <i>did</i> seem plausible. They were caught by a sum.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">VI</span>
+      <p class="st-when">the one that is not a bug</p>
+      <h2>Two strains, one analysis</h2>
+      <p>
+        And then there is the finding that no amount of better parsing fixes.
+      </p>
+      <p>
+        Two entirely different strains from one shop, different names, different listings,
+        carry certificates with the <b>same sample identifier and byte-for-byte identical
+        values</b>. Same THCA, same delta-9, same total, same date. One analysis, filed twice
+        under two names.
+      </p>
+      <p>
+        One of those two products is described by a lab result that was not taken from it. We
+        have no way to determine which, so <b>neither of them gets lab data</b>. Both were
+        dropped.
+      </p>
+      <p>
+        Notably, our own shared-sheet detection from chapter III would have missed this,
+        because that test fingerprints partly on the sample <i>name</i>, and here the names
+        differ. It took a separate check, fingerprinting on the values alone, to see it. Five
+        matching numbers across two unrelated cultivars does not happen by chance.
+      </p>
+      <p class="st-plain">
+        We are not naming the strains or the lab here. The point is not to pillory one
+        laboratory over what may well be a clerical error; the point is that if you read
+        enough certificates you will find this, and that a shop's job is to drop the record
+        rather than pick the more flattering half.
+      </p>
+    </section>
+
+    <section class="st-chapter st-final">
+      <span class="st-num">VII</span>
+      <p class="st-when">what we think this means</p>
+      <h2>The paperwork is better than its reputation, and worse than its marketing</h2>
+      <p>
+        The honest summary of 1,550 certificates is not a scandal, and we are not going to
+        manufacture one. The overwhelming majority are internally consistent to three decimal
+        places. Labs like PharmLabs, Excelbis and the others whose reports make up this corpus
+        are, on the evidence of their own arithmetic, doing careful work.
+      </p>
+      <p>
+        The problem is almost never the laboratory. It is the <b>distance between the
+        certificate and the product page</b>, a sheet that belongs to a different strain, a
+        link that goes to a directory, a badge printed because a field was non-empty. Every
+        failure we found lives in that gap, and every one of them flattered the seller.
+      </p>
+      <p class="st-pull">
+        The lab did its job.<br>
+        The gap between the lab and the label is where the truth goes missing.
+      </p>
+      <p>
+        Which is why the numbers on this site are gated the way they are, and why a product
+        with no certificate of its own shows nothing rather than something. An empty field is
+        not a failure of a comparison engine. It is the engine refusing to make something up.
+      </p>
+      <a class="st-cta" href="/">See the numbers that survived &rarr;</a>
+    </section>
+
+  </article>
+
+  <a class="lib-next" href="/the-body-was-listening">
+    <span class="lib-kind">Next in the library</span>
+    <span class="lib-title">The Body Was Listening</span>
+    <span class="lib-dek">
+      Solving THC's structure took until 1964. Working out how it acts took thirty more years
+      and turned up a signalling system already running inside us, one of whose molecules is
+      named for the Sanskrit word for bliss.
+    </span>
+    <span class="lib-go">Read &rarr;</span>
+  </a>
+
+  <footer class="st-sources">
+    <h2>Notes on method</h2>
+    <ol>
+      <li>Figures in this piece are counts from our own live catalogue and certificate corpora
+        at the time of writing, August 2026. Inventory moves daily, so the product counts drift;
+        the record counts do not.</li>
+      <li>The identity test is Total THC = (THCA &times; 0.877) + delta-9 THC, accepted within
+        the greater of 1.5 percentage points or 8% of the reported total. Records failing it are
+        discarded, not corrected.</li>
+      <li>The 0.877 factor is the ratio of molar masses, &Delta;<sup>9</sup>-THC
+        &asymp;&nbsp;314.5 &divide; THCA &asymp;&nbsp;358.5.</li>
+      <li>Shared-sheet detection groups records by sample name, date, THCA, total and
+        laboratory, then demotes any sheet backing more than one distinct strain name. Reused
+        analyses are caught by a second pass fingerprinting on values alone.</li>
+      <li>Certificate scope is classified as product, store or index by whether the linked
+        asset is a document, how many distinct strains share it, and whether it resolves to a
+        file or a page.</li>
+    </ol>
+    <p class="st-fine">
+      Legal-Leaf Market is a price comparison service. We hold no stock and sell nothing.
+      Nothing here is medical advice or a claim about any product's effects. Where we describe a
+      certificate as inconsistent we mean its own reported figures do not reconcile; we make no
+      allegation of intent by any laboratory or retailer. Adults 21+ only.
+    </p>
+  </footer>
+</main>
+
+</body>
+</html>

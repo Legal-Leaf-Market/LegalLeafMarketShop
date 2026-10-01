@@ -1,0 +1,219 @@
+# Store discovery, run where there is a network.
+#
+# THIS WORKFLOW EXISTS BECAUSE OF ONE CONSTRAINT, and it is worth stating plainly
+# rather than leaving it to be rediscovered. tools/discover-market.mjs was
+# written to take a seed list, fetch each shop's own page, and promote a lead to
+# `confirmed` only when that page NAMES THE CITY. It cannot do any of that from
+# the containers this repo is edited in: the egress proxy answers 403 to every
+# dispensary host, so every candidate stays a candidate. The tool says so on its
+# first line instead of leaving a wall of failures to imply it.
+#
+# A GitHub runner has ordinary network access. So the discovery step moves here,
+# for the same reason the browser did (harvest-coldwater.yml): the machine that
+# can do the work is not the machine the code is written on.
+#
+# WHAT IT DOES NOT DO: it does not write api/market-stores.js. It uploads its
+# findings as an artifact and, on request, opens a PR with the JSON. Promoting a
+# shop into the roster stays a human decision, because `confirmed` is a claim
+# about a real named business and this repo does not publish those automatically.
+#
+# COURTESIES, same as every other reader here (CLAUDE.md section 7): one request
+# per host, sequential, spaced, with a descriptive User-Agent carrying a contact
+# url. A challenged host is RECORDED as challenged and handed to the operator's
+# own browser -- defeating a bot challenge is the one thing this project will not
+# do, and that does not change because the runner is somebody else's.
+
+name: Discover market stores
+
+on:
+  workflow_dispatch:
+    inputs:
+      market:
+        description: "Market slug from api/markets.js (detroit, grandrapids, lansing, ...)"
+        required: true
+        default: "detroit"
+      spacing:
+        description: "Milliseconds between hosts. Lower is ruder; 1500 is the harvester's."
+        required: false
+        default: "1500"
+      open_pr:
+        description: "Open a PR with the resulting JSON as well as the artifact"
+        type: boolean
+        required: false
+        default: false
+
+# One sweep per market at a time. Two concurrent sweeps would double every
+# shop's request count for no extra information.
+concurrency:
+  group: discover-${{ inputs.market }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # 22 for the same reason the other two workflows are: this repo's
+          # tooling assumes a modern global fetch/WebSocket surface, and 20 is
+          # deprecated on the runners anyway.
+          node-version: "22"
+
+      # A seed list is the one input this cannot invent, so say which file is
+      # missing rather than reporting "0 stores found" for a market nobody has
+      # written a seed list for yet -- those two look identical in the output.
+      - name: Check the seed list exists
+        id: seeds
+        run: |
+          set -euo pipefail
+          f="data/${{ inputs.market }}-seeds.txt"
+          if [ ! -f "$f" ]; then
+            echo "::error::No seed list at $f. Discovery does not invent store names;"
+            echo "::error::write that file first (see data/detroit-seeds.txt for the format)."
+            exit 1
+          fi
+          echo "file=$f" >> "$GITHUB_OUTPUT"
+          echo "$(grep -cvE '^\s*(#|$)' "$f") seed lines in $f"
+
+      - name: Sweep
+        run: |
+          set -euo pipefail
+          node tools/discover-market.mjs \
+            --market "${{ inputs.market }}" \
+            --seeds "${{ steps.seeds.outputs.file }}" \
+            --probe \
+            --spacing "${{ inputs.spacing }}" \
+            --out "data/${{ inputs.market }}.json" | tee sweep.log
+
+      # WHICH LANE EACH SHOP BELONGS TO, which is a different question from
+      # whether it exists. discover-market.mjs answers "is this a dispensary in
+      # this city"; this answers "would anything have to be done by hand here",
+      # and the answer decides whether a shop is wired to the automated lane or
+      # handed to the operator's browser. Four outcomes, three of which look
+      # identical from a row count of zero: server-readable, render-needed,
+      # walled, unreachable.
+      #
+      # It reads the roster straight out of the sweep just written, so it asks
+      # about exactly the shops that were confirmed rather than a list that can
+      # drift from them.
+      - name: Which of them can be read without a person
+        if: always()
+        run: |
+          set -uo pipefail
+          f="data/${{ inputs.market }}.json"
+          [ -f "$f" ] || { echo "no sweep output to read"; exit 0; }
+          node -e '
+            const fs = require("fs");
+            const j = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+            const live = (j.stores || []).filter(s => s.status === "confirmed");
+            fs.writeFileSync("roster-probe.json", JSON.stringify(
+              live.map(s => ({ key: s.key, name: s.name, site: s.site, menuUrl: s.menuUrl || "" })), null, 2));
+            console.log(live.length + " confirmed shops to probe");
+          ' "$f"
+          node tools/readability-sweep.mjs --stores roster-probe.json \
+            --json "data/${{ inputs.market }}-lanes.json" --spacing 1500 | tee lanes.log || true
+
+      # THE THIRD QUESTION, AND THE ONE NOTHING WAS ASKING. The two steps above
+      # both read a shop's PAGE: one asks "is this a dispensary in this city",
+      # the other "would a person have to do this by hand". Neither ever asked a
+      # shop for a PRODUCT -- so the roster carried platforms guessed from a
+      # homepage signature, and one observation about Coldwater's Dutchie shops
+      # was generalised to fourteen stores nobody had contacted. Measured at the
+      # time: exactly one store in the whole system had enabled:true.
+      #
+      # This runs against the ROSTER as committed, not against the sweep output,
+      # on purpose: the sweep answers about candidate urls, and what needs
+      # measuring is the shops the site actually ships. It is also the second
+      # independent answer to the question the operator's browser answers, which
+      # is what makes the two comparable instead of one lane doing everything.
+      #
+      # A challenge here is a RECORDED OUTCOME routed to the operator, never
+      # something to get around.
+      - name: Ask each shop on the roster for its actual products
+        if: always()
+        run: |
+          set -uo pipefail
+          node tools/probe-catalogue.mjs --market "${{ inputs.market }}"             --json "data/${{ inputs.market }}-catalogue.json" --spacing 1500 | tee catalogue.log || true
+
+      # The summary is the deliverable a person reads, so put it where GitHub
+      # shows it rather than making somebody open the log.
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo "## Discovery — ${{ inputs.market }}"
+            echo
+            echo '```'
+            tail -n 40 sweep.log 2>/dev/null || echo "(no output)"
+            echo '```'
+            echo
+            echo "### Which lane each shop belongs to"
+            echo
+            echo '```'
+            tail -n 30 lanes.log 2>/dev/null || echo "(not run)"
+            echo '```'
+            echo
+            echo "### What each shop answered when asked for products"
+            echo
+            echo '```'
+            tail -n 60 catalogue.log 2>/dev/null || echo "(not run)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: discovery-${{ inputs.market }}
+          path: |
+            data/${{ inputs.market }}.json
+            data/${{ inputs.market }}-lanes.json
+            data/${{ inputs.market }}-catalogue.json
+            sweep.log
+            lanes.log
+            catalogue.log
+          if-no-files-found: warn
+
+      # Opt-in, because a sweep that finds nothing new should not open a PR every
+      # time somebody runs it.
+      - name: Open a PR with the findings
+        if: ${{ inputs.open_pr && success() }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MARKET: ${{ inputs.market }}
+        run: |
+          set -euo pipefail
+          branch="discovery/${MARKET}-${GITHUB_RUN_ID}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add "data/${MARKET}.json"
+          if git diff --cached --quiet; then
+            echo "Nothing changed; not opening a PR."
+            exit 0
+          fi
+          git commit -m "Discovery sweep for ${MARKET}
+
+          Machine-generated by .github/workflows/discover-market.yml. Every entry
+          is evidence, not a roster: nothing here reaches api/market-stores.js
+          without somebody reading it."
+          git push -u origin "$branch"
+          gh pr create \
+            --title "Discovery sweep: ${MARKET}" \
+            --body "$(printf '%s\n' \
+              "Ran \`tools/discover-market.mjs\` on a runner, which is the only place it can reach these hosts." \
+              "" \
+              '```' \
+              "$(tail -n 30 sweep.log)" \
+              '```' \
+              "" \
+              "**This does not add any shop to the roster.** \`confirmed\` means the shop's own page was read AND named the city; promoting one into \`api/market-stores.js\` is a human decision, because it is a claim about a real named business." \
+              "" \
+              "---" \
+              "_Generated by [Claude Code](https://claude.ai/code)_")" \
+            --base main --head "$branch"

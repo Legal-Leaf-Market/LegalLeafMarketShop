@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Coldwater Price-Per-Gram Guide | Legal-Leaf Market</title>
+<!-- 21+ gate. No `defer`, and anchored immediately after </title> for the same reason as
+     every other page here: it mounts as the DOM is parsed, and the content stays in the DOM
+     behind the overlay so a crawler still sees a full page. See public/js/age-gate.js. -->
+<script src="/js/age-gate.js"></script>
+<meta name="description" content="Six dispensaries sit within a mile of I-69 exit 13 in Coldwater, Michigan, and not one menu tells you the price per gram. A free comparison tool, the state benchmark price, the full Branch County dispensary list, and the border-crossing law nobody explains. Adults 21+.">
+<link rel="canonical" href="https://legal-leafmarket.com/coldwater-guide">
+<meta name="theme-color" content="#080f14">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:title" content="What a Gram Actually Costs in Coldwater">
+<meta property="og:description" content="A $20 eighth is $5.71 a gram. A $58 ounce is $2.08. Same shelf, nearly three times the price, and no menu on the Green Mile says so. Free tool, no signup.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://legal-leafmarket.com/coldwater-guide">
+<meta property="og:site_name" content="Legal-Leaf Market">
+<meta property="og:image" content="https://legal-leafmarket.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What a Gram Actually Costs in Coldwater">
+<meta name="twitter:description" content="Six dispensaries, one road, and not one menu that tells you the price per gram. So here's the tool.">
+<meta name="twitter:image" content="https://legal-leafmarket.com/og-image.png">
+<meta name="rating" content="adult">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "@id": "https://legal-leafmarket.com/coldwater-guide#article",
+      "url": "https://legal-leafmarket.com/coldwater-guide",
+      "headline": "What a Gram Actually Costs in Coldwater, Michigan",
+      "description": "A free price-per-gram comparison tool for the Coldwater, Michigan dispensary cluster at I-69 exit 13, with the state benchmark retail price, the Branch County dispensary list, and a plain explanation of the border-crossing law.",
+      "image": "https://legal-leafmarket.com/og-image.png",
+      "inLanguage": "en",
+      "articleSection": "Local guides",
+      "about": [
+        { "@type": "Thing", "name": "Price per gram",
+          "description": "Retail price divided by net weight in grams, the only figure that compares cannabis packages of different sizes." },
+        { "@type": "Place", "name": "Coldwater, Michigan" }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://legal-leafmarket.com/coldwater-guide#crumbs",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Legal-Leaf Market", "item": "https://legal-leafmarket.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Coldwater, Michigan", "item": "https://legal-leafmarket.com/coldwater-guide" }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Cormorant+Garamond:ital,wght@1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/library.css">
+<!-- The objects the words sit on. MUST load after library.css: it wins by order,
+     not by weight, and moving it above silently restores the old surface. -->
+<link rel="stylesheet" href="/css/plate.css">
+<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+
+<style>
+/* ------------------------------------------------------------------
+   Page-local styles for /coldwater. Everything here is prefixed cw-
+   and every colour comes out of tokens.css, so this page cannot drift
+   from the family palette and cannot leak styles into library.css.
+   ------------------------------------------------------------------ */
+.cw{max-width:min(1100px,94vw);margin:0 auto;padding:0 0 92px}
+.cw h1,.cw h2,.cw h3{font-family:var(--display);letter-spacing:-.015em;text-wrap:balance}
+.cw p,.cw li,.cw td,.cw th{font-family:var(--sans)}
+.cw-num{font-variant-numeric:tabular-nums}
+
+.cw-hero{padding:clamp(30px,6vw,64px) 0 6px}
+.cw-eyebrow{
+  font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.19em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 16px;
+}
+.cw-hero h1{font-size:clamp(32px,6vw,60px);line-height:1.03;font-weight:900;margin:0 0 18px;color:var(--text)}
+.cw-stand{font-size:clamp(16.5px,2.1vw,19px);line-height:1.62;color:var(--muted);max-width:60ch;margin:0}
+.cw-stand b{color:var(--text);font-weight:600}
+
+.cw section{padding-top:clamp(38px,5.5vw,62px)}
+.cw h2{font-size:clamp(23px,3.4vw,34px);line-height:1.14;font-weight:700;margin:0 0 12px;color:var(--text)}
+.cw h3{font-size:17px;font-weight:600;margin:24px 0 7px;color:var(--text)}
+.cw p{font-size:16.5px;line-height:1.66;color:var(--muted);margin:0 0 15px;max-width:66ch}
+.cw p b,.cw li b{color:var(--text);font-weight:600}
+.cw a{color:var(--accent)}
+.cw a:focus-visible,.cw button:focus-visible,.cw input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.cw ul{margin:0 0 15px;padding-left:21px;max-width:66ch;color:var(--muted)}
+.cw li{margin-bottom:8px;line-height:1.6}
+.cw-lbl{
+  display:block;font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--dim);margin-bottom:11px;padding-bottom:9px;
+  border-bottom:1px solid var(--line);
+}
+
+/* --- benchmark strip --- */
+.cw-bench{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin:24px 0 4px;
+}
+.cw-bench div{background:var(--panel);padding:18px 17px}
+.cw-bench .v{
+  display:block;font-family:var(--display);font-size:clamp(25px,4vw,34px);font-weight:900;
+  line-height:1;color:var(--accent);margin-bottom:9px;font-variant-numeric:tabular-nums;
+}
+.cw-bench .k{display:block;font-size:13.5px;line-height:1.42;color:var(--muted)}
+.cw-bench .s{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);margin-top:8px}
+
+/* --- the comparison tool --- */
+.cw-tool{
+  background:var(--panel2);border:1px solid var(--glass-line);border-radius:var(--r-lg);
+  padding:clamp(16px,3vw,26px);margin:22px 0 0;
+}
+.cw-tool-head{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;margin-bottom:5px}
+.cw-tool-head h3{margin:0;font-size:19px;font-family:var(--display);font-weight:700}
+.cw-tool-head span{font-size:13px;color:var(--dim)}
+.cw-rows{display:flex;flex-direction:column;gap:10px;margin:18px 0 0}
+.cw-row{
+  display:grid;grid-template-columns:1fr 92px 1fr auto;gap:9px;align-items:center;
+  background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-sm);padding:10px;
+}
+.cw-row input,.cw-row select{
+  width:100%;background:var(--bg);border:1px solid var(--line);border-radius:6px;
+  color:var(--text);font-family:var(--sans);font-size:15px;padding:8px 10px;min-width:0;
+}
+/* The weight control is a CELL, not a single field: choosing "Other" appends a
+   free grams input beneath the select. Both live in here so the row always has
+   exactly four grid children -- otherwise the extra input lands in an implicit
+   row on desktop and sits on top of the select on mobile, where the two share a
+   grid-area. */
+.cw-wt-cell{display:flex;flex-direction:column;gap:6px;min-width:0}
+.cw-row input::placeholder{color:var(--dim)}
+.cw-row .cw-del{
+  background:transparent;border:1px solid var(--line);border-radius:6px;color:var(--dim);
+  font-size:17px;line-height:1;width:34px;height:34px;cursor:pointer;flex:none;
+}
+.cw-row .cw-del:hover{color:var(--red);border-color:var(--red)}
+.cw-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.cw-btn{
+  background:var(--accent);color:#07120b;border:none;border-radius:999px;
+  font-family:var(--sans);font-weight:700;font-size:14px;padding:10px 20px;cursor:pointer;
+}
+.cw-btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:500}
+.cw-btn.ghost:hover{color:var(--text);border-color:var(--muted)}
+
+.cw-out{margin-top:20px;border-top:1px solid var(--line);padding-top:18px}
+.cw-out ol{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.cw-out li{
+  display:flex;flex-wrap:wrap;gap:5px 14px;align-items:baseline;justify-content:space-between;
+  background:var(--chip);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 15px;margin:0;
+}
+.cw-out li.win{border-color:var(--accent);background:rgba(var(--accent-rgb),.09)}
+.cw-out .nm{font-size:15.5px;font-weight:600;color:var(--text)}
+.cw-out .nm em{font-style:normal;color:var(--dim);font-weight:400;font-size:13.5px;margin-left:7px}
+.cw-out .pg{
+  font-family:var(--display);font-size:22px;font-weight:900;color:var(--text);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.cw-out li.win .pg{color:var(--accent)}
+.cw-out .vs{width:100%;font-size:13px;color:var(--dim);font-variant-numeric:tabular-nums}
+.cw-out .vs.over{color:var(--gold)}
+.cw-out .vs.under{color:var(--accent)}
+.cw-hint{font-size:13.5px;color:var(--dim);margin:14px 0 0;max-width:none}
+
+/* --- tables --- */
+.cw-scroll{overflow-x:auto;margin:20px 0;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}
+.cw table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}
+.cw caption{
+  text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--dim);padding:14px 17px;border-bottom:1px solid var(--line);
+}
+.cw th,.cw td{text-align:left;padding:11px 17px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--muted)}
+.cw thead th{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);font-weight:600;white-space:nowrap}
+.cw tbody tr:last-child td{border-bottom:none}
+.cw td.strong{color:var(--text);font-weight:600}
+.cw td.rate{font-variant-numeric:tabular-nums;color:var(--text);font-weight:600;white-space:nowrap}
+.cw td.rate.good{color:var(--accent)}
+.cw td.rate.bad{color:var(--gold)}
+.cw-mile{display:inline-block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:2px 8px;white-space:nowrap}
+
+/* --- notice --- */
+.cw-notice{
+  border-left:3px solid var(--gold);background:rgba(240,185,60,.07);
+  border-radius:0 var(--r-sm) var(--r-sm) 0;padding:16px 19px;margin:22px 0;max-width:70ch;
+}
+.cw-notice.leaf{border-left-color:var(--accent);background:rgba(var(--accent-rgb),.07)}
+.cw-notice p:last-child{margin-bottom:0}
+.cw-notice .t{
+  display:block;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:7px;
+}
+.cw-notice.leaf .t{color:var(--accent)}
+
+.cw-foot{margin-top:56px;padding-top:22px;border-top:1px solid var(--line)}
+.cw-foot h2{font-size:19px;margin-bottom:10px}
+.cw-foot ol{font-size:13.5px;color:var(--dim);line-height:1.62;padding-left:20px;max-width:72ch}
+.cw-foot li{margin-bottom:8px}
+.cw-fine{font-size:13px;color:var(--dim);line-height:1.6;margin-top:16px;max-width:72ch}
+
+@media (max-width:620px){
+  .cw-row{grid-template-columns:1fr 1fr;grid-template-areas:"nm nm" "pr wt" "del del"}
+  .cw-row .cw-nm{grid-area:nm}
+  .cw-row .cw-pr{grid-area:pr}
+  .cw-row .cw-wt-cell{grid-area:wt}
+  .cw-row .cw-del{grid-area:del;width:100%}
+}
+@media (prefers-reduced-motion:reduce){.cw *{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<main class="cw">
+
+<header class="cw-hero">
+  <p class="cw-eyebrow">Local guide · Branch County, Michigan</p>
+  <h1>What a gram actually costs in Coldwater</h1>
+  <p class="cw-stand">
+    Six dispensaries sit within about a mile of I&#8209;69 exit 13, and more than half the people
+    walking into them drove up from Indiana. Every one of those menus prices by the package —
+    an eighth here, an ounce there — and <b>not one of them tells you the price per gram</b>,
+    which is the only number that compares them. So here is the tool, free, no signup, nothing
+    to install.
+  </p>
+</header>
+
+<section>
+  <span class="cw-lbl">The benchmark</span>
+  <h2>Start from what Michigan actually averages</h2>
+  <p>
+    The state's Cannabis Regulatory Agency publishes an average adult-use retail flower price
+    every month. It is the fairest yardstick there is, because it is computed from real
+    transactions across the whole state rather than from anybody's advertising.
+  </p>
+
+  <div class="cw-bench">
+    <div>
+      <span class="v cw-num">$58.18</span>
+      <span class="k">average retail ounce of adult-use flower, statewide</span>
+      <span class="s">June 2026</span>
+    </div>
+    <div>
+      <span class="v cw-num">$2.08</span>
+      <span class="k">the same figure expressed per gram — the line everything below is measured against</span>
+      <span class="s">Derived</span>
+    </div>
+    <div>
+      <span class="v cw-num">$20</span>
+      <span class="k">median price of an eighth in Michigan, against $35 in Ohio</span>
+      <span class="s">Mid-2026</span>
+    </div>
+  </div>
+  <p style="margin-top:16px">
+    Michigan has the cheapest flower in the country, and that is the entire reason the drive
+    happens. It is also why the per-gram question matters more here than anywhere else: when the
+    floor is this low, the gap between a good buy and a bad one is enormous in percentage terms
+    and nearly invisible in dollars.
+  </p>
+</section>
+
+<section>
+  <span class="cw-lbl">The tool</span>
+  <h2>Put any two prices in and see which one is actually cheaper</h2>
+  <p>
+    Works standing in the parking lot. Type what a shop is charging and what weight you get,
+    add a second row for the shop next door, and it does the division for you and ranks them.
+    Nothing is stored and nothing is sent anywhere.
+  </p>
+
+  <div class="cw-tool">
+    <div class="cw-tool-head">
+      <h3>Price per gram</h3>
+      <span>Add a row for each thing you're comparing</span>
+    </div>
+
+    <div class="cw-rows" id="cwRows"></div>
+
+    <div class="cw-actions">
+      <button type="button" class="cw-btn" id="cwAdd">Add another</button>
+      <button type="button" class="cw-btn ghost" id="cwReset">Clear all</button>
+    </div>
+
+    <div class="cw-out" id="cwOut" hidden>
+      <ol id="cwList"></ol>
+      <p class="cw-hint" id="cwHint"></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="cw-lbl">The shortcut</span>
+  <h2>Or just read it off this table</h2>
+  <p>
+    Most Michigan shelf prices land on a handful of round numbers. Here is what each one works
+    out to, and how it sits against the $2.08 state average.
+  </p>
+
+  <div class="cw-scroll">
+    <table>
+      <caption>Common shelf prices, converted</caption>
+      <thead>
+        <tr><th>You pay</th><th>You get</th><th>Per gram</th><th>Versus state average</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="strong">$35</td><td>Eighth · 3.5&nbsp;g</td><td class="rate bad">$10.00</td><td>4.8&times; the average</td></tr>
+        <tr><td class="strong">$25</td><td>Eighth · 3.5&nbsp;g</td><td class="rate bad">$7.14</td><td>3.4&times; the average</td></tr>
+        <tr><td class="strong">$20</td><td>Eighth · 3.5&nbsp;g</td><td class="rate bad">$5.71</td><td>2.7&times; the average</td></tr>
+        <tr><td class="strong">$40</td><td>Quarter · 7&nbsp;g</td><td class="rate">$5.71</td><td>2.7&times; the average</td></tr>
+        <tr><td class="strong">$60</td><td>Half · 14&nbsp;g</td><td class="rate">$4.29</td><td>2.1&times; the average</td></tr>
+        <tr><td class="strong">$150</td><td>Ounce · 28&nbsp;g</td><td class="rate">$5.36</td><td>2.6&times; the average</td></tr>
+        <tr><td class="strong">$100</td><td>Ounce · 28&nbsp;g</td><td class="rate">$3.57</td><td>1.7&times; the average</td></tr>
+        <tr><td class="strong">$75</td><td>Ounce · 28&nbsp;g</td><td class="rate">$2.68</td><td>1.3&times; the average</td></tr>
+        <tr><td class="strong">$58</td><td>Ounce · 28&nbsp;g</td><td class="rate good">$2.08</td><td>the state average</td></tr>
+        <tr><td class="strong">$50</td><td>Ounce · 28&nbsp;g</td><td class="rate good">$1.79</td><td>14% under</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cw-notice leaf">
+    <span class="t">The one thing worth internalising</span>
+    <p>
+      A <b>$20 eighth is $5.71 a gram</b>. A <b>$58 ounce is $2.08 a gram</b>. The eighth feels
+      like the cheap option because it is a smaller number, and it costs nearly <b>three times as
+      much</b> for the same weight. That single comparison is why this page exists, and no menu
+      on the Green Mile will make it for you.
+    </p>
+  </div>
+</section>
+
+<section>
+  <span class="cw-lbl">Where they are</span>
+  <h2>The Coldwater dispensaries, and how close together they really are</h2>
+  <p>
+    Three of these sit essentially on top of each other at the I&#8209;69 exit 13 interchange —
+    Lume at 351 and Sapura at 355 South Willowbrook are next-door neighbours. Locals call the
+    strip the Green Mile. The rest are spread through town along Chicago Street and downtown.
+  </p>
+
+  <div class="cw-scroll">
+    <table>
+      <caption>Branch County dispensaries · verify before you drive</caption>
+      <thead>
+        <tr><th>Dispensary</th><th>Address</th><th>Phone</th><th>Area</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="strong">Lume Cannabis</td><td>351 S Willowbrook Rd</td><td class="cw-num">(517) 924-3020</td><td><span class="cw-mile">Exit 13</span></td></tr>
+        <tr><td class="strong">Sapura</td><td>355 S Willowbrook Rd</td><td class="cw-num">(517) 924-0094</td><td><span class="cw-mile">Exit 13</span></td></tr>
+        <tr><td class="strong">The Dude Abides</td><td>398 N Willowbrook Rd, Ste D</td><td class="cw-num">(517) 459-9333</td><td><span class="cw-mile">Exit 13</span></td></tr>
+        <tr><td class="strong">Herbology Cannabis Co.</td><td>880 E Chicago St</td><td class="cw-num">(517) 924-0417</td><td>Chicago St</td></tr>
+        <tr><td class="strong">Green Tree Relief</td><td>553 E Chicago St</td><td>—</td><td>Chicago St</td></tr>
+        <tr><td class="strong">Banzen</td><td>55 S Michigan Ave</td><td>—</td><td>Downtown</td></tr>
+        <tr><td class="strong">Exclusive</td><td>Coldwater — address unconfirmed</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    We do not rank these, we do not take money from any of them, and we do not publish their
+    prices — prices move daily and a stale number is worse than none. Call ahead or check the
+    shop's own menu. If something here is wrong or out of date, tell us and we will fix it.
+  </p>
+</section>
+
+<section>
+  <span class="cw-lbl">Before you drive back</span>
+  <h2>The part nobody at the counter is going to explain</h2>
+  <p>
+    Indiana has no legal adult-use market, and <b>carrying cannabis across the state line is a
+    federal and Indiana offence regardless of where you bought it</b>. Buying it legally in
+    Michigan does not travel with it. Branch and Steuben county sheriffs have both said publicly
+    that a large share of their cannabis arrests are people heading south after a Michigan
+    purchase — very often stopped for something minor first, with the smell doing the rest.
+  </p>
+  <p>
+    That is not a scare story and it is not legal advice. It is the single most predictable way
+    a cheap ounce turns expensive, and it is worth knowing before you plan the trip rather than
+    after.
+  </p>
+
+  <div class="cw-notice">
+    <span class="t">If you're coming from Ohio instead</span>
+    <p>
+      Same rule at that line. The price gap is real — Ohio's median eighth has been running
+      about <b>$35</b> against Michigan's <b>$20</b> — but the drive back is the risk, not the
+      purchase.
+    </p>
+  </div>
+</section>
+
+<section>
+  <span class="cw-lbl">Who made this</span>
+  <h2>We're a price comparison site, and this is the same arithmetic we do all day</h2>
+  <p>
+    <a href="/">Legal-Leaf Market</a> compares hemp-derived cannabinoid products from about
+    sixteen stores that ship nationwide, ranked by price per gram with the lab certificate
+    attached to every card. We hold no stock, we sell nothing, and we are not affiliated with
+    any dispensary on this page.
+  </p>
+  <p>
+    This guide exists because the per-gram question is the whole thing we do, Coldwater is where
+    it goes most unanswered, and the tool costs us nothing to give away. If you want to see the
+    same sorting applied to products that arrive by mail, that is
+    <a href="/coldwater">the live Coldwater menus</a>, and <a href="/p/pick">what we publish daily</a> — though what is lawful to receive depends on
+    your state, and that is a question worth checking for yourself rather than taking anyone's
+    word for.
+  </p>
+</section>
+
+<footer class="cw-foot">
+  <h2>Notes on method</h2>
+  <ol>
+    <li>The statewide average retail price of an ounce of adult-use flower is published monthly
+      by the Michigan Cannabis Regulatory Agency. The $58.18 figure is the June 2026 print; April
+      was $59.05 and May $59.73. The per-gram figure of $2.08 is that number divided by 28.</li>
+    <li>Median eighth prices for Michigan and Ohio are drawn from mid-2026 trade reporting, not
+      from our own sampling, and they are medians across each state rather than quotes from any
+      particular shop.</li>
+    <li>The dispensary list was assembled from public business listings in August 2026 and is
+      offered as a starting point, not a register. Shops open, close and move; one entry here
+      carries an unconfirmed address and is marked as such. We publish no prices for any of
+      them.</li>
+    <li>The comparison tool runs entirely in your browser. Nothing you type is transmitted,
+      logged or stored.</li>
+    <li>Conversions use net product weight. A package's price per gram says nothing about its
+      quality, its potency, or whether it is whole flower rather than shake — a very cheap gram
+      is often cheap for a reason worth asking about at the counter.</li>
+  </ol>
+  <p class="cw-fine">
+    Legal-Leaf Market is a price comparison service. We hold no stock, sell nothing, and take no
+    payment from any business named on this page. Nothing here is legal or medical advice, nor a
+    claim about any product's effects. Statements about the law are general and current
+    understanding only; cannabis law differs by state and changes, and you should verify anything
+    that matters to you. Adults 21+ only.
+  </p>
+</footer>
+
+</main>
+
+<script>
+/* ------------------------------------------------------------------
+   /coldwater price-per-gram comparison. Vanilla, no dependencies, no
+   network. Deliberately has no product data in it: this page never
+   asserts what any shop charges (CLAUDE.md §11 -- product data comes
+   from /api/products or not at all), it only divides what the visitor
+   types. That is also why it needs no scraping and carries no risk of
+   publishing a stale price against a named business.
+   ------------------------------------------------------------------ */
+(function(){
+  "use strict";
+
+  var MI_AVG_PER_G = 58.18 / 28;   /* CRA statewide average ounce, June 2026 */
+
+  var SIZES = [
+    ["1 g", 1], ["Eighth · 3.5 g", 3.5], ["Quarter · 7 g", 7],
+    ["Half · 14 g", 14], ["Ounce · 28 g", 28], ["Other (grams)", 0]
+  ];
+
+  var rowsEl = document.getElementById("cwRows");
+  var outEl  = document.getElementById("cwOut");
+  var listEl = document.getElementById("cwList");
+  var hintEl = document.getElementById("cwHint");
+  var seq = 0;
+
+  function money(v){
+    return "$" + v.toFixed(2);
+  }
+
+  function addRow(name, price, grams){
+    var id = ++seq;
+    var row = document.createElement("div");
+    row.className = "cw-row";
+
+    var opts = SIZES.map(function(s, i){
+      return '<option value="' + s[1] + '"' + (s[1] === grams ? " selected" : "") + '>' + s[0] + "</option>";
+    }).join("");
+
+    row.innerHTML =
+      '<input class="cw-nm" type="text" placeholder="Shop or strain" aria-label="Label for row ' + id + '" value="' + (name || "") + '">' +
+      '<input class="cw-pr" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Price" aria-label="Price in dollars for row ' + id + '"' + (price ? ' value="' + price + '"' : "") + '>' +
+      '<div class="cw-wt-cell"><select class="cw-wt" aria-label="Weight for row ' + id + '">' + opts + "</select></div>" +
+      '<button type="button" class="cw-del" aria-label="Remove row ' + id + '">&times;</button>';
+
+    var sel = row.querySelector(".cw-wt");
+    var custom = null;
+
+    /* "Other" swaps the select for a free grams field, and back again. */
+    function syncCustom(){
+      if (sel.value === "0" && !custom){
+        custom = document.createElement("input");
+        custom.type = "number";
+        custom.inputMode = "decimal";
+        custom.min = "0";
+        custom.step = "0.01";
+        custom.placeholder = "grams";
+        custom.className = "cw-wtx";
+        custom.setAttribute("aria-label", "Weight in grams for row " + id);
+        custom.addEventListener("input", recalc);
+        sel.parentNode.appendChild(custom);
+        custom.focus();
+      } else if (sel.value !== "0" && custom){
+        custom.remove();
+        custom = null;
+      }
+    }
+
+    row.gramsOf = function(){
+      if (sel.value === "0") return custom ? parseFloat(custom.value) : NaN;
+      return parseFloat(sel.value);
+    };
+
+    sel.addEventListener("change", function(){ syncCustom(); recalc(); });
+    row.querySelector(".cw-nm").addEventListener("input", recalc);
+    row.querySelector(".cw-pr").addEventListener("input", recalc);
+    row.querySelector(".cw-del").addEventListener("click", function(){
+      row.remove();
+      if (!rowsEl.children.length) addRow("", "", 3.5);
+      recalc();
+    });
+
+    rowsEl.appendChild(row);
+    return row;
+  }
+
+  function recalc(){
+    var out = [];
+    Array.prototype.forEach.call(rowsEl.children, function(row){
+      var price = parseFloat(row.querySelector(".cw-pr").value);
+      var grams = row.gramsOf();
+      if (!isFinite(price) || !isFinite(grams) || price <= 0 || grams <= 0) return;
+      out.push({
+        name: (row.querySelector(".cw-nm").value || "").trim(),
+        price: price,
+        grams: grams,
+        per: price / grams
+      });
+    });
+
+    if (!out.length){
+      outEl.hidden = true;
+      listEl.innerHTML = "";
+      return;
+    }
+
+    out.sort(function(a, b){ return a.per - b.per; });
+    outEl.hidden = false;
+    listEl.innerHTML = "";
+
+    out.forEach(function(o, i){
+      var li = document.createElement("li");
+      if (i === 0 && out.length > 1) li.className = "win";
+
+      var ratio = o.per / MI_AVG_PER_G;
+      var vs, cls;
+      if (ratio >= 1.05){
+        vs = ratio.toFixed(1) + "× the Michigan average of " + money(MI_AVG_PER_G) + " a gram";
+        cls = "over";
+      } else if (ratio <= 0.95){
+        vs = Math.round((1 - ratio) * 100) + "% under the Michigan average of " + money(MI_AVG_PER_G) + " a gram";
+        cls = "under";
+      } else {
+        vs = "about the Michigan average of " + money(MI_AVG_PER_G) + " a gram";
+        cls = "";
+      }
+
+      var label = o.name || "Unnamed";
+      li.innerHTML =
+        '<span class="nm">' + escapeHtml(label) +
+        '<em>' + money(o.price) + " for " + trimNum(o.grams) + " g</em></span>" +
+        '<span class="pg">' + money(o.per) + "/g</span>" +
+        '<span class="vs ' + cls + '">' + vs + "</span>";
+      listEl.appendChild(li);
+    });
+
+    if (out.length > 1){
+      var worst = out[out.length - 1], best = out[0];
+      var times = worst.per / best.per;
+      hintEl.textContent = times >= 1.05
+        ? "Cheapest per gram is " + (best.name || "the top row") + ", at " +
+          times.toFixed(1) + "× better value than the most expensive row."
+        : "These are within a few percent of each other per gram.";
+    } else {
+      hintEl.textContent = "Add a second row to compare against another shop.";
+    }
+  }
+
+  function trimNum(n){
+    return (Math.round(n * 100) / 100).toString();
+  }
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
+
+  document.getElementById("cwAdd").addEventListener("click", function(){
+    addRow("", "", 28);
+    recalc();
+  });
+  document.getElementById("cwReset").addEventListener("click", function(){
+    rowsEl.innerHTML = "";
+    addRow("", "", 3.5);
+    addRow("", "", 28);
+    recalc();
+  });
+
+  /* Opens on the comparison the page is actually about: an eighth against an ounce. */
+  addRow("", "", 3.5);
+  addRow("", "", 28);
+  recalc();
+})();
+</script>
+
+</body>
+</html>

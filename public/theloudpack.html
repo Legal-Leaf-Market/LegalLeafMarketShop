@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Loud Pack: three short films | Legal-Leaf Market</title>
+<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any video
+     renders, and the page content stays in the DOM behind the overlay so a crawler
+     still sees a full page. See public/js/age-gate.js. -->
+<script src="/js/age-gate.js"></script>
+<meta name="description" content="Three short films from Legal-Leaf Market: a heist, a confession, and a party in Paris. Adults 21+.">
+<link rel="canonical" href="https://legal-leafmarket.com/p/theloudpack">
+<meta name="theme-color" content="#0a2078">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<!-- SHARE CARD. Its own 1200x630 image rather than the site-wide og-image.png, because
+     this link gets sent to people directly and the preview is the whole first impression.
+     Dimensions are declared so Facebook, LinkedIn and iMessage reserve the large card
+     before the image finishes downloading instead of falling back to a small thumbnail;
+     twitter:title and twitter:description are stated rather than inherited, because a
+     card missing them renders as a bare domain on some clients. -->
+<meta property="og:title" content="The Loud Pack — three short films">
+<meta property="og:description" content="A heist, a confession, and a party in Paris. Three short films from Legal-Leaf Market. Adults 21+.">
+<meta property="og:type" content="video.other">
+<meta property="og:url" content="https://legal-leafmarket.com/p/theloudpack">
+<meta property="og:site_name" content="Legal-Leaf Market">
+<meta property="og:image" content="https://legal-leafmarket.com/assets/reels/loudpack-og.jpg">
+<meta property="og:image:secure_url" content="https://legal-leafmarket.com/assets/reels/loudpack-og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Legal-Leaf Market: The Loud Pack. Three short films, with a burst reading fifty dollar ounce.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Loud Pack — three short films">
+<meta name="twitter:description" content="A heist, a confession, and a party in Paris. Adults 21+.">
+<meta name="twitter:image" content="https://legal-leafmarket.com/assets/reels/loudpack-og.jpg">
+<meta name="twitter:image:alt" content="Legal-Leaf Market: The Loud Pack. Three short films.">
+<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+
+<style>
+  /* =========================================================================
+     THE LOUD PACK.
+
+     SELF-CONTAINED ON PURPOSE. This page links nowhere off-site. It ran on
+     Instagram embeds first, which are not inline players -- the control hands
+     off to the app, and when that bounces the visitor lands back where they
+     started. Then on plain outbound links, which fared no better. So the films
+     are hosted here and the only thing the page asks anybody to do is watch
+     them and then go to the shelf.
+
+     Three assets per film, and the split is what keeps the page light:
+       reelN-poster.jpg  ~8 KB   first frame, so a card is never blank
+       reelN-loop.mp4    ~95 KB  ten silent seconds, autoplaying in the card
+       reelN.mp4         ~3.5 MB the whole film with its voiceover, fetched
+                                 ONLY when somebody opens the player
+     Landing on the page costs 0.31 MB for all three cards.
+     ========================================================================= */
+  :root{
+    --blue:#0a2078; --blue-lit:#1440d8; --card:#071856;
+    --edge:rgba(150,190,255,.30);
+    --ink:#f2f6ff; --muted:#a8c0f0; --cyan:#63d8ff;
+    --orange:#ff7a00; --orange-lit:#ff9e2c; --orange-edge:#ffb454;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--blue);
+    background-image:
+      radial-gradient(115% 70% at 12% -8%, rgba(20,64,216,.85), transparent 60%),
+      radial-gradient(90% 55% at 92% 108%, rgba(99,216,255,.18), transparent 62%);
+    background-attachment:fixed;color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI Variable Display","Segoe UI",Roboto,
+      "Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  body.locked{overflow:hidden}
+  .wrap{width:min(540px,100%);margin:0 auto;padding:0 14px 128px}
+
+  /* ---- masthead ---- */
+  .top{padding:26px 0 20px;text-align:center}
+  .back{display:inline-block;margin:0 0 20px;font-size:13px;font-weight:600;
+    letter-spacing:.03em;color:var(--muted);text-decoration:none}
+  .back:hover{color:var(--ink)}
+  h1{margin:0;font-size:clamp(34px,8.9vw,54px);line-height:.94;letter-spacing:-.035em;
+    font-weight:900;text-transform:uppercase;text-wrap:balance;
+    text-shadow:0 3px 22px rgba(0,0,0,.4)}
+  .kick{margin:16px 0 0;font-size:12px;font-weight:800;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--cyan)}
+  .say{margin:9px auto 0;max-width:22ch;font-size:19px;line-height:1.35;font-weight:600;
+    text-wrap:balance}
+  .say b{color:var(--orange-lit);font-weight:800}
+
+  /* Play-all. The page's own invitation to watch the set full screen rather than
+     scrolling past three muted loops, which is what most visitors would otherwise do. */
+  .playall{
+    display:inline-flex;align-items:center;gap:10px;margin:20px 0 0;
+    padding:14px 24px;border-radius:999px;cursor:pointer;
+    background:#fff;color:#08205e;border:0;
+    font:inherit;font-size:16px;font-weight:900;letter-spacing:-.01em;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  .playall:hover{transform:translateY(-1px)}
+  .playall svg{width:18px;height:18px;fill:#08205e}
+
+  /* ---- cards ---- */
+  .cards{display:flex;flex-direction:column;gap:18px}
+  .card{background:var(--card);border:1px solid var(--edge);border-radius:20px;
+    overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+  .chead{display:flex;align-items:center;gap:11px;padding:15px 16px}
+  .num{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+    background:rgba(99,216,255,.14);border:1px solid rgba(99,216,255,.45);
+    color:var(--cyan);font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+  .ctitle{margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+
+  /* The well is a BUTTON, not a link: it opens a player on this page rather than
+     navigating, and a screen reader should be told which of those two it is. */
+  .well{position:relative;display:block;width:100%;aspect-ratio:9/16;padding:0;border:0;
+    background:#04113d;cursor:pointer;overflow:hidden}
+  .well video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .tapui{position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:flex-end;padding:0 0 18px;pointer-events:none;
+    background:linear-gradient(to bottom,rgba(4,17,61,0) 55%,rgba(4,17,61,.85) 100%)}
+  .tapui .play{
+    /* 44% not centred: the fixed CTA pill can land on a centred badge on a short phone. */
+    position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);
+    width:74px;height:74px;border-radius:50%;display:grid;place-items:center;
+    background:rgba(4,17,61,.55);border:2px solid rgba(255,255,255,.9);
+    box-shadow:0 8px 30px rgba(0,0,0,.5)}
+  .tapui .play svg{width:26px;height:26px;margin-left:4px;fill:#fff}
+  .tapui .label{font-size:14px;font-weight:800;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+  .well:hover .play,.well:focus-visible .play{background:rgba(255,122,0,.9);border-color:#ffd08a}
+  .well:focus-visible{outline:3px solid var(--cyan);outline-offset:-3px}
+
+  .foot{margin:26px auto 0;max-width:34ch;text-align:center;font-size:12.5px;
+    line-height:1.6;color:var(--muted)}
+  .foot a{color:var(--ink)}
+
+  /* ---- the CTA pill ---- */
+  .pill{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));
+    transform:translateX(-50%);z-index:900;
+    display:flex;align-items:center;gap:9px;white-space:nowrap;text-decoration:none;
+    background:linear-gradient(135deg,var(--orange),var(--orange-lit));color:#1a0d00;
+    font-size:17px;font-weight:900;padding:15px 26px;border-radius:999px;
+    border:2px solid var(--orange-edge);box-shadow:0 8px 26px rgba(255,122,0,.55);
+    animation:flash 1.5s ease-in-out infinite}
+  .pill:focus-visible{outline:3px solid #fff;outline-offset:3px}
+  @keyframes flash{
+    0%,100%{box-shadow:0 6px 20px rgba(255,122,0,.5);border-color:var(--orange-edge);
+      transform:translateX(-50%) scale(1)}
+    50%{box-shadow:0 12px 40px rgba(255,140,26,.95),0 0 0 8px rgba(255,140,26,.16);
+      border-color:#ffd08a;transform:translateX(-50%) scale(1.06)}}
+  /* The pill is fixed over the page, so it has to be got out of the way of the player
+     rather than merely out-ranked: a z-index race with a full-screen dialog is the kind
+     of thing that works until the day it does not. */
+  body.locked .pill{display:none}
+
+  /* ---- the popout player ---- */
+  .lb{position:fixed;inset:0;z-index:1000;background:#02091f;
+    display:flex;flex-direction:column;
+    padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .lb[hidden]{display:none}
+  .lbbar{display:flex;align-items:center;gap:12px;padding:12px 14px;flex:none}
+  .lbnum{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;
+    background:rgba(99,216,255,.16);border:1px solid rgba(99,216,255,.5);
+    color:var(--cyan);font-size:12px;font-weight:800}
+  .lbtitle{font-size:16px;font-weight:800;letter-spacing:-.01em;flex:1;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .iconbtn{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);
+    color:#fff;cursor:pointer;font:inherit;padding:0}
+  .iconbtn:hover{background:rgba(255,255,255,.2)}
+  .iconbtn:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+  .iconbtn svg{width:19px;height:19px;fill:#fff}
+
+  .lbstage{position:relative;flex:1;min-height:0;display:flex;align-items:center;
+    justify-content:center;padding:0 10px}
+  #lbVid{max-width:100%;max-height:100%;width:auto;height:100%;aspect-ratio:9/16;
+    background:#000;border-radius:14px;display:block}
+  .nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2}
+  .nav.prev{left:14px}
+  .nav.next{right:14px}
+  .nav[disabled]{opacity:.28;cursor:default}
+
+  /* Shown when a film finishes, which is the moment a viewer is most likely to want
+     the account rather than the page. */
+  .endcard{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:14px;padding:26px;text-align:center;
+    background:rgba(2,9,31,.9)}
+  .endcard[hidden]{display:none}
+  .endcard p{margin:0;font-size:19px;font-weight:800;text-wrap:balance}
+  .endbtns{display:flex;flex-direction:column;gap:10px;width:min(300px,100%)}
+  .endbtns a,.endbtns button{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    padding:14px 18px;border-radius:999px;font:inherit;font-size:15px;font-weight:800;
+    text-decoration:none;cursor:pointer;border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.10);color:#fff}
+  .endbtns .go{background:#fff;color:#08205e;border-color:#fff}
+
+  /* The player has no footer bar any more. It held one thing, an outbound link, and
+     with that gone the stage simply takes the height instead. */
+  .endbtns .shop{background:linear-gradient(135deg,var(--orange),var(--orange-lit));
+    color:#1a0d00;border-color:var(--orange-edge)}
+
+  @media (prefers-reduced-motion:reduce){ .pill{animation:none} }
+  @media (min-width:700px){
+    .wrap{width:420px;padding-bottom:140px}
+    .cards{gap:26px}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <a class="back" href="/">&larr; Back to the market</a>
+    <h1>Legal-Leaf Market</h1>
+    <p class="kick">Three short films</p>
+    <p class="say">A heist, a confession, and a <b>party in Paris</b>.</p>
+    <button class="playall" id="playAll" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      Play all three, full screen
+    </button>
+  </header>
+
+  <main class="cards" id="cards">
+
+    <article class="card">
+      <div class="chead"><span class="num">1</span><h2 class="ctitle">It&rsquo;s a Heist Story</h2></div>
+      <button class="well" type="button" data-open="0" aria-label="Play It&rsquo;s a Heist Story full screen">
+        <video class="loop" src="/assets/reels/reel1-loop.mp4" poster="/assets/reels/reel1-poster.jpg"
+               muted loop playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
+        <span class="tapui">
+          <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="label">Tap for full screen &amp; sound</span>
+        </span>
+      </button>
+    </article>
+
+    <article class="card">
+      <div class="chead"><span class="num">2</span><h2 class="ctitle">How Our Site Works</h2></div>
+      <button class="well" type="button" data-open="1" aria-label="Play How Our Site Works full screen">
+        <video class="loop" src="/assets/reels/reel2-loop.mp4" poster="/assets/reels/reel2-poster.jpg"
+               muted loop playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
+        <span class="tapui">
+          <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="label">Tap for full screen &amp; sound</span>
+        </span>
+      </button>
+    </article>
+
+    <article class="card">
+      <div class="chead"><span class="num">3</span><h2 class="ctitle">Party in Paris</h2></div>
+      <button class="well" type="button" data-open="2" aria-label="Play Party in Paris full screen">
+        <video class="loop" src="/assets/reels/reel3-loop.mp4" poster="/assets/reels/reel3-poster.jpg"
+               muted loop playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
+        <span class="tapui">
+          <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="label">Tap for full screen &amp; sound</span>
+        </span>
+      </button>
+    </article>
+
+  </main>
+
+
+  <p class="foot">
+    Adults 21+. Nothing here is medical or legal advice.<br>
+    More in <a href="/library">the library</a>.
+  </p>
+
+</div>
+
+<a class="pill" id="pill" href="/p/pick"
+   title="This week's pick: an ounce under $50">Shop $50 ounces &rarr;</a>
+
+<!-- The popout player. One <video> reused across all three films rather than three
+     elements, so only the one being watched is ever holding a decoded stream. -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-labelledby="lbTitle" hidden>
+  <div class="lbbar">
+    <span class="lbnum" id="lbNum">1</span>
+    <span class="lbtitle" id="lbTitle"></span>
+    <button class="iconbtn" id="lbFs" type="button" aria-label="Full screen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5v2H6v3H4zm11-5h5v5h-2V6h-3V4zM4 15h2v3h3v2H4v-5zm14 3v-3h2v5h-5v-2h3z"/></svg>
+    </button>
+    <button class="iconbtn" id="lbClose" type="button" aria-label="Close player">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"/></svg>
+    </button>
+  </div>
+
+  <div class="lbstage" id="lbStage">
+    <video id="lbVid" playsinline controls preload="none"></video>
+    <button class="iconbtn nav prev" id="lbPrev" type="button" aria-label="Previous film">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.4 7.4 14 6l-6 6 6 6 1.4-1.4-4.6-4.6z"/></svg>
+    </button>
+    <button class="iconbtn nav next" id="lbNext" type="button" aria-label="Next film">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.6 16.6 10 18l6-6-6-6-1.4 1.4 4.6 4.6z"/></svg>
+    </button>
+
+    <div class="endcard" id="lbEnd" hidden>
+      <p id="lbEndTitle">That&rsquo;s the one.</p>
+      <div class="endbtns">
+        <button type="button" id="lbEndNext">Next film &rarr;</button>
+        <a class="shop" id="lbEndShop" href="/p/pick">Shop $50 ounces &rarr;</a>
+        <button type="button" id="lbEndReplay">Replay</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var REELS = [
+    { t: "It’s a Heist Story", src: '/assets/reels/reel1.mp4' },
+    { t: 'How Our Site Works', src: '/assets/reels/reel2.mp4' },
+    { t: 'Party in Paris',     src: '/assets/reels/reel3.mp4' }
+  ];
+
+  function track(n, p) {
+    try { if (window.LL && typeof window.LL.track === 'function') window.LL.track(n, p || {}); }
+    catch (e) { /* analytics never breaks the page */ }
+  }
+
+  /* ---- card loops -----------------------------------------------------
+     preload="none" in the markup and played only once a card is actually on
+     screen, so a visitor who never scrolls past the first film never fetches
+     the other two. Paused on the way out for the same reason. */
+  var loops = [].slice.call(document.querySelectorAll('.loop'));
+  if (window.IntersectionObserver) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var v = en.target;
+        if (en.isIntersecting) { v.preload = 'auto'; var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        else { try { v.pause(); } catch (e) {} }
+      });
+    }, { rootMargin: '200px 0px', threshold: 0.15 });
+    loops.forEach(function (v) { io.observe(v); });
+  } else {
+    loops.forEach(function (v) { v.preload = 'auto'; var p = v.play(); if (p && p.catch) p.catch(function () {}); });
+  }
+
+  /* ---- the player ------------------------------------------------------ */
+  var lb = document.getElementById('lb');
+  var vid = document.getElementById('lbVid');
+  var stage = document.getElementById('lbStage');
+  var elTitle = document.getElementById('lbTitle');
+  var elNum = document.getElementById('lbNum');
+  var elEnd = document.getElementById('lbEnd');
+  var btnPrev = document.getElementById('lbPrev');
+  var btnNext = document.getElementById('lbNext');
+  var cur = -1, lastFocus = null;
+
+  function load(i) {
+    cur = i;
+    var r = REELS[i];
+    elTitle.textContent = r.t;
+    elNum.textContent = String(i + 1);
+    elEnd.hidden = true;
+    btnPrev.disabled = i === 0;
+    btnNext.disabled = i === REELS.length - 1;
+    vid.preload = 'auto';
+    vid.src = r.src;
+    vid.currentTime = 0;
+    vid.muted = false;          /* opening the player IS the gesture that earns sound */
+    var p = vid.play();
+    /* A browser that refuses an unmuted autoplay gets a muted one rather than a still
+       frame; the controls are right there to turn it up. */
+    if (p && p.catch) p.catch(function () { vid.muted = true; var q = vid.play(); if (q && q.catch) q.catch(function () {}); });
+    track('loudpack_open', { reel: i + 1, title: r.t });
+  }
+
+  function open(i) {
+    lastFocus = document.activeElement;
+    lb.hidden = false;
+    document.body.classList.add('locked');
+    loops.forEach(function (v) { try { v.pause(); } catch (e) {} });
+    load(i);
+    document.getElementById('lbClose').focus();
+  }
+
+  function close() {
+    try { vid.pause(); } catch (e) {}
+    vid.removeAttribute('src');
+    vid.load();                 /* drop the buffer rather than leaving it resident */
+    lb.hidden = true;
+    document.body.classList.remove('locked');
+    loops.forEach(function (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); });
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function step(d) {
+    var i = cur + d;
+    if (i >= 0 && i < REELS.length) load(i);
+  }
+
+  [].slice.call(document.querySelectorAll('.well')).forEach(function (b) {
+    b.addEventListener('click', function () { open(parseInt(b.getAttribute('data-open'), 10) || 0); });
+  });
+  document.getElementById('playAll').addEventListener('click', function () {
+    track('loudpack_playall', {}); open(0);
+  });
+  document.getElementById('lbClose').addEventListener('click', close);
+  btnPrev.addEventListener('click', function () { step(-1); });
+  btnNext.addEventListener('click', function () { step(1); });
+  document.getElementById('lbEndNext').addEventListener('click', function () { step(1); });
+  document.getElementById('lbEndReplay').addEventListener('click', function () {
+    elEnd.hidden = true; vid.currentTime = 0; var p = vid.play(); if (p && p.catch) p.catch(function () {});
+  });
+  document.getElementById('lbEndShop').addEventListener('click', function () {
+    track('loudpack_pick_click', { to: '/p/pick', from: 'endcard' });
+  });
+
+  /* End card: somebody who has just finished a film is the most engaged visitor this
+     page will ever have, so that is where the next film and the shelf are offered.
+     Autoplay straight into the next one is deliberately NOT done -- it would bury the
+     one moment the page has to convert. */
+  vid.addEventListener('ended', function () {
+    document.getElementById('lbEndNext').hidden = cur >= REELS.length - 1;
+    elEnd.hidden = false;
+    track('loudpack_finished', { reel: cur + 1 });
+  });
+  vid.addEventListener('play', function () { elEnd.hidden = true; });
+
+  /* Full screen. The standard API takes the stage so the title bar and buttons come
+     with it; iOS Safari implements none of it on a container and only ever full-screens
+     a <video>, hence the webkit fallback on the element itself. */
+  document.getElementById('lbFs').addEventListener('click', function () {
+    track('loudpack_fullscreen', { reel: cur + 1 });
+    var el = stage;
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      (document.exitFullscreen || document.webkitExitFullscreen || function () {}).call(document);
+      return;
+    }
+    if (el.requestFullscreen) { var r = el.requestFullscreen(); if (r && r.catch) r.catch(function () {}); }
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (vid.webkitEnterFullscreen) vid.webkitEnterFullscreen();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (lb.hidden) return;
+    if (e.key === 'Escape') { e.preventDefault(); close(); }
+    else if (e.key === 'ArrowRight') step(1);
+    else if (e.key === 'ArrowLeft') step(-1);
+  });
+  /* A tap on the backdrop closes, but a tap on the video must not: the controls live
+     there and hitting pause should not dismiss the player. */
+  lb.addEventListener('click', function (e) { if (e.target === lb || e.target === stage) close(); });
+
+  track('loudpack_view', { reels: REELS.length });
+  var pill = document.getElementById('pill');
+  if (pill) pill.addEventListener('click', function () { track('loudpack_pick_click', { to: '/p/pick' }); });
+})();
+</script>
+
+</body>
+</html>

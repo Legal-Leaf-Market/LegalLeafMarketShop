@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lookah — Preview</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Internal preview: how a Lookah listing could look on Legal-Leaf Market.">
+<!--
+  /lookah-preview -- an internal, password-gated mockup, NOT a real store page.
+
+  WHY THIS EXISTS. Nic applied for Lookah's affiliate program on 22 Aug 2026
+  and asked to "build a password protected mock up live for lookah" before
+  any real integration. Lookah's domain, platform and catalogue are all
+  UNVERIFIED from this environment (egress to every merchant host is refused
+  by the sandbox proxy this was written in -- CLAUDE.md section 10's
+  LL_NO_STORE_FETCH note explains why), and there is no approved affiliate
+  ref yet (api/products.js carries Lookah as a commented-out STORES entry
+  for exactly that reason). SUPERSEDED 22 Aug 2026: the owner chose to list
+  Lookah unmonetised, so that STORES entry is live and this page is now a
+  historical mockup that can be deleted. So this page is hand-authored placeholder data,
+  styled to look like a real card, for Nic to react to visually -- it is NOT
+  wired to /api/products, the cart, or checkout, and must not be mistaken
+  for a live listing.
+
+  WHY A SEPARATE PAGE AND NOT THE BLOB. CLAUDE.md section 5 forbids hand-
+  editing the base64 engine in index.html, and there is no real Lookah
+  product data to feed it even if that were the plan. A small self-contained
+  page (same shape as coldwater-collect.html) avoids the blob entirely and
+  can be deleted with one file removal once the mockup has served its
+  purpose or Lookah goes live for real.
+
+  PASSWORD IS NOT SECURITY. Same caveat as admin mode's PIN (CLAUDE.md
+  section 6): this is client-side and readable in view-source. It exists so
+  the page is not something a casual visitor stumbles onto while it shows
+  fake prices under a real brand name -- not to protect anything sensitive.
+  noindex, nofollow, and deliberately not in any nav or sitemap.xml.
+-->
+<style>
+  :root{
+    --leaf:#4ec9ff; --bg:#080f14; --panel:#0d1720; --panel2:#101d27; --line:#1e2f3a;
+    --ink:#eaf2f6; --dim:#93a9b8; --warn:#ffb454; --gold:#e8c56a;
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f8fb; --panel:#ffffff; --panel2:#eef4f8; --line:#d5e2ec; --ink:#0d1720; --dim:#4a5f6e;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg:#f4f8fb; --panel:#ffffff; --panel2:#eef4f8; --line:#d5e2ec; --ink:#0d1720; --dim:#4a5f6e;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+  a{color:var(--leaf)}
+
+  /* ---- the gate -------------------------------------------------------- */
+  #gate{position:fixed;inset:0;background:var(--bg);display:flex;
+    align-items:center;justify-content:center;z-index:50;padding:24px}
+  #gate.hidden{display:none}
+  #gateBox{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:28px;max-width:360px;width:100%;text-align:center}
+  #gateBox h1{font-size:1.15rem;margin:0 0 6px}
+  #gateBox p{color:var(--dim);font-size:.9rem;margin:0 0 18px}
+  #gatePin{width:100%;padding:11px 12px;border-radius:9px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--ink);font-size:1rem;text-align:center;letter-spacing:.05em}
+  #gateBtn{width:100%;margin-top:12px;padding:11px 12px;border-radius:9px;border:none;
+    background:var(--leaf);color:#04140a;font-weight:700;cursor:pointer;font-size:.95rem}
+  #gateErr{color:var(--warn);font-size:.85rem;margin-top:10px;min-height:1.2em}
+
+  /* ---- the mockup -------------------------------------------------------- */
+  #app{display:none;max-width:1080px;margin:0 auto;padding:28px 20px 60px}
+  #app.shown{display:block}
+  .banner{background:linear-gradient(90deg,#3a2c07,#231a05);border:1px solid var(--warn);
+    color:var(--warn);border-radius:10px;padding:12px 16px;font-size:.88rem;margin-bottom:22px;
+    line-height:1.5}
+  .banner b{color:#ffd27a}
+  header.top{display:flex;align-items:baseline;justify-content:space-between;
+    gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  header.top h1{font-size:1.4rem;margin:0}
+  header.top .sub{color:var(--dim);font-size:.88rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:16px;margin-top:22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    overflow:hidden;display:flex;flex-direction:column}
+  .card .imgwrap{aspect-ratio:1/1;background:var(--panel2);display:flex;
+    align-items:center;justify-content:center;font-size:2.4rem}
+  .card .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .card .cat{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gold)}
+  .card .name{font-weight:600;font-size:.95rem;line-height:1.3}
+  .card .price{font-size:1.05rem;font-weight:700;margin-top:auto}
+  .card .price small{font-weight:400;color:var(--dim);font-size:.75rem}
+  .card .storepill{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);
+    border-radius:999px;padding:2px 9px;font-size:.72rem;color:var(--dim)}
+  .card .fakebtn{margin-top:8px;padding:9px;border-radius:8px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--dim);text-align:center;font-size:.82rem;cursor:not-allowed}
+  footer.note{margin-top:30px;color:var(--dim);font-size:.82rem;border-top:1px solid var(--line);
+    padding-top:16px}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div id="gateBox">
+    <h1>Internal preview</h1>
+    <p>This page mocks up a Lookah listing before anything is live. Enter the preview password to continue.</p>
+    <input id="gatePin" type="password" inputmode="text" autocomplete="off" placeholder="Password" autofocus>
+    <button id="gateBtn" type="button">Continue</button>
+    <div id="gateErr"></div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="banner">
+    <b>Superseded — Lookah is on the real site now.</b> As of 22 Aug 2026 it is a live
+    entry in <code>/api/products</code> and its products appear on the shelf like any
+    other store's, so <b>this page is no longer how to look at Lookah</b>: it is a layout
+    mockup that has served its purpose and can be deleted. Every price and product name
+    below is still placeholder content, never real inventory, and nothing here adds to
+    the cart or reaches checkout. The affiliate application is still pending, so real
+    Lookah links are currently untracked.
+  </div>
+
+  <header class="top">
+    <h1>Lookah — how it could look</h1>
+    <div class="sub">Dab rigs · e-rigs · torches · glass — placeholder cards, Legal‑Leaf styling</div>
+  </header>
+
+  <div class="grid" id="grid"></div>
+
+  <footer class="note">
+    Next real steps once the affiliate program approves: confirm Lookah's storefront
+    platform and a public catalogue endpoint, get a <code>ref</code> / <code>refParam</code>
+    from their affiliate dashboard, then uncomment and fill in the <code>lookah</code> entry
+    already sitting (disabled) in <code>api/products.js</code>'s <code>STORES</code> list.
+    This page can be deleted once that ships for real.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  /* Not authentication -- see the comment at the top of this file. */
+  var PASSWORD = "lookah-preview";
+  var KEY = "ll_lookah_preview_ok";
+
+  var MOCK = [
+    { cat:"Dab Rig",  name:"Lookah Seahorse Pro Plus", price:"$59.99", unit:"electric nectar collector", icon:"🔥" },
+    { cat:"E-Rig",    name:"Lookah Falcon Mini",       price:"$129.99", unit:"portable e-rig kit",        icon:"⚡" },
+    { cat:"E-Rig",    name:"Lookah Q7",                price:"$179.99", unit:"desktop e-rig",             icon:"⚡" },
+    { cat:"Torch",    name:"Lookah Flame Torch",       price:"$34.99",  unit:"butane torch lighter",      icon:"🕯️" },
+    { cat:"Glass",    name:"Lookah Quartz Banger Set",  price:"$24.99",  unit:"4-piece quartz set",         icon:"🧪" },
+    { cat:"Vaporizer",name:"Lookah Duo Pro",           price:"$74.99",  unit:"dual-use vaporizer",         icon:"💨" }
+  ];
+
+  function render(){
+    var g = document.getElementById("grid");
+    g.innerHTML = MOCK.map(function(p){
+      return '<div class="card">'
+        + '<div class="imgwrap">' + p.icon + '</div>'
+        + '<div class="body">'
+        +   '<span class="storepill">Lookah (mock)</span>'
+        +   '<div class="cat">' + p.cat + '</div>'
+        +   '<div class="name">' + p.name + '</div>'
+        +   '<div class="price">' + p.price + ' <small>' + p.unit + '</small></div>'
+        +   '<div class="fakebtn">Preview only — no checkout</div>'
+        + '</div></div>';
+    }).join("");
+  }
+
+  function unlock(){
+    document.getElementById("gate").classList.add("hidden");
+    document.getElementById("app").classList.add("shown");
+    render();
+  }
+
+  function tryPin(){
+    var v = document.getElementById("gatePin").value || "";
+    if (v === PASSWORD) {
+      try { sessionStorage.setItem(KEY, "1"); } catch (e) {}
+      unlock();
+    } else {
+      document.getElementById("gateErr").textContent = "That's not it — try again.";
+    }
+  }
+
+  document.getElementById("gateBtn").addEventListener("click", tryPin);
+  document.getElementById("gatePin").addEventListener("keydown", function(e){
+    if (e.key === "Enter") tryPin();
+  });
+
+  try { if (sessionStorage.getItem(KEY) === "1") unlock(); } catch (e) {}
+})();
+</script>
+</body>
+</html>

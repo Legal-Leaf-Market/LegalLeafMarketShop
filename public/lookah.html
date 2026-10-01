@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Lookah: Seahorse Dab Pens, Glass Bongs &amp; Dab Rigs | Legal-Leaf Market</title>
+<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any product is
+     rendered, and the page content stays in the DOM behind the overlay so a crawler still
+     sees a full page. Anchored after </title> for the reason greekglass.html gave. -->
+<script src="/js/age-gate.js"></script>
+<link rel="canonical" href="https://legal-leafmarket.com/lookah"/>
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"/>
+<!-- A ROOM IN THIS SITE, NOT A SECOND SITE. This page has now been through
+     two corrections of the same kind. It was white, matching Lookah's own site,
+     and that read as somebody else's page; it was then rebuilt as an arcade
+     cabinet in this site's palette, and THAT still read as somebody else's page
+     -- reported as "it feels like a different site right now ... it needs to
+     feel like legal leaf market and maintain the same fonts and everything ...
+     but just feel like we're going to a different part of a site."
+
+     The palette was never the problem the second time. The FURNITURE was: a
+     pixel typeface nothing else here uses, square 3px corners against the
+     family's 16px radius, and a sticky black bar where every other page has the
+     hero band. Those are gone. What stays Lookah is the catalogue, the
+     grouping, and their red as an accent on this site's chrome.
+
+     AND THE ELECTRICITY IS THE ONE NEW IDEA, asked for directly: "I really love
+     the moving backgrounds ... since there's so much electricity going on on
+     this page, come up with something cool based around that." Lookah's whole
+     hardware line is coils, 510 batteries, enails and e-rigs, so current is the
+     page's own subject. Three CSS layers, no canvas and no script -- see the
+     stylesheet header below. -->
+<meta name="theme-color" content="#080f14"/>
+<meta name="color-scheme" content="dark"/>
+<meta name="description" content="Lookah's catalogue on Legal-Leaf Market: Seahorse dab pens, 510 batteries, e-rigs, glass bongs, dab rigs, nectar collectors, grinders and tools. Filter and sort by price - live prices, no markup."/>
+<link rel="icon" href="/favicon.svg"/>
+<!-- The family tokens, loaded rather than copied. tokens.css's own header is
+     about two files drifting apart while one of them claims to be a copy of the
+     other; the cheapest way not to be that file is to have no copy. -->
+<link rel="stylesheet" href="/css/tokens.css"/>
+<!-- NO WEBFONT ON THIS PAGE, and that is the fix rather than a saving. The
+     previous cut set Press Start 2P on the wordmark, every nav button, every
+     heading, every count, every price and every buy control, over Jost --
+     neither of which appears anywhere else on this site. A visitor crossing
+     from / met a different typeface on the first word, which is most of why
+     this read as somebody else's site. The stack is index.html's own now, and
+     it is already on the machine. It also removes the render-blocking
+     fonts.googleapis.com link that the browser suites here have to block at the
+     network layer because these containers' proxies refuse it. -->
+<style>
+/* ---------------------------------------------------------------------------
+   THIS IS A ROOM IN LEGAL-LEAF MARKET, NOT A SECOND SITE.
+
+   Reported, and correctly: "it feels like a different site right now ... it
+   needs to feel like legal leaf market and maintain the same fonts and
+   everything ... but just feel like we're going to a different part of a site."
+
+   THE FONT WAS DOING MOST OF THE DAMAGE. The previous cut set Press Start 2P
+   on the wordmark, every nav button, every section heading, every sidebar
+   count, every price and every buy control, with Jost underneath it -- neither
+   of which appears anywhere else on this site. A visitor crossing from `/`
+   met a different typeface on the first word, and no amount of shared palette
+   survives that. Both are gone. The stack is index.html's own, verbatim, and
+   there is no webfont on this page at all, which also removes the
+   render-blocking fonts.googleapis.com link the browser suites here have to
+   block at the network layer.
+
+   WHAT MAKES IT LOOKAH IS NOT CHROME, IT IS CONTENT. Their catalogue, their
+   prices, their grouping, their brand red as an accent -- on this site's
+   furniture. The hero band, the .nbtn pills, the 16px radius, the glass panels
+   and the cyan/gold pair are index.html's, reached for by token rather than
+   approximated, so a change to the family travels here for free.
+
+   AND THE BACK DOOR IS THE FIRST THING ON THE PAGE. Top left, in words,
+   before the wordmark -- a shop-within-a-shop with no way back out is the
+   thing that made this read as somewhere else.
+   ------------------------------------------------------------------------ */
+:root{
+  --lk-brand:#e60000;              /* the OO in Lookah's own wordmark        */
+  --lk-arc:#8fe3ff;                /* the hot core of an arc, cyan pushed up */
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--text);
+  /* index.html's own stack, character for character. */
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+:focus-visible{outline:2px solid var(--leaf);outline-offset:2px}
+
+/* ---------------------------------------------------------------------------
+   THE MOVING BACKGROUND -- current in the air.
+
+   Asked for directly: "I really love the moving backgrounds ... since there's
+   so much electricity going on on this page, come up with something cool based
+   around that." Lookah's whole hardware line is coils, 510 batteries, enails
+   and e-rigs, so the page's own subject is current, and it costs nothing to
+   say so.
+
+   THREE LAYERS, AND EVERY ONE IS CSS -- no canvas, no rAF loop, no script. The
+   compositor animates transform and opacity off the main thread, so this is
+   free on a phone in a way a particle loop is not, and it cannot break the
+   shelf if it fails.
+
+     1. body::before -- two soft pools of charge that DRIFT. index.html's own
+        hero gradient is the palette; this is that palette put in motion, very
+        slowly, so it reads as a room with something running in it rather than
+        as an animation.
+     2. .lk-field -- the coil. Two conic sweeps rotating in opposite directions
+        behind the hero, masked to a soft ellipse, which reads as the glow
+        around a heating element rather than as a spinning gradient.
+     3. .lk-arc -- the discharge. An SVG polyline whose dash offset runs, under
+        a flicker that is deliberately NOT periodic: two animations of coprime
+        length beat against each other, so the eye never learns the loop. A
+        strobe is the failure mode here, so the duty cycle is short and the
+        peak opacity is low.
+
+   ALL THREE STOP DEAD under prefers-reduced-motion, and the page still looks
+   finished with nothing moving -- the layers are lit as well as animated.
+   ------------------------------------------------------------------------ */
+body::before{
+  content:"";position:fixed;inset:-20%;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(46rem 32rem at 18% 12%, rgba(var(--accent-rgb),.13), transparent 62%),
+    radial-gradient(38rem 28rem at 84% 4%, rgba(230,0,0,.075), transparent 62%),
+    radial-gradient(52rem 30rem at 60% 92%, rgba(240,185,60,.05), transparent 64%);
+  animation:lk-drift 34s ease-in-out infinite alternate;
+  will-change:transform;
+}
+@keyframes lk-drift{
+  from{transform:translate3d(-2.5%,-1.5%,0) scale(1)}
+  to  {transform:translate3d(2.5%,2%,0) scale(1.06)}
+}
+
+/* ---- 21+ bar ------------------------------------------------------------- */
+.lk-age{
+  background:#050a0e;color:var(--muted);border-bottom:1px solid var(--line);
+  font-size:12px;line-height:1.7;letter-spacing:.02em;text-align:center;padding:9px 12px;
+}
+.lk-age b{color:var(--gold)}
+
+/* ---- THE HERO BAND, which is index.html's hero and not a lookalike -------- */
+.lk-top{
+  position:relative;overflow:hidden;padding:16px 18px 34px;
+  background:radial-gradient(120% 90% at 50% -10%, #4b3aa0 0%, #3a2d86 22%, #274a7e 45%, #14615c 68%, #123b4e 84%, #080f14 100%);
+}
+.lk-bar{position:relative;z-index:3;max-width:1200px;margin:0 auto}
+
+/* The coil, behind everything in the band. */
+.lk-field{
+  position:absolute;inset:-40% -10%;z-index:0;pointer-events:none;opacity:.72;
+  background:
+    conic-gradient(from 0deg at 30% 50%, transparent 0deg, rgba(143,227,255,.16) 22deg, transparent 46deg, transparent 180deg, rgba(143,227,255,.12) 202deg, transparent 226deg, transparent 360deg),
+    conic-gradient(from 180deg at 72% 46%, transparent 0deg, rgba(230,0,0,.13) 26deg, transparent 54deg, transparent 200deg, rgba(240,185,60,.10) 224deg, transparent 250deg, transparent 360deg);
+  -webkit-mask-image:radial-gradient(60% 70% at 50% 45%, #000 30%, transparent 78%);
+  mask-image:radial-gradient(60% 70% at 50% 45%, #000 30%, transparent 78%);
+  animation:lk-spin 48s linear infinite;
+  will-change:transform;
+}
+@keyframes lk-spin{ from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+/* The discharge layer itself. WITHOUT THIS RULE THE SVG IS AN IN-FLOW BLOCK
+   and pushes the whole header down by its own intrinsic height -- 266px of
+   empty gradient above the back button, which is what happened once already
+   and which reads as a layout bug rather than as a missing rule. It is
+   absolute, stretched, and behind the words. */
+.lk-arc{position:absolute;inset:0;z-index:1;pointer-events:none;width:100%;height:100%;
+  /* THE FIELD THINS WHERE THE WORDS ARE. Booted at 1280 the traces ran clean
+     through the wordmark and the badge under it, which costs legibility for an
+     effect -- always the wrong trade. Masked rather than moved, because a trace
+     that stops short of the middle reads as a broken line while one that fades
+     reads as the words sitting IN the field. */
+  -webkit-mask-image:radial-gradient(46% 78% at 50% 46%, transparent 8%, rgba(0,0,0,.55) 52%, #000 88%);
+  mask-image:radial-gradient(46% 78% at 50% 46%, transparent 8%, rgba(0,0,0,.55) 52%, #000 88%)}
+
+/* The traces and the discharge, in two layers on purpose.
+
+   ONE FLICKERING LAYER WAS NOT ENOUGH AND THE REASON IS ARITHMETIC: a short
+   duty cycle is right for a discharge, but with three paths each dark for four
+   fifths of its cycle, the most likely thing at any instant is that NOTHING is
+   lit -- so the first cut of this read as no effect at all rather than as a
+   subtle one. Booting the page is what said so; the CSS looked fine.
+
+   So the traces are ALWAYS THERE, dim and continuous, with a bright segment
+   running along each one; the discharge flickers ON TOP of that. Something is
+   always moving, and every few seconds something jumps. */
+.lk-arc path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+/* the dim rail -- present at all times, so the shape reads even between flashes */
+.lk-arc path.t{stroke:rgba(143,227,255,.20);stroke-width:1}
+/* the charge running along it */
+.lk-arc path.a,.lk-arc path.b{
+  stroke:var(--lk-arc);stroke-width:1.4;stroke-dasharray:52 300;
+  filter:drop-shadow(0 0 6px rgba(143,227,255,.9));
+}
+.lk-arc path.a{animation:lk-run 3.7s linear infinite}
+.lk-arc path.b{animation:lk-run 5.3s linear infinite reverse}
+/* the discharge: gold, brighter, and mostly absent */
+.lk-arc path.c{
+  stroke:rgba(240,185,60,.95);stroke-width:1.6;stroke-dasharray:120 240;
+  filter:drop-shadow(0 0 8px rgba(240,185,60,.85));
+  animation:lk-run 6.1s linear infinite, lk-flick 8.3s steps(1,end) infinite;
+}
+@keyframes lk-run{ from{stroke-dashoffset:352} to{stroke-dashoffset:0} }
+/* Short duty cycle on purpose: lit for a fifth of the beat, dark the rest, and
+   the run and the flicker are coprime so the pair never repeats on a count the
+   eye can hold. That is the difference between weather and a strobe. */
+@keyframes lk-flick{ 0%,74%{opacity:0} 77%{opacity:1} 80%{opacity:.2} 84%{opacity:.9} 92%{opacity:.15} 100%{opacity:0} }
+
+/* THE RAIL. One charge running the full width along the bottom edge of the
+   band, continuously. This is the layer that makes the page read as powered
+   from across the room -- the arcs are detail you notice second. It is a
+   gradient moving under a 2px strip, which is a background-position animation
+   and therefore free. */
+.lk-top::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:2px;z-index:2;pointer-events:none;
+  background:linear-gradient(90deg,
+    transparent 0%, transparent 34%,
+    rgba(143,227,255,.15) 40%, var(--lk-arc) 46%, #fff 48%, var(--lk-arc) 50%,
+    rgba(143,227,255,.15) 56%, transparent 62%, transparent 100%);
+  background-size:280% 100%;
+  animation:lk-rail 4.6s linear infinite;
+  opacity:.9;
+}
+@keyframes lk-rail{ from{background-position:140% 0} to{background-position:-140% 0} }
+
+@media (prefers-reduced-motion:reduce){
+  body::before{animation:none}
+  .lk-field{animation:none;opacity:.34}
+  /* Still lit, just still: the layers are drawn as well as animated, so the
+     band is finished with nothing moving rather than empty.
+
+     WRITTEN AT THE SAME SPECIFICITY AS THE RULES IT SWITCHES OFF, which the
+     first cut was not: `.lk-arc path` is (0,1,1) and `.lk-arc path.a` is
+     (0,2,1), so a blanket `animation:none` here lost to every per-class rule
+     and the traces kept running for somebody who had asked them not to. Nothing
+     errored; the block looked like it was working. Same class of failure as
+     plate.css needing to win by ORDER rather than by weight. */
+  .lk-arc path.t,.lk-arc path.a,.lk-arc path.b,.lk-arc path.c{animation:none;stroke-dasharray:none}
+  .lk-arc path.c{opacity:.45}
+  .lk-top::after{animation:none;background-position:50% 0}
+}
+
+/* ---- the back door, first thing on the page ------------------------------ */
+.lk-rowtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+/* index.html's .nbtn, reached for rather than re-invented. */
+.lk-pill{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:999px;
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;
+  font-size:13px;font-weight:600;backdrop-filter:blur(6px);cursor:pointer;white-space:nowrap;
+  font-family:inherit;transition:background .14s,border-color .14s}
+.lk-pill:hover{background:rgba(255,255,255,.18)}
+/* THE WAY OUT IS BRIGHTER THAN THE WAY DEEPER IN, deliberately: this is the
+   one control on the page a lost visitor needs, and it is the first thing in
+   the tab order. */
+.lk-back{background:rgba(78,201,255,.16);border-color:rgba(78,201,255,.5);font-weight:700}
+.lk-back:hover{background:rgba(78,201,255,.28)}
+.lk-back b{font-weight:800;letter-spacing:.01em}
+.lk-rowtop .lk-spacer{flex:1 1 auto}
+
+/* ---- the title, in index.html's own treatment ---------------------------- */
+.lk-title{position:relative;z-index:3;text-align:center;padding:6px 0 0}
+.lk-title h1{margin:0;font-size:clamp(30px,5.4vw,56px);font-weight:900;letter-spacing:.06em;color:#fff;
+  text-shadow:0 2px 24px rgba(80,120,255,.45);line-height:1.05}
+.lk-title h1 i{font-style:normal;color:#ff5a52;text-shadow:0 0 22px rgba(230,0,0,.6)}
+/* The badge says where you are in one line, which is the whole fix. */
+.lk-where{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:7px 14px;border-radius:999px;
+  background:rgba(4,10,16,.55);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(3px);
+  font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#dbe9f2}
+.lk-where s{width:6px;height:6px;border-radius:50%;background:var(--gold);text-decoration:none;
+  box-shadow:0 0 8px rgba(240,185,60,.9)}
+
+/* ---- search + category pills, still on the band -------------------------- */
+.lk-rowsearch{position:relative;z-index:3;max-width:1200px;margin:22px auto 0;display:flex;gap:10px;
+  flex-wrap:wrap;align-items:center;justify-content:center}
+.lk-search{display:flex;align-items:stretch;min-width:210px;flex:0 1 340px}
+.lk-search input{
+  font:inherit;font-size:14px;flex:1;min-width:0;padding:10px 14px;
+  background:rgba(0,0,0,.34);color:#fff;
+  border:1px solid rgba(255,255,255,.2);border-right:0;border-radius:999px 0 0 999px;
+}
+.lk-search input::placeholder{color:rgba(255,255,255,.55)}
+.lk-search span{display:flex;align-items:center;padding:0 15px;background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.2);border-left:0;border-radius:0 999px 999px 0;font-size:14px;color:#fff}
+.lk-nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.lk-nav button{
+  font:inherit;font-size:13px;font-weight:600;color:#fff;
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:999px;
+  padding:9px 15px;cursor:pointer;backdrop-filter:blur(6px);
+  transition:background .14s,border-color .14s,transform .08s;
+}
+.lk-nav button:hover{background:rgba(255,255,255,.2)}
+.lk-nav button:active{transform:translateY(1px)}
+.lk-nav button[aria-pressed="true"]{
+  color:#04202b;background:linear-gradient(90deg,var(--leaf3),var(--leaf));border-color:transparent;font-weight:800;
+}
+
+/* ---- hero copy ----------------------------------------------------------- */
+.lk-hero{max-width:1200px;margin:0 auto;padding:28px 16px 6px;text-align:center}
+.lk-hero h1{font-size:clamp(19px,2.4vw,25px);font-weight:800;line-height:1.35;margin:0 0 12px;color:var(--text);letter-spacing:.01em}
+.lk-hero p{margin:0 auto;max-width:66ch;font-size:15px;line-height:1.65;color:var(--muted)}
+.lk-more{max-width:1200px;margin:0 auto 20px;padding:0 16px}
+.lk-more div{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.lk-more.open div{max-height:700px}
+.lk-more div p{font-size:14.5px;line-height:1.7;color:var(--muted);max-width:72ch;margin:14px auto 0}
+.lk-more button{
+  font:inherit;font-size:13px;font-weight:600;width:100%;margin-top:12px;padding:11px;cursor:pointer;
+  background:var(--glass);border:1px solid var(--glass-line);border-radius:12px;color:var(--muted);
+}
+.lk-more button:hover{color:var(--text);border-color:rgba(var(--accent-rgb),.45)}
+
+/* ---- shell --------------------------------------------------------------- */
+.lk-shell{max-width:1200px;margin:0 auto;padding:8px 16px 44px;display:grid;grid-template-columns:220px 1fr;gap:26px;align-items:start}
+.lk-side{position:sticky;top:16px;border:1px solid var(--glass-line);border-radius:var(--radius);overflow:hidden;
+  background:var(--panel);backdrop-filter:blur(8px)}
+.lk-side h2{margin:0;padding:13px 14px;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--gold);background:rgba(0,0,0,.24);border-bottom:1px solid var(--glass-line)}
+.lk-side a{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 14px;
+  font-size:13.5px;color:var(--muted);border-bottom:1px solid rgba(var(--accent-rgb),.10);cursor:pointer}
+.lk-side a:last-child{border-bottom:0}
+.lk-side a:hover{background:rgba(var(--accent-rgb),.08);color:var(--text)}
+/* One lit row in the list -- plate.css's "one bright thing, reserved for what
+   is lit", which is the family rule and not this page's invention. */
+.lk-side a[aria-current="true"]{background:rgba(var(--accent-rgb),.13);color:var(--leaf);box-shadow:inset 3px 0 0 var(--leaf)}
+/* A count is still monospaced, because a proportional digit set makes a column
+   of numbers wobble -- that reason survived the typeface change. */
+.lk-side a b{font-family:ui-monospace,'Cascadia Mono','Courier New',monospace;font-size:11px;font-weight:700;color:var(--gold)}
+.lk-side a[aria-current="true"] b{color:var(--leaf)}
+
+/* ---- controls ------------------------------------------------------------ */
+.lk-ctl{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:0 0 18px}
+.lk-ctl select{font:inherit;font-size:13.5px;padding:9px 12px;background:var(--chip);color:var(--text);
+  border:1px solid var(--glass-line);border-radius:10px}
+.lk-ctl label{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--muted)}
+.lk-ctl input[type=checkbox]{accent-color:var(--leaf);width:15px;height:15px}
+.lk-count{margin-left:auto;font-family:ui-monospace,'Cascadia Mono','Courier New',monospace;
+  font-size:12px;font-weight:700;color:var(--gold)}
+
+/* ---- section headers ----------------------------------------------------- */
+.lk-sec{display:flex;align-items:center;gap:14px;margin:30px 0 14px}
+.lk-sec h2{font-size:20px;font-weight:800;line-height:1.3;margin:0;color:var(--text);letter-spacing:.01em;
+  position:relative;padding-bottom:10px}
+.lk-sec h2::after{content:"";position:absolute;left:0;bottom:0;width:52px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--gold),rgba(240,185,60,0))}
+.lk-sec a{margin-left:auto;font-size:13px;font-weight:600;padding:9px 14px;
+  border:1px solid var(--glass-line);border-radius:999px;cursor:pointer;white-space:nowrap;
+  color:var(--muted);background:var(--glass)}
+.lk-sec a:hover{color:var(--text);border-color:rgba(var(--accent-rgb),.5)}
+
+/* ---- the collection tiles ------------------------------------------------ */
+.lk-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:10px}
+.lk-tile{position:relative;aspect-ratio:4/3;overflow:hidden;background:#050c11;cursor:pointer;
+  border:1px solid var(--glass-line);border-radius:var(--radius);padding:0;
+  transition:border-color .14s,transform .08s}
+.lk-tile:hover{border-color:var(--leaf)}
+.lk-tile:active{transform:translateY(1px)}
+.lk-tile img{width:100%;height:100%;object-fit:cover;opacity:.45;transition:opacity .2s}
+.lk-tile:hover img{opacity:.66}
+.lk-tile em{position:absolute;top:10px;left:12px;z-index:2;font-style:normal;
+  font-family:ui-monospace,'Cascadia Mono','Courier New',monospace;font-size:11px;font-weight:700;
+  color:var(--gold);text-shadow:0 1px 4px #000}
+.lk-tile span{
+  position:absolute;left:0;right:0;bottom:0;padding:14px 14px 13px;text-align:left;z-index:2;
+  font-size:15px;font-weight:800;line-height:1.3;color:#fff;letter-spacing:.01em;
+  background:linear-gradient(to top,rgba(3,8,12,.94) 42%,rgba(3,8,12,0));
+}
+.lk-tile span i{display:block;font-style:normal;font-size:12.5px;font-weight:500;color:var(--muted);
+  margin-top:6px;letter-spacing:0}
+
+/* ---- the shelf ----------------------------------------------------------- */
+.lk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.lk-card{display:flex;flex-direction:column;border:1px solid var(--glass-line);border-radius:var(--radius);
+  overflow:hidden;background:var(--panel);backdrop-filter:blur(6px);transition:border-color .14s,transform .12s}
+.lk-card:hover{border-color:rgba(var(--accent-rgb),.55);transform:translateY(-2px)}
+/* An aspect box so photos arriving cannot shift the row -- the one thing
+   Lookah's own grid visibly gets wrong. */
+.lk-shot{position:relative;aspect-ratio:1/1;background:#f4f6f8;overflow:hidden}
+.lk-shot img{width:100%;height:100%;object-fit:contain}
+.lk-shot .ph{position:absolute;inset:0;display:grid;place-items:center;font-size:30px;
+  color:var(--dim);background:#0a131b}
+.lk-badge{position:absolute;top:9px;left:9px;font-size:10px;font-weight:800;letter-spacing:.08em;
+  background:var(--lk-brand);color:#fff;padding:5px 8px;border-radius:999px}
+.lk-oos{position:absolute;top:9px;right:9px;font-size:10px;font-weight:700;letter-spacing:.08em;
+  background:rgba(6,12,9,.85);color:var(--muted);border:1px solid var(--line);padding:5px 8px;border-radius:999px}
+.lk-body{padding:12px 13px 13px;display:flex;flex-direction:column;gap:8px;flex:1}
+.lk-name{font-size:13.5px;line-height:1.45;color:var(--text);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.9em}
+.lk-price{font-size:19px;font-weight:900;color:var(--leaf);margin-top:auto;letter-spacing:.01em}
+.lk-buy{display:block;text-align:center;font-size:13px;font-weight:700;padding:11px 8px;
+  border:1px solid var(--glass-line);border-radius:12px;margin-top:2px;color:var(--muted);background:var(--chip);
+  transition:color .12s,background .12s,border-color .12s,transform .08s}
+.lk-buy:hover{color:#04202b;background:linear-gradient(90deg,var(--leaf3),var(--leaf));border-color:transparent}
+.lk-buy:active{transform:translateY(1px)}
+.lk-empty{padding:44px 8px;text-align:center;color:var(--muted);font-size:14.5px}
+
+/* ---- the article --------------------------------------------------------- */
+.lk-article{max-width:1200px;margin:0 auto;padding:0 16px 52px}
+.lk-article h2{font-size:19px;font-weight:800;line-height:1.35;margin:30px 0 12px;color:var(--text)}
+.lk-article p{font-size:15px;line-height:1.75;color:var(--muted);max-width:72ch;margin:0 0 12px}
+
+/* ---- footer -------------------------------------------------------------- */
+.lk-foot{background:#050a0e;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line)}
+.lk-foot .in{max-width:1200px;margin:0 auto;padding:30px 16px;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px}
+.lk-foot h3{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
+.lk-foot a{display:block;padding:4px 0;color:var(--muted)}
+.lk-foot a:hover{color:var(--leaf)}
+.lk-foot .note{border-top:1px solid var(--line);padding:16px 16px 30px;max-width:1200px;margin:0 auto;
+  font-size:12.5px;line-height:1.7;color:var(--dim)}
+
+@media (max-width:860px){
+  .lk-shell{grid-template-columns:1fr}
+  .lk-side{position:static;order:2}
+  .lk-top{padding:14px 14px 26px}
+}
+@media (max-width:520px){
+  /* The back door stays full width and first, because on a phone it is the
+     only way out that does not use the browser chrome. */
+  .lk-back{flex:1 1 100%;justify-content:center}
+}
+
+</style>
+</head>
+<body>
+
+<div class="lk-age">You must be <b>21 or older</b> to buy these products &middot; prices are Lookah's own, pulled live</div>
+
+<header class="lk-top">
+  <!-- The coil and the discharge. Decorative, so both are aria-hidden and
+       neither is in the tab order; the page reads identically with them gone. -->
+  <div class="lk-field" aria-hidden="true"></div>
+  <svg class="lk-arc" viewBox="0 0 1200 260" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path class="t" d="M-20 74 L112 62 L150 96 L268 78 L306 110 L430 88 L468 120 L604 96 L642 130 L780 104 L818 138 L950 112 L988 146 L1120 118 L1220 132"/>
+    <path class="t" d="M-20 196 L96 184 L134 152 L252 174 L290 142 L418 166 L456 134 L590 158 L628 126 L764 150 L802 118 L936 144 L974 112 L1108 138 L1220 124"/>
+    <path class="t" d="M-20 138 L128 128 L166 154 L300 134 L338 160 L476 138 L514 164 L656 142 L694 168 L836 146 L874 172 L1010 150 L1048 176 L1180 154 L1220 160"/>
+    <path class="a" d="M-20 74 L112 62 L150 96 L268 78 L306 110 L430 88 L468 120 L604 96 L642 130 L780 104 L818 138 L950 112 L988 146 L1120 118 L1220 132"/>
+    <path class="b" d="M-20 196 L96 184 L134 152 L252 174 L290 142 L418 166 L456 134 L590 158 L628 126 L764 150 L802 118 L936 144 L974 112 L1108 138 L1220 124"/>
+    <path class="c" d="M-20 138 L128 128 L166 154 L300 134 L338 160 L476 138 L514 164 L656 142 L694 168 L836 146 L874 172 L1010 150 L1048 176 L1180 154 L1220 160"/>
+  </svg>
+
+  <div class="lk-bar">
+    <!-- THE WAY BACK, FIRST IN THE DOM AND FIRST IN THE TAB ORDER. Reported as
+         the page "needing a really obvious back to legal leaf market navigation
+         at the top left", which it did: a shop-within-a-shop with no marked
+         exit is how a room starts reading as a different building. It is a
+         word, not a glyph, and it is the brightest control in the band. -->
+    <div class="lk-rowtop">
+      <a class="lk-pill lk-back" href="/" aria-label="Back to Legal-Leaf Market">&#8592; <b>Legal-Leaf Market</b></a>
+      <span class="lk-spacer"></span>
+      <a class="lk-pill" href="/devices">Devices &amp; Misc</a>
+      <a class="lk-pill" href="/vaporizers">Vaporizers</a>
+      <a class="lk-pill" href="/combustion">Combustion</a>
+      <a class="lk-pill" href="/kit">Build a Kit</a>
+    </div>
+
+    <div class="lk-title">
+      <h1>L<i>OO</i>KAH</h1>
+      <span class="lk-where"><s aria-hidden="true"></s>A shop inside Legal-Leaf Market</span>
+    </div>
+  </div>
+
+  <div class="lk-rowsearch">
+    <label class="lk-search">
+      <input id="lkQ" type="search" placeholder="Search Lookah&hellip;" aria-label="Search Lookah products"/>
+      <span aria-hidden="true">&#128269;</span>
+    </label>
+    <nav class="lk-nav" id="lkNav" aria-label="Lookah categories"></nav>
+  </div>
+</header>
+
+<div class="lk-hero">
+  <h1 id="lkH1">Lookah: Seahorse Dab Pens, Glass Bongs &amp; Dab Rigs</h1>
+  <p id="lkStand">Lookah makes its own hardware &mdash; electric nectar collectors, 510 batteries, e&#8209;rigs and enails &mdash; alongside a glass line of bongs and dab rigs. Everything below is their catalogue, at their prices.</p>
+</div>
+<div class="lk-more" id="lkMore">
+  <div>
+    <p>Lookah is a manufacturer&#8209;direct headshop rather than a reseller, which is why the range runs from a $20 replacement coil to a $300 e&#8209;rig without a gap in the middle. The hardware side is theirs: the Seahorse line of electric nectar collectors, the 510 battery range, the Dragon Egg and Unicorn e&#8209;rigs, and the enail kits. The glass side is theirs too, under Lookah Glass and the Tataoo and BIGMOM sub&#8209;brands. The grinders, trays, torches and papers are curated third&#8209;party stock they carry so a basket can be filled in one place, and they say so on their own site rather than passing it off.</p>
+    <p>This page is the whole catalogue as we last read it, grouped the way Lookah groups it. Prices and availability come from their own listings; we add nothing to them. Where a product links out, it goes to Lookah's page for that item.</p>
+  </div>
+  <button type="button" id="lkMoreBtn" aria-expanded="false">Show more &#8964;</button>
+</div>
+
+<div class="lk-shell">
+  <aside class="lk-side" id="lkSide" aria-label="Collections"><h2>Collections</h2></aside>
+  <main>
+    <div class="lk-ctl">
+      <label>Sort
+        <select id="lkSort" aria-label="Sort products">
+          <option value="featured">Featured</option>
+          <option value="low">Price: low to high</option>
+          <option value="high">Price: high to low</option>
+          <option value="az">Name: A&ndash;Z</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="lkStock" checked/> In stock only</label>
+      <span class="lk-count" id="lkCount"></span>
+    </div>
+    <div id="lkTiles"></div>
+    <div id="lkMain"><div class="lk-empty">Loading Lookah&rsquo;s catalogue&hellip;</div></div>
+  </main>
+</div>
+
+<section class="lk-article">
+  <h2>What Lookah actually makes</h2>
+  <p>The Seahorse is the product most people arrive for: an electric nectar collector that heats a quartz or ceramic tip on demand, so concentrate is taken straight from the dish without a torch. The line runs from the original Seahorse through the Pro, Pro Plus, Max and Queen, and the coils are consumable &mdash; which is why replacement coils are the most repeated item in their catalogue.</p>
+  <p>Their 510 battery range covers the other half of the same shopper: the Load, the Firebee and the Cat are slim variable&#8209;voltage batteries for standard cartridges. Above those sit the e&#8209;rigs &mdash; Dragon Egg, Unicorn, Octopus &mdash; which are self&#8209;contained electric dab rigs with their own glass.</p>
+  <h2>How the glass is organised</h2>
+  <p>Lookah Glass covers bongs, dab rigs and the parts that fit them: bowls, ash catchers, bangers, carb caps and downstems. The bong range is sorted by shape and by novelty &mdash; beakers and straight tubes on one side, animal and figure pieces on the other &mdash; and the dab rigs split between glass and silicone. Their own site carries around 125 collections across this range; the six groups above are how they front them.</p>
+  <h2>Why the prices here are theirs</h2>
+  <p>Legal&#8209;Leaf Market does not set prices, mark them up, or rank a shop by what it pays. What is shown is what Lookah lists, read from their own pages. If a price here disagrees with theirs, theirs is right and ours is stale &mdash; the catalogue is re&#8209;read rather than typed.</p>
+</section>
+
+<footer class="lk-foot">
+  <div class="in">
+    <div>
+      <h3>Lookah</h3>
+      <a href="#" data-bucket="Vaporizer">All Vaporizers</a>
+      <a href="#" data-bucket="Bongs">All Bongs</a>
+      <a href="#" data-bucket="Rigs">All Rigs</a>
+      <a href="#" data-bucket="Tools">All Tools</a>
+      <a href="#" data-bucket="Pipe">All Pipes</a>
+      <a href="#" data-bucket="Lifestyle">Lifestyle</a>
+    </div>
+    <div>
+      <h3>The market</h3>
+      <a href="/">All deals</a>
+      <a href="/devices">Devices &amp; gear</a>
+      <a href="/consumables">Consumables</a>
+      <a href="/international">International</a>
+    </div>
+    <div>
+      <h3>Learn more</h3>
+      <a href="/library">The Library</a>
+      <a href="/reels">The Reels</a>
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+    </div>
+  </div>
+  <div class="note">
+    Product names, photographs and prices belong to Lookah. Legal&#8209;Leaf Market is not affiliated with
+    or endorsed by Lookah, and does not mark up or re&#8209;rank what a shop lists. 21+ only.
+  </div>
+</footer>
+
+<script>
+/* ============================================================================
+   THE SIX BUCKETS, AND HOW A PRODUCT FINDS ITS WAY INTO ONE.
+
+   Lookah fronts ~125 collections behind six menu items, and that is the single
+   most transferable idea in the crawl: six buckets is what makes a deep
+   catalogue navigable. So these are THEIR six, in THEIR order, rather than this
+   site's own eight gear categories -- the page is meant to read like their shop.
+
+   THE ROUTE INTO A BUCKET IS A CASCADE, AND ITS FIRST STEP IS THEIR OWN URL.
+   Every captured product carries the Lookah url it came from, and the first path
+   segment of that url IS their collection: /bongs-and-water-pipes/, /grinders/,
+   /dab-tools-and-dab-accessories/. Measured over the 971 rows we hold, that
+   alone places 739 of them -- no guessing, no keyword matching, their taxonomy
+   read back off their own links.
+
+   The other two steps are for the 185 products sitting on their generic
+   /products/<slug>.html path, which carries no collection at all: this site's
+   own gear category places 153 of those, and a name test the last 33. Anything
+   still unplaced lands in "More", which is honest -- an empty bucket would be a
+   lie about the catalogue and a wrong bucket is worse than a vague one.
+   ========================================================================= */
+(function () {
+  var BUCKETS = [
+    ["Vaporizer", "Dab pens, batteries, e-rigs, enails",
+      /vaporizer|enail|nectar[- ]?collector|510[- ]?thread|disposable[- ]?vape|seahorse|wax[- ]?dab[- ]?pen|dry[- ]?herb|atomizer|vape[- ]?coil|510[- ]?dab|dab[- ]?pen|vape[- ]?pen|batter(y|ies)|e-?rig|coil/i],
+    ["Rigs", "Dab rigs, nails, bangers and carb caps",
+      /dab[- ]?rig|dab[- ]?nail|banger|carb[- ]?cap|marble[- ]?ball|electric[- ]?dab|\bnail\b/i],
+    ["Bongs", "Beakers, percolators, recyclers and figures",
+      /bong|bubbler|beaker|percolator|recycler|gravity|water[- ]?pipe/i],
+    ["Tools", "Grinders, trays, ash catchers, torches",
+      /dab[- ]?tool|ash[- ]?catcher|grinder|rolling[- ]?tray|ashtray|smoke[- ]?filter|joint[- ]?rolling|dab[- ]?torch|cigarette[- ]?case|bong[- ]?mat|dab[- ]?kit|hot[- ]?knife|terp|dabber|straw|\btray\b|papers/i],
+    ["Pipe", "Hand pipes, chillums, glass blunts",
+      /^pipe$|hand[- ]?pipe|spoon|gandalf|chillum|blunt|silicone[- ]?pipe|crystal[- ]?pipe|metal[- ]?smoking|wood[- ]?pipe|dugout|coffee[- ]?mug|smoking[- ]?pipe|weed[- ]?pipes|\bpipe\b/i],
+    ["Lifestyle", "Apparel, pins, tapestries, stickers",
+      /lifestyle|apparel|420|sticker|\bbag\b|poster|pins|tapestr|bracelet|hoodie|shirt/i]
+  ];
+  /* This site's gear categories, mapped onto their six. Accessories is deliberately
+     absent: it is our catch-all, so it says nothing about which bucket a thing is in
+     and would drag a third of the catalogue into whichever bucket it were pointed at. */
+  var FROM_CATEGORY = {
+    "Bongs & Rigs": "Bongs", "Pipes": "Pipe", "Grinders": "Tools", "Rolling": "Tools",
+    "Storage & Trays": "Tools", "Parts & Tools": "Tools", "Vaporizers": "Vaporizer"
+  };
+  var MORE = "More";
+
+  function seg(url) {
+    var m = /^https?:\/\/[^/]+\/([^/?#]+)\//.exec(String(url || ""));
+    return m ? m[1] : "";
+  }
+  function match(text) {
+    for (var i = 0; i < BUCKETS.length; i++) if (text && BUCKETS[i][2].test(text)) return BUCKETS[i][0];
+    return "";
+  }
+  function bucketOf(p) {
+    return match(seg(p.url)) || FROM_CATEGORY[p.category] || match(p.name) || MORE;
+  }
+
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (v) {
+    return String(v == null ? "" : v).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  };
+  var money = function (n) { return "$" + Number(n || 0).toFixed(2); };
+
+  var ALL = [], VIEW = { bucket: "", q: "", sort: "featured", inStock: true };
+
+  /* ---- the shelf ---------------------------------------------------------- */
+  function inStock(p) { return p.inStock !== false; }
+  function priceOf(p) { return Number(p.sale || p.startsAt || 0); }
+
+  function visible() {
+    var q = VIEW.q.toLowerCase();
+    var out = ALL.filter(function (p) {
+      if (VIEW.bucket && p._b !== VIEW.bucket) return false;
+      if (VIEW.inStock && !inStock(p)) return false;
+      if (q && String(p.name || "").toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+    if (VIEW.sort === "low") out.sort(function (a, b) { return priceOf(a) - priceOf(b); });
+    else if (VIEW.sort === "high") out.sort(function (a, b) { return priceOf(b) - priceOf(a); });
+    else if (VIEW.sort === "az") out.sort(function (a, b) { return String(a.name).localeCompare(String(b.name)); });
+    else {
+      /* FEATURED IS NOT RANDOM AND NOT PRICE. A photograph first -- a placeholder at the
+         top of a shop page is the worst thing it can open with -- then in stock, then
+         their own order. Same reasoning as the main shelf's own strength test. */
+      out.sort(function (a, b) {
+        return (b.image ? 1 : 0) - (a.image ? 1 : 0) || (inStock(b) ? 1 : 0) - (inStock(a) ? 1 : 0);
+      });
+    }
+    return out;
+  }
+
+  function card(p) {
+    var oos = !inStock(p);
+    var cut = p.startsAt && p.sale && p.startsAt > p.sale + 0.001
+      ? Math.round((1 - p.sale / p.startsAt) * 100) : 0;
+    return '<article class="lk-card">' +
+      '<div class="lk-shot">' +
+        (p.image
+          ? '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer"/>'
+          : '<div class="ph" aria-hidden="true">&#128302;</div>') +
+        (cut >= 5 ? '<span class="lk-badge">SAVE ' + cut + '%</span>' : "") +
+        (oos ? '<span class="lk-oos">SOLD OUT</span>' : "") +
+      '</div>' +
+      '<div class="lk-body">' +
+        '<div class="lk-name">' + esc(p.name) + '</div>' +
+        '<div class="lk-price">' + money(priceOf(p)) + '</div>' +
+        '<a class="lk-buy" href="' + esc(p.url || "#") + '" target="_blank" rel="noopener nofollow">' +
+          (oos ? "View at Lookah" : "Buy at Lookah") + '</a>' +
+      '</div>' +
+    '</article>';
+  }
+
+  /* ---- the hub: a directory of buckets, not a wall of product ------------- */
+  function tiles() {
+    if (VIEW.bucket || VIEW.q) return "";
+    var html = '<div class="lk-sec"><h2>Select</h2></div><div class="lk-tiles">';
+    var slot = 0;
+    BUCKETS.concat([[MORE, "Everything else in the range", null]]).forEach(function (b) {
+      var pool = ALL.filter(function (p) { return p._b === b[0]; });
+      if (!pool.length) return;
+      /* The slot number is counted over the buckets that SURVIVED, not over
+         the whole list, or a shop missing one bucket publishes a wall with a
+         gap in it -- 01 02 04 reads as a broken page rather than a range. */
+      slot++;
+      /* THE TILE'S PICTURE IS A REAL PRODUCT FROM THAT BUCKET, which is the whole
+         look: a heavy label locked to a dark photograph. Their own tiles are shot
+         for the purpose; ours are the best-photographed item on that shelf, which
+         costs nothing to produce and cannot go stale. */
+      var pic = pool.find(function (p) { return p.image; });
+      html += '<button class="lk-tile" type="button" data-bucket="' + esc(b[0]) + '">' +
+        (pic ? '<img src="' + esc(pic.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer"/>' : "") +
+        '<em>' + (slot < 10 ? "0" : "") + slot + '</em>' +
+        '<span>' + esc(b[0]) +
+          '<i>' + pool.length + " products &middot; " + esc(b[1] || "") + '</i>' +
+        '</span>' +
+      '</button>';
+    });
+    return html + "</div>";
+  }
+
+  function render() {
+    var rows = visible();
+    $("#lkCount").textContent = rows.length + (rows.length === 1 ? " product" : " products");
+    $("#lkTiles").innerHTML = tiles();
+
+    var head = VIEW.bucket || (VIEW.q ? 'Search: "' + VIEW.q + '"' : "");
+    var main = "";
+    if (head) {
+      main += '<div class="lk-sec"><h2>' + esc(head) + "</h2>" +
+              '<a href="#" data-bucket="">&larr; All collections</a></div>';
+    } else {
+      main += '<div class="lk-sec"><h2>Featured</h2></div>';
+      rows = rows.slice(0, 20);
+    }
+    main += rows.length
+      ? '<div class="lk-grid">' + rows.map(card).join("") + "</div>"
+      : '<div class="lk-empty">Nothing here matches that. <a href="#" data-bucket="" style="color:var(--brand-red);font-weight:700">Show everything</a></div>';
+    $("#lkMain").innerHTML = main;
+
+    document.querySelectorAll("#lkSide a").forEach(function (a) {
+      a.setAttribute("aria-current", String(a.dataset.bucket === VIEW.bucket));
+    });
+    document.querySelectorAll("#lkNav button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.bucket === VIEW.bucket));
+    });
+    $("#lkH1").textContent = VIEW.bucket
+      ? "Lookah " + VIEW.bucket + " | " + (rows.length) + " products"
+      : "Lookah: Seahorse Dab Pens, Glass Bongs & Dab Rigs";
+  }
+
+  function chrome() {
+    var order = BUCKETS.map(function (b) { return b[0]; }).concat([MORE]);
+    var counts = {};
+    ALL.forEach(function (p) { counts[p._b] = (counts[p._b] || 0) + 1; });
+
+    $("#lkNav").innerHTML = order.filter(function (n) { return counts[n]; }).map(function (n) {
+      return '<button type="button" data-bucket="' + esc(n) + '">' + esc(n) + "</button>";
+    }).join("");
+    /* THE SIDEBAR SHOWS EVERY SIBLING AND MARKS THE CURRENT ONE -- it is how Lookah
+       makes 125 collections feel small, and the one piece of their chrome that does
+       real navigational work rather than decoration. */
+    $("#lkSide").innerHTML = '<h2>Collections</h2>' +
+      '<a href="#" data-bucket="">All Lookah <b>' + ALL.length + "</b></a>" +
+      order.filter(function (n) { return counts[n]; }).map(function (n) {
+        return '<a href="#" data-bucket="' + esc(n) + '">' + esc(n) + " <b>" + counts[n] + "</b></a>";
+      }).join("");
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-bucket]");
+    if (!t) return;
+    e.preventDefault();
+    VIEW.bucket = t.dataset.bucket || "";
+    if (VIEW.bucket) VIEW.q = "", $("#lkQ").value = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    render();
+  });
+  $("#lkMoreBtn").addEventListener("click", function () {
+    var box = $("#lkMore"), open = box.classList.toggle("open");
+    this.setAttribute("aria-expanded", String(open));
+    this.innerHTML = open ? "Show less &#8963;" : "Show more &#8964;";
+  });
+  $("#lkQ").addEventListener("input", function () { VIEW.q = this.value.trim(); VIEW.bucket = ""; render(); });
+  $("#lkSort").addEventListener("change", function () { VIEW.sort = this.value; render(); });
+  $("#lkStock").addEventListener("change", function () { VIEW.inStock = this.checked; render(); });
+
+  /* ONE SHOP'S SLICE, ASKED FOR BY KEY. ?store= filters server-side, so this page
+     downloads ~930 products rather than the whole ~7MB catalogue to throw 84% of it
+     away -- the same reasoning as the ?shelf= slice the satellite pages use. */
+  fetch("/api/products?store=lookah", { headers: { accept: "application/json" } })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      ALL = ((d && d.products) || []).filter(function (p) { return p && p.name && priceOf(p) > 0; });
+      ALL.forEach(function (p) { p._b = bucketOf(p); });
+      if (!ALL.length) {
+        $("#lkMain").innerHTML = '<div class="lk-empty">Lookah&rsquo;s catalogue is not loading right now. ' +
+          '<a href="/devices" style="color:var(--brand-red);font-weight:700">Browse all devices &amp; gear</a></div>';
+        return;
+      }
+      chrome();
+      render();
+    })
+    .catch(function () {
+      $("#lkMain").innerHTML = '<div class="lk-empty">Lookah&rsquo;s catalogue is not loading right now. ' +
+        '<a href="/devices" style="color:var(--brand-red);font-weight:700">Browse all devices &amp; gear</a></div>';
+    });
+})();
+</script>
+</body>
+</html>

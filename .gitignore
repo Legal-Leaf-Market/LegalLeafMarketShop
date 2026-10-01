@@ -1,0 +1,12 @@
+node_modules
+.vercel
+.env
+.env.*
+.DS_Store
+*.log
+
+# Backup archives — never commit project zips into the repo
+*.zip
+
+# Rendered IG carousel slides — tools/make-ig-slides.mjs regenerates them
+out/

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy: what we collect, which is very little | Legal-Leaf Market</title>
+<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any product is
+     rendered, and the page content stays in the DOM behind the overlay so a crawler still
+     sees a full page. See public/js/age-gate.js for why an attestation gate is the right
+     shape here and what it deliberately does not do.
+     Anchored after </title> because three of these pages (consumables, devices,
+     international) have no explicit </head> at all -- an anchor that works on twelve of
+     fifteen pages is how a gate ends up missing from the ones that sell things. -->
+<script src="/js/age-gate.js"></script>
+<meta name="description" content="What Legal-Leaf Market collects, why, and who it goes to. We set no cookies, we have no login, and we do not sell anything. Written plainly rather than in legal language.">
+<link rel="canonical" href="https://legal-leafmarket.com/privacy">
+<meta name="theme-color" content="#080f14">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:title" content="Privacy: Legal-Leaf Market">
+<meta property="og:description" content="What we collect, why, and who it goes to. We set no cookies and there is no login.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://legal-leafmarket.com/privacy">
+<meta property="og:site_name" content="Legal-Leaf Market">
+<meta property="og:image" content="https://legal-leafmarket.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://legal-leafmarket.com/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Cormorant+Garamond:ital,wght@1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/library.css">
+<!-- The objects the words sit on. MUST load after library.css: it wins by order,
+     not by weight, and moving it above silently restores the old surface. -->
+<link rel="stylesheet" href="/css/plate.css">
+<!-- Analytics. One tag, four sites; see /js/analytics.js for the taxonomy and for why
+     this is not Vercel custom events (they are Pro-only and capped at 2 props). -->
+<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+</head>
+<body>
+
+<main class="shell story">
+  <a class="sbacklink" href="/">&larr; Back to the market</a>
+
+  <header class="st-hero">
+    <p class="eyebrow">Privacy</p>
+    <h1><span class="st-lead">what we collect,</span>which is very little</h1>
+    <p class="st-standfirst">
+      This is written in plain English on purpose. It describes what the site actually does,
+      which we can be precise about because we wrote it. <em>Last updated 8 August 2026.</em>
+    </p>
+  </header>
+
+  <article class="st-body">
+
+    <section class="st-chapter st-hilite">
+      <span class="st-num">I</span>
+      <p class="st-when">the short version</p>
+      <h2>No cookies, no account, nothing sold</h2>
+      <p>
+        We do not set any cookies. There is no login and no user account. We do not sell,
+        rent or trade personal information to anybody, and we never have.
+      </p>
+      <p>
+        The only time we hold your details is if <b>you type them into a form and press the
+        button</b>. Everything else described below is either kept in your own browser, or is
+        the ordinary technical record any website keeps in order to be online at all.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">II</span>
+      <p class="st-when">what stays on your device</p>
+      <h2>Your cart and watchlist never leave your browser</h2>
+      <p>
+        The site keeps a handful of things in your browser's own storage so it can remember
+        what you were doing between visits. These are <b>not</b> cookies and are not sent to
+        us. They stay on your machine until you clear them.
+      </p>
+      <ul>
+        <li>your cart and your watchlist</li>
+        <li>a random id for the browsing session, so the page can tell one visit from another</li>
+        <li>your filter and display preferences</li>
+        <li>restock reminders you have set</li>
+        <li>if you have ever opened the admin console, whether you are signed into it</li>
+      </ul>
+      <p>
+        You can wipe all of it at any time by clearing site data for this domain in your
+        browser settings. Nothing breaks; the site simply forgets you.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">III</span>
+      <p class="st-when">what you send us on purpose</p>
+      <h2>The two forms</h2>
+      <h3>The email signup</h3>
+      <p>
+        If you give us an email address, we record the address, any name you typed, the fact
+        that you ticked the consent box, your browser's time zone, and which page the signup
+        came from. It goes into our mailing list so we can email you. That is all it is for.
+      </p>
+      <h3>The wholesale interest form</h3>
+      <p>
+        The form on <a href="/wholesale">/wholesale</a> also asks for company, state, rough
+        monthly volume, and whether you buy or sell. Those are optional and they exist so we
+        can judge whether a business side to this site is worth building. <b>We do not pass
+        your address or any of those answers to any seller.</b>
+      </p>
+      <p>
+        To be removed from either, email <a href="mailto:hello@legal-leafmarket.com">hello@legal-leafmarket.com</a>
+        and say so. We will delete the record; we do not require a reason and we will not try
+        to talk you out of it.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">IV</span>
+      <p class="st-when">the technical record</p>
+      <h2>Analytics, and what our host sees</h2>
+      <p>
+        We use <b>Vercel Web Analytics</b>, which counts page views without cookies and
+        without building a profile of you across sites. We use it to see which pages people
+        read, not who read them.
+      </p>
+      <p>
+        The site is <b>hosted by Vercel</b>, and like any web host their servers keep ordinary
+        request logs, which include IP addresses. We do not use those logs to identify anyone,
+        but they exist and we would be misleading you to leave them out.
+      </p>
+      <p>
+        Some pages, the library and the wholesale preview, load typefaces from
+        <b>Google Fonts</b>. That means your browser makes a request to Google to fetch them,
+        and Google sees that request. If that matters to you, it is worth knowing.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">V</span>
+      <p class="st-when">who else touches it</p>
+      <h2>The short list of other companies</h2>
+      <table class="st-table">
+        <tr><th>who</th><th>what they get</th><th>why</th></tr>
+        <tr><td><b>Vercel</b></td><td>request logs, page-view counts</td><td>hosting and analytics</td></tr>
+        <tr><td><b>Google</b></td><td>a font request from your browser</td><td>typefaces on the library pages</td></tr>
+        <tr><td><b>Resend</b></td><td>your email address, if you signed up</td><td>sending the emails</td></tr>
+        <tr><td><b>Google Sheets</b></td><td>your signup record, if you signed up</td><td>where the mailing list is kept</td></tr>
+      </table>
+      <p>
+        That is the whole list. There is no advertising network, no tag manager, no session
+        recorder, no chat widget and no data broker anywhere on this site.
+      </p>
+      <p class="st-aside">
+        The last two only receive anything if you actually submitted a form. If you have never
+        typed your address into this site, they have nothing of yours.
+      </p>
+    </section>
+
+    <section class="st-chapter">
+      <span class="st-num">VI</span>
+      <p class="st-when">when you leave</p>
+      <h2>Clicking through to a shop</h2>
+      <p>
+        When you click a product link you go to that shop's own website, and from that point
+        you are on their site under their privacy policy, not ours. Those links usually carry
+        a referral tag, which tells the shop the visit came from us so that any commission is
+        credited. It does not tell them who you are, because we do not know either.
+      </p>
+    </section>
+
+    <section class="st-chapter st-final">
+      <span class="st-num">VII</span>
+      <p class="st-when">asking us things</p>
+      <h2>Your data, and how to get rid of it</h2>
+      <p>
+        Email <a href="mailto:hello@legal-leafmarket.com">hello@legal-leafmarket.com</a> and
+        ask. You can ask what we hold on you, ask for a copy, or ask us to delete it. In
+        practice, for almost everybody, the honest answer will be "an email address, and it is
+        gone now."
+      </p>
+      <p>
+        This site is for adults 21 and over. We do not knowingly collect anything from anyone
+        under 21, and if we learn that we have, we will delete it.
+      </p>
+      <p>
+        If we change how any of this works, we will change this page and move the date at the
+        top. We are not going to quietly widen what we collect and leave the old page up.
+      </p>
+    </section>
+
+  </article>
+
+  <footer class="st-sources">
+    <p class="st-fine">
+      Legal-Leaf Market is a price comparison service. We hold no stock and sell nothing.
+      This page is a plain description of how the site behaves, written by the people who
+      built it, and is not a legal instrument or legal advice.
+      See also <a href="/terms">Terms</a>. Adults 21+ only.
+    </p>
+  </footer>
+</main>
+
+</body>
+</html>

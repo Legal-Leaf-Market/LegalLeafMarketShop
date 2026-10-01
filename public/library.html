@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Library: writing on cannabis, its history and the people who use it | Legal-Leaf Market</title>
+<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any product is
+     rendered, and the page content stays in the DOM behind the overlay so a crawler still
+     sees a full page. See public/js/age-gate.js for why an attestation gate is the right
+     shape here and what it deliberately does not do.
+     Anchored after </title> because three of these pages (consumables, devices,
+     international) have no explicit </head> at all -- an anchor that works on twelve of
+     fifteen pages is how a gate ends up missing from the ones that sell things. -->
+<script src="/js/age-gate.js"></script>
+<meta name="description" content="Long-form writing from Legal-Leaf Market: how a plant led us to a signalling system inside our own bodies, where the word cannabis comes from and why marijuana is a prohibition word, the 0.3% line this whole shop stands on, the Paris club that invented drug literature, and what we learned reading 1,400 certificates of analysis. Adults 21+.">
+<link rel="canonical" href="https://legal-leafmarket.com/library">
+<meta name="theme-color" content="#080f14">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:title" content="The Library: Legal-Leaf Market">
+<meta property="og:description" content="Writing on cannabis, its history, its language, and the people who use it. Adults 21+.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://legal-leafmarket.com/library">
+<meta property="og:site_name" content="Legal-Leaf Market">
+<meta property="og:image" content="https://legal-leafmarket.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://legal-leafmarket.com/og-image.png">
+<meta name="rating" content="adult">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "https://legal-leafmarket.com/library#page",
+      "url": "https://legal-leafmarket.com/library",
+      "name": "The Library, Legal-Leaf Market",
+      "about": "Long-form writing on cannabis, its history, its language, its law and its laboratory paperwork."
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://legal-leafmarket.com/library#list",
+      "itemListOrder": "https://schema.org/ItemListOrderDescending",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "url": "https://legal-leafmarket.com/the-body-was-listening",
+          "name": "The Body Was Listening, how a plant led us to a system inside ourselves" },
+        { "@type": "ListItem", "position": 2, "url": "https://legal-leafmarket.com/a-word-for-the-plant",
+          "name": "A Word for the Plant, cannabis, kannabis, and the word prohibition chose" },
+        { "@type": "ListItem", "position": 3, "url": "https://legal-leafmarket.com/burned-at-a-funeral",
+          "name": "They Burned It at a Funeral, the oldest hard evidence for cannabis smoking" },
+        { "@type": "ListItem", "position": 4, "url": "https://legal-leafmarket.com/the-seam",
+          "name": "The Seam, the 0.3% line this whole shop stands on" },
+        { "@type": "ListItem", "position": 5, "url": "https://legal-leafmarket.com/club-des-hashischins",
+          "name": "The Club des Hashischins, Paris, 1844, and the man who changed his mind" },
+        { "@type": "ListItem", "position": 6, "url": "https://legal-leafmarket.com/what-the-certificates-say",
+          "name": "What the Certificates Say, notes from reading 1,400 lab reports" }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Cormorant+Garamond:ital,wght@1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/library.css">
+<!-- The objects the words sit on. MUST load after library.css: it wins by order,
+     not by weight, and moving it above silently restores the old surface. -->
+<link rel="stylesheet" href="/css/plate.css">
+<!-- Analytics. One tag, four sites; see /js/analytics.js for the taxonomy and for why
+     this is not Vercel custom events (they are Pro-only and capped at 2 props). -->
+<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+</head>
+<body>
+
+<main class="shell story">
+  <a class="sbacklink" href="/">&larr; Back to the market</a>
+
+  <header class="st-hero">
+    <svg class="st-mark" viewBox="0 0 60 72" aria-hidden="true">
+      <path d="M30 4 C46 15 52 36 43 54 C39 63 34 68 30 70 C26 68 21 63 17 54 C8 36 14 15 30 4 Z"
+            fill="#4ec9ff" opacity="0.20"/>
+      <path d="M30 4 C46 15 52 36 43 54 C39 63 34 68 30 70 C26 68 21 63 17 54 C8 36 14 15 30 4 Z"
+            fill="none" stroke="#4ec9ff" stroke-width="1.9" stroke-linejoin="round"/>
+      <path d="M30 8 L30 70" fill="none" stroke="#f0b93c" stroke-width="1.5" stroke-linecap="round"/>
+      <g fill="none" stroke="#4ec9ff" stroke-width="1.15" stroke-linecap="round" opacity="0.9">
+        <path d="M30 19 C24 21 20 26 19 32"/><path d="M30 19 C36 21 40 26 41 32"/>
+        <path d="M30 32 C23 34 18 40 17 47"/><path d="M30 32 C37 34 42 40 43 47"/>
+        <path d="M30 45 C25 47 21 52 20 57"/><path d="M30 45 C35 47 39 52 40 57"/>
+      </g>
+    </svg>
+    <p class="eyebrow">The library</p>
+    <h1><span class="st-lead">everything except</span>the price</h1>
+    <p class="st-standfirst">
+      The rest of this site is a number. This is the part where we say why the number
+      matters. The plant is older than agriculture, the receptor it fits is older than the
+      plant, and the law that decides which of it we are allowed to sell you is seven years
+      old and rests on a single decimal. Written to be read, checked before it was written,
+      and free of anything we cannot stand behind.
+    </p>
+  </header>
+
+  <div class="lib-list">
+
+    <a class="lib-item" href="/the-body-was-listening">
+      <span class="lib-kind">Science &amp; the body</span>
+      <span class="lib-title">The Body Was Listening</span>
+      <span class="lib-tag">The lock was fitted long before the key arrived.</span>
+      <span class="lib-dek">
+        In 1964 two chemists in Israel worked out the structure of THC. Asking how it
+        worked took thirty more years and turned up something nobody was looking for: a
+        signalling system already running inside us, with its own molecules, one of which
+        was named for the Sanskrit word for bliss. The plant did not invent the feeling. It
+        found a door that was already there, and the door is old enough to be present in
+        animals with no brain at all.
+      </span>
+      <span class="lib-go">Read &rarr;</span>
+    </a>
+
+    <a class="lib-item" href="/a-word-for-the-plant">
+      <span class="lib-kind">Etymology &amp; history</span>
+      <span class="lib-title">A Word for the Plant</span>
+      <span class="lib-tag">Two names. Only one of them was chosen honestly.</span>
+      <span class="lib-dek">
+        One of this plant's two names is two and a half thousand years old and has passed
+        through Greek, Latin and Linnaeus essentially unchanged. The other is ninety years
+        old, is Mexican-Spanish, and was written into American law by people who wanted the
+        plant to sound foreign, so that a drug already sitting in the pharmacopoeia would
+        not be recognised as one. Names are policy.
+      </span>
+      <span class="lib-go">Read &rarr;</span>
+    </a>
+
+    <a class="lib-item" href="/burned-at-a-funeral">
+      <span class="lib-kind">History &amp; archaeology</span>
+      <span class="lib-title">They Burned It at a Funeral</span>
+      <span class="lib-tag">Smoke was never the by-product. Smoke was the point.</span>
+      <span class="lib-dek">
+        The oldest chemically verified evidence of anyone smoking cannabis is about 2,500
+        years old, and it was not found at a party or a market. It was ten wooden braziers in
+        a cemetery high on the Pamir Plateau, the stones inside them burnt, the residue
+        carrying the signature of combusted THC, placed in the tomb as equipment for the
+        occasion.
+      </span>
+      <span class="lib-go">Read &rarr;</span>
+    </a>
+
+    <a class="lib-item" href="/the-seam">
+      <span class="lib-kind">Law &amp; policy</span>
+      <span class="lib-title">The Seam</span>
+      <span class="lib-tag">0.3%, dry weight, delta-9 only. Everything here lives in that sentence.</span>
+      <span class="lib-dek">
+        The American Medical Association sent a man to Congress in 1937 to argue against
+        prohibition, and he was effectively told to sit down. Thirty-three years later the
+        plant became Schedule I. Then in 2018 a farm bill drew one line, 0.3% delta-9 THC
+        by dry weight, and accidentally created the entire product category this shop
+        sells. We explain the seam we operate in, including the parts of it that are
+        genuinely unsettled.
+      </span>
+      <span class="lib-go">Read &rarr;</span>
+    </a>
+
+    <a class="lib-item" href="/club-des-hashischins">
+      <span class="lib-kind">Literature &amp; language</span>
+      <span class="lib-title">The Club des Hashischins</span>
+      <span class="lib-tag">Paris, 1844. Everyone you have heard of was upstairs.</span>
+      <span class="lib-dek">
+        For five years, in a seventeenth-century house on the Ile Saint-Louis, Gautier,
+        Baudelaire, Dumas, Balzac, Delacroix and Nerval ate hashish paste supplied by a
+        working psychiatrist and wrote down what happened. It produced the first real drug
+        literature in the West. It also produced Baudelaire's book arguing against the
+        whole enterprise, and we quote that part too.
+      </span>
+      <span class="lib-go">Read &rarr;</span>
+    </a>
+
+    <a class="lib-item" href="/what-the-certificates-say">
+      <span class="lib-kind">Our own research</span>
+      <span class="lib-title">What the Certificates Say</span>
+      <span class="lib-tag">We read the paperwork. Here is what was in it.</span>
+      <span class="lib-dek">
+        Nobody writes this piece except a price-comparison site, because nobody else has
+        read this many lab reports in a row. Every certificate contains a sum that has to
+        come out right, which makes it possible to catch a bad one with arithmetic. One
+        sheet we found was doing duty for forty-two products across thirty-seven different
+        strains. Another lab reused a single analysis for two unrelated cultivars. This is
+        what we do about that.
+      </span>
+      <span class="lib-go">Read &rarr;</span>
+    </a>
+
+  </div>
+
+  <section class="trio">
+    <p class="eyebrow">The family</p>
+    <h2>Three shops, one habit</h2>
+    <p class="lede">
+      These are branches of the same idea: find every seller, price the thing by the unit
+      that actually matters, and never dress up a number. <b>Same house, three appetites.</b>
+    </p>
+    <div class="trio-grid">
+      <div class="trio-card tc-leaf is-here">
+        <span class="tc-name">Legal-Leaf Market</span>
+        <span class="tc-tag">Priced per gram</span>
+        <span class="tc-dek">Hemp and cannabinoid flower across every store we can reach.</span>
+      </div>
+      <a class="trio-card tc-ember" href="https://nicotiamarket.com/library">
+        <span class="tc-name">Nicotia Market</span>
+        <span class="tc-tag">Priced per pouch, per puff, per ml</span>
+        <span class="tc-dek">Nicotine, and a library of its own, the etymology, the smoke
+          break, and four centuries of tobacco verse.</span>
+      </a>
+      <a class="trio-card tc-terra" href="https://herballeafmarket.com">
+        <span class="tc-name">Herbal Leaf Market</span>
+        <span class="tc-tag">The closest we come to quitting</span>
+        <span class="tc-dek">Herbal blends and smokable botanicals with nothing scheduled
+          in them.</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="st-sources">
+    <p class="st-fine">
+      Legal-Leaf Market is a price comparison service. We hold no stock and sell nothing.
+      Nothing in this library is medical, legal or agricultural advice, and nothing in it is
+      a claim about what any product will do for you. Sources are cited at the foot of every
+      piece so you can check us. Adults 21+ only.
+    </p>
+  </footer>
+</main>
+
+</body>
+</html>

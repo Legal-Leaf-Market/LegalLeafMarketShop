@@ -1,0 +1,32 @@
+{
+  "_how": "This file is the whole editorial surface of /reels. To FEATURE a reel: open the reel on Instagram, Share -> Copy link, then append an entry to `featured` below and merge. Vercel redeploys on merge and the reel appears at the top of /reels. Any instagram.com /reel/ /p/ or /tv/ link works. `by` is the handle shown under the card (no @), `title` is an optional one-line caption. Remove an entry to unfeature it. The account grids need no upkeep at all: Instagram serves each profile's latest posts into the page itself. See REELS.md at the repo root for the full guide.",
+  "_example_featured_entry": { "url": "https://www.instagram.com/reel/SHORTCODE/", "by": "legal_leaf_market", "title": "What price per gram actually tells you" },
+  "accounts": [
+    {
+      "handle": "legal_leaf_market",
+      "label": "Legal Leaf Market",
+      "tag": "The market's own account. Deals, drops, and why price per gram is the only honest number."
+    },
+    {
+      "handle": "legalleafjacob",
+      "label": "Legal Leaf Jacob",
+      "tag": "The person behind the counter. Field notes from running the market."
+    },
+    {
+      "handle": "herbal_leaf_market",
+      "label": "Herbal Leaf Market",
+      "tag": "The botanical side of the family, nothing scheduled in it."
+    },
+    {
+      "handle": "nicotia_market",
+      "label": "Nicotia Market",
+      "tag": "The sister shop for nicotine, priced per pouch, per puff, per ml."
+    },
+    {
+      "handle": "stomp_box_world",
+      "label": "Stomp Box World",
+      "tag": "From the wider family. Follow along."
+    }
+  ],
+  "featured": []
+}
