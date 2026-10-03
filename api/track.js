@@ -32,7 +32,7 @@
      ANALYTICS_WEBHOOK   Same thing under the shared name the other three use.
 
    With none of them set this still returns 204 and still writes one structured
-   line per batch to stdout, which lands in Vercel's runtime logs and in any
+   line per batch to stdout, which lands in Netlify's function logs and in any
    log drain. That is the zero-configuration floor: it is not a dashboard, but
    it means no event is ever unrecoverable.
    ========================================================================= */
@@ -79,10 +79,13 @@ export default async function handler(req, res) {
   const batch = normalise(payload);
   if (!batch.events.length) return res.status(204).end();
 
+  /* Set by the host, never by the visitor: netlify/lib/node-compat.mjs writes
+     these three from Netlify's own lookup and deletes any that arrived with
+     the request. The local preview sets none, and the fields are then empty. */
   const geo = {
-    country: header(req, 'x-vercel-ip-country'),
-    region: header(req, 'x-vercel-ip-country-region'),
-    city: safeDecode(header(req, 'x-vercel-ip-city'))
+    country: header(req, 'x-geo-country'),
+    region: header(req, 'x-geo-region'),
+    city: safeDecode(header(req, 'x-geo-city'))
   };
 
   const enriched = {
@@ -154,8 +157,8 @@ async function sendToGa4(batch, enriched) {
           session_id: batch.sid,
           engagement_time_msec: 1,
           /* Geo is the one thing this path cannot recover: the Measurement
-             Protocol attributes location to the caller, which here is a Vercel
-             region, not the shopper. Sent as a plain param so the data is at
+             Protocol attributes location to the caller, which here is the
+             function's region, not the shopper. Sent as a plain param so the data is at
              least present in Explorations, rather than letting GA4 report
              every blocked visitor as being wherever the function ran. */
           edge_country: enriched.country || undefined,

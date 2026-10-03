@@ -33,7 +33,7 @@ const group = m => console.log("\n" + m);
 const H = (h, fwd) => ({ headers: fwd ? { host: h, "x-forwarded-host": fwd } : { host: h } });
 
 /* A clean slate: these are read at call time, and the suite sets them itself. */
-for (const k of ["LL_SITE_HOST", "LL_SITE", "VERCEL_PROJECT_PRODUCTION_URL"]) delete process.env[k];
+for (const k of ["LL_SITE_HOST", "LL_SITE", "URL"]) delete process.env[k];
 
 console.log("\nWhich host the catalogue is read from\n");
 
@@ -61,13 +61,17 @@ ok("x-forwarded-host wins over host, as before", siteHost(H("a.internal", "legal
 group("THE FALLBACK LADDER");
 ok("no request at all lands on the public domain", siteHost(null) === "legal-leafmarket.com");
 ok("...and so does an empty header bag", siteHost({ headers: {} }) === "legal-leafmarket.com");
-process.env.VERCEL_PROJECT_PRODUCTION_URL = "legal-leafmarket.com";
+/* `URL` is Netlify's name for the site's main address inside a function, and it
+   is a whole url rather than a bare host. */
+process.env.URL = "https://legal-leafmarket.com";
 ok("the platform's own answer is preferred to the hardcoded one",
    siteHost(H("legal-leaf.vercel.app")) === "legal-leafmarket.com");
-process.env.VERCEL_PROJECT_PRODUCTION_URL = "example.org";
+process.env.URL = "https://example.org";
 ok("...and it really is read rather than coincidentally equal",
    siteHost(H("legal-leaf.vercel.app")) === "example.org", siteHost(H("legal-leaf.vercel.app")));
-delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
+ok("...but never ahead of the host that actually asked",
+   siteHost(H("legal-leafmarket.com")) === "legal-leafmarket.com", siteHost(H("legal-leafmarket.com")));
+delete process.env.URL;
 
 group("AN EXPLICIT OVERRIDE WINS, AND IS FORGIVING ABOUT SHAPE");
 /* LL_SITE already exists in this repo as a full URL (the Actions workflow's own

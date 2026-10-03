@@ -404,13 +404,14 @@ group("A CITY PAGE NEEDS NO ROUTING ENTRY, IN EITHER OF THE TWO ROUTING FILES");
 {
   /* CLAUDE.md section 3 says routing lives in two files that must stay in sync,
      which is true and is why this was worth checking rather than assuming. The
-     answer is that a PAGE needs neither: cleanUrls resolves /x to x.html on
-     Vercel, and serveStatic() resolves it the same way locally. The dozen
-     "/x": "/x.html" rewrites already in both files never fire -- server.mjs
-     says so in its own comment beside /p/theloudpack, which is the one rewrite
-     that did fire and was broken by exactly this. */
-  const vj = JSON.parse(readFileSync("vercel.json", "utf8"));
-  ok(vj.cleanUrls === true, "vercel serves clean urls, so /<city> finds <city>.html");
+     answer is that a PAGE needs neither: Netlify serves public/x.html at /x
+     with no rule at all, and serveStatic() resolves it the same way locally.
+     The dozen "/x": "/x.html" entries in server.mjs never fire -- it says so in
+     its own comment beside /p/theloudpack, which is the one rewrite that did
+     fire. netlify.toml lists no page for the same reason. */
+  const toml = readFileSync("netlify.toml", "utf8");
+  ok(/^\s*publish\s*=\s*"public"\s*$/m.test(toml),
+     "netlify publishes public/, where /<city> finds <city>.html on its own");
 
   const srv = readFileSync("server.mjs", "utf8");
   ok(/tryFiles\s*=\s*extname\(file\)\s*\?\s*\[file\]\s*:\s*\[file \+ "\.html"/.test(srv),
@@ -420,8 +421,8 @@ group("A CITY PAGE NEEDS NO ROUTING ENTRY, IN EITHER OF THE TWO ROUTING FILES");
      file and check it answers. */
   const probe = "zzz-routing-probe";
   ok(!new RegExp('"/' + probe + '"').test(srv), "the probe path is in no local rewrite");
-  ok(!new RegExp('"/' + probe + '"').test(readFileSync("vercel.json", "utf8")),
-     "and in no vercel rewrite");
+  ok(!new RegExp('"/' + probe + '"').test(toml),
+     "and in no netlify redirect");
   writeFileSync("public/" + probe + ".html", "<!doctype html><title>probe</title>ROUTING-OK\n");
   let out = "";
   try {

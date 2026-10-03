@@ -17,16 +17,24 @@
  */
 import { strict as assert } from "node:assert";
 import { readFileSync } from "node:fs";
+import { remixRoots, balancedEnd } from "./api/coldwater.js";
 
 const fails = [];
 const ok = (n, c, x = "") => { console.log(`${c ? "  PASS" : "  FAIL"}  ${n}${x ? "   (" + x + ")" : ""}`); if (!c) fails.push(n); };
 
-/* Pull the two functions out of the module rather than importing it: the module
-   is a Vercel handler with side effects, and what is under test is the parser. */
+/* IMPORTED, NOT SLICED OUT OF THE SOURCE. This suite used to cut the text from
+   `function balancedEnd(` to `async function fromGeneric(` and eval it, on the
+   grounds that the module has side effects. Two things were wrong with that.
+   The module imports cleanly -- test-coldwater-rsc.mjs has imported these same
+   exports all along. And a slice only works while every helper the parser calls
+   happens to sit inside the window: when the Remix reader gained `unquote()` and
+   `arraysFromChunks()` just ABOVE balancedEnd, the slice kept remixRoots and lost
+   its dependencies, and this suite died with "unquote is not defined" for over a
+   month while the live code -- where both hoist -- was fine. A test that breaks
+   when a function moves is testing the file's layout, not the parser. */
+/* The source text is still read, for the two checks near the end that are about
+   what the file SAYS (its depth guard and its error wording), not what it does. */
 const src = readFileSync("api/coldwater.js", "utf8");
-const cut = (from, to) => src.slice(src.indexOf(from), src.indexOf(to));
-const parserSrc = cut("function balancedEnd(", "async function fromGeneric(");
-const { remixRoots, balancedEnd } = new Function(parserSrc + "; return { remixRoots, balancedEnd };")();
 
 /* ---- the shapes ---------------------------------------------------------- */
 const product = (name, variant, price) => ({

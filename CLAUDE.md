@@ -1,6 +1,6 @@
 # CLAUDE.md — Operating guide for Legal-Leaf Market
 
-This file tells an AI code editor (Claude Code, Vercel Agent, v0) how this repo actually
+This file tells an AI code editor (Claude Code, Netlify's agent, v0) how this repo actually
 works. **Read it fully before editing.** Several systems here look editable but will break
 in non-obvious ways if you touch them wrong. When in doubt, prefer the smallest possible
 change and verify in a preview before merging.
@@ -17,9 +17,13 @@ CBD / hemp product deals scraped from ~16 stores.
 - **Node ≥ 18**, native `fetch`, `"type": "module"`. `dependencies` is intentionally empty.
 
 ```
-vercel.json          Routing: clean URLs, redirects, framework:null, outputDirectory:public
+netlify.toml         Production: publish dir, redirects, headers for files (see §2, §3)
+netlify/
+  functions/api.mjs  The one function behind /api/*, /p/* and /admin — runs the file in api/
+  functions/cron-*   The two nightly schedules and the background worker they start
+  lib/               routes.mjs (URL -> api/ module), node-compat.mjs (web Request <-> req/res)
 package.json         Node ≥18, zero deps, scripts run server.mjs (LOCAL ONLY — see §4)
-server.mjs           Local preview server. Vercel IGNORES this. Do not rely on it in prod.
+server.mjs           Local preview server. Netlify IGNORES this. Do not rely on it in prod.
 api/
   products.js        LIVE scraper (Shopify + WooCommerce + Squarespace) -> /api/products
   subscribe.js       Email capture -> /api/subscribe (POST)
@@ -36,75 +40,112 @@ public/
 ## 2. Deploy model (how code goes live)
 
 ```
-Editor edits -> commit / PR to GitHub (Legal-Leaf-Market/Code_Backup) -> Vercel auto-deploys
+Editor edits -> commit / PR to GitHub (Legal-Leaf-Market/LegalLeafMarketShop) -> Netlify auto-deploys
 ```
 
-- GitHub is the **single source of truth**. Vercel builds from it automatically on push/merge
-  to the production branch. Claude Code, the Vercel Agent, and v0 all feed the same repo.
-- Because `vercel.json` sets `framework: null` + `outputDirectory: public`, Vercel just serves
-  `public/` statically and runs each file in `api/` as a serverless function. **Do not add a
-  Next.js / Vite / build pipeline** — it will break this and re-trigger the old
-  "No Next.js version detected" failure. If a deploy fails, check `vercel.json` first.
-- **The dashboard disagrees with the repo, and `vercel.json` is the one winning.** Read off the
-  project API on 12 Aug 2026, the Vercel project's own Framework Preset is **`nextjs`** while
-  `vercel.json` says `framework: null`. Deploys work because the file overrides the dashboard —
-  so this is latent, not broken. What it means is that the protection against the old
-  "No Next.js version detected" failure rests on **one line in one file**: trim or reformat that
-  key and the dashboard's setting takes over, Vercel starts looking for a Next.js build, and the
-  failure comes back looking like it came from nowhere. The dashboard setting should be **Other**
-  (Settings → Build & Deployment → Framework Preset); until it is, treat `framework: null` as
-  load-bearing rather than decorative. Note the project also reports `nodeVersion: 24.x` against
-  this repo's stated Node ≥ 18 floor, which is compatible and worth knowing when a runtime
-  behaviour differs from a local check.
+**Production is Netlify (project `legalleafmarket-shop`), since October 2026.** The site ran on
+Vercel before that, and most of the incident notes further down were written there; where one says
+"Vercel" it is describing what happened, not what to do now. This section, §3, §4 and §9 are the
+current instructions.
+
+- GitHub is the **single source of truth**. Netlify deploys `main` on every push, and builds a
+  Deploy Preview for every pull request — use it; it is the only place the real CDN, the real
+  function runtime and the real headers can be checked before a merge.
+- **`netlify.toml` is the whole of the configuration, and it overrides the dashboard.** It says
+  `publish = "public"`, no build command, and `netlify/functions` for the functions. **Do not add
+  a Next.js / Vite / build pipeline** — there is nothing to build, and a framework preset would
+  start looking for one.
+- **Never remove `publish = "public"`.** The first deploy of this repo to Netlify had no publish
+  directory at all. Netlify published the repository root: `/` answered "Page not found" (there is
+  no `index.html` up there), and `CLAUDE.md`, `api/` and every planning document were served to
+  anyone who asked for them by name. `test-netlify.mjs` holds the line.
+- **How a request is answered.** A path that is a file in `public/` is served as that file, and
+  `/foo` finds `public/foo.html` with no rule. `/api/*`, `/p/*` and the four `/admin` paths go to
+  **one function**, `netlify/functions/api.mjs`, which finds the matching file in `api/` and runs
+  it. The handlers are still written as `handler(req, res)`; `netlify/lib/node-compat.mjs`
+  translates Netlify's web `Request`/`Response` to that shape at the door, so nothing in `api/`
+  knows which host it is on and every suite that calls a handler directly still works.
+- **Adding an endpoint is still just adding a file.** `/api/<name>` is answered by
+  `api/<name>.js` if it has a default-exported function, with no table to update
+  (`netlify/lib/routes.mjs`). A `_helper.js` is never routed; a library answers 404.
+- **Limits that are not the old ones.** A request to a function is stopped at **60 seconds**
+  (a cold scrape is ~30, so there is room, but not the five minutes there used to be). A
+  *scheduled* function is stopped at **30 seconds**, which is why the nightly jobs are started by
+  one function and run by another — see "The nightly jobs run on Netlify" in §10. A buffered
+  response is capped at 6 MB and a streamed one at 20 MB; the feed is ~7 MB, so
+  `node-compat.mjs` always streams. Do not "simplify" it into returning a string.
+- **Function answers are cached by the CDN only when they ask to be.** The handlers still set
+  `Cache-Control: public, s-maxage=…, stale-while-revalidate=…`; `netlify/lib/edge-headers.mjs`
+  hands that to the edge as `Netlify-CDN-Cache-Control` (plus `durable`, so edge nodes share one
+  copy) and gives browsers the line without the shared-cache directives. The tell for a working
+  edge cache is the `Cache-Status` response header (`"Netlify Edge"; hit`).
+- Node: the project builds on **24.x** against this repo's stated ≥ 18 floor; functions run on the
+  same major.
 
 ---
 
-## 3. Routing rules (`vercel.json`) — filenames must match clean URLs
+## 3. Routing rules — filenames must match clean URLs
 
-`cleanUrls: true` means `public/foo.html` is served at `/foo`. **The filename must match the
-URL the nav links to.** A past outage was caused by linking `/consumables` while the file was
-`consumable.html`. If you rename a page, update `vercel.json` and every nav link together.
-Keep the singular→plural redirect (`/consumable` -> `/consumables`) for safety.
+Netlify serves `public/foo.html` at `/foo`. **The filename must match the URL the nav links to.**
+A past outage was caused by linking `/consumables` while the file was `consumable.html`. If you
+rename a page, update every nav link together. Keep the singular→plural redirect
+(`/consumable` -> `/consumables`) for safety.
 
-**Routing lives in TWO files that MUST stay in sync:**
+**Routing lives in three places in production, and `server.mjs` has to agree with all of them:**
 
-- **`vercel.json`** — the `rewrites` / `redirects` arrays. This is what **production** (Vercel)
-  actually uses.
-- **`server.mjs`** — a **separate, hardcoded `REWRITES` / redirects map** for the local/preview
-  server (§4). It does NOT read `vercel.json`.
+- **`netlify.toml`** — the `[[redirects]]` (and the one rewrite, `/p/theloudpack`) and the
+  `[[headers]]` for files.
+- **`netlify/lib/routes.mjs`** — `ALIASES`: the handful of URLs whose path is not the name of the
+  `api/` file that answers them (`/admin`, `/api/market`, `/api/coldwater/ingest`, …). Everything
+  else under `/api/` is found by filename and is not listed anywhere.
+- **`netlify/functions/api.mjs`** — `config.path`: the list of paths Netlify hands to the function
+  at all. It is a literal that Netlify reads at build time without running the file, so it cannot
+  be derived from `routes.mjs`. A new alias outside `/api/` and `/p/` must be added in **both**.
+- **`server.mjs`** — a **separate, hardcoded `REWRITES` / `REDIRECTS` / `API` map** for the
+  local/preview server (§4). It reads none of the above.
 
-Every page route must be listed in **both**. When you add, rename, or remove a page, update the
-matching entry in `vercel.json` AND `server.mjs`, and point each at the correct `*.html`
-filename.
+`node test-netlify.mjs` holds the four together: every redirect, every alias and every `config.path`
+entry is compared against `server.mjs`, in both directions, and it drives the real function with
+real requests rather than reading its source.
 
-**Except that a plain page needs neither, and the `"/x": "/x.html"` entries never fire.**
-Measured 17 Aug 2026 while adding a second city: `cleanUrls:true` makes Vercel serve
-`public/foo.html` at `/foo` with no rewrite at all, and `serveStatic()` in `server.mjs`
-resolves an extensionless path to `.html` itself (`tryFiles`). The filesystem answers
-`/privacy` before either rewrite map is consulted, so the dozen `/x -> /x.html` rules are
-inert — `server.mjs` says so in its own comment beside `/p/theloudpack`, which is the one
-rewrite that *did* fire and was broken by exactly this (an `.html` destination is a path
-Vercel has already redirected away from by the time rewrites run). Keep listing them for
-symmetry if you like; do not believe a new page is broken because you forgot one, and do
-not "fix" an inert one by adding `.html` to the local map. `test-market-add.mjs` proves it
-by serving a page with no entry anywhere and asserting a 200. **A REDIRECT is a different
-matter and does fire** — `/coldwater-list -> /trip` is real in both files. A real bug came from renaming `consumable.html` → `consumables.html`, updating
-`vercel.json`, but leaving `server.mjs` pointing at the deleted `consumable.html` — production
-worked while the popped-out preview 404'd. Because the preview can lie either way, after a
-routing change verify every route in BOTH the local preview and a Vercel deploy.
+**A plain page needs no entry anywhere, and the `"/x": "/x.html"` entries in `server.mjs` never
+fire.** Measured 17 Aug 2026 while adding a second city: the filesystem answers `/privacy` before
+any rewrite map is consulted, both in production and in `serveStatic()` (`tryFiles`). Keep listing
+them in `server.mjs` for symmetry if you like; do not believe a new page is broken because you
+forgot one. `test-market-add.mjs` proves it by serving a page with no entry anywhere and asserting
+a 200. **A REDIRECT is a different matter and does fire** — `/coldwater-list -> /trip` is real in
+both files. A real bug came from renaming `consumable.html` → `consumables.html`, updating the
+production routing, but leaving `server.mjs` pointing at the deleted `consumable.html` — production
+worked while the popped-out preview 404'd. Because the preview can lie either way, after a routing
+change verify every route in BOTH the local preview and a Netlify Deploy Preview.
+
+**One redirect the preview makes and production does not list: `/index.html` -> `/`.** It was
+left out on purpose and has NOT been tried on Netlify: `/` is served *from* `index.html`, and a
+forced rule on that path is the classic way to redirect `/` to itself. Every page carries a
+canonical link, which is what the redirect was for, so the cost of leaving it out is a duplicate
+URL that search engines are already told to ignore. If you add it, try it on a Deploy Preview and
+load `/` before merging.
 
 ---
 
 ## 4. `server.mjs` is LOCAL-PREVIEW ONLY
 
-`server.mjs` mirrors the `vercel.json` rewrites/redirects and runs the `api/` functions so the
-site works in local/preview. **Vercel never runs it in production.** Two consequences:
+`server.mjs` mirrors the production redirects and aliases and runs the `api/` functions so the
+site works in local/preview. **Netlify never runs it in production.** Two consequences:
 
-- Production behavior is defined by `vercel.json` + `api/*`, NOT by `server.mjs`. If you change
-  routing, change it in **`vercel.json`** (and mirror in `server.mjs` only for local parity).
+- Production behavior is defined by `netlify.toml` + `netlify/` + `api/*`, NOT by `server.mjs`.
+  If you change routing, change it there (§3) and mirror it in `server.mjs` for local parity.
 - `server.mjs` **caches the imported `api/` modules**. After editing `api/products.js` you must
   **restart the local server** to see changes — otherwise you'll test stale code. (This exact
   gotcha once produced a misleading "0 COAs" result.)
+
+`netlify dev` (the Netlify CLI) is a second local option and runs the real function code, but it
+is not a faithful copy of production either. Observed on CLI 27.10 while porting: when a function
+answers 403 or 404 the CLI retries the same path with `.html`, `.htm` and `/index.html` appended
+(its static-file fallback), so a refused `/api/price-history?record=1` reads as "Not found" and an
+unknown `/p/<id>` reaches the handler a second time as `/p/<id>/index.htm`. Calling the function
+directly (which is what `test-netlify.mjs` does) gives the handler's real answer. Trust a Deploy
+Preview over either local server.
 
 ---
 
@@ -730,7 +771,19 @@ Groq strain info, any remaining per-store tuning.
 
 ## 9. Environment variables (all optional; site works without them)
 
-Set in Vercel → Project → Settings → Environment Variables. Do not commit secrets.
+Set in Netlify → Project configuration → Environment variables. Do not commit secrets. **A change
+takes effect on the next deploy, not at once** — a function keeps the values it was deployed with,
+so after adding or changing one, trigger a deploy. Variables written in `netlify.toml` are *not*
+visible to functions; they have to be set in the dashboard (or the CLI).
+
+**`ANTHROPIC_API_KEY` needs a word of its own on this host.** When a project has not set one,
+Netlify's AI Gateway supplies its own, together with an `ANTHROPIC_BASE_URL`, and bills the usage
+to the Netlify account in credits. `api/llm.js` talks to `api.anthropic.com` and does not read the
+base url, so that key would be refused on every turn while the concierge reported itself
+configured. `netlify/lib/runtime.mjs` therefore treats a gateway-supplied key as no key: the
+concierge fails closed with its usual 501 until **your own** key is set, at which point Netlify
+injects nothing and nothing here interferes. Routing the concierge through the gateway instead is
+possible, but it is a billing decision and not one to be made by a default.
 
 | Var | Purpose |
 |---|---|
@@ -739,17 +792,17 @@ Set in Vercel → Project → Settings → Environment Variables. Do not commit 
 | `RESEND_AUDIENCE_ID` | With the key, add new signups to this Resend audience. |
 | `LL_EVENTS_WEBHOOK`  | Forward `LL.track` events to an Apps Script `llTrackEvent` Web App. |
 | `LL_ADMIN_TOKEN`     | **Required to publish shared admin overrides.** Without it `POST /api/overrides` returns 501 and the endpoint is read-only — it fails closed on purpose, so an unconfigured deploy cannot have its catalog rewritten by a stranger. Never commit it or put it in client code. |
-| `CRON_SECRET`        | **Required for the nightly price recorder.** Vercel sends it as `Authorization: Bearer …` on its own scheduled calls, and `GET /api/price-history?record=1` accepts nothing else. Unset, that path returns 501 — a cron gate that falls open when a variable is missing is an open write that *looks* configured, which is worse than one that plainly refuses. It gates only the schedule; a hand-run still goes through `POST` with `x-ll-admin-token`. |
+| `CRON_SECRET`        | **Required for both nightly jobs.** The scheduled functions present it to `cron-worker` as `Authorization: Bearer …`, the worker presents it to `GET /api/price-history?record=1`, and neither accepts anything else. Unset, the schedule starts nothing and that path returns 501 — a cron gate that falls open when a variable is missing is an open write that *looks* configured, which is worse than one that plainly refuses. It gates only the schedule; a hand-run still goes through `POST` with `x-ll-admin-token`. Any long random string; it is not issued by the host. |
 | `ANTHROPIC_API_KEY`  | **Enables the concierge conversation** (`POST /api/concierge`). Without any provider key that route returns 501 and the endpoint is read-only — it fails closed on purpose, so an unconfigured deploy cannot be billed by a stranger. `GET /api/concierge?mood=` works without it, because a deterministic sort needs no model. Runs **Haiku 4.5** by default ($1/$5 per million against Opus 5's $5/$25). |
 | `LL_ANTHROPIC_MODEL` | Optional model override, so moving up a tier is config rather than a diff. **Two request parameters are model-gated and therefore NOT sent by default**, which is the trap this row exists for: `output_config.effort` *errors* on Haiku 4.5 and Sonnet 4.5, and the code used to send `effort:'low'` unconditionally — a 400 on every turn of the cheap tier. Server-side `fallbacks` are likewise for the frontier tier's safety classifiers. Enable each explicitly with `LL_ANTHROPIC_EFFORT` (checked against `low, medium, high, xhigh, max`, or `off`) and `LL_ANTHROPIC_FALLBACKS` once you are on a model that takes them. |
-| — *(spend logging, no variable)* | Every model call now logs `[concierge] <model> in=N out=N cache_read=N $0.00xxx`, read from the provider's own `usage` rather than estimated, so "what have I spent" is answerable by grepping the Vercel logs instead of by arithmetic over character counts. A turn where the provider reported no usage is marked `ESTIMATED` (chars/3.5) and a model missing from the price table is marked `UNKNOWN-RATE` and **charged at the most expensive rate**, so an unpriced model makes the cap fire early rather than late. Rates are keyed by model prefix because the model is config — a hardcoded Haiku rate would keep reporting Haiku prices after someone set `LL_ANTHROPIC_MODEL`. |
+| — *(spend logging, no variable)* | Every model call now logs `[concierge] <model> in=N out=N cache_read=N $0.00xxx`, read from the provider's own `usage` rather than estimated, so "what have I spent" is answerable by grepping the function logs (Netlify → Logs → Functions → `api`) instead of by arithmetic over character counts. A turn where the provider reported no usage is marked `ESTIMATED` (chars/3.5) and a model missing from the price table is marked `UNKNOWN-RATE` and **charged at the most expensive rate**, so an unpriced model makes the cap fire early rather than late. Rates are keyed by model prefix because the model is config — a hardcoded Haiku rate would keep reporting Haiku prices after someone set `LL_ANTHROPIC_MODEL`. |
 | — *(caching, no variable)* | **Prompt caching does not engage on Haiku**, and the earlier claim that it saves ~30% here was wrong for this tier. The minimum cacheable prefix is model-dependent and not monotonic across generations — **512 tokens on Opus 5, 4,096 on Haiku 4.5** — and the concierge prefix is ~1,455. Below the minimum the entry is silently never created: no error, `cache_creation_input_tokens: 0`. The breakpoint stays in `api/llm.js` because it costs nothing and starts working the moment the model moves up. Verify with `usage.cache_read_input_tokens` before believing any figure. |
 | `LL_OPENAI_COMPAT_BASE` / `LL_OPENAI_COMPAT_KEY` / `LL_OPENAI_COMPAT_MODEL` | **Any OpenAI-compatible chat-completions host** — DeepSeek, Together, Fireworks, OpenRouter, Cerebras, a local llama.cpp server, or Groq itself. What was written as "the Groq adapter" is not Groq-specific in a single line: it is the OpenAI dialect, so it is built from config rather than hardcoded. **Groq was removed as a code entry** — its free tier could not carry one concierge turn and its paid tier was closed to new signups — and pointing this base at `https://api.groq.com/openai/v1` brings it back with no diff, which is the point. Set the base to the root that has `/chat/completions` under it (trailing slash optional, it is trimmed). **All three are required** — a key with no base is treated as unconfigured rather than selected and then failing every turn on a request to nowhere. Last in preference order, since nobody sets a base url by accident. Optional `LL_OPENAI_COMPAT_EFFORT` is checked against the dialect's documented set (`none, default, low, medium, high`); it is model-gated too, so it stays opt-in. |
 | `LL_DAILY_USD` | **The daily spend ceiling for the concierge, in dollars.** Defaults to **$1.00** — roughly 30 conversations a day at the measured ~$0.032 each, about $30 if every day ran to the ceiling. Over the line, `POST` does **not** error: it stops calling the model and answers with the deterministic mood pick instead, the same zero-token scorer the `GET` path runs, and says so. A widget that vanishes teaches a visitor the site is broken; one that says "out of chat for today, here's what the shelf says" still sells. It is a ceiling in **dollars, not conversations**, because one exchange and a six-round tool loop differ by ~20x. It can overshoot by at most one turn — a turn's cost is not knowable until it has run, so the check is against what is already spent. Ledger is KV (below), falling back to a per-instance counter when KV is absent or unreachable; the fallback is weaker and is reported rather than hidden. Day rolls at **00:00 UTC**. |
 | `DATABASE_URL` (Neon) | **Postgres over HTTPS, the second shared backend** for overrides and the spend ledger. Neon exposes SQL on an HTTPS endpoint — the same one its own serverless driver posts to — so `fetch` reaches it with no client library, which is the only reason a database can be used here at all (§1: `dependencies` is empty, §11 forbids adding to it). Any of `DATABASE_URL`, `POSTGRES_URL`, `POSTGRES_PRISMA_URL`, `DATABASE_URL_UNPOOLED`, `POSTGRES_URL_NON_POOLING`, `NEON_DATABASE_URL` is read, pooled first. **Postgres is the better fit for the ledger than Redis:** one `insert … on conflict do update … returning n` increments atomically *and* hands back the running total, where Redis needs `INCRBYFLOAT` then a `GET`. One table, `ll_store`, created lazily on first write so there is no migration step to remember. **`expires_at` is enforced on read** — Postgres has no TTL. |
 | **`REDIS_URL` alone is USELESS here** | ⚠️ Read this before attaching storage. Vercel's Storage tab offers several Redis vendors and **only Upstash exposes an HTTP data API**. **Redis Cloud** (`cloud.redis.io`) speaks RESP over TLS only; its `api.redislabs.com` REST API provisions *databases*, not keys. Attach it and you get a `REDIS_URL` a zero-dependency function cannot open — storage looks connected and every backend still reports unconfigured. `GET /api/overrides` reports `REDIS_URL: true` alongside `storage: "NOT CONFIGURED"` precisely so that pairing is recognisable rather than baffling. Use **Upstash** or **Neon**. |
 | `LL_NEON_SQL_URL` | Optional override for the derived Neon endpoint. The endpoint is built as `https://<host from the connection string>/sql`, which is an assumption about Neon's URL layout — **never verified against a live database**, because egress to Neon is refused from the containers this was written in. If the derivation is wrong, this fixes it without a code change. `GET /api/overrides` prints the host and endpoint it would call (never the connection string — it carries the password). |
-| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Storage backend for shared overrides **and the concierge spend ledger** (`INCRBYFLOAT` on a UTC-day key, 48h TTL — not read-modify-write, which would lose concurrent lambdas' turns exactly when traffic is heaviest). Vercel sets both automatically when you attach a KV store to the project. Preferred. |
+| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Storage backend for shared overrides **and the concierge spend ledger** (`INCRBYFLOAT` on a UTC-day key, 48h TTL — not read-modify-write, which would lose concurrent lambdas' turns exactly when traffic is heaviest). These are an **Upstash Redis** store's REST url and token (`UPSTASH_REDIS_REST_URL` / `_TOKEN` are read too); nothing sets them automatically on Netlify — copy them from the Upstash console. Preferred. |
 | `LL_OVERRIDES_WEBHOOK` | Alternative override storage: an Apps Script `/exec` url, same pattern as `LL_CRM_WEBHOOK`. Used only if KV is not configured. |
 
 **Backend preference order, and it is the same for reads and writes** (a write landing in one store
@@ -2073,7 +2126,49 @@ later, so it wraps this one, and it repoints `/api/products` to `/api/coldwater`
 through — by the time the request reaches this tap the path no longer matches. One code path, no
 branch, nothing to keep in step.
 
-### The nightly price recorder runs on Vercel, not on Actions
+### The nightly jobs run on Netlify (Oct 2026) — three functions, and why not two lines
+
+**Read this one first; the section after it is the history that explains the guards.** Vercel ran
+both jobs from two lines of `vercel.json`. Netlify cannot do it that way, and the reason is a
+number: **a scheduled function is stopped after 30 seconds**, and a cold read of the catalogue is
+about that long on its own (`catalogue 5950 products in 32340ms`, below). A job that waits for one
+cannot live inside the thing that schedules it.
+
+```
+netlify/functions/cron-products.mjs        06:00 UTC   starts `products-refresh`
+netlify/functions/cron-price-history.mjs   08:20 UTC   starts `price-history`
+netlify/functions/cron-worker.mjs          a BACKGROUND function (15 minutes): does the work
+netlify/lib/cron.mjs                       the jobs themselves, and the gate
+```
+
+- **The schedule is `config.schedule` in the two `cron-*.mjs` files and nowhere else** — same
+  times as before, still UTC. `test-price-history.mjs` and `test-netlify.mjs` both read it from
+  there and hold the order (refresh before recorder).
+- **Scheduled functions only run on the published production deploy.** Not on a Deploy Preview,
+  not on a branch deploy. To run one by hand: Netlify → Logs → Functions → the function → **Run
+  now**.
+- **The worker is a public URL** (`/.netlify/functions/cron-worker`), so it is gated on
+  `CRON_SECRET` and refuses when that is unset. The recorder is then run *in the worker's own
+  process*, through `api/price-history.js`'s unchanged handler, with the same path, query and
+  bearer the old scheduler sent — so the three guards described below are exercised every night
+  rather than bypassed. Running it in-process is what gives it fifteen minutes instead of sixty
+  seconds.
+- **The refresh makes two requests, and the second is the one that matters.** `?refresh=1` answers
+  `no-store` and is a different cache key from the bare path, which the recorder's notes below
+  found out the hard way (`cache=MISS` straight after the refresh). So the job follows the forced
+  re-read with one ordinary `GET /api/products`, which the warm instance answers at once and the
+  edge keeps. That copy is the one visitors are served.
+- **A failed job throws, deliberately.** Netlify retries a background function that errors — one
+  minute later, then two minutes after that. Both jobs are safe to repeat: the fold counts days,
+  not calls. A `501` (no storage, not configured) is logged and *not* retried; a minute will not
+  attach a database.
+- **Where to look when a night goes missing:** Netlify → Logs → Functions → `cron-worker`. Every
+  line starts `[cron]`, and the recorder's own `[price-history]` lines are in the same log. If
+  `cron-price-history` shows the run and `cron-worker` shows nothing, the worker refused — its log
+  says `refused:` and why.
+- `.github/workflows/price-history.yml` is still the manual lever it was, unchanged.
+
+### The nightly price recorder ran on Vercel, not on Actions (the history)
 
 **`/api/price-history` folds today's shelf into a per-product summary** — lowest ever and when,
 highest ever and when, current, and how many days we have looked. It is the one feature here where
@@ -2125,7 +2220,7 @@ one code path no visitor takes — the concierge, the kit builder and `/p/` all 
 function and all work, because they arrive on the custom domain. `siteHost()` in `api/feed.js`
 refuses a generated host as an **address**, never as a caller: `LL_SITE_HOST`/`LL_SITE` (a full url
 is reduced to its host, since that variable already exists carrying one), then the asking host,
-then `VERCEL_PROJECT_PRODUCTION_URL`, then the public domain. `node test-feed-host.mjs` pins the
+then the platform's own name for the site (`URL` on Netlify; it was `VERCEL_PROJECT_PRODUCTION_URL`), then the public domain. `node test-feed-host.mjs` pins the
 counter-cases as hard as the refusal — pinning production unconditionally would break local
 development in the identical read-200-get-nothing way, and `not-vercel-app.com` must survive.
 
@@ -2515,7 +2610,9 @@ Everything else is still manual:
 - Do NOT hand-edit the base64 engine line in `index.html` (§5).
 - Do NOT remove admin mode or change its `adminmode` / PIN `5824` trigger without being asked (§6).
 - Do NOT add a build step / framework — this is static + serverless by design (§2).
-- Do NOT rename a page without updating `vercel.json` routing AND nav links together (§3).
-- Do NOT commit `node_modules`, `.env*`, `.vercel`, `*.log`, or backup `*.zip` (see `.gitignore`).
+- Do NOT rename a page without updating the routing (§3) AND nav links together.
+- Do NOT remove `publish = "public"` from `netlify.toml`, or add a build command to it (§2).
+- Do NOT turn `netlify/lib/node-compat.mjs` into something that returns a buffered body: the feed is over Netlify's 6 MB limit for one (§2).
+- Do NOT commit `node_modules`, `.env*`, `.netlify`, `.vercel`, `*.log`, or backup `*.zip` (see `.gitignore`).
 - Do NOT hardcode product data into the pages — always source it from `/api/products`.
 - Do NOT push directly to the production branch; open a PR and let it deploy after review.

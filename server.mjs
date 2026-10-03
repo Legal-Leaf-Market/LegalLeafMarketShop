@@ -1,9 +1,17 @@
 // server.mjs — local/preview dev server ONLY.
 //
-// Vercel does NOT use this in production: it serves `public/` statically and
-// `api/*.js` as serverless functions on its own. This tiny zero-dependency
-// server reproduces that behavior (plus the vercel.json rewrites/redirects/
-// clean URLs) so the v0 preview renders the real site and live API.
+// Netlify does NOT use this in production: it serves `public/` as files and
+// runs the handlers in `api/` through netlify/functions/api.mjs. This tiny
+// zero-dependency server reproduces that behavior (the redirects in
+// netlify.toml, the aliases in netlify/lib/routes.mjs, clean URLs) so the local
+// preview renders the real site and live API.
+//
+// THE COMMENTS BELOW THAT SAY `vercel.json` ARE HISTORY, AND ARE LEFT AS
+// WRITTEN. The site was hosted on Vercel until October 2026 and each of those
+// notes records something that really happened there. What they describe as
+// "the other routing file" is now two: netlify.toml for the redirects, and
+// netlify/lib/routes.mjs for the URLs a function answers. test-netlify.mjs
+// holds this file against both.
 import { createServer } from "node:http"
 import { readFile, stat } from "node:fs/promises"
 import { join, extname, normalize } from "node:path"
@@ -31,7 +39,7 @@ const MIME = {
   ".woff2": "font/woff2",
 }
 
-// ---- vercel.json parity ------------------------------------------------------
+// ---- production parity (netlify.toml + netlify/lib/routes.mjs) ---------------
 const REWRITES = {
   "/privacy": "/privacy.html",
   "/terms": "/terms.html",
@@ -160,7 +168,8 @@ async function loadApi(path) {
   return apiCache.get(path)
 }
 
-// Give Node's ServerResponse the small Vercel helper surface the handlers use.
+// Give Node's ServerResponse the small helper surface the handlers use. The
+// production twin of this is nodeResponse() in netlify/lib/node-compat.mjs.
 function enhanceRes(res) {
   res.status = (code) => {
     res.statusCode = code
@@ -212,7 +221,7 @@ const server = createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`)
     let path = url.pathname
 
-    // 1) API functions (Vercel: /api/* -> serverless)
+    // 1) API functions (production: netlify/functions/api.mjs)
     if (API[path]) {
       req.query = Object.fromEntries(url.searchParams.entries())
       enhanceRes(res)

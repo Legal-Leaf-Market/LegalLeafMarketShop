@@ -1,5 +1,9 @@
 # Legal-Leaf Market — Rebuild Spec (for Vercel)
 
+> **Historical.** This spec was written when the host was Vercel. Production moved to Netlify in
+> October 2026: `vercel.json` is now `netlify.toml` + `netlify/`, and Vercel Web Analytics is gone
+> (`LL.track` still reports through gtag and `/api/track`). `CLAUDE.md` §2–§4 is the current word.
+
 > Everything an agent needs to rebuild/extend this project accurately. Host target: **Vercel**.
 
 ## 1. Short description

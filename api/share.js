@@ -747,10 +747,11 @@ function similarSection(list) {
 
 /* ---- analytics ----
  * Mirrors the LL.track block in index.html rather than inventing a second scheme:
- * same va() custom events, same ll_sid session id, same ll_events ring buffer, and
- * the same deferred /_vercel/insights/script.js the satellite pages load. Without
- * that script va() only queues and nothing reports, which is why the earlier
- * version of this page called LL.track into thin air: LL was never defined here.
+ * same va() call, same ll_sid session id, same ll_events ring buffer. The first
+ * of those is a queue with nothing reading it now: the script that drained it
+ * was the previous host's own analytics, served from a path that only existed
+ * there, and it left with the host (Oct 2026). The stub stays so LL.track is
+ * the same function on every page; what reports is gtag and the beacon below.
  *
  * It also beacons to /api/track. On this page the whole point is that people land,
  * tap, and leave within a second or two, and a beacon survives that unload where a
@@ -759,8 +760,7 @@ function similarSection(list) {
  */
 function analytics(track) {
   var payload = JSON.stringify(track).replace(/</g, '\\u003c');
-  return `<script defer src="/_vercel/insights/script.js"><\/script>
-<script>
+  return `<script>
 window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 window.LL = window.LL || {};
 (function () {

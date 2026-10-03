@@ -575,7 +575,7 @@ export default async function handler(req, res) {
     return res.status(501).send(JSON.stringify({
       error: "ingest disabled",
       why: "LL_ADMIN_TOKEN is not set. Writes fail closed on purpose so an unconfigured deploy cannot have its catalogue written by a stranger.",
-      fix: "Set LL_ADMIN_TOKEN in Vercel > Project > Settings > Environment Variables.",
+      fix: "Set LL_ADMIN_TOKEN in Netlify > Project configuration > Environment variables, then redeploy.",
     }));
   }
   if ((req.headers["x-ll-admin-token"] || "") !== token) {

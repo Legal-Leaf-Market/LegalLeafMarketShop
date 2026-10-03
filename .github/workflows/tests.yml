@@ -107,7 +107,7 @@ jobs:
         run: |
           set -euo pipefail
           fail=0
-          for f in api/*.js api/**/*.js tools/*.mjs server.mjs; do
+          for f in api/*.js api/**/*.js tools/*.mjs server.mjs netlify/functions/*.mjs netlify/lib/*.mjs; do
             [ -e "$f" ] || continue
             node --check "$f" || { echo "::error file=$f::syntax error"; fail=1; }
           done
@@ -149,6 +149,7 @@ jobs:
             test-feed-host.mjs
             test-scene.mjs
             test-server-routes.mjs
+            test-netlify.mjs
             test-kit.mjs
             test-ig-research.mjs
             test-ingest-partial-drop.mjs

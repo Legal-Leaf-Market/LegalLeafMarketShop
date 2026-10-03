@@ -219,13 +219,19 @@ group("ONE SCHEDULE, IN ONE PLACE");
    whose value is destroyed by waiting must not sit behind a billing ceiling.
    Two schedules would not corrupt the record -- the fold is per day, not per
    call -- but it would leave two places to look when a night goes missing. */
-const vj = JSON.parse(readFileSync("vercel.json", "utf8"));
-const cron = (vj.crons || []).find(c => c.path.startsWith("/api/price-history"));
-ok("vercel.json schedules the recorder", !!cron, cron ? cron.schedule : "absent");
-ok("...at the path the handler actually gates on", !!cron && /\brecord=1\b/.test(cron.path), cron && cron.path);
+/* On Netlify the schedule is `config.schedule` in a scheduled function, and the
+   work is a named job in netlify/lib/cron.mjs. Both are imported and read as
+   values: Netlify takes the schedule from the same export. */
+const cronFn = await import("./netlify/functions/cron-price-history.mjs");
+const refreshFn = await import("./netlify/functions/cron-products.mjs");
+const cronLib = readFileSync("netlify/lib/cron.mjs", "utf8");
+const cron = cronFn.config && cronFn.config.schedule;
+ok("a scheduled function runs the recorder", /^\d+ \d+ \* \* \*$/.test(String(cron)), cron || "absent");
+ok("...at the path the handler actually gates on",
+   /async 'price-history'\([\s\S]*?\/api\/price-history\?record=1/.test(cronLib), "");
 ok("...after the catalogue refresh it prices",
-   !!cron && (vj.crons || []).some(c => /\/api\/products/.test(c.path) && hhmm(c.schedule) < hhmm(cron.schedule)),
-   cron && cron.schedule);
+   !!cron && !!refreshFn.config && hhmm(refreshFn.config.schedule) < hhmm(cron),
+   `${refreshFn.config && refreshFn.config.schedule} then ${cron}`);
 const wf = readFileSync(".github/workflows/price-history.yml", "utf8");
 ok("the Actions workflow no longer schedules it too",
    !/^\s*-\s*cron:/m.test(wf.replace(/^\s*#.*$/gm, "")), "");

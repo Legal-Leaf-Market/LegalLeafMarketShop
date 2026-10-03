@@ -1,10 +1,14 @@
-# Legal-Leaf Market — v2 (Vercel)
+# Legal-Leaf Market — v2 (Netlify)
 
-Static pages + two serverless functions. No build step, no framework.
+Static pages + serverless functions. No build step, no framework.
+
+> **`CLAUDE.md` is the operating guide and is kept current; this file is the short version.**
+> Hosting moved from Vercel to Netlify in October 2026 — see `CLAUDE.md` §2.
 
 ## What's in here
 ```
-vercel.json          routing (clean URLs: /consumables /devices /international /greekglass)
+netlify.toml         production config: publish dir, redirects, headers
+netlify/             the function that runs api/ on Netlify, and the two nightly schedules
 package.json         (Node ≥18, zero deps — native fetch)
 api/
   products.js        LIVE product scraper (Shopify + WooCommerce + Squarespace) -> /api/products
@@ -22,15 +26,16 @@ public/
   greekglass.html    <-- YOU ADD  (served at /greekglass)
 ```
 
-## Deploy (drag-and-drop, no Git needed)
-1. Put your 5 HTML pages into **`public/`** (filenames exactly as above).
-2. Zip the **whole project folder** (or use the ready zip provided).
-3. Go to **vercel.com/new** → drag the zip in → **Deploy**. (Or `vercel` CLI if you prefer.)
-4. Project → **Settings → Domains** → add `legal-leafmarket.com` (+ `www`), follow the DNS records.
-   Vercel auto-provisions SSL.
+## Deploy
+Push to `main` on GitHub (`Legal-Leaf-Market/LegalLeafMarketShop`); Netlify deploys it. Every pull
+request gets a Deploy Preview. There is nothing to build: `netlify.toml` publishes `public/` and
+points Netlify at `netlify/functions/`.
 
-That's it — the site is live. `/api/products` serves the live catalog; the pages already
-fall back to it automatically (they were built host-agnostic).
+Custom domain: Netlify → Domain management → add `legal-leafmarket.com` (+ `www`) and follow the DNS
+records. Netlify provisions SSL.
+
+`/api/products` serves the live catalog; the pages already fall back to it automatically (they were
+built host-agnostic).
 
 ## URLs
 - `/` → `public/index.html`
@@ -38,7 +43,7 @@ fall back to it automatically (they were built host-agnostic).
 - `/api/products` → JSON catalog (`?debug` shows per-store counts, `?refresh` busts cache)
 - `/api/subscribe` (POST), `/api/track` (POST)
 
-## Environment variables (Project → Settings → Environment Variables)
+## Environment variables (Netlify → Project configuration → Environment variables)
 All optional — the site works without them.
 
 | Var | Purpose |
@@ -46,7 +51,7 @@ All optional — the site works without them.
 | `LL_CRM_WEBHOOK`     | Keep your **Google Sheet CRM**: deploy `code.html`'s `llSubscribe` as an Apps Script **Web App** and paste its `/exec` URL here. `/api/subscribe` forwards each signup to it. |
 | `RESEND_API_KEY`     | Enable Resend emails (restock/weekly). |
 | `RESEND_AUDIENCE_ID` | If set with the key, new signups are added to this Resend audience. |
-| `LL_EVENTS_WEBHOOK`  | Optional: forward `LL.track` events to an Apps Script `llTrackEvent` Web App (Vercel's own Analytics → Events also captures them). |
+| `LL_EVENTS_WEBHOOK`  | Optional: forward `LL.track` events to an Apps Script `llTrackEvent` Web App |
 
 ## Notes / TODO (from your Apps Script `code.html`)
 `api/products.js` is a faithful port of the **Shopify / WooCommerce / Squarespace** scrapers
@@ -60,6 +65,6 @@ price-per-gram). Still to port when you send `code.html`:
 Big Cartel (baked seed + live refresh), exactly like today.
 
 ## Caching
-`/api/products` caches in-memory for 30 min per warm instance, and Vercel's CDN caches the JSON
-at the edge (`s-maxage=600, stale-while-revalidate=3600`). Use `/api/products?refresh` to force a
+`/api/products` caches in-memory for 30 min per warm instance, and Netlify's CDN caches the JSON
+at the edge (the handler's `s-maxage` / `stale-while-revalidate`, see `netlify/lib/edge-headers.mjs`). Use `/api/products?refresh` to force a
 fresh scrape.

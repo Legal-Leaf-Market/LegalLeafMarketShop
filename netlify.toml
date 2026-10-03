@@ -1,0 +1,105 @@
+# netlify.toml — how this repo is served in production.
+#
+# THE WHOLE MODEL, IN THREE LINES:
+#   public/              served as files. /foo is public/foo.html, with no rule.
+#   netlify/functions/   api.mjs answers /api/*, /p/* and /admin by running the
+#                        matching file in api/; three more run the nightly jobs.
+#   this file            the redirects and headers for the FILES, and nothing
+#                        about the functions except where they live.
+#
+# Settings here override the ones in the Netlify dashboard, so this file is the
+# one to read when the two disagree.
+
+[build]
+  publish = "public"
+  # NO `command`, ON PURPOSE. This is static files plus functions and there is
+  # nothing to build (CLAUDE.md §2, §11). Before this line existed the dashboard
+  # had no publish directory either, Netlify published the repository ROOT, and
+  # the site answered "Page not found" at / while serving CLAUDE.md, api/ and
+  # every other file in the repo to anyone who asked for it by name.
+
+[functions]
+  directory = "netlify/functions"
+  # THE HANDLERS ARE FOUND AT RUN TIME, BY NAME (netlify/lib/routes.mjs), so the
+  # bundler cannot see them by following imports. This puts them in the bundle.
+  # It also carries the three files api/admin/ reads off disk beside itself
+  # (_client-*.js and _client-styles.css), and api/package.json, whose
+  # `"type": "module"` is what makes a .js file in api/ an ES module once it has
+  # been copied somewhere the root package.json is not.
+  included_files = ["api/**"]
+
+# ---- redirects ---------------------------------------------------------------
+# A PAGE NEEDS NO ENTRY HERE. public/foo.html is already served at /foo. What is
+# listed is only what a file cannot say for itself.
+
+# Singular -> plural, kept for safety: an outage once came from linking one
+# while the file was named the other (CLAUDE.md §3).
+[[redirects]]
+  from = "/consumable"
+  to = "/consumables"
+  status = 301
+
+# The trip page is shared by every city, so it stopped being named after one.
+# It is in no nav, so this exists for somebody's homescreen shortcut.
+[[redirects]]
+  from = "/coldwater-list"
+  to = "/trip"
+  status = 301
+
+# A static page living under the share-page prefix. /p/* belongs to the function
+# (api/share.js); this one path is excluded there and served from its file here.
+[[redirects]]
+  from = "/p/theloudpack"
+  to = "/theloudpack.html"
+  status = 200
+
+# ---- headers -----------------------------------------------------------------
+# THESE APPLY TO FILES ONLY. A function's answer never passes through here: what
+# it needs is set in netlify/lib/edge-headers.mjs.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+
+# The engine holds 120 bytes above ASCII. Served without a charset they come out
+# as mojibake -- "360º Grinder" read "360Âº Grinder" for as long as that was
+# true. test-one-core.mjs holds this line.
+[[headers]]
+  for = "/engine.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+
+# A service worker that is cached is a service worker that cannot be replaced.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/install.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/og-image.png"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
