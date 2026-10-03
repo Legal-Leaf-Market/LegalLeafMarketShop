@@ -54,6 +54,13 @@ let feedCache = { at: 0, products: [], meta: null };
 // So a generated host is refused as an ADDRESS, never as a caller. Anything
 // else -- the custom domain, localhost, a self-hosted preview -- is still
 // honoured, so ordinary requests and local development are untouched.
+//
+// ON NETLIFY (Oct 2026) NONE OF THAT CAN HAPPEN, and the rule is kept anyway.
+// A *.netlify.app host is public, and the nightly job arrives on the site's
+// own address (netlify/lib/cron.mjs). What changed here is only the last rung
+// but one: `URL` is what Netlify calls the site's main address at run time --
+// the custom domain once one is attached -- and it arrives as a full url, which
+// clean() already reduces to a host.
 function siteHost(req) {
   const clean = (v) => String(v || '').trim().replace(/^https?:\/\//i, '').replace(/\/.*$/, '');
   const explicit = clean(process.env.LL_SITE_HOST || process.env.LL_SITE);
@@ -61,7 +68,7 @@ function siteHost(req) {
   const h = (req && req.headers) || {};
   const asked = clean(h['x-forwarded-host'] || h.host);
   if (asked && !/\.vercel\.app$/i.test(asked)) return asked;
-  return clean(process.env.VERCEL_PROJECT_PRODUCTION_URL) || 'legal-leafmarket.com';
+  return clean(process.env.URL) || 'legal-leafmarket.com';
 }
 
 export async function loadCatalogue(req) {

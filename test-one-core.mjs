@@ -150,12 +150,16 @@ group("ONE ENGINE, loaded by every city page");
   /* It has to be served as UTF-8 or the 120 bytes become mojibake again -- which
      is exactly what atob was doing, and the reason "360º Grinder" rendered as
      "360Âº Grinder" for as long as the blob existed. */
-  const vercel = JSON.parse(readFileSync("vercel.json", "utf8"));
-  const hdr = (vercel.headers || []).find(h => h.source === "/engine.js");
-  ok(!!hdr, "vercel.json serves /engine.js explicitly");
-  ok(!!(hdr && hdr.headers.some(h => /content-type/i.test(h.key) && /charset=utf-8/i.test(h.value))),
+  /* netlify.toml, read as text: there is no TOML parser in a repo with no
+     dependencies, and one [[headers]] table is not worth acquiring one for.
+     The table runs from its `for` line to the next table or the end. */
+  const toml = readFileSync("netlify.toml", "utf8").replace(/^\s*#.*$/gm, "");
+  const at = toml.search(/\[\[headers\]\]\s*\n\s*for\s*=\s*"\/engine\.js"/);
+  const hdr = at < 0 ? "" : toml.slice(at).split(/\n\[\[/)[0];
+  ok(at >= 0, "netlify.toml serves /engine.js explicitly");
+  ok(/^\s*Content-Type\s*=\s*"[^"]*charset=utf-8[^"]*"/im.test(hdr),
      "...as UTF-8, without which the mojibake returns");
-  ok(!!(hdr && hdr.headers.some(h => /cache-control/i.test(h.key))),
+  ok(/^\s*Cache-Control\s*=\s*"[^"]+"/im.test(hdr),
      "...and cached, so a browser downloads it once for the whole site");
 }
 
@@ -234,11 +238,14 @@ group("A SECOND CITY IS META + CONFIG, AND NOTHING ELSE");
   ok(/TO = "\/api\/market"/.test(readFileSync(other, "latin1")),
      "a city page calls the market-neutral endpoint, not the pilot's name");
   {
-    const vercel = JSON.parse(readFileSync("vercel.json", "utf8"));
-    const rw = vercel.rewrites || [];
-    const has = (src) => rw.some(r => r.source === src);
-    ok(has("/api/market"), "vercel routes /api/market");
-    ok(has("/api/market/ingest"), "vercel routes /api/market/ingest");
+    /* The aliases live in netlify/lib/routes.mjs now, and this asks the router
+       itself rather than reading its source: what matters is where a request
+       for the path actually lands. */
+    const { resolve } = await import("./netlify/lib/routes.mjs");
+    const has = (src) => { const r = resolve(src); return !!r && /^coldwater(-ingest)?$/.test(r.module); };
+    ok(has("/api/market") && resolve("/api/market").module === "coldwater", "production routes /api/market");
+    ok(has("/api/market/ingest") && resolve("/api/market/ingest").module === "coldwater-ingest",
+       "production routes /api/market/ingest");
     /* NOTHING IS REMOVED. An installed bookmarklet posts to the old path, and a
        capture that 404s is a capture silently lost -- so the old routes are
        aliases kept forever, not deprecations with a date on them. */

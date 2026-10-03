@@ -10,3 +10,6 @@ node_modules
 
 # Rendered IG carousel slides — tools/make-ig-slides.mjs regenerates them
 out/
+
+# Netlify CLI state and local build output
+.netlify

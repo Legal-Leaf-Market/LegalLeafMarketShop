@@ -233,7 +233,7 @@ export default async function handler(req, res) {
       return res.status(501).json({
         ok: false,
         error: 'writes disabled',
-        hint: 'Set LL_ADMIN_TOKEN in Vercel > Project > Settings > Environment Variables, plus a backend: either attach a Vercel KV store (sets KV_REST_API_URL and KV_REST_API_TOKEN automatically) or set LL_OVERRIDES_WEBHOOK to an Apps Script /exec url.'
+        hint: 'Set LL_ADMIN_TOKEN in Netlify > Project configuration > Environment variables, then redeploy, plus a backend: either an Upstash Redis store (KV_REST_API_URL and KV_REST_API_TOKEN, or the UPSTASH_REDIS_REST_ pair), a Neon database (DATABASE_URL), or LL_OVERRIDES_WEBHOOK set to an Apps Script /exec url.'
       });
     }
     const got = req.headers['x-ll-admin-token'];

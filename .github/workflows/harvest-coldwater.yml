@@ -6,8 +6,9 @@
 # `dependencies` empty and the no-build-step rule intact (CLAUDE.md sections 1
 # and 11).
 #
-# WHY NOT A VERCEL CRON. vercel.json already schedules /api/products?refresh=1,
-# and that works because it is a handful of cheap HTTP calls. A browser is not:
+# WHY NOT THE HOST'S OWN CRON. A scheduled function already re-reads
+# /api/products every night (netlify/functions/cron-products.mjs; it was a line
+# in vercel.json), and that works because it is a handful of cheap HTTP calls. A browser is not:
 # Chromium plus a real page render is ~300MB and 10-20s per store, which is past
 # any serverless limit long before the store list is. Different tool, different
 # machine.

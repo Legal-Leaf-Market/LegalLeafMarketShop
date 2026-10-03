@@ -35,7 +35,7 @@ export default function handler(req, res) {
         <h1 class="admin-h1" style="font-size:1.5rem">This page is private</h1>
         <div style="margin-top:14px">
           <p>No admin credential is configured on this deployment, so nothing can be unlocked yet. The gate fails closed on purpose &mdash; an unset variable must not publish the operating model.</p>
-          <p>Set this in Vercel &rarr; Project &rarr; Settings &rarr; Environment Variables, then redeploy:</p>
+          <p>Set this in Netlify &rarr; Project configuration &rarr; Environment variables, then redeploy:</p>
           <div class="card" style="margin-top:10px;background:rgba(255,255,255,0.05)">
             <code style="font-weight:900;color:var(--leaf)">ADMIN_PASSCODE</code>
             <p style="margin-top:4px;font-size:0.78rem">A long random string. Enter it here to unlock; it also signs the session cookie, so changing it signs everyone out.</p>

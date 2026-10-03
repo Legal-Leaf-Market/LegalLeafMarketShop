@@ -2,7 +2,7 @@
   "name": "legal-leafmarket",
   "private": true,
   "version": "2.0.0",
-  "description": "Legal-Leaf Market, v2 (Vercel). Static pages + serverless product scraper + CRM capture.",
+  "description": "Legal-Leaf Market, v2 (Netlify). Static pages + serverless product scraper + CRM capture.",
   "type": "module",
   "scripts": {
     "dev": "node server.mjs",

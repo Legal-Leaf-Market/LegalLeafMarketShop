@@ -1,0 +1,5 @@
+{
+  "//": "Makes every .js file in api/ an ES module wherever this directory is copied. The root package.json says the same thing, but Netlify writes a package.json of its own at the root of a function bundle and the nearest one wins. Not a package: nothing is installed from here.",
+  "private": true,
+  "type": "module"
+}

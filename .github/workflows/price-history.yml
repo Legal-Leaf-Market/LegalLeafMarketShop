@@ -11,6 +11,12 @@
 # there is no backfill. That is the entire argument for starting this before
 # the features that can begin empty and fill up later.
 #
+# THE SCHEDULE NOW LIVES ON NETLIFY (Oct 2026):
+# netlify/functions/cron-price-history.mjs, 08:20 UTC, same time as before.
+# Everything below about Vercel is the history of how it left this file, and
+# every argument in it carries over unchanged -- including CRON_SECRET, which
+# the scheduled function presents exactly as Vercel's scheduler did.
+#
 # THE SCHEDULE MOVED TO VERCEL (25 Aug 2026) AND THIS IS THE MANUAL LEVER NOW.
 # It ran twice, on 24 and 25 Aug, and died in four seconds both times: Actions
 # minutes are exhausted on this private repo, so a runner is assigned and the
@@ -43,7 +49,8 @@
 name: Record prices
 
 on:
-  # NO `schedule:` HERE ANY MORE. vercel.json owns the 08:20 UTC run. Two
+  # NO `schedule:` HERE ANY MORE. netlify/functions/cron-price-history.mjs owns
+  # the 08:20 UTC run. Two
   # schedules would not corrupt anything -- the fold is per day, not per call --
   # but it would spend Actions minutes on work that already happened and leave
   # two places to look when a night goes missing.
