@@ -2442,6 +2442,26 @@ and this page has sixty.
 > a numeric character reference is not a colour. Verified by injecting that exact green and watching
 > it go red, because a guard that passes vacuously is worse than none.
 
+### The articles wear the SHOP's skin now — `public/css/shop.css` (31 Oct 2026)
+
+**"Change all the themes of the articles and such to the overall theme where the products are."**
+The stompbox plate look described in the next section is still loaded, and is now overridden by
+`shop.css`, linked **after** `plate.css` on every page that loads `library.css` (14 pages). It
+copies the shelf rather than inventing: the system sans (`--display`, `--script` and `--sans` are
+all remapped to it, so no rule anywhere had to be rewritten), the purple-to-teal hero band with the
+drifting paisley (`/img/paisley.svg`, decoded from the data URI `index.html` inlines twice), the
+white glowing title with the blue-to-lavender underline, gold uppercase labels, cards and glass
+panels, frosted nav pills and the blue gradient action pill. The Google Fonts request was removed
+from those pages because nothing on them names Fraunces, Cormorant or Jost any more.
+
+- **The band is drawn on `body::before/::after`, not on `.st-hero`**: the hero sits in a centred
+  shell, and a full-bleed background there needs 100vw tricks that scroll sideways wherever there
+  is a vertical scrollbar. Only `main/header/footer/nav` are lifted above it, never `body > *`,
+  which would have un-fixed every fixed overlay that lacks an id selector.
+- **`.st-when` is a `<p>`**, so `library.css`'s `.st-chapter p` out-ranks a bare `.st-when` and the
+  label stayed grey; it is named inside its chapter to take the gold.
+- `test-library-style.mjs` asserts every library-family page loads `shop.css` after `plate.css`.
+
 ### The library wears this site's colours now, and its objects — `public/css/plate.css`
 
 **Reported 19 Aug 2026: "the reels and library need to match the rest of the site in their own

@@ -130,6 +130,16 @@ for (const f of libPages) {
 }
 ok("every page in it loads plate.css", noPlate.length === 0, noPlate.join(", "));
 ok("...and every one loads it AFTER library.css", wrongOrder.length === 0, wrongOrder.join(", "));
+/* shop.css puts the shelf's skin on these pages (31 Oct 2026) and wins over
+   plate.css the same way plate.css wins over library.css: by order. */
+const noShop = [], shopEarly = [];
+for (const f of libPages) {
+  const h = readFileSync("public/" + f, "latin1");
+  const b = h.indexOf("css/plate.css"), c = h.indexOf("css/shop.css");
+  if (c < 0) noShop.push(f); else if (c < b) shopEarly.push(f);
+}
+ok("every page in it loads shop.css", noShop.length === 0, noShop.join(", "));
+ok("...and every one loads it AFTER plate.css", shopEarly.length === 0, shopEarly.join(", "));
 
 group("AND GREEK GLASS IS NO LONGER THE ONE PAGE STILL PAINTED GREEN");
 /* It was the last of them. Hand-authored, fed by Big Cartel rather than

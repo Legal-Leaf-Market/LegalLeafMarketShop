@@ -1,0 +1,178 @@
+/* ============================================================
+   shop.css -- the article pages wear the SHOP's skin.
+   ------------------------------------------------------------
+   Asked for 31 Oct 2026: "change all the themes of the articles and
+   such to the overall legalleafmarket.shop theme where the products
+   are." Until now the library family (/library, the essays, /reels,
+   /terms, /privacy, /shipping, /returns, /wholesale, /coldwater-guide)
+   was its own object: serif display type, a script face for the lead,
+   gold italic flourishes, and stompbox-style machined plates
+   (plate.css). Correct as a reading room and visibly a different site
+   from the shelf a visitor just left.
+
+   What the shelf (public/index.html) actually looks like, and what this
+   file copies from it rather than inventing:
+     - one system sans for everything: 'Segoe UI',system-ui,...
+     - the hero: a purple -> teal -> ground radial wash under the
+       drifting paisley field (/img/paisley.svg, decoded from the data
+       URI index.html inlines twice)
+     - the title: white, 900 weight, wide tracking, a blue glow, and the
+       blue -> lavender underline
+     - labels: gold, 11px, 800, uppercase, tracked (the filter labels)
+     - surfaces: the glass panel (--glass on --glass-line, 22px, blur)
+       and the card (16px, teal-to-ground gradient)
+     - controls: frosted pills for navigation, the blue gradient pill
+       for the one action that matters (the cart button)
+
+   LOADED LAST, after library.css and plate.css, and it wins by ORDER
+   at equal specificity exactly as plate.css does over library.css --
+   no !important. Moving the <link> above plate.css silently restores
+   the old look. test-library-style.mjs asserts the order on every page
+   that loads library.css, read off disk rather than from a list.
+
+   THE HEADLINE TRAP plate.css documents still applies: library.css sets
+   the h1 to background-clip:text with a transparent fill. Undoing it
+   means undoing all three (image, clip, fill), or the title is an
+   invisible gradient box.
+
+   library.css still sets the reading measure (64ch) and the chapter
+   rhythm. Those are about reading, not about whose site this is, so
+   they are untouched.
+   ============================================================ */
+
+:root{
+  /* The shop's own stack, verbatim from index.html's body rule. The three
+     family faces are remapped rather than each rule being rewritten, so
+     every selector in library.css / plate.css / wholesale.css that asks
+     for --display, --script or --sans now gets the shelf's type. */
+  --shop-sans:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,Roboto,sans-serif;
+  --sans:var(--shop-sans);
+  --display:var(--shop-sans);
+  --script:var(--shop-sans);
+}
+
+/* ---------- THE GROUND ---------- */
+/* The shelf's hero is a band, not a box: it runs edge to edge and fades
+   into the ground. A full-bleed background on .st-hero would mean 100vw
+   tricks inside a centred shell (and a horizontal scrollbar wherever the
+   page has a vertical one), so the band is drawn on the body instead and
+   the content sits above it. */
+body{
+  position:relative;
+  font-family:var(--shop-sans);
+  background-color:var(--bg);
+  background-image:none;
+}
+body::before,body::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:560px;
+  pointer-events:none;z-index:0;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 46%,transparent 100%);
+          mask-image:linear-gradient(180deg,#000 0%,#000 46%,transparent 100%);
+}
+body::before{
+  background:radial-gradient(120% 90% at 50% -10%,#4b3aa0 0%,#3a2d86 22%,#274a7e 45%,
+             #14615c 68%,#123b4e 84%,#080f14 100%);
+}
+body::after{
+  opacity:.30;
+  background-image:url("/img/paisley.svg");
+  background-size:300px 300px;
+  animation:shop-drift 110s linear infinite;
+}
+@keyframes shop-drift{to{background-position:300px 300px}}
+@media (prefers-reduced-motion:reduce){body::after{animation:none}}
+body > main,body > header,body > footer,body > nav{position:relative;z-index:1}
+
+/* ---------- THE HERO ---------- */
+.st-hero{border-bottom:0;padding:34px 0 40px;margin-bottom:34px;overflow:visible}
+.st-hero::before{display:none}
+.st-hero::after{
+  content:"";position:static;display:block;width:min(340px,60%);height:3px;
+  margin:26px auto 0;border-radius:3px;opacity:1;
+  background:linear-gradient(90deg,transparent,#8ab4ff,#c9a6ff,transparent);
+  box-shadow:0 0 18px rgba(150,180,255,.7);
+}
+.st-hero h1{
+  font-family:var(--shop-sans);font-weight:900;letter-spacing:.04em;line-height:1.02;
+  font-size:clamp(2.1rem,5.6vw,3.9rem);
+  background-image:none;-webkit-background-clip:border-box;background-clip:border-box;
+  -webkit-text-fill-color:currentColor;color:#fff;
+  text-shadow:0 2px 24px rgba(80,120,255,.45);
+}
+.st-lead{
+  font-family:var(--shop-sans);font-style:normal;font-weight:800;
+  font-size:clamp(.78rem,1.6vw,.95rem);letter-spacing:.22em;text-transform:uppercase;
+  color:#cfe7ff;margin-bottom:8px;text-shadow:none;
+}
+.st-tag-en,.st-tag-sub{font-family:var(--shop-sans);font-style:normal}
+.eyebrow{
+  font-family:var(--shop-sans);font-size:11px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--gold);
+}
+.st-standfirst{color:#d6e4ee}
+.st-standfirst em{font-family:var(--shop-sans);font-style:normal;font-weight:600;color:var(--gold)}
+
+/* The way back is a nav pill, the same object as the shelf's top row. */
+.sbacklink{
+  display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:999px;
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);
+  color:#fff;font-family:var(--shop-sans);font-size:13px;font-weight:600;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:none;
+}
+.sbacklink:hover{background:rgba(255,255,255,.18);color:#fff}
+
+/* ---------- THE CHAPTERS ---------- */
+/* Every chapter is a card on the shelf: the reading column keeps its
+   measure, it just sits on the same surface a product does. */
+.st-chapter{
+  background:linear-gradient(180deg,rgba(20,72,84,.30),rgba(12,24,32,.55) 60%);
+  border:1px solid var(--glass-line);border-radius:var(--radius,16px);
+  padding:24px 26px;margin:0 0 18px;box-shadow:0 10px 40px rgba(0,0,0,.35);
+}
+/* The 112px chapter numeral was a print flourish; on a card it reads as a
+   smudge in the corner. The gold label above the heading does its job. */
+.st-num{display:none}
+/* .st-chapter p (library.css) out-ranks a bare .st-when, which is a <p>,
+   so the label has to be named inside its chapter to take the gold. */
+.st-when,.st-chapter .st-when{
+  font-family:var(--shop-sans);font-size:11px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--gold);
+}
+.st-chapter h2{font-family:var(--shop-sans);font-weight:800;letter-spacing:0;color:#fff}
+.st-chapter h3{font-family:var(--shop-sans);font-weight:700;color:#fff}
+.st-hilite,.st-cosmic,.st-warn,.st-manifesto{
+  background:var(--glass);border:1px solid var(--glass-line);border-radius:22px;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  box-shadow:0 10px 40px rgba(0,0,0,.35);
+}
+.st-warn{border-color:rgba(240,185,60,.45)}
+.st-pull{font-family:var(--shop-sans);font-weight:800;color:#fff}
+.st-quote{font-family:var(--shop-sans);font-style:normal;font-weight:600;color:var(--accent)}
+.st-viva{font-family:var(--shop-sans);font-style:normal}
+.st-table th{
+  font-family:var(--shop-sans);font-size:11px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--gold);
+}
+
+/* The one action on a page is the cart button's object. */
+.st-cta,.rl-follow{
+  border:0;border-radius:999px;
+  background:linear-gradient(90deg,var(--leaf3),var(--leaf));color:#04202b;
+  font-family:var(--shop-sans);font-weight:800;box-shadow:0 6px 22px rgba(var(--accent-rgb),.25);
+}
+
+/* ---------- THE LISTS (library index, reels, the family footer) ---------- */
+.plate,.lib-item,.lib-next,.trio-card,.rl-card,.rl-acct{
+  background:linear-gradient(180deg,rgba(20,72,84,.30),rgba(12,24,32,.55) 60%);
+  border:1px solid var(--glass-line);border-radius:var(--radius,16px);
+  box-shadow:0 10px 40px rgba(0,0,0,.35);
+}
+.plate:hover,.lib-item:hover,.rl-card:hover,.rl-acct:hover,.lib-next:hover,.trio-card:hover{
+  border-color:rgba(var(--accent-rgb),.55);
+}
+.lib-kind{
+  font-family:var(--shop-sans);font-size:10.5px;font-weight:800;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--gold);
+}
+.lib-title,.tc-name{font-family:var(--shop-sans);font-weight:800;color:#fff}
+.st-sources{border-top:1px solid var(--line)}
