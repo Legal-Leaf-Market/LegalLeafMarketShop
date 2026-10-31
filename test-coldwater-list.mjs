@@ -103,6 +103,12 @@ const key = async k => send("Input.dispatchKeyEvent", { type: "keyDown", key: k,
 
 await send("Runtime.enable"); await send("Page.enable"); await send("Network.enable");
 await send("Network.setBlockedURLs", { urls: ["*fonts.googleapis.com*", "*fonts.gstatic.com*"] });
+/* /trip carries the 21+ gate like every shopper-facing page, and the gate pulls
+   focus and swallows Escape, so the Escape assertions below would be pressing
+   keys into the overlay. Confirmed before any page script runs, on every load,
+   because this suite calls localStorage.clear() between scenarios. The gate
+   itself is driven in test-concierge-browser.mjs. */
+await send("Page.addScriptToEvaluateOnNewDocument", { source: "try{localStorage.setItem('ll_age_ok','1')}catch(e){}" });
 
 async function goto(path) {
   await send("Page.navigate", { url: `http://127.0.0.1:${PORT}${path}` });
