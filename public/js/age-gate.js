@@ -107,7 +107,7 @@
     + '<button type="button" class="llg-yes">Yes, I am 21+</button>'
     + '<button type="button" class="llg-no">No, I am under 21</button>'
     + '</div>'
-    + '<p class="llg-fine">Answering yes is a confirmation, not a check — every order is age-verified at checkout. '
+    + '<p class="llg-fine">Answering yes is a confirmation, not a check. Every order is age-verified at checkout. '
     + 'See <a href="/terms">Terms</a> and <a href="/privacy">Privacy</a>.</p>'
     + '</div>';
 

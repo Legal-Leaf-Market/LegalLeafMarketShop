@@ -61,6 +61,11 @@
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
+    # SAMEORIGIN, not DENY: /ig-studio frames its own slides. Nothing here uses
+    # the camera, microphone or location.
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
 
 # The engine holds 120 bytes above ASCII. Served without a charset they come out
 # as mojibake -- "360º Grinder" read "360Âº Grinder" for as long as that was

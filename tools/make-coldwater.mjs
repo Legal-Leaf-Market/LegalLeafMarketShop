@@ -102,7 +102,7 @@ const swapWhere = (test, from, to) => {
   return false;
 };
 
-const TITLE = `${MK.label} Cannabis Prices: Compare Every Dispensary by Price Per Gram`;
+const TITLE = `${MK.label} Cannabis Prices: Every Dispensary, per Gram`;
 const DESC  = `Compare live menus from the ${MK.label}, Michigan dispensaries` +
               `${MK.blurb ? " " + MK.blurb : ""}. ` +
               "Sorted by real price per gram, filtered by shop, strain and category. Adults 21+.";
@@ -158,7 +158,7 @@ swapWhere(l => l.includes("Affiliate disclosure:"),
   + "pays to appear or to rank. Shop and brand names, logos and product photographs "
   + "belong to their respective owners and are used only to identify what is being "
   + "compared. Prices and availability are read from each shop&#x2019;s own public menu, "
-  + "can be out of date or wrong, and are not an offer &#x2014; always confirm with the "
+  + "can be out of date or wrong, and are not an offer. Always confirm with the "
   + "shop before you travel.");
 
 /* The nav glyphs hardcode the leaf green as an SVG stroke attribute. No custom
@@ -488,7 +488,7 @@ const INJECT = `<!-- ===========================================================
             var ct = String(x.category || "");
             if (ct) {
               e.perCat[ct] = (e.perCat[ct] || 0) + 1;
-              if (st) { var pk = st + "\u0000" + ct; e.perPair[pk] = (e.perPair[pk] || 0) + 1; }
+              if (st) { var pk = st + "\\u0000" + ct; e.perPair[pk] = (e.perPair[pk] || 0) + 1; }
             }
             /* THE BRAND'S PICTURE IS ITS OWN PRODUCT PHOTO. There is no logo
                table to commit and keep in step, and the favicon trick the store
@@ -1624,7 +1624,7 @@ const TAIL = `<style id="cw-no-hemp-nav">
       var m = (j && j.meta) || {};
       if (m.demo){
         show('<b>Sample catalogue.</b> No ${MK.label} dispensary is connected to this page yet, '
-           + 'so these are placeholder products under placeholder shop names &mdash; '
+           + 'so these are placeholder products under placeholder shop names, '
            + '<span>not any real shop\\'s prices.</span> The price-per-gram maths is real; the inventory is not.');
       }
     })
@@ -2119,7 +2119,7 @@ const TAIL = `<style id="cw-no-hemp-nav">
   var TITLE = TOWN + " Cannabis Shopping List";
   var SUB   = "One list for the whole town \\u00b7 buy it at the counter";
   var NOTE  = "Prices are what each shop published when this page loaded. Nothing is " +
-              "reserved and nothing is bought here \\u2014 confirm at the counter.";
+              "reserved and nothing is bought here. Confirm at the counter.";
   var EMPTY = "Your " + TOWN + " list is empty.<br/>Add anything from the shelf to start " +
               "planning a trip across the shops.";
 

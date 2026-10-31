@@ -202,7 +202,7 @@ footer{margin-top:20px;color:var(--dim);font-size:11.5px;line-height:1.6}
 
   <footer>
     Prices and availability are read from each shop&rsquo;s own public menu, can be out of
-    date or wrong, and are not an offer &mdash; always confirm with the shop before you
+    date or wrong, and are not an offer. Always confirm with the shop before you
     travel. This page is not affiliated with, endorsed by or connected to any dispensary
     or brand shown on it. Must be 21+.
     <br/><br/>
@@ -343,14 +343,14 @@ footer{margin-top:20px;color:var(--dim);font-size:11.5px;line-height:1.6}
     for (var i = 0; i < its.length; i++) {
       var it = its[i];
       if (!it.mix || !it.group) continue;
-      var gk = it.storeKey + " " + it.group;
+      var gk = it.storeKey + "\u0000" + it.group;
       var g = shopGroups[gk] || (shopGroups[gk] = { need: it.minQty || 0, unit: it.unit, have: 0, name: it.group, storeKey: it.storeKey });
       g.have += it.qty;
       if (it.minQty && (!g.need || it.minQty < g.need)) g.need = it.minQty;
     }
     function unlocked(it){
       if (!it.mix || !it.group) return false;
-      var g = shopGroups[it.storeKey + " " + it.group];
+      var g = shopGroups[it.storeKey + "\u0000" + it.group];
       return !!(g && g.have >= g.need && it.unit != null);
     }
     function lineTotal(it){
@@ -455,7 +455,7 @@ footer{margin-top:20px;color:var(--dim);font-size:11.5px;line-height:1.6}
           '<input type="checkbox" data-tick="' + esc(it.key) + '"' + (on ? " checked" : "") + '/>' +
           '<span class="nm"><b>' + esc(it.name) + '</b>' +
             (sub ? '<span class="sub">' + esc(sub) + '</span>' : "") + '</span>' +
-          '<span class="pr">' + (it.price != null ? money(line) : "&mdash;") +
+          '<span class="pr">' + (it.price != null ? money(line) : "No price") +
             (M.unlocked(it) ? '<small>deal price</small>' : (it.qty > 1 && it.price != null ? '<small>' + money(it.price) + " each</small>" : "")) +
           '</span>' +
           '<button class="rm" type="button" data-rm="' + esc(it.key) + '" aria-label="Remove ' + esc(it.name) + '">&times;</button>' +
@@ -472,7 +472,7 @@ footer{margin-top:20px;color:var(--dim);font-size:11.5px;line-height:1.6}
       html += '<div class="mix' + (M.loose[L].ok ? " ok" : "") + '">' + esc(M.loose[L].text) + '</div>';
     }
     html += '<div class="fine">Prices as published by each shop when this list was built. ' +
-      'Not an offer &mdash; confirm at the counter. legal-leafmarket.com' + CTX.path + '</div>';
+      'Not an offer. Confirm at the counter. legal-leafmarket.com' + CTX.path + '</div>';
     card.innerHTML = html;
   }
 
@@ -597,7 +597,7 @@ footer{margin-top:20px;color:var(--dim);font-size:11.5px;line-height:1.6}
       }
       for (var j = 0; j < g.items.length; j++) {
         var it = g.items[j];
-        var priceTxt = it.price != null ? money(M.lineTotal(it)) : "—";
+        var priceTxt = it.price != null ? money(M.lineTotal(it)) : "No price";
         x.font = font(600, 24);
         var pw = x.measureText(priceTxt).width;
         var nameW = INNER - pw - 30;
@@ -636,7 +636,7 @@ footer{margin-top:20px;color:var(--dim);font-size:11.5px;line-height:1.6}
 
     rule(y); y += 8;
     x.font = font(400, 18);
-    var fine = wrap("Prices as published by each shop when this list was built. Not an offer — confirm at the counter.", INNER);
+    var fine = wrap("Prices as published by each shop when this list was built. Not an offer. Confirm at the counter.", INNER);
     for (var f = 0; f < fine.length; f++) text(fine[f], PAD, y + 20 + f * 24, font(400, 18), "#8fa6b3");
     y += fine.length * 24 + 12;
     text("legal-leafmarket.com" + CTX.path, PAD, y + 20, font(600, 19), "#d8b25a");

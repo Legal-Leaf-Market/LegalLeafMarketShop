@@ -38,4 +38,8 @@
   <url><loc>https://legal-leafmarket.com/coldwater-guide</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://legal-leafmarket.com/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://legal-leafmarket.com/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://legal-leafmarket.com/grandrapids</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://legal-leafmarket.com/newbuffalo</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://legal-leafmarket.com/ambassador</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://legal-leafmarket.com/p/theloudpack</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
 </urlset>

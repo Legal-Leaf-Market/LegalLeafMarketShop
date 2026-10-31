@@ -1256,7 +1256,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
           <div class="cname">${p.name}</div>
           <div class="priceblock"><span class="sale">${money(gp.now)}</span>${gp.orig>gp.now+0.001?`<span class="orig">${money(gp.orig)}</span>`:""}</div>
           <div class="otd">\u2248 ${money(gp.now+(p.ship||0))} out the door (incl. est. ship ${money(p.ship||0)})</div>
-          ${gp.coupon?`<div class="coupon">10% OFF \u2014 code ${gp.coupon} applied at checkout</div>`:""}
+          ${gp.coupon?`<div class="coupon">10% off with code ${gp.coupon}, applied at checkout</div>`:""}
           ${p.description?`<div class="ggdesc"><div class="ggdtext">${esc(p.description)}</div><button class="ggmore" type="button" style="display:none">See more</button></div>`:""}
           <div class="cfoot">
           <button class="addbtn ggbtn" ${soldG?"disabled":""}>${soldG?"Out of stock":"\uff0b Add to Cart"}</button>
@@ -1387,13 +1387,13 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
         return pr || strainNm || _lbl;
       }
       if(GENERIC_PROD && _lbl && /[a-z]{2,}/i.test(_lbl)){
-        return _lbl.replace(/\s*\/\s*/," \u2014 ").replace(/\s{2,}/g," ").trim();  // "Hawaiian Haze / 28 Grams" -> "Hawaiian Haze — 28 Grams"
+        return _lbl.replace(/\s*\/\s*/," \u00b7 ").replace(/\s{2,}/g," ").trim();  // "Hawaiian Haze / 28 Grams" -> "Hawaiian Haze — 28 Grams"
       }
       // weight/qty for this row; drop generic "Each"/"Option N"
       var qty = (r.label && !/^each$|^option\s*\d+$/i.test(r.label)) ? r.label : "";
       var s = strainNm;
       if(qty && s && qty.toLowerCase().indexOf(s.toLowerCase())>=0) return qty; // qty already has strain
-      if(s && qty) return s+" \u2014 "+qty;   // Strain ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Weight
+      if(s && qty) return s+" \u00b7 "+qty;   // Strain ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Weight
       return s || qty;                         // whichever we have
     }
     const optRow=(r,lbl)=>{
@@ -1404,7 +1404,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
       // plus a star + label so it's clear even where option styling is limited.
       const style = isBest ? ` style="color:#f0c74c;font-weight:800"` : "";
       const bestTag = isBest ? " \u2b50 BEST $/g" : "";
-      return `<option value="${r.i}"${style} ${r.avail?"":"disabled"} ${defRow&&r.i===defRow.i?"selected":""}>${lbl} \u2014 ${money(r.price)}${r.avail?gTxt+bestTag:" (out of stock)"}</option>`;
+      return `<option value="${r.i}"${style} ${r.avail?"":"disabled"} ${defRow&&r.i===defRow.i?"selected":""}>${lbl} \u00b7 ${money(r.price)}${r.avail?gTxt+bestTag:" (out of stock)"}</option>`;
     };
     const opts = rows.map(r=>optRow(r,optLabel(r))).join("");
     // ===== DUAL-AXIS SUBSCRIPTION (Black Tie "Budtender's Choice") =====
@@ -1439,7 +1439,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
       const qrows = qtyRowsFor(defProd);
       const defQ = (defDual&&defDual.prod===defProd) ? defDual : (qrows.find(r=>r.avail)||qrows[0]);
       const qtySel = '<select class="sizesel subqty" aria-label="Choose quantity">'
-        + qrows.map(r=>{ const v=ppg(r); const gTxt=v!=null?` \u00b7 ${money(v)}/g`:""; return `<option value="${r.i}" ${r.avail?"":"disabled"} ${defQ&&r.i===defQ.i?"selected":""}>${esc(r.qty)} \u2014 ${money(r.price)}${r.avail?gTxt:" (out of stock)"}</option>`; }).join("")
+        + qrows.map(r=>{ const v=ppg(r); const gTxt=v!=null?` \u00b7 ${money(v)}/g`:""; return `<option value="${r.i}" ${r.avail?"":"disabled"} ${defQ&&r.i===defQ.i?"selected":""}>${esc(r.qty)} \u00b7 ${money(r.price)}${r.avail?gTxt:" (out of stock)"}</option>`; }).join("")
         + '</select>';
       sizeControl = `<div class="dualsel">`
         + `<label class="sublbl">Choose production type</label>${prodSel}`
@@ -1478,7 +1478,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
           const rawRest=(mSep&&mSep.index>0)?lbl0.slice(mSep.index+mSep[0].length).trim():"";
           if(okHead(rawHead) && SIZE_LIKE.test(rawRest)){ addSeg(rawHead,r,rawRest); return; }
           const full=optLabel(r);
-          const ix=full.indexOf(" \u2014 ");
+          const ix=full.indexOf(" \u00b7 ");
           const head = ix>0 ? full.slice(0,ix).trim() : "";
           const txt = ix>0 ? full.slice(ix+3).trim() : "";
           if(okHead(head) && SIZE_LIKE.test(txt)){ addSeg(head,r,txt); return; }
@@ -1514,11 +1514,11 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
         <div class="priceblock">
           <span class="sale">${money(defRow?defRow.price:p.sale)}</span>
           ${p.startsAt>p.sale?`<span class="orig">${money(p.startsAt)}</span>`:""}
-          ${isPreroll?"":`<span class="perg${(defPPG!=null && Math.abs(defPPG-bestVal)<0.005)?" pgbest":""}">${defPPG!=null?money(defPPG)+"/g":"\u2014 /g"}</span>`}
+          ${isPreroll?"":`<span class="perg${(defPPG!=null && Math.abs(defPPG-bestVal)<0.005)?" pgbest":""}">${defPPG!=null?money(defPPG)+"/g":"$/g n/a"}</span>`}
         </div>
         ${rangeLine}
         <div class="otd">\u2248 ${money(otd)} out the door ${p.badges.includes("ship")?"(free ship)":"(incl. est. ship "+money(p.ship||0)+")"}</div>
-        ${p.coupon?`<div class="coupon">10% OFF \u2014 code ${p.coupon} applied at checkout</div>`:""}
+        ${p.coupon?`<div class="coupon">10% off with code ${p.coupon}, applied at checkout</div>`:""}
         <div class="cfoot">
         ${useDual?"":`<label class="sizelabel">Size / option</label>`}
         ${sizeControl}
@@ -1543,7 +1543,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
       const selPPG = (s[2]&&s[2]>0) ? s[1]/s[2] : null;
       const pgEl=c.querySelector(".perg");
       if(pgEl){
-        pgEl.textContent = selPPG!=null?money(selPPG)+"/g":"\u2014 /g";
+        pgEl.textContent = selPPG!=null?money(selPPG)+"/g":"$/g n/a";
         // Gold-highlight the $/g when the chosen size IS the best value.
         pgEl.classList.toggle("pgbest", selPPG!=null && Math.abs(selPPG-bestVal)<0.005);
       }
@@ -1579,7 +1579,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
         const qrows=qtyRowsFor(prod);
         let def=(pickIdx!=null)?qrows.find(r=>r.i===pickIdx):null;
         if(!def) def=qrows.find(r=>r.avail)||qrows[0];
-        qtySelEl.innerHTML=qrows.map(r=>{ const v=ppg(r); const gTxt=v!=null?` \u00b7 ${money(v)}/g`:""; return `<option value="${r.i}" ${r.avail?"":"disabled"} ${def&&r.i===def.i?"selected":""}>${esc(r.qty)} \u2014 ${money(r.price)}${r.avail?gTxt:" (out of stock)"}</option>`; }).join("");
+        qtySelEl.innerHTML=qrows.map(r=>{ const v=ppg(r); const gTxt=v!=null?` \u00b7 ${money(v)}/g`:""; return `<option value="${r.i}" ${r.avail?"":"disabled"} ${def&&r.i===def.i?"selected":""}>${esc(r.qty)} \u00b7 ${money(r.price)}${r.avail?gTxt:" (out of stock)"}</option>`; }).join("");
         if(def){ applyRow(def.i); syncAdd(def); }
       }
       if(prodSelEl) prodSelEl.onchange=()=>rebuildQty(prodSelEl.value, null);
@@ -1734,7 +1734,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
           body:'cart[add][id]='+id+'&cart[add][quantity]='+(q||1)});
       }
       (async function(){
-        if(!I.length){ alert('Your Legal-Leaf cart looks empty on this page.\n\nGo back to Legal-Leaf, tap "Checkout at Greek Glass", then use the "Open Greek Glass" button so your CURRENT cart travels here \u2014 then click this bookmark again.'); return; }
+        if(!I.length){ alert('Your Legal-Leaf cart looks empty on this page.\n\nGo back to Legal-Leaf, tap "Checkout at Greek Glass", then use the "Open Greek Glass" button so your CURRENT cart travels here, then click this bookmark again.'); return; }
         var n=0;
         for(var k=0;k<I.length;k++){
           try{
@@ -1744,8 +1744,8 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
           }catch(e){}
         }
         try{ if(COUPON && navigator.clipboard) await navigator.clipboard.writeText(COUPON); }catch(e){}
-        if(!n){ alert('Could not auto-add \u2014 please add the items manually.'); }
-        else if(COUPON){ alert('\u2705 '+n+' item(s) added to your Greek Glass cart!\n\nYour 10% code '+COUPON+' is COPIED \u2014 just paste it in the discount box at checkout.'); }
+        if(!n){ alert('Could not auto-add. Please add the items manually.'); }
+        else if(COUPON){ alert('\u2705 '+n+' item(s) added to your Greek Glass cart!\n\nYour 10% code '+COUPON+' is COPIED. Just paste it in the discount box at checkout.'); }
         location.href='/cart';
       })();
     }
@@ -1770,7 +1770,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
     // Copy the code to the clipboard NOW (we're inside the checkout click = allowed gesture)
     // so the shopper can just paste it at Big Cartel checkout, and show the instruction.
     if(coupon){
-      try{ if(navigator.clipboard) navigator.clipboard.writeText(coupon).then(function(){toast("Code "+coupon+" copied \u2014 paste at checkout \u2713");},function(){}); }catch(e){}
+      try{ if(navigator.clipboard) navigator.clipboard.writeText(coupon).then(function(){toast("Code "+coupon+" copied. Paste at checkout \u2713");},function(){}); }catch(e){}
     }
     var cw=$("#ggCoCouponWrap"), cc=$("#ggCoCode");
     if(coupon){ if(cc) cc.textContent=coupon; if(cw) cw.style.display="inline"; }
@@ -1839,7 +1839,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
       }
       if(!/thcahempire/i.test(location.hostname)){alert('Open thcahempire.com first, then click this bookmark.');return;}
       var I=readCart();
-      if(!I.length){alert('Your Legal-Leaf cart looks empty on this page.\n\nGo back to Legal-Leaf, tap "Checkout at THCa Hempire", then use the "Open THCa Hempire" button so your CURRENT cart travels here \u2014 then click this bookmark again.');return;}
+      if(!I.length){alert('Your Legal-Leaf cart looks empty on this page.\n\nGo back to Legal-Leaf, tap "Checkout at THCa Hempire", then use the "Open THCa Hempire" button so your CURRENT cart travels here, then click this bookmark again.');return;}
       function parseProduct(html){
         var doc=new DOMParser().parseFromString(html,'text/html');
         var pid=(doc.querySelector('input[name=product_id]')||{}).value||null;
@@ -1890,7 +1890,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
             var names=Object.keys(info.groups),ok=true;
             for(var g=0;g<names.length;g++){
               var opts=info.groups[names[g]];
-              var v=(opts.length===1)?opts[0].v:await pick(I[k].name+(names.length>1?(' \u2014 option '+(g+1)):''),opts);
+              var v=(opts.length===1)?opts[0].v:await pick(I[k].name+(names.length>1?(' (option '+(g+1)+')'):''),opts);
               if(v==null){ok=false;break;}
               fd.append(names[g],v);
             }
@@ -1905,7 +1905,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
             headers:{'Content-Type':'application/x-www-form-urlencoded'},
             body:'action=applycoupon&couponcode='+encodeURIComponent(COUPON)});}catch(e){}
         }
-        if(!n){alert('Could not auto-add \u2014 please add the items manually.');}
+        if(!n){alert('Could not auto-add. Please add the items manually.');}
         else{alert('\u2705 '+n+' item(s) added to your THCa Hempire cart'+(COUPON?(' with code '+COUPON+' applied'):'')+'!');}
         location.href='/cart.php';
       })();
@@ -1931,7 +1931,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
       try{ if(navigator.clipboard){ navigator.clipboard.writeText(href).then(function(){toast("Bookmarklet code copied \u2713");},function(){toast("Copy failed");}); } }catch(e){}
     };
     // Copy the code NOW (inside the click gesture) so pasting at their cart is instant.
-    if(coupon){ try{ if(navigator.clipboard) navigator.clipboard.writeText(coupon).then(function(){toast("Code "+coupon+" copied \u2014 paste at checkout \u2713");},function(){}); }catch(e){} }
+    if(coupon){ try{ if(navigator.clipboard) navigator.clipboard.writeText(coupon).then(function(){toast("Code "+coupon+" copied. Paste at checkout \u2713");},function(){}); }catch(e){} }
     var cc=$("#hpCoCode");  if(cc) cc.textContent=coupon;
     var cm=$("#hpCoCodeM"); if(cm) cm.textContent=coupon;
     var ml=$("#hpMobList");
@@ -2076,7 +2076,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
     } else {
       // No direct COA file - storefront pages block iframes, so DON'T embed a broken
       // frame. Show a clear message + button to the product page where the COA lives.
-      embed='<div class="coamiss">We couldn\u2019t auto-embed this store\u2019s COA. It\u2019s on the product page \u2014 open it below.</div>';
+      embed='<div class="coamiss">We couldn\u2019t auto-embed this store\u2019s COA. It\u2019s on the product page. Open it below.</div>';
     }
     box.innerHTML='<div class="strainhead"><div><div class="stitle">Certificate of Analysis</div>'
       +'<div class="ssub">'+esc(p.name)+' \u00b7 '+esc(p.store)+'</div></div>'
@@ -2102,7 +2102,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
   var LAB_CAVEAT = {
     coa_page_1_only:"Only page 1 of a multi-page report was published",
     coa_stale:"This lab test is more than a year old",
-    coa_name_mismatch:"The report is for a different strain \u2014 worth asking the store about",
+    coa_name_mismatch:"The report is for a different strain. Worth asking the store about",
     coa_strain_unverifiable:"Generic listing, so the report can't be tied to one strain",
     advertised_potency_off:"The listing's advertised potency disagrees with the lab",
     safety_not_pass:"The safety panel is not marked Pass",
@@ -2126,13 +2126,13 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
 
     if(!d){
       return head
-        +'<div class="snote">'+(p.labTested?'This store publishes a lab report for every product, but this listing could not be tied to its own certificate \u2014 so there are no measured numbers to show here. Open the COA from the card to find this batch.':'No lab report has been published for this one, so there are no measured numbers to show. Everything below comes from the store\u2019s own listing.')+'</div>'
+        +'<div class="snote">'+(p.labTested?'This store publishes a lab report for every product, but this listing could not be tied to its own certificate, so there are no measured numbers to show here. Open the COA from the card to find this batch.':'No lab report has been published for this one, so there are no measured numbers to show. Everything below comes from the store\u2019s own listing.')+'</div>'
         +'<div class="sgrid">'
         + labRow("Type", p.type) + labRow("Grow", p.grow)
         + labRow("Advertised THCa", pct(p.potency))
         + labRow("Cannabinoid", canLabel(p.cannabinoid))
         +'</div>'
-        + (p.coa?'<div class="scredit">\ud83d\udcc4 '+(p.coaScope==="index"?'The store publishes a lab-results page rather than a certificate per product \u2014 open it from the card and find this batch yourself.':p.coaScope==="store"?'The COA on this card is the store\u2019s general compliance certificate, which it publishes for many products at once \u2014 it is not a test of this strain.':'This product does have a COA link \u2014 open it from the card and read it yourself.')+'</div>':'')
+        + (p.coa?'<div class="scredit">\ud83d\udcc4 '+(p.coaScope==="index"?'The store publishes a lab-results page rather than a certificate per product. Open it from the card and find this batch yourself.':p.coaScope==="store"?'The COA on this card is the store\u2019s general compliance certificate, which it publishes for many products at once. It is not a test of this strain.':'This product does have a COA link. Open it from the card and read it yourself.')+'</div>':'')
         + close;
     }
 
@@ -2140,7 +2140,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
     // The headline: what it is sold as, versus what you actually get after decarb.
     if(d.thca!=null && d.totalThc!=null){
       body+='<div class="snote">Sold as <b>'+esc(d.thca)+'% THCa</b>, which becomes '
-        +'<b>'+esc(d.totalThc)+'% total THC</b> once you heat it \u2014 that second number is what '
+        +'<b>'+esc(d.totalThc)+'% total THC</b> once you heat it. That second number is what '
         +'you actually get. THCa sheds about 12% of its weight converting to THC, so every '
         +'advertised THCa figure reads higher than the real thing.</div>';
     }
@@ -2232,7 +2232,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
         right='<span class="sdcount" title="In stock at '+r.count+' store'+(r.count===1?"":"s")+'">'+r.count+(r.count===1?" store":" stores")+'</span>';
       } else {
         var on=isStrainWatched(r.disp);
-        right='<button type="button" class="sdbell'+(on?" on":"")+'" data-watch="'+esc(r.disp)+'" title="'+(on?"In watchlist \u2014 tap to remove":"Notify me when this restocks at any store")+'">'
+        right='<button type="button" class="sdbell'+(on?" on":"")+'" data-watch="'+esc(r.disp)+'" title="'+(on?"In watchlist (tap to remove)":"Notify me when this restocks at any store")+'">'
           +(on?"\ud83d\udd14":"\ud83d\udd15")+'<span>'+(on?"Watching":"Notify")+'</span></button>';
       }
       return '<div class="sdrow'+(r.inStock?"":" oos")+'" data-pick="'+esc(r.disp)+'">'
@@ -2307,7 +2307,7 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
     var id=strainWatchId(key), i=watch.findIndex(w=>w.id===id);
     if(i>=0){ watch.splice(i,1); toast("Removed "+key+" from watchlist"); }
     else{ watch.push({id:id, kind:"strain", name:key, store:"Any store \u00b7 restock alert"});
-          toast("\ud83d\udd14 Watching "+key+" \u2014 we\u2019ll tell you when it restocks anywhere"); }
+          toast("\ud83d\udd14 Watching "+key+". We\u2019ll tell you when it restocks anywhere"); }
     save("ll_watch",watch); badges(); renderWatch();
   }
   function updateRestockPrompt(){
@@ -2315,9 +2315,9 @@ if (typeof module !== "undefined") module.exports = LL_STORES;
     var v=(state.strain||"").trim();
     if(!v || !strainIsOOS(v)){ row.innerHTML=""; row.classList.remove("show"); return; }
     var already=isStrainWatched(v);
-    row.innerHTML='<span class="oosmsg">\ud83d\udd15 <b>'+esc(v)+'</b> is out of stock right now \u2014 we\u2019ll watch every store for it.</span>'
+    row.innerHTML='<span class="oosmsg">\ud83d\udd15 <b>'+esc(v)+'</b> is out of stock right now. We\u2019ll watch every store for it.</span>'
       +'<button class="restockbtn'+(already?" set":"")+'" id="restockBtn">'
-      +(already?"\ud83d\udd14 In watchlist \u2014 tap to remove":"\ud83d\udd14 Add to watchlist \u2014 alert me when it\u2019s back")
+      +(already?"\ud83d\udd14 In watchlist (tap to remove)":"\ud83d\udd14 Add to watchlist: alert me when it\u2019s back")
       +'</button>';
     row.classList.add("show");
     var rb=$("#restockBtn");

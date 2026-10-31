@@ -3,13 +3,23 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Build a kit | Legal-Leaf Market</title>
+<title>Build a Kit | Legal-Leaf Market</title>
 <script src="/js/age-gate.js"></script>
 <link rel="canonical" href="https://legal-leafmarket.com/kit"/>
 <meta name="robots" content="index,follow,max-image-preview:large"/>
 <meta name="theme-color" content="#080f14"/>
 <meta name="color-scheme" content="dark"/>
-<meta name="description" content="Pick a setup and we build the whole rig across every shop we compare - the piece, what heats it, the tools, and something to put in it. Real prices, real stock, shipping counted per shop."/>
+<meta name="description" content="Pick a setup and we build the whole rig across every shop we compare: the piece, what heats it, the tools and something to put in it."/>
+<meta property="og:title" content="Build a Kit"/>
+<meta property="og:description" content="Pick a setup and we build the whole rig across every shop we compare, with real prices and real stock."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://legal-leafmarket.com/kit"/>
+<meta property="og:site_name" content="Legal-Leaf Market"/>
+<meta property="og:image" content="https://legal-leafmarket.com/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Build a Kit"/>
+<meta name="twitter:description" content="Pick a setup and we build the whole rig across every shop we compare, with real prices and real stock."/>
+<meta name="twitter:image" content="https://legal-leafmarket.com/og-image.png"/>
 <link rel="icon" href="/favicon.svg"/>
 <link rel="stylesheet" href="/css/tokens.css"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -141,7 +151,7 @@ img{max-width:100%;display:block}
     <a href="/">&larr; back to the shop</a>
   </div>
   <p class="k-lede">Pick what you are setting up and we will put the whole rig together out of
-    everything we compare &mdash; the piece, what heats it, the tools, and something to put in it.
+    everything we compare: the piece, what heats it, the tools, and something to put in it.
     Real prices, in stock today, and shipping counted <em>per shop</em> rather than hidden.</p>
 
   <div class="k-sec">1 &middot; What are you building</div>
@@ -158,7 +168,7 @@ img{max-width:100%;display:block}
   <section class="k-out" id="kOut" hidden aria-live="polite"></section>
 
   <p class="k-foot">Every part is picked from what is actually in stock right now, and the roll is
-    seeded &mdash; the link in your address bar rebuilds this exact kit for anyone you send it to.
+    seeded: the link in your address bar rebuilds this exact kit for anyone you send it to.
     We never mark anything up and we are not paid to put one shop above another; where a shop pays
     us a commission it is on the price you see, not on top of it.</p>
 </div>
@@ -208,7 +218,7 @@ img{max-width:100%;display:block}
           (x.need ? ' <span class="need">&middot; needed</span>' : "") + '</div>' +
           '<div class="k-name">Nothing on the shelf fills this today</div>' +
           '<div class="k-why"><i>We would rather leave the slot empty than put the wrong thing in it.</i></div>' +
-        '</div><div class="k-price">&mdash;</div></div>';
+        '</div><div class="k-price">&hellip;</div></div>';
     }
     var price = Number(p.sale || p.startsAt || 0);
     var cut = p.startsAt && p.sale && p.startsAt > p.sale + 0.001
@@ -350,7 +360,7 @@ img{max-width:100%;display:block}
     });
     try { localStorage.setItem("ll_cart", JSON.stringify(cart)); } catch (e) {}
     $("#kSaid").textContent = added
-      ? added + (added === 1 ? " item added" : " items added") + " — open the cart on any page to check out"
+      ? added + (added === 1 ? " item added" : " items added") + ". Open the cart on any page to check out"
       : "already in your cart";
   }
 

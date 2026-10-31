@@ -57,7 +57,7 @@ const SHELVES = [
     slug: "consumables",
     label: "Consumables",
     heading: "CONSUMABLES",
-    title: "Consumables: Compare THCA Flower, Edibles, Vapes & CBD | Legal-Leaf Market",
+    title: "Consumables: THCA Flower & Edibles | Legal-Leaf Market",
     description: "Compare THCA flower, edibles, vapes and CBD by price per gram across trusted stores. Live prices, in-stock only, no sponsored ranking.",
     test: p => shelfGroup(p) === "cons",
   },
@@ -65,7 +65,7 @@ const SHELVES = [
     slug: "devices",
     label: "Devices & Misc",
     heading: "DEVICES &amp; MISC",
-    title: "Devices & Misc: Vaporizers, Pipes & Grinders | Legal-Leaf Market",
+    title: "Devices: Vaporizers, Pipes & Grinders | Legal-Leaf Market",
     description: "Compare vaporizers, bongs and rigs, pipes, grinders and rolling gear across trusted stores. Live prices and real stock.",
     test: p => shelfGroup(p) === "gear",
   },
@@ -73,7 +73,7 @@ const SHELVES = [
     slug: "international",
     label: "International",
     heading: "INTERNATIONAL",
-    title: "International: Worldwide-Shipping Grinders, Trays & Gear | Legal-Leaf Market",
+    title: "International: Worldwide-Shipping Gear | Legal-Leaf Market",
     description: "Gear from vendors that ship worldwide, with prices in their own currency alongside the dollar.",
     /* NOT A GROUP. International is a shipping property, orthogonal to what the
        thing is -- an international vendor's products ALSO appear on their group
@@ -84,8 +84,8 @@ const SHELVES = [
     slug: "vaporizers",
     label: "Vaporizers",
     heading: "VAPORIZERS",
-    title: "Vaporizers: Dry Herb Vapes, Dab Pens, E-Rigs & 510 Batteries | Legal-Leaf Market",
-    description: "Every device that heats without burning, compared across stores: dry herb vaporizers, dab pens, e-rigs, enails, 510 batteries and the bangers and coils that feed them.",
+    title: "Vaporizers: Dry Herb, Dab Pens & E-Rigs | Legal-Leaf Market",
+    description: "Every device that heats without burning, compared across stores: dry herb vapes, dab pens, e-rigs, enails, 510 batteries, bangers and coils.",
     /* NOT `heat` READ OFF A GROUP. The feed stamps the verdict per product in
        api/heat.js, and "" is a real answer there, so this is an equality test
        rather than a negation -- a product with no verdict belongs on neither
@@ -96,7 +96,7 @@ const SHELVES = [
     slug: "combustion",
     label: "Combustion",
     heading: "COMBUSTION",
-    title: "Combustion: Bongs, Glass Pipes, Rolling Papers & Ash Catchers | Legal-Leaf Market",
+    title: "Combustion: Bongs, Pipes & Papers | Legal-Leaf Market",
     description: "Everything you light: bongs and water pipes, hand pipes and chillums, rolling papers, bowls, downstems and ash catchers, compared across stores.",
     test: p => p && p.heat === COMBUSTION,
   },

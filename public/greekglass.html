@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Greek Glass: Quartz Bangers, Rigs &amp; Borosilicate Glass | Legal-Leaf Market</title>
+<title>Greek Glass: Quartz Bangers &amp; Rigs | Legal-Leaf Market</title>
 <!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any product is
      rendered, and the page content stays in the DOM behind the overlay so a crawler still
      sees a full page. See public/js/age-gate.js for why an attestation gate is the right
@@ -2070,7 +2070,7 @@
     document.querySelectorAll('.gcard[data-slug="'+slug+'"] .ginfo').forEach(function(info){
       var nameEl=info.querySelector('.gname'); var name=nameEl?nameEl.textContent:"";
       var strike = g.orig>g.now+0.001 ? '<span class="gorig">'+money(g.orig)+'</span>' : '';
-      var coup = g.coupon ? '<div class="gcoupon">10% OFF \u2014 code '+g.coupon+'</div>' : '';
+      var coup = g.coupon ? '<div class="gcoupon">10% off with code '+g.coupon+'</div>' : '';
       info.innerHTML =
         '<div class="gprice">'+money(g.now)+strike+'</div>'+
         '<div class="gotd">\u2248 '+money(g.now+g.ship)+' out the door (incl. est. ship '+money(g.ship)+')</div>'+
@@ -2204,7 +2204,7 @@
           body:'cart[add][id]='+id+'&cart[add][quantity]='+(q||1)});
       }
       (async function(){
-        if(!I.length){ alert('Your Legal-Leaf cart looks empty on this page.\n\nGo back to Legal-Leaf, tap "Checkout at Greek Glass", then use the "Open Greek Glass" button so your CURRENT cart travels here \u2014 then click this bookmark again.'); return; }
+        if(!I.length){ alert('Your Legal-Leaf cart looks empty on this page.\n\nGo back to Legal-Leaf, tap "Checkout at Greek Glass", then use the "Open Greek Glass" button so your CURRENT cart travels here, then click this bookmark again.'); return; }
         var n=0;
         for(var k=0;k<I.length;k++){
           try{
@@ -2214,8 +2214,8 @@
           }catch(e){}
         }
         try{ if(COUPON && navigator.clipboard) await navigator.clipboard.writeText(COUPON); }catch(e){}
-        if(!n){ alert('Could not auto-add \u2014 please add the items manually.'); }
-        else if(COUPON){ alert('\u2705 '+n+' item(s) added to your Greek Glass cart!\n\nYour 10% code '+COUPON+' is COPIED \u2014 just paste it in the discount box at checkout.'); }
+        if(!n){ alert('Could not auto-add. Please add the items manually.'); }
+        else if(COUPON){ alert('\u2705 '+n+' item(s) added to your Greek Glass cart!\n\nYour 10% code '+COUPON+' is COPIED. Just paste it in the discount box at checkout.'); }
         location.href='/cart';
       })();
     }
@@ -2240,7 +2240,7 @@
     var _ggHash="#llcart="+encodeURIComponent(JSON.stringify(_ggPay));
     var op=ggcoID("ggCoOpen"); if(op) op.setAttribute("href","https://www.greekglassshop.com"+_ggHash);
     var mgo=ggcoID("ggMobGo"); if(mgo) mgo.setAttribute("href",(items[0].url||"https://www.greekglassshop.com")+_ggHash);
-    if(coupon){ try{ if(navigator.clipboard) navigator.clipboard.writeText(coupon).then(function(){toast("Code "+coupon+" copied \u2014 paste at checkout \u2713");},function(){}); }catch(e){} }
+    if(coupon){ try{ if(navigator.clipboard) navigator.clipboard.writeText(coupon).then(function(){toast("Code "+coupon+" copied. Paste at checkout \u2713");},function(){}); }catch(e){} }
     var cw=ggcoID("ggCoCouponWrap"), cc=ggcoID("ggCoCode");
     if(coupon){ if(cc) cc.textContent=coupon; if(cw) cw.style.display="inline"; } else if(cw){ cw.style.display="none"; }
     var ml=ggcoID("ggMobList");
