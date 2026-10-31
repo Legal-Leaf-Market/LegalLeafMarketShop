@@ -775,9 +775,19 @@ The business is forming an Indiana LLC to sell accessories itself, beyond the af
 `noindex,nofollow`, absent from `sitemap.xml`, linked only from each other. They have to be,
 because `terms.html` and `privacy.html` still say, truthfully, "we hold no stock and sell nothing";
 a policy page for orders that cannot be placed contradicts the terms. **Launch is one change, not
-four:** flip both to `index,follow`, add them to the sitemap, link them from the footers beside
-Terms and Privacy, and add a "when you buy from us" section to Terms and Privacy (an order collects
-a name, an address and a payment, which Privacy currently says the site never holds).
+four:** flip both to `index,follow`, add them to the sitemap, and link them from the footers beside
+Terms and Privacy.
+
+**Terms and Privacy already cover direct sales (31 Oct 2026).** Both say what an order is and
+collects, and both scope it to items marked *Sold by Legal-Leaf Market*, so they stay true before
+the first such item exists. That marking is now a promise: every product the site sells itself must
+carry the words "Sold by Legal-Leaf Market" on its card, or the terms describe a shop the shelf does
+not show. The seller is named as Legal-Leaf Market LLC; if the LLC files under another name, change
+it in Terms chapter III. Privacy lists Shopify, the payment processor, an age-verification provider
+and the carriers by role; name the processor and the age-check app there once they are chosen.
+Privacy also stopped claiming Vercel hosting and Vercel Web Analytics: the host is Netlify and the
+only analytics running is the first-party `/api/track` counter (GA_ID is empty). Setting GA_ID means
+adding Google to that table in the same commit.
 
 **The age gate's fine print is now a requirement on our own checkout.** It used to read "our partner
 stores do that at checkout"; it now reads "every order is age-verified at checkout", which is true on
