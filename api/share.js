@@ -27,7 +27,7 @@ import { specsOf, SPEC_ORDER } from './specs.js';
 import { SHELVES } from './shelves.js';
 import { MARKETS } from './markets.js';
 
-const SITE = 'https://legal-leafmarket.com';
+const SITE = 'https://legalleafmarket.shop';
 
 /* ------------------------------------------------------------------ *
  * THE CRUMB IS A BACK, NOT A HOME                                     *
@@ -38,7 +38,7 @@ const SITE = 'https://legal-leafmarket.com';
  *  It should be like when you tab over to Reels on Facebook, and you come back
  *  to your main feed, and it's there."
  *
- * The only way off this page was `<a href="https://legal-leafmarket.com/">`,
+ * The only way off this page was `<a href="https://legalleafmarket.shop/">`,
  * and every word of that is wrong for somebody coming back:
  *
  *   - IT GOES TO `/`. A shopper browsing /devices who opens a bong and clicks
@@ -1182,7 +1182,7 @@ export default async function handler(req, res) {
   try {
     // Same origin, so this rides the CDN cache /api/products already populates
     // instead of triggering another twenty-store scrape.
-    const host = (req.headers && (req.headers['x-forwarded-host'] || req.headers.host)) || 'legal-leafmarket.com';
+    const host = (req.headers && (req.headers['x-forwarded-host'] || req.headers.host)) || 'legalleafmarket.shop';
     const proto = host.startsWith('localhost') || host.startsWith('127.0.0.1') ? 'http' : 'https';
     const r = await fetch(`${proto}://${host}/api/products`, { headers: { accept: 'application/json' } });
     if (r.ok) {

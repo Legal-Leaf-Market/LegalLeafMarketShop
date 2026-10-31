@@ -1,7 +1,7 @@
 # Operating model — admin mode
 
 The 24-month projection for the four-site affiliate family, served privately at
-**`/admin/operating-model`** on legal-leafmarket.com.
+**`/admin/operating-model`** on legalleafmarket.shop.
 
 ## Why this isn't a Next.js page
 

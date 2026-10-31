@@ -111,11 +111,11 @@ swapWhere(l => l.includes("<title>"),
   "<title>Legal-Leaf Market: Compare Legal Hemp Deals by Price Per Gram</title>",
   `<title>${TITLE}</title>`);
 swapWhere(l => l.includes('rel="canonical"'),
-  'href="https://legal-leafmarket.com/"',
-  `href="https://legal-leafmarket.com/${MK.slug}"`);
+  'href="https://legalleafmarket.shop/"',
+  `href="https://legalleafmarket.shop/${MK.slug}"`);
 swapWhere(l => l.includes('og:url'),
-  'content="https://legal-leafmarket.com/"',
-  `content="https://legal-leafmarket.com/${MK.slug}"`);
+  'content="https://legalleafmarket.shop/"',
+  `content="https://legalleafmarket.shop/${MK.slug}"`);
 swapWhere(l => l.includes('og:title'),
   'content="Legal-Leaf Market: Compare Legal Hemp Deals by Price Per Gram"',
   `content="${TITLE}"`);
@@ -160,6 +160,14 @@ swapWhere(l => l.includes("Affiliate disclosure:"),
   + "compared. Prices and availability are read from each shop&#x2019;s own public menu, "
   + "can be out of date or wrong, and are not an offer &#x2014; always confirm with the "
   + "shop before you travel.");
+
+/* OUR SHIPPING AND RETURNS PAGES ARE ABOUT OUR OWN ORDERS, and a city page takes none.
+   index.html's footer links them since direct (dropship) sales went live; on a page listing
+   local dispensaries those links would promise delivery and returns for products we do not
+   sell. Same reasoning as the affiliate line above: the inherited claim is false here. */
+swapWhere(l => l.includes('href="/shipping"') && l.includes("Sister shops:"),
+  ' &#xB7; <a href="/shipping" style="color:var(--leaf3)">Shipping</a> &#xB7; <a href="/returns" style="color:var(--leaf3)">Returns</a>',
+  "");
 
 /* The nav glyphs hardcode the leaf green as an SVG stroke attribute. No custom
    property reaches an attribute, so recolour the literal — everywhere EXCEPT

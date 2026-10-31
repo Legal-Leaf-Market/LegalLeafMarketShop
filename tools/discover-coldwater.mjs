@@ -20,7 +20,7 @@
  */
 import { STORES } from "../api/coldwater.js";
 
-const UA = "LegalLeafMarket/1.0 (+https://legal-leafmarket.com/coldwater; price comparison; contact via site)";
+const UA = "LegalLeafMarket/1.0 (+https://legalleafmarket.shop/coldwater; price comparison; contact via site)";
 const JSON_OUT = process.argv.includes("--json");
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 

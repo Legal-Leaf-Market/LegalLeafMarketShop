@@ -19,7 +19,7 @@
  * Make a bookmark whose URL is:
  *
  *   javascript:(function(){var s=document.createElement('script');
- *   s.src='https://legal-leafmarket.com/coldwater-collector.js?'+Date.now();
+ *   s.src='https://legalleafmarket.shop/coldwater-collector.js?'+Date.now();
  *   document.body.appendChild(s);})();
  *
  * Open a dispensary menu, let it finish loading, click the bookmark.
@@ -35,7 +35,7 @@
  *   // @match        https://banzencoldwater.com/*
  *   // @match        https://www.shophcc.com/*
  *   // @match        https://greentreerelief.com/*
- *   // @require      https://legal-leafmarket.com/coldwater-collector.js
+ *   // @require      https://legalleafmarket.shop/coldwater-collector.js
  *   // ==/UserScript==
  *
  * ── THE THREE WAYS A MENU HIDES, AND THEY ARE NOT THE SAME ──────────────────
@@ -136,7 +136,7 @@
       var me = selfSrc();
       if (me) return new URL(me).origin + "/api/coldwater/ingest";
     } catch (e) {}
-    return "https://legal-leafmarket.com/api/coldwater/ingest";
+    return "https://legalleafmarket.shop/api/coldwater/ingest";
   })();
   var TOKEN_KEY = "ll_admin_token";      // sessionStorage, this tab only
   var STORE_KEY = "ll_collector_store";  // remembered between runs
@@ -3959,7 +3959,7 @@
 
     function relayFallback(e) {
       panel('<div>This site blocks sending directly.</div>' +
-        '<div style="font-size:12.5px;margin-top:8px;color:#9fb4c2">Its Content-Security-Policy does not allow a request to legal-leafmarket.com. ' +
+        '<div style="font-size:12.5px;margin-top:8px;color:#9fb4c2">Its Content-Security-Policy does not allow a request to legalleafmarket.shop. ' +
         'Opening a tab there instead &mdash; allow the popup if asked.</div>');
       sendViaRelay(payload, token, function (r) {
         if (r && r.result) return renderResult({ ok: r.ok, j: r.result }, store, collection);

@@ -2478,7 +2478,7 @@ export function captureToProduct(store, c, cl) {
  * REPORTED FOUR TIMES ABOUT LOOKAH -- "lookah ain't got no product pics" --
  * and diagnosed to a standstill. What IS known, measured rather than argued:
  * /api/img?probe=1 fetches those urls at 200 with a real image/webp body and
- * correct RIFF magic bytes, WITH and WITHOUT a legal-leafmarket.com Referer.
+ * correct RIFF magic bytes, WITH and WITHOUT a legalleafmarket.shop Referer.
  * So it is not a dead url, not an expiring signature, not a wrong
  * content-type, and NOT hot-link protection -- every server-side explanation
  * is eliminated. Both the engine and /lookah were then rendered against real

@@ -37,7 +37,7 @@ let feedCache = { at: 0, products: [], meta: null };
 // This project runs Vercel's SSO protection at `all_except_custom_domains`, so
 // EVERY *.vercel.app host -- previews and the generated production alias alike
 // -- answers an anonymous request with a redirect to vercel.com/sso-api. Only
-// legal-leafmarket.com is public.
+// legalleafmarket.shop is public.
 //
 // A scheduled invocation arrives on exactly one of those protected hosts. The
 // invocation itself is exempt (that is the platform's own call), but the
@@ -68,7 +68,7 @@ function siteHost(req) {
   const h = (req && req.headers) || {};
   const asked = clean(h['x-forwarded-host'] || h.host);
   if (asked && !/\.vercel\.app$/i.test(asked)) return asked;
-  return clean(process.env.URL) || 'legal-leafmarket.com';
+  return clean(process.env.URL) || 'legalleafmarket.shop';
 }
 
 export async function loadCatalogue(req) {

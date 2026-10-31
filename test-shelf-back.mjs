@@ -10,7 +10,7 @@
  * BOTH HALVES WERE MEASURED IN THIS BROWSER BEFORE ANY OF IT WAS WRITTEN, and
  * the numbers are why the fix is shaped the way it is.
  *
- * 1. THE PRODUCT PAGE'S ONLY WAY OUT WAS `<a href="https://legal-leafmarket.com/">`.
+ * 1. THE PRODUCT PAGE'S ONLY WAY OUT WAS `<a href="https://legalleafmarket.shop/">`.
  *    Three separate faults in one attribute: it goes to `/` even from /devices,
  *    so the shopper's shelf is not restored but REPLACED; it is a fresh
  *    navigation, so the browser's own back/forward cache -- which would hand

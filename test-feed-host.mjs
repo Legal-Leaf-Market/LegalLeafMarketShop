@@ -39,51 +39,51 @@ console.log("\nWhich host the catalogue is read from\n");
 
 group("A PROTECTED HOST IS REFUSED AS AN ADDRESS, NEVER AS A CALLER");
 ok("the generated production alias is not asked",
-   siteHost(H("legal-leaf.vercel.app")) === "legal-leafmarket.com", siteHost(H("legal-leaf.vercel.app")));
+   siteHost(H("legal-leaf.vercel.app")) === "legalleafmarket.shop", siteHost(H("legal-leaf.vercel.app")));
 ok("...nor an immutable deployment url",
-   siteHost(H("legal-leaf-ni7o0dg88-legal-leaf.vercel.app")) === "legal-leafmarket.com");
+   siteHost(H("legal-leaf-ni7o0dg88-legal-leaf.vercel.app")) === "legalleafmarket.shop");
 ok("...nor one that arrived via x-forwarded-host",
-   siteHost(H("whatever", "legal-leaf-abc123-legal-leaf.vercel.app")) === "legal-leafmarket.com");
+   siteHost(H("whatever", "legal-leaf-abc123-legal-leaf.vercel.app")) === "legalleafmarket.shop");
 ok("...and the match is anchored, so a real domain ending in those words is fine",
    siteHost(H("not-vercel-app.com")) === "not-vercel-app.com", siteHost(H("not-vercel-app.com")));
-ok("...case does not get past it", siteHost(H("Legal-Leaf.Vercel.App")) === "legal-leafmarket.com");
+ok("...case does not get past it", siteHost(H("Legal-Leaf.Vercel.App")) === "legalleafmarket.shop");
 
 group("EVERY OTHER CALLER IS STILL HONOURED");
 /* api/feed.js is shared with the concierge, the kit builder and the share
    pages. Pinning production unconditionally would break local development in
    exactly the same silent way -- a dev server reading the live site. */
-ok("the custom domain", siteHost(H("legal-leafmarket.com")) === "legal-leafmarket.com");
-ok("a www host", siteHost(H("www.legal-leafmarket.com")) === "www.legal-leafmarket.com");
+ok("the custom domain", siteHost(H("legalleafmarket.shop")) === "legalleafmarket.shop");
+ok("a www host", siteHost(H("www.legalleafmarket.shop")) === "www.legalleafmarket.shop");
 ok("localhost keeps its port", siteHost(H("localhost:3000")) === "localhost:3000");
 ok("...and so does 127.0.0.1", siteHost(H("127.0.0.1:8787")) === "127.0.0.1:8787");
-ok("x-forwarded-host wins over host, as before", siteHost(H("a.internal", "legal-leafmarket.com")) === "legal-leafmarket.com");
+ok("x-forwarded-host wins over host, as before", siteHost(H("a.internal", "legalleafmarket.shop")) === "legalleafmarket.shop");
 
 group("THE FALLBACK LADDER");
-ok("no request at all lands on the public domain", siteHost(null) === "legal-leafmarket.com");
-ok("...and so does an empty header bag", siteHost({ headers: {} }) === "legal-leafmarket.com");
+ok("no request at all lands on the public domain", siteHost(null) === "legalleafmarket.shop");
+ok("...and so does an empty header bag", siteHost({ headers: {} }) === "legalleafmarket.shop");
 /* `URL` is Netlify's name for the site's main address inside a function, and it
    is a whole url rather than a bare host. */
-process.env.URL = "https://legal-leafmarket.com";
+process.env.URL = "https://legalleafmarket.shop";
 ok("the platform's own answer is preferred to the hardcoded one",
-   siteHost(H("legal-leaf.vercel.app")) === "legal-leafmarket.com");
+   siteHost(H("legal-leaf.vercel.app")) === "legalleafmarket.shop");
 process.env.URL = "https://example.org";
 ok("...and it really is read rather than coincidentally equal",
    siteHost(H("legal-leaf.vercel.app")) === "example.org", siteHost(H("legal-leaf.vercel.app")));
 ok("...but never ahead of the host that actually asked",
-   siteHost(H("legal-leafmarket.com")) === "legal-leafmarket.com", siteHost(H("legal-leafmarket.com")));
+   siteHost(H("legalleafmarket.shop")) === "legalleafmarket.shop", siteHost(H("legalleafmarket.shop")));
 delete process.env.URL;
 
 group("AN EXPLICIT OVERRIDE WINS, AND IS FORGIVING ABOUT SHAPE");
 /* LL_SITE already exists in this repo as a full URL (the Actions workflow's own
    variable), so a scheme and a trailing path must not become part of a host. */
 process.env.LL_SITE = "https://staging.example.com/";
-ok("a full url is reduced to its host", siteHost(H("legal-leafmarket.com")) === "staging.example.com", siteHost(H("legal-leafmarket.com")));
+ok("a full url is reduced to its host", siteHost(H("legalleafmarket.shop")) === "staging.example.com", siteHost(H("legalleafmarket.shop")));
 process.env.LL_SITE = "  http://staging.example.com/api/products  ";
 ok("...whitespace and a path too", siteHost(null) === "staging.example.com", siteHost(null));
 process.env.LL_SITE_HOST = "pinned.example.com";
 ok("LL_SITE_HOST outranks LL_SITE", siteHost(null) === "pinned.example.com", siteHost(null));
 delete process.env.LL_SITE_HOST; process.env.LL_SITE = "";
-ok("an empty override is not an override", siteHost(H("legal-leafmarket.com")) === "legal-leafmarket.com");
+ok("an empty override is not an override", siteHost(H("legalleafmarket.shop")) === "legalleafmarket.shop");
 delete process.env.LL_SITE;
 
 group("THE MESSAGE NAMES THE HOST");

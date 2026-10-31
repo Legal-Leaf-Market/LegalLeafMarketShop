@@ -60,7 +60,7 @@ const { decorate } = await import("./netlify/lib/edge-headers.mjs");
 const { prepare } = await import("./netlify/lib/runtime.mjs");
 const cron = await import("./netlify/lib/cron.mjs");
 
-const SITE = "https://legal-leafmarket.com";
+const SITE = "https://legalleafmarket.shop";
 const call = (path, init = {}, context = {}) => api(new Request(SITE + path, init), context);
 const json = async (r) => { try { return JSON.parse(await r.text()); } catch { return null; } };
 
@@ -317,7 +317,7 @@ group("THE CALLER'S ADDRESS COMES FROM THE PLATFORM, NEVER FROM THE CALLER");
      !("x-forwarded-for" in q.headers) && !("x-real-ip" in q.headers) && !("x-geo-country" in q.headers) && !("x-geo-city" in q.headers));
   ok("the handlers that read them read these names",
      /header\(req, 'x-geo-country'\)/.test(readFileSync("api/track.js", "utf8")) && !/x-vercel-ip/.test(readFileSync("api/track.js", "utf8")));
-  ok("the host a handler builds its own URLs from is the one that was asked", q.headers["x-forwarded-host"] === "legal-leafmarket.com" && q.headers["x-forwarded-proto"] === "https");
+  ok("the host a handler builds its own URLs from is the one that was asked", q.headers["x-forwarded-host"] === "legalleafmarket.shop" && q.headers["x-forwarded-proto"] === "https");
   const many = await nodeRequest(new Request(SITE + "/x?a=1&a=2&b=3"), {});
   ok("a repeated query key is an array, a single one a string", Array.isArray(many.query.a) && many.query.a.length === 2 && many.query.b === "3");
 }

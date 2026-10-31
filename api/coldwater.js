@@ -64,7 +64,7 @@ import { readIngest, readIngestMany } from "./coldwater-ingest.js";
 import { OBJ_ARTEFACT, cleanName, brandFromUrl, normBrand, brandKey, isStoreBrand } from "./brand.js";
 import { mergeProducts } from "./coldwater-merge.js";
 
-const UA = "LegalLeafMarket/1.0 (+https://legal-leafmarket.com/coldwater; price comparison; contact via site)";
+const UA = "LegalLeafMarket/1.0 (+https://legalleafmarket.shop/coldwater; price comparison; contact via site)";
 const TIMEOUT_MS = 9000;
 const SPACING_MS = 700;      // between stores, never concurrent
 const CACHE_MS = 30 * 60e3;
@@ -2198,7 +2198,7 @@ async function runDiag(which) {
            output -- and it is almost certainly just a big server-rendered page
            like Lume's 4.5 MB one. A bench that cannot tell "slow" from "blocked"
            writes off readable stores. */
-        const r = await get(url, { timeout: 25000, headers: { accept: "*/*", referer: "https://legal-leafmarket.com/coldwater" } });
+        const r = await get(url, { timeout: 25000, headers: { accept: "*/*", referer: "https://legalleafmarket.shop/coldwater" } });
         const body = r.text || "";
         out[k].push({
           label, url,

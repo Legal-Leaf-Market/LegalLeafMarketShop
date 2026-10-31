@@ -149,7 +149,7 @@ the footers. Those journeys are the whole argument for running the family as a
 family, and four properties make them invisible.
 
 1. `analytics.google.com` > Admin > Create property. Add a Web data stream for
-   `legal-leafmarket.com`. Copy the `G-XXXXXXXXXX` measurement id.
+   `legalleafmarket.shop`. Copy the `G-XXXXXXXXXX` measurement id.
 2. Paste it into `GA_ID` at the top of
    `legal-leafmarket/public/js/analytics.js`, then copy that file to the other
    three repos. **One constant, four copies.**

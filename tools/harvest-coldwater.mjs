@@ -5,7 +5,7 @@
  * lets its autoScan settle, and posts the rows to /api/coldwater/ingest with
  * lane:"headless".
  *
- *   node tools/harvest-coldwater.mjs --site https://legal-leafmarket.com \
+ *   node tools/harvest-coldwater.mjs --site https://legalleafmarket.shop \
  *        --token "$LL_ADMIN_TOKEN" [--only lume,dude] [--concurrency 3] [--dry]
  *
  * ---------------------------------------------------------------------------
@@ -49,7 +49,7 @@ const ROOT = join(HERE, "..");
 
 /* Same UA the server path uses, with the lane named. A shop reading its logs
    should be able to tell what this was and how to make it stop. */
-const UA = "LegalLeafMarket/1.0 (+https://legal-leafmarket.com/coldwater; price comparison; scheduled reader; contact via site)";
+const UA = "LegalLeafMarket/1.0 (+https://legalleafmarket.shop/coldwater; price comparison; scheduled reader; contact via site)";
 
 /* WHERE THE BROWSER IS, ASKED IN ONE PLACE. This used to be its own candidate
    list with a PINNED Playwright build in it (chromium-1194), duplicated across
@@ -518,7 +518,7 @@ if (opts.help || !opts.site) {
   console.log(`
 tools/harvest-coldwater.mjs — scheduled headless lane
 
-  --site         https://legal-leafmarket.com   (required)
+  --site         https://legalleafmarket.shop   (required)
   --market       coldwater | detroit | grandrapids | ...   (default coldwater)
   --clear        comma-separated store keys to EMPTY, then exit (needs --token)
   --token        admin token; required unless --dry

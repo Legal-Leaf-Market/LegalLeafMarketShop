@@ -15,7 +15,7 @@ It has the pre-filled answers for the Articles of Organization and the EIN, fees
 | Business model | Online only, ships from Indiana, no storefront |
 | What it sells | Smoking accessories: glass, pipes, bongs, grinders, papers, trays, storage, cleaning products. Plus affiliate links to partner stores. |
 | What it does NOT sell | No flower of any kind, no vapes or vape batteries on Shopify, no nicotine or tobacco |
-| Website | legal-leafmarket.com (code and hosting are handled in Claude Code; do not change them) |
+| Website | legalleafmarket.shop (code and hosting are handled in Claude Code; do not change them) |
 | Management | Member-managed |
 
 Ask the owner for: members and ownership split, business email, mailing address, and whether to use a paid registered agent (checklist recommends Northwest, $125/yr) or themselves.
@@ -48,7 +48,7 @@ Do one at a time and check with the owner before each submit.
 3. Install a **21+ age-verification app** that checks at checkout.
 4. Settings → Taxes: enable Indiana sales tax (needs the RRMC number from step 3).
 5. Settings → Shipping: US only. Leave the blocked-states list for the attorney.
-6. Settings → Policies: copy the text from https://legal-leafmarket.com/shipping and https://legal-leafmarket.com/returns once they are live, or ask the owner.
+6. Settings → Policies: copy the text from https://legalleafmarket.shop/shipping and https://legalleafmarket.shop/returns once they are live, or ask the owner.
 7. Product wording rule: "for tobacco and legal herbs". No marijuana words, strain names or leaf imagery on accessory listings. Payment processors check this.
 8. **No vape products** on Shopify (2026 reports say Shopify is removing them).
 

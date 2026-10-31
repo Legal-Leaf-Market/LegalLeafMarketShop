@@ -267,7 +267,7 @@ group("A SECOND CITY IS META + CONFIG, AND NOTHING ELSE");
   /* Meta must actually be per-city, or every city competes for one canonical. */
   const bs = readFileSync(other, "latin1");
   ok(/<title>Lansing Cannabis Prices/.test(bs), "the second city has its own title");
-  ok(/legal-leafmarket\.com\/lansing/.test(bs), "and its own canonical url");
+  ok(/legalleafmarket\.shop\/lansing/.test(bs), "and its own canonical url");
   ok(/\/api\/overrides\?market=lansing/.test(bs), "and its own overrides market");
   ok(!/market=coldwater/.test(bs), "with no trace of the pilot's market");
 
