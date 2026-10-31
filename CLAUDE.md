@@ -767,6 +767,30 @@ correct it.
 **TODO carried from the old Apps Script `code.html`:** BigCommerce (THCa Hempire) scrape,
 Groq strain info, any remaining per-store tuning.
 
+
+### Direct sales are staged, not launched — `/shipping`, `/returns` (31 Oct 2026)
+
+The business is forming an Indiana LLC to sell accessories itself, beyond the affiliate links.
+`public/shipping.html` and `public/returns.html` are written for those orders and are **staged**:
+`noindex,nofollow`, absent from `sitemap.xml`, linked only from each other. They have to be,
+because `terms.html` and `privacy.html` still say, truthfully, "we hold no stock and sell nothing";
+a policy page for orders that cannot be placed contradicts the terms. **Launch is one change, not
+four:** flip both to `index,follow`, add them to the sitemap, link them from the footers beside
+Terms and Privacy, and add a "when you buy from us" section to Terms and Privacy (an order collects
+a name, an address and a payment, which Privacy currently says the site never holds).
+
+**The age gate's fine print is now a requirement on our own checkout.** It used to read "our partner
+stores do that at checkout"; it now reads "every order is age-verified at checkout", which is true on
+both paths only if the checkout this site eventually runs carries an age/ID check at payment and
+adult-signature delivery for age-restricted items. Ship a checkout without one and that sentence is
+false on every page. The gate was also still leaf green on a blue site; it is the `:root` blues now,
+as literals, because it mounts on pages that do not load `tokens.css`.
+
+**Indiana is not Michigan.** Indiana bans smokable hemp outright and has no adult-use cannabis, so
+the paraphernalia exemption for items sold for tobacco is the one that applies: direct-sale glass
+listings carry no marijuana wording or imagery. Carts, batteries and oil e-rigs are inside the USPS
+vape ban and UPS/FedEx refuse them to consumers; dry-herb devices reportedly are not.
+
 ---
 
 ## 9. Environment variables (all optional; site works without them)
@@ -2417,6 +2441,26 @@ and this page has sixty.
 > page with `#0b8a37` put back into it. The honest exclusion is `(?<!&)`, which says the real thing:
 > a numeric character reference is not a colour. Verified by injecting that exact green and watching
 > it go red, because a guard that passes vacuously is worse than none.
+
+### The articles wear the SHOP's skin now — `public/css/shop.css` (31 Oct 2026)
+
+**"Change all the themes of the articles and such to the overall theme where the products are."**
+The stompbox plate look described in the next section is still loaded, and is now overridden by
+`shop.css`, linked **after** `plate.css` on every page that loads `library.css` (14 pages). It
+copies the shelf rather than inventing: the system sans (`--display`, `--script` and `--sans` are
+all remapped to it, so no rule anywhere had to be rewritten), the purple-to-teal hero band with the
+drifting paisley (`/img/paisley.svg`, decoded from the data URI `index.html` inlines twice), the
+white glowing title with the blue-to-lavender underline, gold uppercase labels, cards and glass
+panels, frosted nav pills and the blue gradient action pill. The Google Fonts request was removed
+from those pages because nothing on them names Fraunces, Cormorant or Jost any more.
+
+- **The band is drawn on `body::before/::after`, not on `.st-hero`**: the hero sits in a centred
+  shell, and a full-bleed background there needs 100vw tricks that scroll sideways wherever there
+  is a vertical scrollbar. Only `main/header/footer/nav` are lifted above it, never `body > *`,
+  which would have un-fixed every fixed overlay that lacks an id selector.
+- **`.st-when` is a `<p>`**, so `library.css`'s `.st-chapter p` out-ranks a bare `.st-when` and the
+  label stayed grey; it is named inside its chapter to take the gold.
+- `test-library-style.mjs` asserts every library-family page loads `shop.css` after `plate.css`.
 
 ### The library wears this site's colours now, and its objects — `public/css/plate.css`
 

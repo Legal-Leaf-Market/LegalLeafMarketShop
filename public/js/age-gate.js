@@ -21,9 +21,19 @@
  * holds no payment details, so it has nothing to verify anyone against; the merchant that ships the order
  * is the one that runs an age check and carries the obligation. The note used to read "we take your word
  * for it, we do not verify", which was true and left the obvious question hanging -- if nobody checks,
- * who does. It now answers it. Note this is a claim about the STORES, not about this file: if a partner
+ * who does. It now answers it. Note this is a claim about the CHECKOUTS, not about this file: if a partner
  * ever ships without an age check at checkout, the sentence is wrong and it is the sentence that has to
  * change, not the gate.
+ *
+ * DIRECT SALES (planned, Oct 2026). The business is forming an LLC to sell accessories itself. The
+ * sentence was reworded from "our partner stores do that at checkout" to "every order is age-verified
+ * at checkout" so it stays true on both paths -- which makes it a REQUIREMENT on our own checkout the
+ * day it exists: an ID/age check at payment and adult-signature delivery for age-restricted items
+ * (see /shipping). Launching a checkout without one makes this line false.
+ *
+ * COLOURS are the market's cold blue, read off public/index.html's :root (--bg, --leaf, --text, --muted,
+ * --dim). The gate was still painted leaf green from before the recolour, on every page. Literals rather
+ * than var() because the gate mounts on pages that do not load tokens.css.
  *
  * NO JS, NO GATE -- and that is not the weakness it looks like. The entire deals grid is rendered by
  * script; a visitor with JavaScript off sees no products at all. So a script-based gate is exactly as
@@ -66,22 +76,22 @@
   css.textContent = [
     'html.ll-gated,html.ll-gated body{overflow:hidden !important}',
     '#ll-age{position:fixed;inset:0;z-index:' + Z + ';display:flex;align-items:center;',
-    '  justify-content:center;padding:22px;background:rgba(6,12,8,.94);',
+    '  justify-content:center;padding:22px;background:rgba(4,9,13,.94);',
     '  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}',
     '#ll-age .llg-card{max-width:440px;width:100%;padding:34px 30px;border-radius:16px;text-align:center;',
-    '  background:#101a13;border:1px solid rgba(74,222,128,.4);box-shadow:0 26px 70px rgba(0,0,0,.6);',
-    '  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#eaf5ee}',
+    '  background:#0d1820;border:1px solid rgba(78,201,255,.4);box-shadow:0 26px 70px rgba(0,0,0,.6);',
+    '  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#eaf2f6}',
     '#ll-age h2{margin:0 0 10px;font-size:1.55rem;line-height:1.2}',
-    '#ll-age p{margin:0 0 22px;font-size:.95rem;line-height:1.5;color:#a9bdb0}',
+    '#ll-age p{margin:0 0 22px;font-size:.95rem;line-height:1.5;color:#9fb4c2}',
     '#ll-age .llg-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}',
     '#ll-age button{cursor:pointer;font:inherit;font-weight:700;font-size:.95rem;padding:13px 22px;',
     '  border-radius:11px;border:1px solid rgba(255,255,255,.14);transition:filter .15s}',
     '#ll-age button:hover{filter:brightness(1.12)}',
-    '#ll-age button:focus-visible{outline:2px solid #4ade80;outline-offset:2px}',
-    '#ll-age .llg-yes{background:#4ade80;color:#06210f;border-color:transparent}',
-    '#ll-age .llg-no{background:transparent;color:#a9bdb0}',
-    '#ll-age .llg-fine{margin:18px 0 0;font-size:11.5px;color:#7b8e82}',
-    '#ll-age .llg-fine a{color:#a9bdb0}'
+    '#ll-age button:focus-visible{outline:2px solid #4ec9ff;outline-offset:2px}',
+    '#ll-age .llg-yes{background:#4ec9ff;color:#04141f;border-color:transparent}',
+    '#ll-age .llg-no{background:transparent;color:#9fb4c2}',
+    '#ll-age .llg-fine{margin:18px 0 0;font-size:11.5px;color:#7d94a2}',
+    '#ll-age .llg-fine a{color:#9fb4c2}'
   ].join('\n');
 
   var wrap = document.createElement('div');
@@ -92,12 +102,12 @@
   wrap.innerHTML =
     '<div class="llg-card">'
     + '<h2 id="ll-age-h">Are you 21 or over?</h2>'
-    + '<p>Legal-Leaf Market compares prices on hemp-derived products intended for adults 21 and over.</p>'
+    + '<p>Legal-Leaf Market lists smoking accessories and hemp-derived products for adults 21 and over.</p>'
     + '<div class="llg-btns">'
     + '<button type="button" class="llg-yes">Yes, I am 21+</button>'
     + '<button type="button" class="llg-no">No, I am under 21</button>'
     + '</div>'
-    + '<p class="llg-fine">We do not verify age here — our partner stores do that at checkout. '
+    + '<p class="llg-fine">Answering yes is a confirmation, not a check — every order is age-verified at checkout. '
     + 'See <a href="/terms">Terms</a> and <a href="/privacy">Privacy</a>.</p>'
     + '</div>';
 

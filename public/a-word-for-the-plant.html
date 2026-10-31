@@ -72,14 +72,14 @@
   ]
 }
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Cormorant+Garamond:ital,wght@1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/tokens.css">
 <link rel="stylesheet" href="/css/library.css">
 <!-- The objects the words sit on. MUST load after library.css: it wins by order,
      not by weight, and moving it above silently restores the old surface. -->
 <link rel="stylesheet" href="/css/plate.css">
+<!-- The shop's skin: same type, hero band, cards and pills as the shelf. MUST load
+     after plate.css; it wins by order. See the header of /css/shop.css. -->
+<link rel="stylesheet" href="/css/shop.css">
 <!-- Analytics. One tag, four sites; see /js/analytics.js for the taxonomy and for why
      this is not Vercel custom events (they are Pro-only and capped at 2 props). -->
 <script src="/js/analytics.js" defer data-site="legal-leaf"></script>
