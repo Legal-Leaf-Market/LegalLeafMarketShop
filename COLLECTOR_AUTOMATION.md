@@ -20,7 +20,7 @@ evening disappears chasing the wrong layer:
 There is **one extractor** and two ways to drive it.
 
 **Manual lane.** The operator opens a menu, clicks the *Grab menu* bookmarklet,
-which injects `https://legal-leafmarket.com/coldwater-collector.js`. The
+which injects `https://legalleafmarket.shop/coldwater-collector.js`. The
 collector harvests, draws a panel, and the operator sets the store key,
 collection and admin token and presses **Send**. *(SOFTWARE)*
 
@@ -513,7 +513,7 @@ publishes all of them, on a timer, at night.
 
 ```bash
 # scheduled lane, all shops
-node tools/harvest-coldwater.mjs --site https://legal-leafmarket.com \
+node tools/harvest-coldwater.mjs --site https://legalleafmarket.shop \
      --token "$LL_ADMIN_TOKEN"
 
 node tools/harvest-coldwater.mjs --site … --dry              # capture, report, post nothing

@@ -40,7 +40,7 @@
  */
 import { readFileSync, writeFileSync } from "node:fs";
 
-const UA = "LegalLeafMarket/1.0 (+https://legal-leafmarket.com/coldwater; price comparison; readability probe; contact via site)";
+const UA = "LegalLeafMarket/1.0 (+https://legalleafmarket.shop/coldwater; price comparison; readability probe; contact via site)";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function args(argv) {

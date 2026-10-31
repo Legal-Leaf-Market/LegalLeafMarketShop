@@ -73,7 +73,7 @@
  *      LL_ADMIN_TOKEN       = the same string as LL_SHARED_SECRET
  *    Then REDEPLOY. Environment variables only take effect on a new deployment.
  *
- * Verify: open https://legal-leafmarket.com/api/overrides in a browser. You want
+ * Verify: open https://legalleafmarket.shop/api/overrides in a browser. You want
  *   "storage": "webhook"   and   "writes": "enabled"
  * If it still says NOT CONFIGURED, the redeploy in step 6 has not happened yet.
  *

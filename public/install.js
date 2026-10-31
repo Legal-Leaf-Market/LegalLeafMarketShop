@@ -93,7 +93,7 @@ window.LL_INSTALL = (function () {
       return 'In <b>' + d.name + '</b>, tap ' + d.find +
              ', then choose <b>' + d.item + '</b>.';
     }
-    return 'Open <b>legal-leafmarket.com</b> on your phone to install it.';
+    return 'Open <b>legalleafmarket.shop</b> on your phone to install it.';
   }
 
   /* ---- the hint itself ----------------------------------------------

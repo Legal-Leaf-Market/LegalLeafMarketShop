@@ -31,7 +31,7 @@ Push to `main` on GitHub (`Legal-Leaf-Market/LegalLeafMarketShop`); Netlify depl
 request gets a Deploy Preview. There is nothing to build: `netlify.toml` publishes `public/` and
 points Netlify at `netlify/functions/`.
 
-Custom domain: Netlify → Domain management → add `legal-leafmarket.com` (+ `www`) and follow the DNS
+Custom domain: Netlify → Domain management → add `legalleafmarket.shop` (+ `www`) and follow the DNS
 records. Netlify provisions SSL.
 
 `/api/products` serves the live catalog; the pages already fall back to it automatically (they were

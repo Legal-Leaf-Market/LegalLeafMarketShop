@@ -449,7 +449,7 @@
 
   const SITE_PROFILES = [
     {
-      key: 'legal', name: 'Legal Leaf Market', shortName: 'Legal Leaf', domain: 'legal-leafmarket.com',
+      key: 'legal', name: 'Legal Leaf Market', shortName: 'Legal Leaf', domain: 'legalleafmarket.shop',
       tagline: 'Hemp / THCa price comparison · 18 stores · 3,576 products', color: COLORS.legal,
       seasonality: [0.8281, 0.815, 0.9292, 1.1072, 1.0106, 1.0088, 1.038, 1.0116, 0.9597, 0.9336, 0.8508, 0.8305],
       curveSteepness: 0.2558, indexablePages: 15,

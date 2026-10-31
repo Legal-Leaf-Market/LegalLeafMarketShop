@@ -85,7 +85,7 @@
      element rather than emitting the JSX verbatim, and a page copied from one
      repo to another arrives with the wrong key. The hostname cannot be wrong. */
   var SITE_BY_HOST = {
-    "legal-leafmarket.com": "legal-leaf",
+    "legalleafmarket.shop": "legal-leaf",
     "nicotiamarket.com":    "nicotia",
     "herballeafmarket.com": "herbal-leaf",
     "kawaiikatz.com":       "kawaiikatz"
@@ -110,7 +110,7 @@
      internal navigation across the family and must never be counted as an
      affiliate handoff, or cross-links between the sister sites would look
      like revenue events. */
-  var FAMILY = /(^|\.)(legal-leafmarket|nicotiamarket|herballeafmarket|kawaiikatz)\.com$/i;
+  var FAMILY = /(^|\.)((legal-leafmarket|nicotiamarket|herballeafmarket|kawaiikatz)\.com|legalleafmarket\.shop)$/i;
   var SOCIAL = /(^|\.)(facebook|instagram|x|twitter|reddit|youtube|tiktok|pinterest|linkedin)\.com$/i;
 
   /* ---- identity ----------------------------------------------------------

@@ -3,7 +3,7 @@
  * "Shop by store", "Shop by category" and "Shop by brand" were worked out on
  * NicotiaMarket, ported class for class into the Coldwater generator, and then
  * lived only there: 65KB of city-page injection inside tools/make-coldwater.mjs
- * that legal-leafmarket.com -- the site every one of those pages is generated
+ * that legalleafmarket.shop -- the site every one of those pages is generated
  * FROM -- could not use.
  *
  * NOTHING IN ANY OF THE FIVE BLOCKS WAS EVER CITY-SPECIFIC, and that was

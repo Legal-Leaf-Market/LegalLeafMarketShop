@@ -9,7 +9,7 @@ change and verify in a preview before merging.
 
 ## 1. What this project is
 
-A **static site + serverless API** for `legal-leafmarket.com`. It compares live cannabis /
+A **static site + serverless API** for `legalleafmarket.shop`. It compares live cannabis /
 CBD / hemp product deals scraped from ~16 stores.
 
 - **No framework. No build step.** It is plain HTML in `public/` plus zero-dependency
@@ -768,7 +768,31 @@ correct it.
 Groq strain info, any remaining per-store tuning.
 
 
-### Direct sales are staged, not launched — `/shipping`, `/returns` (31 Oct 2026)
+### The domain is legalleafmarket.shop (31 Oct 2026)
+
+**legal-leafmarket.com is dead; every address is now `legalleafmarket.shop`, bare, no hyphen**
+(owner, 31 Oct 2026). Canonicals, og tags, the sitemap, robots.txt, `siteHost()`'s fallback in
+`api/feed.js`, the scrapers' contact user-agent and both mailboxes (hello@, images@) moved
+together. Nothing may reintroduce the .com. `analytics.js` is meant to be byte-identical across
+the four sister sites: its `SITE_BY_HOST` key and `FAMILY` regex now name the .shop host, so port
+that file to Nicotia, Herbal Leaf and Kawaii Katz, and change those sites' footer links to
+Legal-Leaf, which still point at the .com.
+
+### Direct sales are DROPSHIP, and Shipping/Returns are live (31 Oct 2026)
+
+**Suppliers hold the stock and ship our orders; we are the seller of record.** Shipping, Returns,
+Terms and Privacy all say so: orders leave in one to three business days, a multi-supplier order
+arrives in several boxes, return addresses are often the supplier's warehouse, and the supplier
+receives name, address, phone and items only (never payment or email). If fulfilment ever moves
+in-house, those four pages change together. Shipping and Returns are now `index,follow`, in the
+sitemap, and linked from the index footer (and so from every generated shelf).
+
+**Dropship does not get around the hemp rules, and this is the trap.** As seller of record, an
+Indiana LLC selling THCa flower is selling smokable hemp from Indiana, and from 11 Dec 2026 most
+THCa flower is not hemp federally either. A supplier shipping it does not move who sold it. Keep
+our own catalogue to accessories; flower stays on the affiliate side, where the shop is the seller.
+
+### Direct sales were staged before launch — `/shipping`, `/returns` (31 Oct 2026)
 
 The business is forming an Indiana LLC to sell accessories itself, beyond the affiliate links.
 `public/shipping.html` and `public/returns.html` are written for those orders and are **staged**:

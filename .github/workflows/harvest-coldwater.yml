@@ -16,7 +16,7 @@
 # SETUP (one time):
 #   Settings -> Secrets and variables -> Actions
 #     LL_ADMIN_TOKEN   the same token /api/coldwater/ingest checks
-#     LL_SITE          e.g. https://legal-leafmarket.com   (a variable, not a secret)
+#     LL_SITE          e.g. https://legalleafmarket.shop   (a variable, not a secret)
 #
 # The token is a SECRET and is passed through the environment, never on the
 # command line -- an argument is visible in the process list and in any log that
@@ -102,7 +102,7 @@ jobs:
           CLEAR: ${{ inputs.clear }}
         run: |
           set -uo pipefail
-          SITE="${LL_SITE:-https://legal-leafmarket.com}"
+          SITE="${LL_SITE:-https://legalleafmarket.shop}"
 
           # EVERY LIVE CITY, NOT THE PILOT. This ran with no --market at all, so
           # the harvester took its default and the nightly lane covered

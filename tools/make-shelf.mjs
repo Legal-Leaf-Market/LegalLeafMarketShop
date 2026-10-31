@@ -101,7 +101,7 @@ function build(shelf) {
   /* Canonical must move or three pages declare themselves to be the homepage,
      which is the one SEO mistake that costs all of them at once. */
   out = replaceOnce(out, /<link rel="canonical" href="[^"]*"\s*\/?>/,
-                    `<link rel="canonical" href="https://legal-leafmarket.com/${shelf.slug}"/>`, "canonical");
+                    `<link rel="canonical" href="https://legalleafmarket.shop/${shelf.slug}"/>`, "canonical");
   return out;
 }
 
@@ -223,7 +223,7 @@ function verify(shelf, out) {
 
     ["the title is this shelf's", out.includes("<title>" + esc(shelf.title) + "</title>"), ""],
     ["the canonical points at this shelf, not the homepage",
-      out.includes('href="https://legal-leafmarket.com/' + shelf.slug + '"'), ""],
+      out.includes('href="https://legalleafmarket.shop/' + shelf.slug + '"'), ""],
     ["...and no second canonical survives", (out.match(/rel="canonical"/g) || []).length === 1, ""],
     ["the heading is this shelf's", out.includes(JSON.stringify(shelf.heading)), shelf.heading],
 

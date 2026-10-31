@@ -41,7 +41,7 @@
 # SETUP (one time, and identical to the harvest workflow's):
 #   Settings -> Secrets and variables -> Actions
 #     LL_ADMIN_TOKEN   secret   the same token /api/overrides checks
-#     LL_SITE          variable e.g. https://legal-leafmarket.com
+#     LL_SITE          variable e.g. https://legalleafmarket.shop
 #
 # The token is passed through the environment and never on the command line: an
 # argument is visible in the process list and in any log that echoes it.
@@ -67,7 +67,7 @@ jobs:
       - name: Fold today's shelf into the record
         env:
           LL_ADMIN_TOKEN: ${{ secrets.LL_ADMIN_TOKEN }}
-          LL_SITE: ${{ vars.LL_SITE || 'https://legal-leafmarket.com' }}
+          LL_SITE: ${{ vars.LL_SITE || 'https://legalleafmarket.shop' }}
         run: |
           set -euo pipefail
           if [ -z "${LL_ADMIN_TOKEN}" ]; then

@@ -449,7 +449,7 @@ await until(async () => { if ((await ev(`document.querySelectorAll('#tbl tbody t
 const href = await ev(`document.getElementById('bm').getAttribute('href')`);
 ok("bookmarklet is a javascript: URL", /^javascript:/.test(String(href)), String(href).slice(0, 42));
 ok("bookmarklet points at THIS origin, not a baked-in host",
-   String(href).includes(`127.0.0.1:${PORT}/coldwater-collector.js`) && !String(href).includes("legal-leafmarket.com"),
+   String(href).includes(`127.0.0.1:${PORT}/coldwater-collector.js`) && !String(href).includes("legalleafmarket.shop"),
    String(href).slice(0, 100));
 /* A blocked script is silent, so the loading build has to say what happened --
    and now say which button fixes it rather than only naming the cause. */
@@ -549,7 +549,7 @@ await until(async () => { if ((await ev(`document.querySelectorAll('#tbl tbody t
      rather than configuration. */
   const head = copied.split("\n")[0];
   ok("and names THIS origin, not production",
-     head.includes(`127.0.0.1:${PORT}/coldwater-collector.js`) && !head.includes("legal-leafmarket.com"),
+     head.includes(`127.0.0.1:${PORT}/coldwater-collector.js`) && !head.includes("legalleafmarket.shop"),
      head.slice(0, 90));
   /* The override is only read when currentScript is absent, so a bookmarklet is
      unaffected -- its own src wins. */

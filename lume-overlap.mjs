@@ -12,7 +12,7 @@
 // page that mostly says "nothing matches", and the vocabulary has to be WRITTEN for the strains
 // we actually sell rather than imported from Lume.
 //
-// It could not be measured where it was written: egress to legal-leafmarket.com is refused by
+// It could not be measured where it was written: egress to legalleafmarket.shop is refused by
 // that container's proxy. So this is the one command that answers it, from anywhere with
 // network, and it also runs against a saved feed so the answer can be re-checked offline.
 //
@@ -28,7 +28,7 @@
 
 import { readFile } from 'node:fs/promises';
 
-const FEED = 'https://legal-leafmarket.com/api/products';
+const FEED = 'https://legalleafmarket.shop/api/products';
 
 /* Lume's offline fallback library, lifted verbatim from lume.garden's page source (the
    `const STRAINS=[...]` its client falls back to when its own /api is unreachable), minus the

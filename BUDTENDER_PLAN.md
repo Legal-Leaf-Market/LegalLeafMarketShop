@@ -1,6 +1,6 @@
 # Budtender Concierge — Build Plan
 
-An AI buyer's agent embedded in legal-leafmarket.com. Talks to visitors about what they
+An AI buyer's agent embedded in legalleafmarket.shop. Talks to visitors about what they
 want, teaches them something true, and assembles a multi-store cart.
 
 Status: **v1 built, not yet validated against traffic**. Written 2026-08-07. Updated 2026-08-11.

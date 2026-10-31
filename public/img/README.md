@@ -2,7 +2,7 @@
 
 Anything in `public/` is served at the matching URL, because `vercel.json` sets
 `outputDirectory: public`. So a file dropped in here as `joint-arrow.png` is live
-at `https://legal-leafmarket.com/img/joint-arrow.png` as soon as it is pushed.
+at `https://legalleafmarket.shop/img/joint-arrow.png` as soon as it is pushed.
 There is no upload step and no CDN configuration.
 
 ## joint-arrow.png — the rail arrows

@@ -472,7 +472,7 @@ footer{margin-top:20px;color:var(--dim);font-size:11.5px;line-height:1.6}
       html += '<div class="mix' + (M.loose[L].ok ? " ok" : "") + '">' + esc(M.loose[L].text) + '</div>';
     }
     html += '<div class="fine">Prices as published by each shop when this list was built. ' +
-      'Not an offer &mdash; confirm at the counter. legal-leafmarket.com' + CTX.path + '</div>';
+      'Not an offer &mdash; confirm at the counter. legalleafmarket.shop' + CTX.path + '</div>';
     card.innerHTML = html;
   }
 
@@ -511,7 +511,7 @@ footer{margin-top:20px;color:var(--dim);font-size:11.5px;line-height:1.6}
     out.push("TOTAL " + money(M.actual) + (M.actual < M.shelf - 0.005 ? "   (shelf " + money(M.shelf) + ")" : ""));
     out.push("");
     out.push("Prices as published by each shop; confirm before you travel.");
-    out.push("legal-leafmarket.com" + CTX.path);
+    out.push("legalleafmarket.shop" + CTX.path);
     return out.join(NL);
   }
 
@@ -639,7 +639,7 @@ footer{margin-top:20px;color:var(--dim);font-size:11.5px;line-height:1.6}
     var fine = wrap("Prices as published by each shop when this list was built. Not an offer — confirm at the counter.", INNER);
     for (var f = 0; f < fine.length; f++) text(fine[f], PAD, y + 20 + f * 24, font(400, 18), "#8fa6b3");
     y += fine.length * 24 + 12;
-    text("legal-leafmarket.com" + CTX.path, PAD, y + 20, font(600, 19), "#d8b25a");
+    text("legalleafmarket.shop" + CTX.path, PAD, y + 20, font(600, 19), "#d8b25a");
     y += 34 + PAD;
 
     c.width = W * SCALE; c.height = Math.ceil(y) * SCALE;

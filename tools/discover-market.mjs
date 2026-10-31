@@ -49,7 +49,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { MARKETS, marketKey } from "../api/markets.js";
 
-const UA = "LegalLeafMarket/1.0 (+https://legal-leafmarket.com/coldwater; price comparison; store discovery; contact via site)";
+const UA = "LegalLeafMarket/1.0 (+https://legalleafmarket.shop/coldwater; price comparison; store discovery; contact via site)";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function args(argv) {

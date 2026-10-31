@@ -2,7 +2,7 @@
 
    "Shop by store", "Shop by category" and "Shop by brand" were worked out on
    NicotiaMarket and ported into tools/make-coldwater.mjs, where they sat as
-   65KB of injection that legal-leafmarket.com -- the file every city page is
+   65KB of injection that legalleafmarket.shop -- the file every city page is
    GENERATED FROM -- could not use. They live in public/js/rails.js now, loaded
    by public/index.html and inherited by every city page the way the engine is.
 

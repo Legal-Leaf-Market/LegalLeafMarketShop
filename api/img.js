@@ -104,7 +104,7 @@ export default async function handler(req, res) {
        contact, the same courtesy api/products.js extends when scraping. */
     const head = {
       'accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
-      'user-agent': 'Legal-Leaf-Market/1.0 (+https://legal-leafmarket.com; images@legal-leafmarket.com)',
+      'user-agent': 'Legal-Leaf-Market/1.0 (+https://legalleafmarket.shop; images@legalleafmarket.shop)',
     };
     /* DIAGNOSTIC ONLY, and never on the serving path: `?probe=1&withref=1`
        sends the Referer a real browser would send. That is the difference
@@ -112,7 +112,7 @@ export default async function handler(req, res) {
        browser on our site", which is exactly the question hot-link protection
        poses and the one nothing here could answer before. Comparing the two
        probes is the proof; guessing at it is what happened three times. */
-    if (probe && q.withref != null) head.referer = 'https://legal-leafmarket.com/';
+    if (probe && q.withref != null) head.referer = 'https://legalleafmarket.shop/';
     r = await fetch(got.u.href, { signal: ctl.signal, redirect: 'follow', headers: head });
   } catch (e) {
     clearTimeout(timer);

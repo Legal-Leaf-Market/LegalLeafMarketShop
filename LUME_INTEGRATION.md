@@ -81,7 +81,7 @@ prototype needs no new server code at all — except for two things that do have
 
 1. **CORS does not exist on this site.** Measured today: zero `Access-Control-*` headers
    anywhere in `api/` or `vercel.json`. A browser on `lume.garden` cannot read
-   `legal-leafmarket.com/api/products` at all. This is the one hard blocker, and it is small:
+   `legalleafmarket.shop/api/products` at all. This is the one hard blocker, and it is small:
    an allow-origin for the Lume origin on a read-only endpoint.
 2. **Don't hand a phone the whole feed.** ~6,352 products with galleries is megabytes to
    download so that Lume can use one row. The right shape is a projection —
@@ -196,7 +196,7 @@ The dark list prints *normalised* keys, so it shows what the join sees, artefact
 "9 LB Hammer" arrives as `9 hammer` because `LAB_NOISE` eats `lb` as a size token. That is the
 catalogue's own key, not a bug in the probe, and it is the string any join would have to match.
 
-**It has never been run against the live feed.** Egress to `legal-leafmarket.com` is refused by
+**It has never been run against the live feed.** Egress to `legalleafmarket.shop` is refused by
 the proxy in the container this was written in, the same limitation recorded for the TribeTokes
 and Dogwood entries in `api/products.js`. It has only been exercised against a synthetic feed
 shaped like a real one, which proves it runs and bridges the aliases; the coverage percentage

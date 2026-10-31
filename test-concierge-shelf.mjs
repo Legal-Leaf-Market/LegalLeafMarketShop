@@ -1,7 +1,7 @@
 /* test-concierge-shelf.mjs — the budtender knows which shelf the shopper is on.
  *
  * REPORTED AS "still failing", with a screenshot whose URL bar is the whole bug:
- * legal-leafmarket.com/consumables, four blue bongs pinned, banner reading
+ * legalleafmarket.shop/consumables, four blue bongs pinned, banner reading
  *
  *     Blue Bongs - Four Styles -- showing 0 of 4
  *     could not place: Chill - Matte Baby Blue Bong, ... -- ask me about them by name

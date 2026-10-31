@@ -52,7 +52,7 @@ import { STORES } from "../api/market-stores.js";
 import { MARKETS } from "../api/markets.js";
 import { writeFileSync } from "node:fs";
 
-const UA = "LegalLeafMarket/1.0 (+https://legal-leafmarket.com/coldwater; price comparison; catalogue probe; contact via site)";
+const UA = "LegalLeafMarket/1.0 (+https://legalleafmarket.shop/coldwater; price comparison; catalogue probe; contact via site)";
 
 const opts = { market: "", json: "", spacingMs: 1500, timeoutMs: 20000, concurrency: 1 };
 for (let i = 2; i < process.argv.length; i++) {
