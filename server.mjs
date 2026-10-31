@@ -151,6 +151,7 @@ const API = {
   "/api/img": "./api/img.js",                     // the restricted image proxy Lookah's photos ride through
   "/api/kit": "./api/kit.js",                     // the rig builder behind /kit
   "/api/comments": "./api/comments.js",           // per-product threads; public POST is queued, never published
+  "/api/promo": "./api/promo.js",                 // which stores take the house coupon; the sitewide banner
   "/api/admin/session": "./api/admin/session.js",
   // vercel.json rewrites these clean paths to serverless functions rather than
   // static files; mapped directly here since the API check runs before REWRITES.
