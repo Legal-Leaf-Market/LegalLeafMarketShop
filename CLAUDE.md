@@ -768,6 +768,36 @@ correct it.
 Groq strain info, any remaining per-store tuning.
 
 
+### The base site is closed; the shop is Shopify (2 Nov 2026)
+
+**Owner, 2 Nov 2026: "nixing live portions of the site to favor pushing shop.legalleafmarket.shop."**
+Every page in `public/` now 302s to the Shopify store (the block at the top of the redirects in
+`netlify.toml`, listed page by page, never a `/*` catch-all, so `/api/*`, `/p/*`, `/admin*`, the
+crons, `/shop-dispensary.js`, `/ig-studio` and `/coldwater-collect` keep working). A new page
+added to `public/` is served until it is added to that list. `server.mjs` and `test-netlify.mjs`
+do not mirror the block yet.
+
+- **The dispensary lives at `shop.legalleafmarket.shop/pages/dispensary`.** Page template
+  `dispensary` carries one Custom Liquid section with a mount div and
+  `<script src="https://legalleafmarket.shop/shop-dispensary.js" defer>`. All of the shelf is
+  `public/shop-dispensary.js`, in this repo, on purpose: the first build was pasted into the theme
+  editor in pieces, the session ran out before it saved, and the page shipped empty. Do not move it
+  back into Shopify. Shops come from `data-stores` on the mount (thcasmallbuds, puffweiser,
+  blacktiecbd) and are read through `/api/products?store=<key>`, which now sends
+  `Access-Control-Allow-Origin: *` for this reader.
+- **Bloomz Hemp, CBD Hemp Direct and Exhale Wellness are `enabled:false`** (owner: "take off").
+- **Herbal Leaf Market and Nicotia Market products are Shopify products now**, tagged
+  `herbal-leaf` / `nicotia`, `special-order`, `src:<maker>`, behind smart collections
+  `herbal-leaf-market` and `nicotia-market` and Shopify URL redirects `/herbal-leaf`, `/herbalife`
+  and `/nicotia`. Nicotine pouches and cigars are DRAFT with `compliance-review` until the LLC, the
+  ATC tobacco sales certificate, a non-Shopify-Payments processor and checkout age verification
+  exist. CBD makers (Soul, Charlotte's Web) are DRAFT for the same review. Secret Nature was not
+  imported (smokable hemp, see "Dropship does not get around the hemp rules"). Herbal copy that
+  mentioned cannabis had those sentences removed (`copy-edited` tag), per the processor wording rule
+  in HANDOFF_CHROME.md.
+- **`/api/img` allows bearblend.com** because Shopify's importer is refused by Bear Blend's image
+  host; Bear Blend product photos were imported through the proxy.
+
 ### The domain is legalleafmarket.shop (31 Oct 2026)
 
 **legal-leafmarket.com is dead; every address is now `legalleafmarket.shop`, bare, no hyphen**
