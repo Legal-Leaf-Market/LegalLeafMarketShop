@@ -62,19 +62,21 @@
     'll-grasscity-la-pipes-mini-sherlock-with-slyme-cane-and-dichro', 'll-grasscity-empire-glassworks-bomber-spoon-pipe',
     'ceramic-cat-pipe-pipe-for-herbs', 'lookah-statue-of-liberty-ceramic-bong', 'll-grasscity-wulf-mods-curv-hand-pipe',
     /* Herbal Leaf: the way in to smoking blends */
-    'whole-blue-lotus-flowers-extra-large', 'kaleidoscope', 'flower-power-sampler', 'coneheads', 'blue-sky', 'mullein',
+    /* (Natural Smoke Shop picks were trimmed from 10 to 6 after a crawl found it holding 7 of the
+     * first 27 cards: picks are exempt from VENDOR_CAP, so the cap could not catch it.) */
+    'whole-blue-lotus-flowers-extra-large', 'kaleidoscope', 'flower-power-sampler', 'coneheads',
     /* jars and stash */
     '10-oz-glass-apothecary-jar-with-airtight-bamboo-lid', 'll-chill-re-cache-storage-container-matte-black',
     'll-grasscity-famous-x-ceramic-stash-jar-with-lid-black', 'll-grasscity-jay-and-silent-bob-glass-stash-jar-buddy-christ',
     /* grinders */
     'll-grasscity-cheech-chong-s-up-in-smoke-grinder-old', 'll-grasscity-the-beach-bum-4-part-magnetic-aluminum-grinder-moondog-silver',
-    'revolution-herb-mill', 'herbs-only-wood-grinder', 'll-zamgrinders-small-4-piece-stainless-steel-grinder',
+    'herbs-only-wood-grinder', 'll-zamgrinders-small-4-piece-stainless-steel-grinder',
     /* rolling */
     'll-grasscity-cheech-chong-s-40th-anniversary-aluminum-rolling-tray-red', 'rose-cone', 'll-grasscity-famous-design-space-rolling-tray',
     'raw-classic-pre-rolled-cone-6-piece', 'leopard-print-rolling-papers',
     /* incense and ash */
     'zodiac-sun-ashtray-ceremonial-bowl', 'blue-lotus-ashtray', 'nepali-sandalwood-rope-incense-and-burner',
-    'soapstone-smudge-bowl', 'tsubota-pearl-queue-lighter', 'agarwood',
+    'soapstone-smudge-bowl', 'tsubota-pearl-queue-lighter',
     /* a few CBD things, all THC-free or plain CBD */
     'sleep-25mg-thc-free-cbd-gummies', 'cbd-oil-drops', 'rapid-relief-cbd-cream', 'cbd-gummies'
   ];
@@ -142,6 +144,9 @@
     { k: 'gear', name: 'Gear', re: /./ }
   ];
   var LANE_NAME = {}; LANES.forEach(function (l) { LANE_NAME[l.k] = l.name; });
+  /* In a collection's category chips, a shop name is the wrong word for a category. */
+  var SLICER_CAT = {}; LANES.forEach(function (l) { SLICER_CAT[l.k] = l.name; });
+  SLICER_CAT.nicotia = 'Cigar Accessories'; SLICER_CAT.herbal = 'Herbs & Blends'; SLICER_CAT.gear = 'Accessories';
 
   /* Shopify product_type -> shelf. The catalogue fills product_type cleanly (2 Nov 2026), so this
    * decides, and the title only breaks a tie for the WEAK types below. */
@@ -343,20 +348,60 @@
     return null;
   }
 
-  function addToCart(id, qty) {
-    return fetch('/cart/add.js', {
-      method: 'POST', credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ items: [].concat(id).map(function (v) { return { id: v, quantity: qty || 1 }; }) })
-    }).then(function (r) { if (!r.ok) throw new Error('cart'); return r.json(); })
-      .then(function () {
-        document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
-        return fetch('/cart.js', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (c) {
-          document.querySelectorAll('.cart-count-bubble span, [data-cart-count], .cart-count').forEach(function (el) {
-            if (/^\d+$/.test(el.textContent.trim())) el.textContent = c.item_count;
+  /* Adding to the cart in a way Horizon notices. Nothing in this Horizon build listens for the old
+   * `cart:refresh` event, so the item was added while the drawer re-opened with the old contents
+   * and the header count stayed put (found by a crawl on 2 Nov 2026). Horizon's cart icon and
+   * cart-items-component wait for a CartLinesUpdateEvent from '@shopify/events' whose promise
+   * resolves to {cart, detail}, with detail.sections holding the re-rendered drawer; this does
+   * what the theme's own product-form.js does. The event must not be dispatched from inside
+   * cart-items-component (it ignores its own events), so it goes from the clicked button.
+   * Themes without '@shopify/events' fall back to the old event and a count rewrite. */
+  var horizonEvents = null;
+  function loadHorizonEvents() {
+    if (!horizonEvents) {
+      try { horizonEvents = import('@shopify/events').then(function (m) { return m; }, function () { return null; }); }
+      catch (e) { horizonEvents = Promise.resolve(null); }
+    }
+    return horizonEvents;
+  }
+  function legacyRefresh(c) {
+    document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+    document.querySelectorAll('.cart-count-bubble span, [data-cart-count], .cart-count').forEach(function (el) {
+      if (/^\d+$/.test(el.textContent.trim())) el.textContent = c.item_count;
+    });
+  }
+  function addToCart(id, qty, sourceEl) {
+    var ids = [].concat(id).map(function (v) { return +v; });
+    var n = qty || 1;
+    var sectionIds = [].map.call(document.querySelectorAll('cart-items-component'), function (e) { return e.dataset.sectionId; }).filter(Boolean);
+    return loadHorizonEvents().then(function (mod) {
+      var Ev = mod && mod.CartLinesUpdateEvent, deferred = null;
+      if (Ev && Ev.createPromise) {
+        deferred = Ev.createPromise();
+        (sourceEl || document.body).dispatchEvent(new Ev({
+          action: 'add', context: 'product',
+          lines: ids.map(function (v) { return { merchandiseId: v, quantity: n }; }),
+          promise: deferred.promise
+        }));
+      }
+      return fetch('/cart/add.js', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ items: ids.map(function (v) { return { id: v, quantity: n }; }), sections: sectionIds.join(',') })
+      }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.description || 'cart'); return j; }); })
+        .then(function (res) {
+          return fetch('/cart.js', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (c) {
+            if (deferred) {
+              deferred.resolve({
+                cart: Ev.createCartFromAjaxResponse ? Ev.createCartFromAjaxResponse(c) : c,
+                detail: { items: c.items, source: 'll-shop', itemCount: ids.length * n, sections: res.sections, didError: false }
+              });
+            } else legacyRefresh(c);
+            return c;
           });
-        }).catch(function () {});
-      });
+        })
+        .catch(function (err) { if (deferred) deferred.reject(err); throw err; });
+    });
   }
   var toastEl;
   function toast(msg) {
@@ -371,7 +416,7 @@
       e.preventDefault();
       var ids = b.getAttribute('data-add').split(',');
       b.disabled = true; var was = b.textContent; b.textContent = 'Adding...';
-      addToCart(ids).then(function () {
+      addToCart(ids, 1, b).then(function () {
         b.textContent = 'Added'; toast('Added to your cart. <a href="/cart">View cart</a>');
       }).catch(function () {
         b.textContent = was; toast('Could not add that. Try the product page.');
@@ -417,7 +462,8 @@
     '.ll-x .ll-post .tag{position:absolute;left:8px;top:8px;background:rgba(11,15,23,.82);color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:999px}',
     '.ll-x .ll-post .tag.sale{left:auto;right:8px;background:var(--gold);color:#1a1300}',
     '.ll-x .ll-post .bd{padding:10px 12px 12px}',
-    '.ll-x .ll-post .t{display:block;font-size:14px;font-weight:700;line-height:1.3;text-decoration:none}',
+    /* two lines at most: 92 titles run past 90 characters and one runs to 232 */
+    '.ll-x .ll-post .t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:14px;font-weight:700;line-height:1.3;text-decoration:none}',
     '.ll-x .ll-post .m{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}',
     '.ll-x .ll-post .pr{font-weight:800;font-size:15px}',
     '.ll-x .ll-post .pr s{color:var(--muted);font-weight:500;font-size:12px;margin-left:5px}',
@@ -718,7 +764,12 @@
       var all = raw.map(norm).filter(Boolean);
       if (!all.length) { mount.innerHTML = ''; mount.style.display = 'none'; return; }
       all.forEach(function (x) {
-        x.cat = x.type || LANE_NAME[x.lane] || 'Other';
+        /* A catch-all type (Accessories, Incense & Ritual, Storage & Trays, Rolling) is replaced
+         * by what the thing is, so the apothecary jar is not filed under Incense & Ritual and the
+         * Accessories collection gets real category chips instead of none. */
+        var byType = TYPE_LANE[low(x.type)];
+        x.cat = !x.type ? (SLICER_CAT[x.lane] || 'Other')
+          : byType && WEAK[byType] && x.lane !== byType ? SLICER_CAT[x.lane] : x.type;
         x.strength = []; x.flavor = [];
         x.options.forEach(function (o) {
           var k = optKind(o.name);
