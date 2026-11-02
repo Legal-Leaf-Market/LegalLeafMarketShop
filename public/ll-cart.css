@@ -19,7 +19,9 @@
  * stepper read as disabled. The colours below are set on the input itself, with
  * -webkit-text-fill-color, because Safari ignores `color` on some inputs.
  *
- * Every selector is scoped to cart-drawer-component, so nothing else in the theme is touched.
+ * Every selector is scoped to cart-drawer-component, so nothing else in the theme is touched. The
+ * header group's Custom Liquid styles `.button:not(.button-secondary, .button-unstyled)` (0,2,0)
+ * with !important, so the two real buttons here carry `.button` in their selectors to outrank it.
  */
 
 dialog:has(cart-drawer-component) {
@@ -183,6 +185,7 @@ cart-drawer-component .quantity-selector button:hover { color: var(--ll-accent) 
 cart-drawer-component .quantity-selector button:disabled { opacity: .35 !important; }
 
 /* remove: a quiet ghost button, not a second loud call to action */
+cart-drawer-component .button.cart-items__remove,
 cart-drawer-component .cart-items__remove {
   background: transparent !important;
   background-image: none !important;
@@ -197,6 +200,7 @@ cart-drawer-component .cart-items__remove {
   display: inline-grid !important;
   place-items: center;
 }
+cart-drawer-component .button.cart-items__remove:hover,
 cart-drawer-component .cart-items__remove:hover {
   color: #ff6b8a !important;
   border-color: #ff6b8a !important;
@@ -219,6 +223,7 @@ cart-drawer-component .cart-totals__total-value {
 cart-drawer-component .cart-totals__tax-note { color: var(--ll-muted) !important; font-size: 12.5px !important; }
 cart-drawer-component .cart-totals__tax-note a { color: var(--ll-accent) !important; }
 cart-drawer-component .cart__ctas { width: 100%; }
+cart-drawer-component .button.cart__checkout-button,
 cart-drawer-component .cart__checkout-button {
   width: 100% !important;
   min-height: 52px !important;
@@ -231,7 +236,8 @@ cart-drawer-component .cart__checkout-button {
   box-shadow: 0 8px 22px rgba(34, 168, 232, .28) !important;
   border: 0 !important;
 }
-cart-drawer-component .cart__checkout-button:hover { filter: brightness(1.08); }
+cart-drawer-component .button.cart__checkout-button .button-text { color: #fff !important; }
+cart-drawer-component .button.cart__checkout-button:hover { filter: brightness(1.08); }
 
 /* ---------- focus that can be seen on the dark drawer ---------- */
 cart-drawer-component a:focus-visible,
