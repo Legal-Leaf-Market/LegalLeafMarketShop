@@ -71,6 +71,7 @@
     '#ll-dispensary .lld-bar input[type=search],#ll-dispensary select{background:#0d1820;color:var(--ink);border:1px solid var(--line);',
     'border-radius:10px;padding:9px 12px;font:inherit;font-size:14px;min-height:40px}',
     '#ll-dispensary .lld-bar input[type=search]{flex:1 1 220px;min-width:0}',
+    '#ll-dispensary input::placeholder{color:#7f95a3!important;opacity:1}',
     '#ll-dispensary .lld-bar label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}',
     '#ll-dispensary .lld-btn{all:unset;cursor:pointer;padding:9px 14px;border-radius:10px;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--ink)}',
     '#ll-dispensary .lld-btn:focus-visible{outline:2px solid var(--accent)}',
@@ -78,8 +79,8 @@
     /* grid + cards: rows stretch, so collapsed cards in a row share one height */
     '#ll-dispensary .lld-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;align-items:stretch}',
     '#ll-dispensary .lld-card{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}',
-    '#ll-dispensary .lld-media{position:relative;aspect-ratio:4/3;background:#0b141a;display:flex;align-items:center;justify-content:center}',
-    '#ll-dispensary .lld-media img{max-width:100%;max-height:100%;object-fit:contain}',
+    '#ll-dispensary .lld-media{position:relative;height:0;padding-top:72%;background:#0b141a;overflow:hidden}',
+    '#ll-dispensary .lld-media img{position:absolute!important;inset:0;width:100%!important;height:100%!important;max-width:none;object-fit:contain;margin:0}',
     '#ll-dispensary .lld-store{position:absolute;top:10px;left:10px;background:rgba(8,15,20,.85);border:1px solid var(--line);border-radius:999px;',
     'padding:4px 10px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}',
     '#ll-dispensary .lld-trim{position:absolute;top:10px;right:10px;background:#b42318;color:#fff;border-radius:6px;padding:3px 7px;font-size:10px;font-weight:800;letter-spacing:.06em}',
@@ -92,9 +93,10 @@
     '#ll-dispensary .b-new{background:rgba(78,201,255,.14);color:var(--accent)}',
     '#ll-dispensary .lld-name{margin:0;font-size:16px;font-weight:700;line-height:1.25;color:#fff;',
     'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em}',
-    '#ll-dispensary .lld-tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-height:22px}',
+    '#ll-dispensary .lld-tags{display:flex;gap:6px;flex-wrap:nowrap;overflow:hidden;align-items:center;min-height:22px}',
     '#ll-dispensary .lld-tag{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}',
-    '#ll-dispensary .lld-lab{margin-left:auto;font-size:11px;font-weight:700;color:#fff;background:var(--lab);border-radius:999px;padding:3px 9px;text-decoration:none}',
+    '#ll-dispensary .lld-tag{white-space:nowrap}',
+    '#ll-dispensary .lld-foot .lld-lab{font-weight:700;color:#c4b5fd}',
     '#ll-dispensary .lld-price{display:flex;align-items:baseline;gap:8px}',
     '#ll-dispensary .lld-price b{font-size:24px;color:var(--accent);font-weight:800}',
     '#ll-dispensary .lld-price s{color:var(--muted);font-size:13px}',
@@ -109,7 +111,7 @@
     '#ll-dispensary .lld-cta{display:block;text-align:center;padding:12px;border-radius:12px;font-weight:700;color:#fff;text-decoration:none;',
     'background:linear-gradient(90deg,var(--leaf3),var(--accent))}',
     '#ll-dispensary .lld-cta:focus-visible{outline:2px solid #fff;outline-offset:2px}',
-    '#ll-dispensary .lld-foot{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted)}',
+    '#ll-dispensary .lld-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--muted);min-height:18px}',
     '#ll-dispensary .lld-foot button{all:unset;cursor:pointer;color:var(--accent);font-weight:600}',
     '#ll-dispensary .lld-foot a{color:var(--accent)}',
     '#ll-dispensary .lld-moreBtn{display:flex;justify-content:center;margin:20px 0 0}',
@@ -124,7 +126,7 @@
     '.lld-gate button{margin:6px;padding:11px 18px;border-radius:10px;border:0;font-weight:700;cursor:pointer;font-size:14px}',
     '.lld-gate .y{background:linear-gradient(90deg,#1787c4,#4ec9ff);color:#fff}.lld-gate .n{background:#22303a;color:#eef6fb}',
     '@media (max-width:600px){#ll-dispensary{padding:16px 12px 32px;border-radius:0}#ll-dispensary .lld-grid{grid-template-columns:1fr;gap:12px}',
-    '#ll-dispensary .lld-media{aspect-ratio:16/10}#ll-dispensary .lld-stores{grid-template-columns:repeat(3,1fr)}#ll-dispensary .lld-st img{width:48px;height:48px}}'
+    '#ll-dispensary .lld-media{padding-top:58%}#ll-dispensary .lld-stores{grid-template-columns:repeat(3,1fr)}#ll-dispensary .lld-st img{width:48px;height:48px}}'
   ].join('');
   var style = document.createElement('style');
   style.textContent = css;
@@ -177,17 +179,20 @@
 
   /* ---------- state ---------- */
   var state = {
-    all: [], stores: {}, on: {}, cat: '', q: '', sort: 'pg', stock: true, shown: PAGE, open: {}
+    all: [], stores: {}, on: {}, cat: '', q: '', sort: 'pg', stock: true, trim: false, shown: PAGE, open: {}
   };
 
   /* ---------- skeleton ---------- */
   mount.innerHTML = '<div class="lld-head"><h2>Dispensary</h2><p class="lld-sub">Live prices from partner shops, refreshed through the day.</p></div>'
     + '<div class="lld-grid">' + new Array(8).join('<div class="lld-skel" aria-hidden="true"></div>') + '</div>';
 
-  /* ---------- 21+ gate (attestation; the partner shop verifies age at its own checkout) ---------- */
+  /* ---------- optional 21+ gate (attestation; the partner shop verifies age at its own checkout) ---------- */
   function gate(done) {
     var ok = false;
     try { ok = localStorage.getItem(GATE_KEY) === '1'; } catch (e) { ok = false; }
+    /* OFF unless the mount asks for it with data-gate="1": the storefront already runs Blockify's
+       21+ gate on every page, and two gates in a row read as a broken page. */
+    if (mount.getAttribute('data-gate') !== '1') return done();
     if (ok || /bot|crawl|spider|lighthouse/i.test(navigator.userAgent)) return done();
     var g = document.createElement('div');
     g.className = 'lld-gate';
@@ -240,6 +245,7 @@
     var list = state.all.filter(function (x) {
       if (!state.on[x.p.storeKey]) return false;
       if (state.stock && !x.p.inStock) return false;
+      if (!state.trim && x.p.offcut) return false;
       if (state.cat && x.p.category !== state.cat) return false;
       if (q && x.text.indexOf(q) < 0) return false;
       return true;
@@ -257,6 +263,7 @@
     var m = {};
     state.all.forEach(function (x) {
       if (state.stock && !x.p.inStock) return;
+      if (!state.trim && x.p.offcut) return;
       if (field === 'cat' && !state.on[x.p.storeKey]) return;
       var k = field === 'cat' ? x.p.category : x.p.storeKey;
       m[k] = (m[k] || 0) + 1;
@@ -292,7 +299,7 @@
       + '</div><div class="lld-body">'
       + '<div class="lld-badges">' + badges + '</div>'
       + '<h3 class="lld-name" title="' + esc(p.name) + '">' + esc(p.name) + '</h3>'
-      + '<div class="lld-tags">' + tags + (coa ? '<a class="lld-lab" href="' + esc(coa) + '" target="_blank" rel="noopener">Lab data</a>' : '') + '</div>'
+      + '<div class="lld-tags">' + tags + '</div>'
       + '<div class="lld-price"><b>' + money(s.price) + '</b>' + (s.compare && s.compare > s.price ? '<s>' + money(s.compare) + '</s>' : '')
       + (pg ? '<span class="lld-pg">' + money(pg) + '/g</span>' : '') + '</div>'
       + '<div class="lld-meta">' + meta.join('<br>') + '</div>'
@@ -300,7 +307,7 @@
       + (open && desc ? '<div class="lld-more">' + esc(desc.slice(0, 900)) + (desc.length > 900 ? '\u2026' : '') + '</div>' : '')
       + '<div class="lld-spacer"></div>'
       + '<a class="lld-cta" href="' + esc(hrefFor(p, s)) + '" target="_blank" rel="sponsored noopener">Shop at ' + esc(store.name) + ' \u2192</a>'
-      + '<div class="lld-foot"><span>Sold and shipped by ' + esc(store.name) + '</span>'
+      + '<div class="lld-foot"><span>' + (coa ? '<a class="lld-lab" href="' + esc(coa) + '" target="_blank" rel="noopener">Lab data \u2197</a>' : 'Ships from ' + esc(store.name)) + '</span>'
       + (desc ? '<button type="button" class="lld-det" aria-expanded="' + open + '">' + (open ? 'Less \u25b4' : 'Details \u25be') + '</button>' : '')
       + '</div></div></article>';
   }
@@ -327,7 +334,8 @@
       + '<div class="lld-label">Category</div><div class="lld-chips">' + chips + '</div>'
       + '<div class="lld-bar"><input type="search" placeholder="Search strains, brands, products" aria-label="Search" value="' + esc(state.q) + '">'
       + '<select aria-label="Sort"><option value="pg">Best $/g</option><option value="cheap">Cheapest</option><option value="strong">Strongest</option><option value="fresh">Newest</option><option value="az">A\u2013Z</option></select>'
-      + '<label><input type="checkbox"' + (state.stock ? ' checked' : '') + '> In stock only</label>'
+      + '<label><input type="checkbox" data-f="stock"' + (state.stock ? ' checked' : '') + '> In stock only</label>'
+      + '<label><input type="checkbox" data-f="trim"' + (state.trim ? ' checked' : '') + '> Trim &amp; shake</label>'
       + (anyOpen ? '<button type="button" class="lld-btn lld-collapse">Collapse all</button>' : '') + '</div>'
       + '<p class="lld-count" aria-live="polite">' + list.length + ' deal' + (list.length === 1 ? '' : 's') + '</p>'
       + (list.length ? '<div class="lld-grid">' + list.slice(0, state.shown).map(cardHTML).join('') + '</div>'
@@ -383,7 +391,7 @@
     } else if (t.matches('.lld-bar select')) {
       state.sort = t.value; state.shown = PAGE; render();
     } else if (t.matches('.lld-bar input[type=checkbox]')) {
-      state.stock = t.checked; state.shown = PAGE; render();
+      state[t.getAttribute('data-f')] = t.checked; state.shown = PAGE; render();
     }
   });
   mount.addEventListener('input', function (e) {
