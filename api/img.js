@@ -61,6 +61,10 @@ function allowed() {
   }
   ['cdn.shopify.com', 'cdn11.bigcommerce.com', 'i.shgcdn.com',
    'images.squarespace-cdn.com', 'static.wixstatic.com'].forEach(h => ALLOW.add(h));
+  /* Bear Blend is not a STORES row (the Herbal Leaf seed lists it), but the Shopify store now
+     sells its line, and Shopify's importer is refused by bearblend.com's image host. Product
+     photos for those listings are imported through this proxy (2 Nov 2026). */
+  ALLOW.add('bearblend.com'); ALLOW.add('www.bearblend.com');
   return ALLOW;
 }
 
