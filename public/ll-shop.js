@@ -8,7 +8,7 @@
  *     <script src="https://cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@<commit>/public/ll-shop.js" defer></script>
  *
  *   Collection template, above the main product grid:
- *     <div id="ll-slicer" data-collection="{{ collection.handle }}" data-title="{{ collection.title | escape }}"></div>
+ *     <div id="ll-slicer" data-collection="{{ collection.handle }}" data-title="{{ collection.title | escape }}" data-heading="off"></div>
  *     <script src="(the same src)" defer></script>
  *
  * WHY jsDelivr, AND WHY A COMMIT. On 2 Nov 2026 Netlify paused production deploys for the team
@@ -742,8 +742,10 @@
     var anyStrength = all.some(function (x) { return x.strength.length; });
     var anyFlavor = all.some(function (x) { return x.flavor.length; });
 
-    mount.innerHTML =
-      '<p class="ll-kicker">Shop</p><h2 class="ll-h">' + esc(title) + '</h2>' +
+    /* data-heading="off" when the theme's own Heading section already prints the collection title
+     * and description above the mount (Horizon's collection template does). */
+    var heading = mount.getAttribute('data-heading') === 'off' ? '' : '<p class="ll-kicker">Shop</p><h2 class="ll-h">' + esc(title) + '</h2>';
+    mount.innerHTML = heading +
       '<div class="ll-bar">' +
       '<input type="search" placeholder="Search ' + esc(title) + '" aria-label="Search" value="' + esc(st.q) + '">' +
       '<select data-f="price" aria-label="Price"><option value="">Any price</option><option value="0-25">Under $25</option><option value="25-50">$25 to $50</option><option value="50-100">$50 to $100</option><option value="100-250">$100 to $250</option><option value="250-99999">$250 and up</option></select>' +
