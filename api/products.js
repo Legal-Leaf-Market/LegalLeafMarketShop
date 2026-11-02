@@ -285,7 +285,11 @@ export const STORES = [
      THCA King's was deleted so it could not come back by accident, and this one must be able
      to. */
   { key:'binoid',        name:'Binoid',          domain:'www.binoidcbd.com', platform:'woocommerce', wooVariations:true, ref:'coffeeandajoint', coupon:'', coaFolder:'https://www.binoidcbd.com/lab-results', enabled:false },
-  { key:'bloomzhemp',    name:'Bloomz Hemp',     domain:'bloomzhemp.com',    platform:'auto', preferWoo:true, wooVariations:true, ref:'coffeeandajoint', coupon:'' }, // COAs are per-product PDFs (wp-content/uploads/coas/); no public index page
+  /* DELISTED 2 Nov 2026 -- Bloomz Hemp, CBD Hemp Direct and Exhale Wellness taken off the
+     shelf at the owner's request. Fit, not conduct: enabled:false is the whole delisting (the
+     handler filters on it for the scrape, the roster, ?debug and the capture merge). Remove the
+     flag to re-list; ref, coupon and COA folder stay put. */
+  { key:'bloomzhemp',    name:'Bloomz Hemp',     domain:'bloomzhemp.com',    platform:'auto', preferWoo:true, wooVariations:true, ref:'coffeeandajoint', coupon:'', enabled:false }, // COAs are per-product PDFs (wp-content/uploads/coas/); no public index page
 
   // ---- TWO PENDING STORES, 10 Aug 2026. Both applications submitted, neither decided. ----
   //
@@ -465,7 +469,7 @@ export const STORES = [
   // thinner for THCa than for CBD. It is only ever the FALLBACK (a per-product COA image found
   // by isCoaUrl wins), and a store's own lab index beats showing the shopper no lab link at all,
   // but check the page covers THCa before treating this as a per-strain COA.
-  { key:'cbdhempdirect', name:'CBD Hemp Direct', domain:'cbdhemp.direct', platform:'woocommerce', wooVariations:true, maxPages:20, wooVariationPages:80, cartPath:'/cart', ref:'161', refParam:'sld', coupon:'', freeShipOver:75, coaFolder:'https://cbdhemp.direct/pages/cbd-flower-test-results' },
+  { key:'cbdhempdirect', name:'CBD Hemp Direct', domain:'cbdhemp.direct', platform:'woocommerce', wooVariations:true, maxPages:20, wooVariationPages:80, cartPath:'/cart', ref:'161', refParam:'sld', coupon:'', freeShipOver:75, coaFolder:'https://cbdhemp.direct/pages/cbd-flower-test-results', enabled:false },
   // wooVariations: Exhale sells only VARIABLE products and exposes no weight field anywhere, so
   // without the variations sweep every product publishes a flat "from" price and no per-gram
   // figure. Costs ~6 extra requests per scrape (578 variations at 100/page) behind a 30-min cache.
@@ -473,7 +477,7 @@ export const STORES = [
   // no affiliate ID yet, so this emits a clean untracked link. Do not invent an ID. When one
   // arrives, set ref:'<id>' and refParam:'rfsn' -- nothing else needs to change.
   // coupon/freeShipOver/coaFolder omitted rather than guessed: all three probed unverified.
-  { key:'exhalewell', name:'Exhale Wellness', domain:'www.exhalewell.com', platform:'woocommerce', wooVariations:true, ref:'', refParam:'rfsn', coupon:'' },
+  { key:'exhalewell', name:'Exhale Wellness', domain:'www.exhalewell.com', platform:'woocommerce', wooVariations:true, ref:'', refParam:'rfsn', coupon:'', enabled:false },
   // UpPromote affiliate id, supplied by the owner. refParam is REQUIRED -- UpPromote reads
   // `sca_ref` and ignores `ref` entirely, so the default would earn $0 with no visible symptom.
   // Canonical domain is nothingbutcanna.net; the legacy nothingbuthemp.net 301s here preserving
