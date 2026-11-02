@@ -222,11 +222,15 @@
 
   /* Never on the front page, whatever the score. Tested against title + handle only (tags carry
    * shelf names like "Bongs & Rigs" that would trip these). Every line is something that got there.
-   * Collections are unaffected: this is the front page's editorial line, not a delisting. */
-  var FEED_SKIP_TYPES = { 'nicotine pouches': 1, 'nicotine-free pouches': 1, 'nicotine long cut': 1, 'parts & tools': 1, 'herbal diffusers': 1 };
+   * Collections are unaffected: this is the front page's editorial line, not a delisting.
+   *
+   * TASTE ONLY, NEVER LICENSING (owner, 2 Nov 2026: "ALL products need to be live. I won't push the
+   * site until licenses are in place but I need to work on the tech in isolation now"). THC
+   * gummies, nicotine pouches and marijuana wording were kept off here for a few minutes on
+   * compliance grounds and were put back on that instruction. The licensing gate is the owner's,
+   * at launch, and it is not this file's job. */
+  var FEED_SKIP_TYPES = { 'parts & tools': 1, 'herbal diffusers': 1 };
   var FEED_SKIP = [
-    /* Indiana: no marijuana wording on our own shelf (CLAUDE.md, "Indiana is not Michigan") */
-    /\b(weed|ganja|marijuana|cannabis|stoner|420)\b/,
     /* importer and marketplace junk */
     /\b(mystery|superangebot|geschenkgutschein|gutschein|gravur|edelstahl|gift ?card|package protection|savedby|test product|deposit|insurance)\b/,
     /* merch and novelties that are not the shop */
@@ -234,11 +238,9 @@
     /* parts: right for someone who knows exactly what they need, wrong for a scroll */
     /\b(replacement|mouth ?pieces?|carbon filters?|coils?|screens?|o-?rings?|cartridges?|510|batter(?:y|ies)|neckpieces?|downstems?|bangers?|quartz|nails?|slides?|carb caps?|spinners?|auto-spinner|slurpers?|attachments?|dry top|bong bowls?|bowl pieces?|ash catchers?|dab tools?|dab straws?|sapphire|ceramic tips?|heating tips?|rolling tip|torch(?:es)?|chamber base)\b/
   ];
-  var THC = /\bthc\b/, THC_FREE = /\bthc-? ?free\b/;
   function skipped(x) {
     if (FEED_SKIP_TYPES[low(x.type)]) return true;
     var t = low(x.title + ' ' + x.handle.replace(/-/g, ' '));
-    if (THC.test(t) && !THC_FREE.test(t)) return true;   /* "a few CBD things" means CBD, not THC gummies */
     for (var i = 0; i < FEED_SKIP.length; i++) if (FEED_SKIP[i].test(t)) return true;
     return false;
   }
