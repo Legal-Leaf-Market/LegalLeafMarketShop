@@ -798,6 +798,12 @@ do not mirror the block yet.
   imported (smokable hemp, see "Dropship does not get around the hemp rules"). Herbal copy that
   mentioned cannabis had those sentences removed (`copy-edited` tag), per the processor wording rule
   in HANDOFF_CHROME.md.
+- **The Shopify homepage feed and collection slicers are `public/ll-shop.js`** (2 Nov 2026),
+  mounted like the dispensary by two-line Custom Liquid sections (`#ll-feed` on the homepage,
+  `#ll-slicer data-collection=...` on the collection template; the header of the file has both).
+  It reads the storefront's own `/products.json`. Feed rules, owner's words: nothing over $250,
+  over $150 only for glass, no bulk lots, sold-out never shows; `PICKS` (handles) leads, the rules
+  fill the rest. The theme grid is hidden only after the slicers render, so a failure leaves it up.
 - **`/api/img` allows bearblend.com** because Shopify's importer is refused by Bear Blend's image
   host; Bear Blend product photos were imported through the proxy.
 
