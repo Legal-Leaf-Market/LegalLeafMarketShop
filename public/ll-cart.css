@@ -1,0 +1,248 @@
+/* public/ll-cart.css -- the cart drawer on the Shopify storefront (Horizon theme): one scroll
+ * area, a summary that is always reachable, and the same look as the feed (public/ll-shop.js).
+ *
+ * WHERE IT RUNS. Every page, from one Custom Liquid section in the theme's HEADER group (so it
+ * loads wherever the drawer can open, not only where ll-shop.js is mounted):
+ *   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@<commit>/public/ll-cart.css">
+ * Pinned to a commit for the reason ll-shop.js is (Netlify paused, see its header).
+ *
+ * WHAT WAS WRONG (owner, 2 Nov 2026: "cart's not scrolling"). Horizon nests two scroll areas:
+ * .cart-drawer__content scrolls, and inside it .cart-drawer__items scrolls again, with
+ * .cart-drawer__summary pushed to the bottom by margin-top:auto. The drawer is exactly one screen
+ * tall, so whenever something covers the bottom edge of the screen (a phone's browser toolbar
+ * when the height is 100vh, or Shopify's admin preview bar, 68px, which staff always see) the
+ * Check out button sits underneath it and no scroll reaches it: the inner list takes the scroll
+ * and the outer area has nothing left to give. Fix: the item list stops scrolling on its own, the
+ * body is the one scroll area, the summary is sticky at its bottom, and the drawer is 100dvh.
+ *
+ * ALSO: the quantity number was rgb(13 26 34) on a #080F14 drawer, i.e. invisible, so every
+ * stepper read as disabled. The colours below are set on the input itself, with
+ * -webkit-text-fill-color, because Safari ignores `color` on some inputs.
+ *
+ * Every selector is scoped to cart-drawer-component, so nothing else in the theme is touched.
+ */
+
+dialog:has(cart-drawer-component) {
+  --ll-bg: #0b0f17;
+  --ll-card: #141a26;
+  --ll-line: #263044;
+  --ll-ink: #f4f6fb;
+  --ll-muted: #9aa6bd;
+  --ll-accent: #4ec9ff;
+  --ll-gold: #f0b93c;
+  --ll-bottom: env(safe-area-inset-bottom, 0px);
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  background: var(--ll-bg) !important;
+  color: var(--ll-ink);
+  border-left: 1px solid var(--ll-line);
+}
+/* Shopify's preview bar (staff only) covers the bottom 68px of the screen */
+html:has([id^="PBar"]) dialog:has(cart-drawer-component) { --ll-bottom: 76px; }
+
+/* ---------- one scroll area ---------- */
+cart-drawer-component .cart-drawer__inner {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--ll-bg);
+}
+cart-drawer-component cart-items-component { min-height: 0; flex: 1 1 auto; display: flex; }
+cart-drawer-component .cart-drawer__content {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: var(--ll-bg) !important;
+}
+cart-drawer-component .cart-drawer__items {
+  overflow: visible !important;
+  flex: 0 0 auto;
+  padding: 14px 16px 18px !important;
+}
+cart-drawer-component .cart-drawer__summary {
+  position: sticky;
+  bottom: 0;
+  margin-top: auto;
+  gap: 12px !important;
+  padding: 14px 16px calc(16px + var(--ll-bottom)) !important;
+  background: var(--ll-bg) !important;
+  border-top: 1px solid var(--ll-line);
+  box-shadow: 0 -14px 28px rgba(0, 0, 0, .45);
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+/* ---------- header ---------- */
+cart-drawer-component .theme-drawer__header {
+  padding: 16px !important;
+  border-bottom: 1px solid var(--ll-line);
+  background: var(--ll-bg);
+}
+cart-drawer-component .theme-drawer__title {
+  font: 800 24px/1.1 Georgia, "Times New Roman", serif !important;
+  letter-spacing: -.01em;
+  color: var(--ll-ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+cart-drawer-component .theme-drawer__badge {
+  background: var(--ll-gold) !important;
+  color: #1a1300 !important;
+  font: 800 12px/1 system-ui, sans-serif !important;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+}
+cart-drawer-component .theme-drawer__close-button {
+  border: 1px solid var(--ll-line) !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: var(--ll-ink) !important;
+}
+
+/* ---------- line items as cards ---------- */
+cart-drawer-component .cart-drawer__items .cart-items__table-row {
+  background: var(--ll-card);
+  border: 1px solid var(--ll-line) !important;
+  border-radius: 16px;
+  padding: 12px !important;
+  margin: 0 0 10px !important;
+  column-gap: 12px;
+}
+cart-drawer-component .cart-drawer__items .cart-items__table-row:last-child { margin-bottom: 0 !important; }
+cart-drawer-component .cart-items__media-container {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+cart-drawer-component .cart-items__media-image {
+  border-radius: 12px !important;
+  background: #fff;
+  object-fit: contain !important;
+  aspect-ratio: 1;
+}
+cart-drawer-component .cart-items__title {
+  color: var(--ll-ink) !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  line-height: 1.3 !important;
+  text-decoration: none !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+cart-drawer-component .cart-items__title:hover { color: var(--ll-accent) !important; }
+cart-drawer-component .cart-items__variants-wrapper,
+cart-drawer-component .cart-items__unit-price-wrapper {
+  color: var(--ll-muted) !important;
+  font-size: 13px !important;
+}
+cart-drawer-component .cart-items__price,
+cart-drawer-component td:last-child text-component {
+  color: var(--ll-ink) !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+}
+
+/* quantity: a visible pill, not a disabled-looking box */
+cart-drawer-component .cart-items__quantity-controls { gap: 8px !important; align-items: center; }
+cart-drawer-component .quantity-selector {
+  border: 1px solid var(--ll-line) !important;
+  border-radius: 999px !important;
+  background: #0f1520 !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  overflow: hidden;
+  --color-foreground: 244 246 251;
+}
+cart-drawer-component .quantity-selector input,
+cart-drawer-component .quantity-selector input[name="updates[]"] {
+  color: var(--ll-ink) !important;
+  -webkit-text-fill-color: var(--ll-ink) !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  background: transparent !important;
+}
+cart-drawer-component .quantity-selector button {
+  color: var(--ll-ink) !important;
+  opacity: 1 !important;
+  width: 34px !important;
+}
+cart-drawer-component .quantity-selector button:hover { color: var(--ll-accent) !important; }
+cart-drawer-component .quantity-selector button:disabled { opacity: .35 !important; }
+
+/* remove: a quiet ghost button, not a second loud call to action */
+cart-drawer-component .cart-items__remove {
+  background: transparent !important;
+  background-image: none !important;
+  border: 1px solid var(--ll-line) !important;
+  border-radius: 999px !important;
+  color: var(--ll-muted) !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  display: inline-grid !important;
+  place-items: center;
+}
+cart-drawer-component .cart-items__remove:hover {
+  color: #ff6b8a !important;
+  border-color: #ff6b8a !important;
+}
+cart-drawer-component .cart-items__remove svg { width: 16px; height: 16px; }
+
+/* ---------- summary ---------- */
+cart-drawer-component .cart-totals { width: 100%; gap: 10px !important; }
+cart-drawer-component .cart-discount__summary {
+  color: var(--ll-muted) !important;
+  font-size: 14px !important;
+  padding-block: 4px !important;
+}
+cart-drawer-component .cart-totals__total { align-items: baseline; }
+cart-drawer-component .cart-totals__total-label { color: var(--ll-muted) !important; font-size: 14px !important; }
+cart-drawer-component .cart-totals__total-value {
+  color: var(--ll-ink) !important;
+  font: 800 22px/1.1 Georgia, "Times New Roman", serif !important;
+}
+cart-drawer-component .cart-totals__tax-note { color: var(--ll-muted) !important; font-size: 12.5px !important; }
+cart-drawer-component .cart-totals__tax-note a { color: var(--ll-accent) !important; }
+cart-drawer-component .cart__ctas { width: 100%; }
+cart-drawer-component .cart__checkout-button {
+  width: 100% !important;
+  min-height: 52px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #1787c4, #22a8e8) !important;
+  color: #fff !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+  letter-spacing: .01em;
+  box-shadow: 0 8px 22px rgba(34, 168, 232, .28) !important;
+  border: 0 !important;
+}
+cart-drawer-component .cart__checkout-button:hover { filter: brightness(1.08); }
+
+/* ---------- focus that can be seen on the dark drawer ---------- */
+cart-drawer-component a:focus-visible,
+cart-drawer-component button:focus-visible,
+cart-drawer-component input:focus-visible {
+  outline: 2px solid var(--ll-accent) !important;
+  outline-offset: 2px;
+}
+
+@media (max-width: 420px) {
+  cart-drawer-component .cart-drawer__items { padding: 12px 12px 14px !important; }
+  cart-drawer-component .cart-items__title { font-size: 14px !important; }
+  cart-drawer-component .cart-totals__total-value { font-size: 20px !important; }
+}
