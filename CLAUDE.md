@@ -789,9 +789,12 @@ do not mirror the block yet.
 - **Herbal Leaf Market and Nicotia Market products are Shopify products now**, tagged
   `herbal-leaf` / `nicotia`, `special-order`, `src:<maker>`, behind smart collections
   `herbal-leaf-market` and `nicotia-market` and Shopify URL redirects `/herbal-leaf`, `/herbalife`
-  and `/nicotia`. Nicotine pouches and cigars are DRAFT with `compliance-review` until the LLC, the
-  ATC tobacco sales certificate, a non-Shopify-Payments processor and checkout age verification
-  exist. CBD makers (Soul, Charlotte's Web) are DRAFT for the same review. Secret Nature was not
+  and `/nicotia`. Nicotine pouches, cigars and the CBD makers (Soul, Charlotte's Web) were imported as DRAFT
+  with `compliance-review`; the owner switched everything on the same day ("I need to see it
+  all"). The tag still marks what needs the LLC, the ATC tobacco sales certificate, a
+  non-Shopify-Payments processor and checkout age verification before it can actually be sold.
+  Bear Blend (not Shopify) and Natural Smoke Shop (WooCommerce) were refreshed from their live
+  sites the same day by an overwrite import: descriptions, current prices, full-size photos. Secret Nature was not
   imported (smokable hemp, see "Dropship does not get around the hemp rules"). Herbal copy that
   mentioned cannabis had those sentences removed (`copy-edited` tag), per the processor wording rule
   in HANDOFF_CHROME.md.
