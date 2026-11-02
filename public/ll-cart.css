@@ -15,7 +15,7 @@
  * and the outer area has nothing left to give. Fix: the item list stops scrolling on its own, the
  * body is the one scroll area, the summary is sticky at its bottom, and the drawer is 100dvh.
  *
- * ALSO: the quantity number was rgb(13 26 34) on a #080F14 drawer, i.e. invisible, so every
+ * ALSO: the quantity number (and the discount code field) was rgb(13 26 34) on a #080F14 drawer, i.e. invisible, so every
  * stepper read as disabled. The colours below are set on the input itself, with
  * -webkit-text-fill-color, because Safari ignores `color` on some inputs.
  *
@@ -238,6 +238,24 @@ cart-drawer-component .cart__checkout-button {
 }
 cart-drawer-component .button.cart__checkout-button .button-text { color: #fff !important; }
 cart-drawer-component .button.cart__checkout-button:hover { filter: brightness(1.08); }
+
+/* the discount code field had the same near-black text as the quantity */
+cart-drawer-component .cart-discount__form input,
+cart-drawer-component .cart-discount__form input[type="text"] {
+  color: var(--ll-ink) !important;
+  -webkit-text-fill-color: var(--ll-ink) !important;
+  background: #0f1520 !important;
+  border: 1px solid var(--ll-line) !important;
+  border-radius: 10px !important;
+}
+cart-drawer-component .cart-discount__form input::placeholder { color: #7d89a0 !important; -webkit-text-fill-color: #7d89a0 !important; opacity: 1; }
+cart-drawer-component .cart-discount__codes { color: var(--ll-ink) !important; }
+
+/* empty cart: the same pill as Check out */
+cart-drawer-component .button:not(.button-secondary, .button-unstyled):not(.cart-items__remove) {
+  border-radius: 999px !important;
+  color: #fff !important;
+}
 
 /* ---------- focus that can be seen on the dark drawer ---------- */
 cart-drawer-component a:focus-visible,
