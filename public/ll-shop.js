@@ -308,14 +308,22 @@
       if ((venLane[x.vendor + '|' + x.lane] || 0) >= VENDOR_LANE_CAP) return false;
       return true;
     }
-    function nextFrom(b, prev) {
-      var any = -1;
+    /* No maker twice within SPREAD cards where the shelf allows it. "Not the previous card" was
+     * not enough: picks skip VENDOR_CAP, so Natural Smoke Shop still came back every other card
+     * on the first screen (5 of 24 on 2 Nov 2026). Only the strongest few candidates are
+     * considered for the spread, so a weak card is never pulled forward just to vary the maker. */
+    var SPREAD = 3, LOOK = 8;
+    function nextFrom(b, recent) {
+      var prevV = recent[recent.length - 1], notPrev = -1, any = -1, looked = 0;
       for (var k = 0; k < b.length; k++) {
         if (!room(b[k])) continue;
-        if (!prev || b[k].vendor !== prev.vendor) return k;
         if (any < 0) any = k;
+        if (notPrev < 0 && b[k].vendor !== prevV) notPrev = k;
+        if (looked < LOOK && recent.indexOf(b[k].vendor) < 0) return k;
+        looked++;
+        if (looked >= LOOK && notPrev >= 0) break;
       }
-      return any;
+      return notPrev >= 0 ? notPrev : any;
     }
     var out = [], taken = {}, i = 0, guard = 0;
     var start = hash(seed) % RHYTHM.length;
@@ -326,7 +334,7 @@
       if ((taken[lane] || 0) >= (LANE_CAP[lane] || 99)) continue;
       var prev = out[out.length - 1];
       if (prev && prev.lane === lane) continue;
-      var k = nextFrom(b, prev);
+      var k = nextFrom(b, out.slice(-SPREAD).map(function (y) { return y.vendor; }));
       if (k < 0) { buckets[lane] = []; continue; }
       var x = b.splice(k, 1)[0];
       seen[x.handle] = 1; fam[famKey(x)] = 1;
