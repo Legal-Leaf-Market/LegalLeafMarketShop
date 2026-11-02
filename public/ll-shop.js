@@ -236,7 +236,7 @@
     /* merch and novelties that are not the shop */
     /\b(stickers?|brooch|keychains?|t-?shirt|hoodie|dice|card dealer|shuffler|ice cube|penis|genitals?)\b/,
     /* parts: right for someone who knows exactly what they need, wrong for a scroll */
-    /\b(replacement|mouth ?pieces?|carbon filters?|coils?|screens?|o-?rings?|cartridges?|510|batter(?:y|ies)|neckpieces?|downstems?|bangers?|quartz|nails?|slides?|carb caps?|spinners?|auto-spinner|slurpers?|attachments?|dry top|bong bowls?|bowl pieces?|ash catchers?|dab tools?|dab straws?|sapphire|ceramic tips?|heating tips?|rolling tip|torch(?:es)?|chamber base)\b/
+    /\b(replacement|mouth ?pieces?|carbon filters?|coils?|screens?|o-?rings?|cartridges?|510|batter(?:y|ies)|neckpieces?|downstems?|bangers?|quartz|nails?|slides?|carb caps?|spinners?|auto-spinner|slurpers?|attachments?|dry top|bong bowls?|bowl pieces?|ash catchers?|dab tools?|dab straws?|sapphire|ceramic tips?|heating tips?|rolling tip|torch(?:es)?|chamber base|lid & plug|lid and plug|plug set|lid set)\b/
   ];
   function skipped(x) {
     if (FEED_SKIP_TYPES[low(x.type)]) return true;
