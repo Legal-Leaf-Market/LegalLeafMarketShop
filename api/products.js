@@ -2530,6 +2530,12 @@ function proxyPhoto(p){
 }
 
 export default async function handler(req, res){
+  /* THE SHOPIFY STOREFRONT READS THIS FEED (2 Nov 2026). shop.legalleafmarket.shop/pages/dispensary
+     loads public/shop-dispensary.js, which asks for ?store= slices from the browser, cross-origin.
+     The catalogue is public, carries no cookies (the reader sends credentials:'omit') and is cached
+     at the edge, so a wildcard is the honest header: an origin allow-list would be cached against
+     whichever origin asked first and fail for the other one. */
+  res.setHeader('Access-Control-Allow-Origin', '*');
   const debug = req.query && (req.query.debug!=null);
   // ?debug&slim -- every diagnostic, none of the catalogue. See enrichCoverage(). It implies
   // ?debug rather than requiring both, because a bare ?slim asking for the public shape minus
