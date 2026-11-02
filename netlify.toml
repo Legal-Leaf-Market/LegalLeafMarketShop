@@ -32,6 +32,433 @@
 # A PAGE NEEDS NO ENTRY HERE. public/foo.html is already served at /foo. What is
 # listed is only what a file cannot say for itself.
 
+# ---- THE BASE SITE IS CLOSED; THE SHOP IS SHOPIFY (2 Nov 2026) ----------------
+# Owner, 2 Nov 2026: every page here now redirects to shop.legalleafmarket.shop.
+# The deal shelves, library, reels and articles are retired in favour of the
+# Shopify store; /consumables lives on as shop.legalleafmarket.shop/pages/dispensary,
+# which reads this site's /api/products feed through public/shop-dispensary.js.
+#
+# PAGES ARE LISTED ONE BY ONE, NOT CAUGHT BY "/*", ON PURPOSE. A forced catch-all
+# would also have to be taught to step around /api/*, /p/*, /admin (the function's
+# config.path), the crons and /shop-dispensary.js, and getting that order wrong
+# takes the dispensary page down with the rest. A list only touches what it names.
+# A NEW PAGE IN public/ IS SERVED UNTIL IT IS ADDED HERE.
+#
+# KEPT UP, deliberately: /api/* and /p/* (function), /admin*, /shop-dispensary.js,
+# /js /css /img /assets, and the two operator tools /ig-studio and
+# /coldwater-collect (noindex, used by the owner, not shoppers).
+#
+# 302 not 301: browsers cache a 301 for good, and this is reversible by deleting
+# this block. force = true because every one of these paths is a real file, and a
+# file shadows an unforced rule.
+[[redirects]]
+  from = "/"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/index.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/consumable"
+  to = "https://shop.legalleafmarket.shop/pages/dispensary"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/coldwater-list"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/p/theloudpack"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/arcade/*"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/a-word-for-the-plant"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/a-word-for-the-plant.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/ambassador"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/ambassador.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/arcade"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/arcade.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/burned-at-a-funeral"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/burned-at-a-funeral.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/club-des-hashischins"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/club-des-hashischins.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/coldwater-guide"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/coldwater-guide.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/coldwater"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/coldwater.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/combustion"
+  to = "https://shop.legalleafmarket.shop/collections/pipes"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/combustion.html"
+  to = "https://shop.legalleafmarket.shop/collections/pipes"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/consumables"
+  to = "https://shop.legalleafmarket.shop/pages/dispensary"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/consumables.html"
+  to = "https://shop.legalleafmarket.shop/pages/dispensary"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/detroit"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/detroit.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/devices"
+  to = "https://shop.legalleafmarket.shop/collections/vaporizers"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/devices.html"
+  to = "https://shop.legalleafmarket.shop/collections/vaporizers"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/grandrapids"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/grandrapids.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/greekglass"
+  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Greek%20Glass"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/greekglass.html"
+  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Greek%20Glass"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/international"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/international.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/kit"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/kit.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/library"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/library.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/lookah-preview"
+  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Lookah"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/lookah-preview.html"
+  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Lookah"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/lookah"
+  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Lookah"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/lookah.html"
+  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Lookah"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/newbuffalo"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/newbuffalo.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/privacy"
+  to = "https://shop.legalleafmarket.shop/policies/privacy-policy"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/privacy.html"
+  to = "https://shop.legalleafmarket.shop/policies/privacy-policy"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/reels"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/reels.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/returns"
+  to = "https://shop.legalleafmarket.shop/policies/refund-policy"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/returns.html"
+  to = "https://shop.legalleafmarket.shop/policies/refund-policy"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/shipping"
+  to = "https://shop.legalleafmarket.shop/policies/shipping-policy"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/shipping.html"
+  to = "https://shop.legalleafmarket.shop/policies/shipping-policy"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/terms"
+  to = "https://shop.legalleafmarket.shop/policies/terms-of-service"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/terms.html"
+  to = "https://shop.legalleafmarket.shop/policies/terms-of-service"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/the-body-was-listening"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/the-body-was-listening.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/the-seam"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/the-seam.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/theloudpack"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/theloudpack.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/trip"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/trip.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/vaporizers"
+  to = "https://shop.legalleafmarket.shop/collections/vaporizers"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/vaporizers.html"
+  to = "https://shop.legalleafmarket.shop/collections/vaporizers"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/what-the-certificates-say"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/what-the-certificates-say.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/wholesale"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/wholesale.html"
+  to = "https://shop.legalleafmarket.shop/"
+  status = 302
+  force = true
+
 # Singular -> plural, kept for safety: an outage once came from linking one
 # while the file was named the other (CLAUDE.md §3).
 [[redirects]]
