@@ -804,6 +804,16 @@ do not mirror the block yet.
   It reads the storefront's own `/products.json`. Feed rules, owner's words: nothing over $250,
   over $150 only for glass, no bulk lots, sold-out never shows; `PICKS` (handles) leads, the rules
   fill the rest. The theme grid is hidden only after the slicers render, so a failure leaves it up.
+- **Netlify production deploys are PAUSED (2 Nov 2026, team out of plan credits)**, so nothing
+  merged since then is served from legalleafmarket.shop. The storefront loads `public/ll-shop.js`
+  and `public/ll-cart.css` from jsDelivr instead, pinned to a commit
+  (`cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@<commit>/public/...`). Shipping a
+  change = merge, then put the new commit in the theme: the homepage feed section, the collection
+  template's slicer section (`data-heading="off"`, Horizon's Heading section prints the title) and,
+  for the CSS, the header group's Custom Liquid section.
+- **The cart drawer is restyled by `public/ll-cart.css`** (header group, every page): one scroll
+  area with the summary sticky, readable quantity and discount inputs. Its header says why.
+  Adding from the feed uses Horizon's `CartLinesUpdateEvent`; `cart:refresh` does nothing here.
 - **`/api/img` allows bearblend.com** because Shopify's importer is refused by Bear Blend's image
   host; Bear Blend product photos were imported through the proxy.
 
