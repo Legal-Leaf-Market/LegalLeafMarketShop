@@ -445,12 +445,10 @@
     '.ll-x input[type=search],.ll-x select{background:#0f1520;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;font-size:14px;min-height:40px}',
     '.ll-x input[type=search]{flex:1 1 200px;min-width:0}',
     '.ll-x input::placeholder{color:#7d89a0;opacity:1}',
-    '.ll-x .ll-chips{display:flex;flex-wrap:wrap;gap:7px}',
     '.ll-x .ll-chip{all:unset;cursor:pointer;padding:7px 12px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid var(--line);background:rgba(78,201,255,.06)}',
     '.ll-x .ll-chip small{opacity:.7;margin-left:4px}',
     '.ll-x .ll-chip[aria-pressed="true"]{background:linear-gradient(90deg,#1787c4,#22a8e8);border-color:transparent;color:#fff}',
     '.ll-x .ll-chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}',
-    '.ll-x .ll-lab{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 7px}',
     '.ll-x .ll-count{color:var(--muted);font-size:13px;margin:4px 0 12px}',
     /* masonry feed */
     '.ll-x .ll-cols{column-count:4;column-gap:14px}',
@@ -499,12 +497,26 @@
     '.ll-x .ll-end b{display:block;color:var(--ink);font:800 20px Georgia,serif;margin-bottom:4px}',
     '.ll-x .ll-more{all:unset;cursor:pointer;display:block;margin:10px auto 0;padding:11px 20px;border-radius:999px;border:1px solid var(--line);font-weight:700;font-size:14px}',
     '.ll-x .ll-empty{padding:30px;text-align:center;color:var(--muted)}',
+    /* collection slicer: the homepage's story circles in one scrolling row, arrows on desktop */
+    '.ll-x .ll-srow{position:relative}',
+    '.ll-x .ll-srow .ll-stories{scroll-behavior:smooth}',
+    '.ll-x .ll-srow .ll-story b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:76px}',
+    '.ll-x .ll-story.off{opacity:.35;cursor:default}',
+    '.ll-x .ll-arw{all:unset;cursor:pointer;position:absolute;top:33px;z-index:2;width:34px;height:34px;border-radius:50%;display:none;place-items:center;background:rgba(20,26,38,.94);border:1px solid var(--line);color:var(--ink);font-size:22px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.45)}',
+    '.ll-x .ll-arw.l{left:-8px}.ll-x .ll-arw.r{right:-8px}',
+    '.ll-x .ll-srow.can-l .ll-arw.l,.ll-x .ll-srow.can-r .ll-arw.r{display:grid}',
+    '.ll-x .ll-arw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}',
+    '@media(hover:none){.ll-x .ll-srow .ll-arw{display:none}}',
+    '.ll-x .ll-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px}',
+    '.ll-x .ll-meta .ll-count{margin:0 auto 0 0}',
+    '.ll-x .ll-meta .ll-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;font-size:12.5px}',
+    '.ll-x .ll-chip input{margin:0;accent-color:var(--accent)}',
+    '.ll-x .ll-meta select{min-height:32px;padding:5px 10px;font-size:13px;border-radius:999px}',
+    '.ll-x .ll-clr{all:unset;cursor:pointer;color:var(--muted);font-size:12.5px;font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:4px 2px}',
+    '.ll-x .ll-clr:hover{color:var(--ink)}',
+    '.ll-x .ll-bar select{max-width:210px}',
+    '@media(max-width:560px){.ll-x .ll-bar select{flex:1 1 calc(50% - 4px);min-width:0;max-width:none}}',
     /* collection grid */
-    '.ll-x .ll-brands{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}',
-    '.ll-x .ll-brand{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:13px;font-weight:600;line-height:1.2}',
-    '.ll-x .ll-brand img{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#fff;flex:0 0 auto}',
-    '.ll-x .ll-brand small{display:block;color:var(--muted);font-weight:500}',
-    '.ll-x .ll-brand[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}',
     '.ll-x .ll-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}',
     '@media(max-width:560px){.ll-x .ll-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}',
     '.ll-x .ll-grid .ll-post{margin:0;display:flex;flex-direction:column}',
@@ -783,35 +795,112 @@
     }).catch(function () { mount.innerHTML = ''; mount.style.display = 'none'; });
   }
 
+  /* WHICH ROW OF CIRCLES. The collection page wears the homepage's story circles (owner, 2 Nov
+   * 2026: "use the main legalleafmarket.shop gallery pills"), not the 99-card brand wall and four
+   * chip walls it had, which ran 1,500px before the first product. One row of circles, picked per
+   * collection: shelves when the collection spans several (Shop all, Accessories, Herbal Leaf),
+   * else product types when those split it (Nicotia: pouches, cigars, wraps), else brands (Bongs
+   * & Rigs, Grinders, Pipes, Vaporizers). A field is skipped when one value holds 85% of it (Parts
+   * & Tools is 96% one shelf). Every other facet is a dropdown in the bar. */
+  function pillField(all) {
+    function split(get) {
+      var c = {}; all.forEach(function (x) { var v = get(x); if (v) c[v] = (c[v] || 0) + 1; });
+      var n = Object.keys(c).length, top = 0; for (var k in c) if (c[k] > top) top = c[k];
+      return { n: n, top: top / all.length };
+    }
+    var lane = split(function (x) { return x.lane; });
+    if (lane.n >= 3 && lane.top <= 0.85) return 'lane';
+    var cat = split(function (x) { return x.cat; });
+    if (cat.n >= 3 && cat.top <= 0.85) return 'cat';
+    if (split(function (x) { return x.vendor; }).n >= 2) return 'brand';
+    if (cat.n >= 2) return 'cat';
+    return '';
+  }
+
   function renderSlicer(mount, all, title) {
     var P = new URLSearchParams(location.search);
     var st = {
-      brand: P.get('ll_brand') || '', cat: P.get('ll_cat') || '', strength: P.get('ll_str') || '', flavor: P.get('ll_flv') || '',
+      lane: P.get('ll_shelf') || '', brand: P.get('ll_brand') || '', cat: P.get('ll_cat') || '', strength: P.get('ll_str') || '', flavor: P.get('ll_flv') || '',
       price: P.get('ll_price') || '', q: P.get('ll_q') || '', sort: P.get('ll_sort') || 'featured',
       sale: P.get('ll_sale') === '1', stock: P.get('ll_all') !== '1', shown: 36
     };
-    var anyStrength = all.some(function (x) { return x.strength.length; });
-    var anyFlavor = all.some(function (x) { return x.flavor.length; });
+    function valOf(x, field) { return field === 'brand' ? [x.vendor] : field === 'cat' ? [x.cat] : field === 'lane' ? [x.lane] : x[field]; }
+    function distinct(field) { var c = {}; all.forEach(function (x) { valOf(x, field).forEach(function (v) { if (v) c[v] = 1; }); }); return Object.keys(c).length; }
+    /* strength and flavor are variant options on a handful of CBD items (5 and 16 of 1,728 on
+     * 2 Nov 2026): a dropdown only where at least a tenth of the collection has them */
+    function covers(field) { return all.filter(function (x) { return valOf(x, field).length; }).length / all.length; }
+
+    /* the circles: built once, so the row never jumps; paint() only presses and dims them */
+    var pf = pillField(all);
+    var pills = [];
+    if (pf) {
+      var tally = {}; all.forEach(function (x) { valOf(x, pf).forEach(function (v) { if (v) tally[v] = (tally[v] || 0) + 1; }); });
+      pills = pf === 'lane' ? LANES.filter(function (l) { return tally[l.k]; }).map(function (l) { return l.k; })
+        : Object.keys(tally).sort(function (a, b) { return tally[b] - tally[a] || a.localeCompare(b); });
+    }
+    /* a circle's face: a hand pick if the shelf has one, else the first in-stock photo */
+    function faceOf(v) {
+      var best = null, rank = 1e9;
+      all.forEach(function (x) {
+        if (!x.img || valOf(x, pf).indexOf(v) < 0) return;
+        var r = (PICK_RANK[x.handle] != null ? PICK_RANK[x.handle] : 5000) + (x.stock ? 0 : 10000);
+        if (r < rank) { rank = r; best = x; }
+      });
+      return best ? best.img : '';
+    }
+    function pillName(v) { return pf === 'lane' ? LANE_NAME[v] || v : v; }
+    var rowLabel = pf === 'lane' ? 'Shelves' : pf === 'cat' ? 'Categories' : 'Brands';
+    var storyHTML = pf ? '<div class="ll-srow"><button class="ll-arw l" type="button" tabindex="-1" aria-label="Scroll left">&#8249;</button>' +
+      '<div class="ll-stories" role="toolbar" aria-label="' + rowLabel + '">' +
+      '<button class="ll-story" type="button" data-k="' + pf + '" data-v="" aria-pressed="true"><span class="r"><i style="background:linear-gradient(135deg,#f0b93c,#8b5cf6)"></i></span><b>All</b></button>' +
+      pills.map(function (v) {
+        var f = faceOf(v);
+        return '<button class="ll-story" type="button" data-k="' + pf + '" data-v="' + esc(v) + '" aria-pressed="false"><span class="r">' +
+          (f ? '<img alt="" loading="lazy" src="' + esc(img(f, 160)) + '">' : '<i style="background:#1b2440"></i>') + '</span><b>' + esc(pillName(v)) + '</b></button>';
+      }).join('') + '</div><button class="ll-arw r" type="button" tabindex="-1" aria-label="Scroll right">&#8250;</button></div>' : '';
+
+    /* every other facet is a dropdown, shown only when the collection has a choice to make */
+    var DROPS = [['cat', 'All types'], ['brand', 'All brands'], ['strength', 'Any strength'], ['flavor', 'Any flavor']]
+      .filter(function (d) { return d[0] !== pf && distinct(d[0]) >= 2 && (d[0] === 'cat' || d[0] === 'brand' || st[d[0]] || covers(d[0]) >= 0.1); });
 
     /* data-heading="off" when the theme's own Heading section already prints the collection title
      * and description above the mount (Horizon's collection template does). */
     var heading = mount.getAttribute('data-heading') === 'off' ? '' : '<p class="ll-kicker">Shop</p><h2 class="ll-h">' + esc(title) + '</h2>';
-    mount.innerHTML = heading +
+    mount.innerHTML = heading + storyHTML +
       '<div class="ll-bar">' +
       '<input type="search" placeholder="Search ' + esc(title) + '" aria-label="Search" value="' + esc(st.q) + '">' +
+      DROPS.map(function (d) { return '<select data-f="' + d[0] + '" aria-label="' + esc(d[1].replace(/^(All|Any) /, '')) + '"></select>'; }).join('') +
       '<select data-f="price" aria-label="Price"><option value="">Any price</option><option value="0-25">Under $25</option><option value="25-50">$25 to $50</option><option value="50-100">$50 to $100</option><option value="100-250">$100 to $250</option><option value="250-99999">$250 and up</option></select>' +
-      '<select data-f="sort" aria-label="Sort"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="new">Newest</option><option value="az">A to Z</option></select>' +
-      '<label class="ll-chip" style="display:inline-flex;gap:6px"><input type="checkbox" data-t="sale"' + (st.sale ? ' checked' : '') + '> On sale</label>' +
-      '<label class="ll-chip" style="display:inline-flex;gap:6px"><input type="checkbox" data-t="stock"' + (st.stock ? ' checked' : '') + '> In stock</label>' +
-      '<button class="ll-chip" type="button" data-clear>Clear all</button>' +
       '</div>' +
-      '<div class="ll-facets"></div><p class="ll-count"></p><div class="ll-grid"></div><div class="ll-foot"></div>';
+      '<div class="ll-meta"><p class="ll-count"></p>' +
+      '<label class="ll-chip"><input type="checkbox" data-t="stock"' + (st.stock ? ' checked' : '') + '> In stock</label>' +
+      '<label class="ll-chip"><input type="checkbox" data-t="sale"' + (st.sale ? ' checked' : '') + '> On sale</label>' +
+      '<select data-f="sort" aria-label="Sort"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="new">Newest</option><option value="az">A to Z</option></select>' +
+      '<button class="ll-clr" type="button" data-clear>Clear all</button>' +
+      '</div>' +
+      '<div class="ll-grid"></div><div class="ll-foot"></div>';
     mount.querySelector('[data-f=price]').value = st.price;
     mount.querySelector('[data-f=sort]').value = st.sort;
+
+    var row = mount.querySelector('.ll-srow'), strip = row && row.querySelector('.ll-stories');
+    function arrows() {
+      if (!strip) return;
+      row.classList.toggle('can-l', strip.scrollLeft > 4);
+      row.classList.toggle('can-r', strip.scrollLeft + strip.clientWidth < strip.scrollWidth - 4);
+    }
+    if (strip) {
+      strip.addEventListener('scroll', arrows, { passive: true });
+      window.addEventListener('resize', arrows);
+      /* a shared link with a circle chosen opens with that circle in view */
+      var on = [].filter.call(strip.querySelectorAll('.ll-story'), function (b) { return st[pf] && b.getAttribute('data-v') === st[pf]; })[0];
+      if (on && on.offsetLeft > strip.clientWidth - 80) { strip.style.scrollBehavior = 'auto'; strip.scrollLeft = on.offsetLeft - strip.clientWidth / 2 + 38; strip.style.scrollBehavior = ''; }
+      setTimeout(arrows, 0);
+    }
 
     function pass(x, skip) {
       if (st.stock && !x.stock) return false;
       if (st.sale && !x.sale) return false;
+      if (skip !== 'lane' && st.lane && x.lane !== st.lane) return false;
       if (skip !== 'brand' && st.brand && x.vendor !== st.brand) return false;
       if (skip !== 'cat' && st.cat && x.cat !== st.cat) return false;
       if (skip !== 'strength' && st.strength && x.strength.indexOf(st.strength) < 0) return false;
@@ -824,64 +913,63 @@
       var c = {};
       all.forEach(function (x) {
         if (!pass(x, field)) return;
-        var vals = field === 'brand' ? [x.vendor] : field === 'cat' ? [x.cat] : x[field];
-        vals.forEach(function (v) { if (v) c[v] = (c[v] || 0) + 1; });
+        valOf(x, field).forEach(function (v) { if (v) c[v] = (c[v] || 0) + 1; });
       });
       return c;
     }
-    function chipRow(field, label, cur) {
+    function fillDrop(sel, field, anyLabel) {
       var c = counts(field), keys = Object.keys(c);
-      if (cur && keys.indexOf(cur) < 0) keys.push(cur);
-      if (keys.length < 2 && !cur) return '';
+      if (st[field] && keys.indexOf(st[field]) < 0) keys.push(st[field]);
       keys.sort(function (a, b) { return field === 'strength' ? (parseFloat(a) || 0) - (parseFloat(b) || 0) : (c[b] || 0) - (c[a] || 0) || a.localeCompare(b); });
-      return '<p class="ll-lab">' + label + '</p><div class="ll-chips">' +
-        '<button class="ll-chip" type="button" data-k="' + field + '" data-v="" aria-pressed="' + (!cur) + '">All</button>' +
-        keys.map(function (k) { return '<button class="ll-chip" type="button" data-k="' + field + '" data-v="' + esc(k) + '" aria-pressed="' + (k === cur) + '">' + esc(k) + '<small>' + (c[k] || 0) + '</small></button>'; }).join('') + '</div>';
+      sel.innerHTML = '<option value="">' + anyLabel + '</option>' +
+        keys.map(function (k) { return '<option value="' + esc(k) + '">' + esc(k) + ' (' + (c[k] || 0) + ')</option>'; }).join('');
+      sel.value = st[field];
     }
-    function brandRow() {
-      var c = counts('brand'), keys = Object.keys(c);
-      if (st.brand && keys.indexOf(st.brand) < 0) keys.push(st.brand);
-      if (keys.length < 2 && !st.brand) return '';
-      keys.sort(function (a, b) { return (c[b] || 0) - (c[a] || 0) || a.localeCompare(b); });
-      var face = {}; all.forEach(function (x) { if (!face[x.vendor] && x.img) face[x.vendor] = x.img; });
-      return '<p class="ll-lab">Brands</p><div class="ll-brands">' + keys.map(function (k) {
-        return '<button class="ll-brand" type="button" data-k="brand" data-v="' + esc(k) + '" aria-pressed="' + (k === st.brand) + '">' +
-          (face[k] ? '<img alt="" loading="lazy" src="' + esc(img(face[k], 80)) + '">' : '') + '<span>' + esc(k) + '<small>' + (c[k] || 0) + ' items</small></span></button>';
-      }).join('') + '</div>';
+    function paintPills() {
+      if (!strip) return;
+      var c = counts(pf);
+      strip.querySelectorAll('.ll-story').forEach(function (b) {
+        var v = b.getAttribute('data-v'), n = v ? c[v] || 0 : 0, pressed = v ? st[pf] === v : !st[pf];
+        b.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+        if (!v) return;
+        var dead = !n && !pressed;
+        b.classList.toggle('off', dead); b.disabled = dead;
+        b.title = pillName(v) + ' · ' + n + (n === 1 ? ' item' : ' items');
+      });
     }
     function syncUrl() {
       var u = new URL(location.href);
-      [['ll_brand', st.brand], ['ll_cat', st.cat], ['ll_str', st.strength], ['ll_flv', st.flavor], ['ll_price', st.price], ['ll_q', st.q],
+      [['ll_shelf', st.lane], ['ll_brand', st.brand], ['ll_cat', st.cat], ['ll_str', st.strength], ['ll_flv', st.flavor], ['ll_price', st.price], ['ll_q', st.q],
         ['ll_sort', st.sort === 'featured' ? '' : st.sort], ['ll_sale', st.sale ? '1' : ''], ['ll_all', st.stock ? '' : '1']]
         .forEach(function (p) { if (p[1]) u.searchParams.set(p[0], p[1]); else u.searchParams.delete(p[0]); });
       history.replaceState(null, '', u.toString());
     }
     function paint() {
-      var facets = brandRow() + chipRow('cat', 'Category', st.cat) +
-        (anyStrength ? chipRow('strength', 'Strength', st.strength) : '') +
-        (anyFlavor ? chipRow('flavor', 'Flavor', st.flavor) : '');
-      mount.querySelector('.ll-facets').innerHTML = facets;
+      paintPills();
+      DROPS.forEach(function (d) { fillDrop(mount.querySelector('select[data-f="' + d[0] + '"]'), d[0], d[1]); });
       var r = all.filter(function (x) { return pass(x); });
       if (st.sort === 'low') r.sort(function (a, b) { return a.price - b.price; });
       if (st.sort === 'high') r.sort(function (a, b) { return b.price - a.price; });
       if (st.sort === 'new') r.sort(function (a, b) { return b.created - a.created; });
       if (st.sort === 'az') r.sort(function (a, b) { return a.title.localeCompare(b.title); });
-      mount.querySelector('.ll-count').textContent = r.length + ' of ' + all.length + ' items';
+      mount.querySelector('.ll-count').textContent = r.length === all.length ? all.length + ' items' : r.length + ' of ' + all.length + ' items';
       mount.querySelector('.ll-grid').innerHTML = r.length ? r.slice(0, st.shown).map(function (x) { return postHTML(x, { tag: false }); }).join('')
         : '<p class="ll-empty" style="grid-column:1/-1">Nothing matches those filters. <button class="ll-chip" type="button" data-clear>Clear all</button></p>';
       mount.querySelector('.ll-foot').innerHTML = r.length > st.shown ? '<button class="ll-more" type="button">Show more (' + (r.length - st.shown) + ')</button>' : '';
       syncUrl();
     }
     function clearAll() {
-      st.brand = st.cat = st.strength = st.flavor = st.price = st.q = ''; st.sort = 'featured'; st.sale = false; st.stock = true; st.shown = 36;
+      st.lane = st.brand = st.cat = st.strength = st.flavor = st.price = st.q = ''; st.sort = 'featured'; st.sale = false; st.stock = true; st.shown = 36;
       mount.querySelector('input[type=search]').value = ''; mount.querySelector('[data-f=price]').value = ''; mount.querySelector('[data-f=sort]').value = 'featured';
       mount.querySelector('[data-t=sale]').checked = false; mount.querySelector('[data-t=stock]').checked = true;
       paint();
     }
     mount.addEventListener('click', function (e) {
+      var a = e.target.closest('.ll-arw');
+      if (a && strip) { strip.scrollBy({ left: (a.classList.contains('l') ? -1 : 1) * Math.max(160, strip.clientWidth * 0.8), behavior: 'smooth' }); return; }
       if (e.target.closest('[data-clear]')) { clearAll(); return; }
       var c = e.target.closest('[data-k]');
-      if (c) { var k = c.getAttribute('data-k'), v = c.getAttribute('data-v'); st[k] = st[k] === v ? '' : v; st.shown = 36; paint(); return; }
+      if (c) { if (c.disabled) return; var k = c.getAttribute('data-k'), v = c.getAttribute('data-v'); st[k] = st[k] === v ? '' : v; st.shown = 36; paint(); return; }
       if (e.target.closest('.ll-more')) { st.shown += 36; paint(); }
     });
     var t;
