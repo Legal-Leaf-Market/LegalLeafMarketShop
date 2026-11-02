@@ -44,7 +44,7 @@
 # takes the dispensary page down with the rest. A list only touches what it names.
 # A NEW PAGE IN public/ IS SERVED UNTIL IT IS ADDED HERE.
 #
-# KEPT UP, deliberately: /api/* and /p/* (function), /admin*, /shop-dispensary.js,
+# KEPT UP, deliberately: /api/* and /p/* (function), /admin*, /shop-dispensary.js, /ll-shop.js,
 # /js /css /img /assets, and the two operator tools /ig-studio and
 # /coldwater-collect (noindex, used by the owner, not shoppers).
 #
