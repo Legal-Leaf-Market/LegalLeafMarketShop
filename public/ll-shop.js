@@ -5,11 +5,19 @@
  *
  *   Homepage, under the Dispensary / Herbal Leaf / Nicotia cards:
  *     <div id="ll-feed"></div>
- *     <script src="https://legalleafmarket.shop/ll-shop.js" defer></script>
+ *     <script src="https://cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@<commit>/public/ll-shop.js" defer></script>
  *
  *   Collection template, above the main product grid:
  *     <div id="ll-slicer" data-collection="{{ collection.handle }}" data-title="{{ collection.title | escape }}"></div>
- *     <script src="https://legalleafmarket.shop/ll-shop.js" defer></script>
+ *     <script src="(the same src)" defer></script>
+ *
+ * WHY jsDelivr, AND WHY A COMMIT. On 2 Nov 2026 Netlify paused production deploys for the team
+ * (out of plan credits), so https://legalleafmarket.shop/ll-shop.js answered 404 while the merge
+ * that added it sat on main. The repo is public, so jsDelivr serves this file straight from
+ * GitHub. Pin the src to a commit: a pinned file never changes under the theme, so a live page
+ * only moves when somebody edits the src. To ship a change: merge it, then put the new commit in
+ * BOTH theme sections. Once Netlify deploys again the src can go back to
+ * https://legalleafmarket.shop/ll-shop.js.
  *
  * WHAT IT READS. The storefront's own public /products.json (or /collections/<h>/products.json),
  * same origin, paged at 250. Price and stock are read live on every load, so the rules below are
@@ -21,6 +29,20 @@
  * teas, a few CBD things, grinders, jars and glass, mixed so no shelf takes over a screen.
  * PICKS is the hand-curated list (by product handle): those lead, the rules fill the rest.
  *
+ * WHAT THE FIRST LIVE RUN TAUGHT (2 Nov 2026, 1,728 products). The rules alone, guessing shelves
+ * from title words, opened with CBD capsules as the cover story, filled "Herbal Leaf" with vintage
+ * ashtrays (the herb shop that sells them is tagged herbal-leaf), showed no apothecary jar and no
+ * real glass, and let "Mystery Weed Box ... SUPERANGEBOT" and two vape mouthpieces onto the front
+ * page. Four fixes, each of which was needed:
+ *   - the shelf comes from Shopify's product_type (TYPE_LANE), which the catalogue fills cleanly,
+ *     and only a weak type (Accessories, Incense & Ritual, Storage & Trays) is overruled by what
+ *     the thing plainly is: an apothecary jar is a jar, a "Secret Stash" tray is a tray;
+ *   - hand PICKS, chosen by looking at the photos, plus a COVERS list that rotates daily;
+ *   - caps per maker and per near-identical family, so one brand's twelve ashtrays or eight
+ *     colourways of one bong cannot wall up the page;
+ *   - FEED_SKIP: never on the front page, whatever the score (parts, multipacks, THC gummies,
+ *     marijuana wording, merch). Collections still show all of it; this is the front page only.
+ *
  * FAILS OPEN. If the catalogue cannot be read, the feed renders nothing and the collection page
  * keeps the theme's own grid (it is only hidden after the slicers have rendered).
  */
@@ -29,12 +51,52 @@
   if (window.__llShop) return;
   window.__llShop = 1;
 
-  /* Hand picks, by Shopify product handle, in the order they should lead. Add Ada-style picks here. */
-  var PICKS = [];
+  /* Hand picks, by Shopify product handle, chosen from the live catalogue on 2 Nov 2026 by looking
+   * at the photos rather than the titles. A pick leads its shelf (the rhythm below still mixes
+   * shelves, and the daily shuffle reorders picks among themselves); a pick that sells out, goes
+   * over the price rules or is deleted simply drops out and the rules fill its place. Add
+   * Ada-style picks here. */
+  var PICKS = [
+    /* glass: one big piece, then character */
+    'll-chill-chill-limited-edition-rainbow-mirror', 'll-gg-gg-lamp', 'll-gg-gg-saki-bottle',
+    'll-grasscity-la-pipes-mini-sherlock-with-slyme-cane-and-dichro', 'll-grasscity-empire-glassworks-bomber-spoon-pipe',
+    'ceramic-cat-pipe-pipe-for-herbs', 'lookah-statue-of-liberty-ceramic-bong', 'll-grasscity-wulf-mods-curv-hand-pipe',
+    /* Herbal Leaf: the way in to smoking blends */
+    'whole-blue-lotus-flowers-extra-large', 'kaleidoscope', 'flower-power-sampler', 'coneheads', 'blue-sky', 'mullein',
+    /* jars and stash */
+    '10-oz-glass-apothecary-jar-with-airtight-bamboo-lid', 'll-chill-re-cache-storage-container-matte-black',
+    'll-grasscity-famous-x-ceramic-stash-jar-with-lid-black', 'll-grasscity-jay-and-silent-bob-glass-stash-jar-buddy-christ',
+    /* grinders */
+    'll-grasscity-cheech-chong-s-up-in-smoke-grinder-old', 'll-grasscity-the-beach-bum-4-part-magnetic-aluminum-grinder-moondog-silver',
+    'revolution-herb-mill', 'herbs-only-wood-grinder', 'll-zamgrinders-small-4-piece-stainless-steel-grinder',
+    /* rolling */
+    'll-grasscity-cheech-chong-s-40th-anniversary-aluminum-rolling-tray-red', 'rose-cone', 'll-grasscity-famous-design-space-rolling-tray',
+    'raw-classic-pre-rolled-cone-6-piece', 'leopard-print-rolling-papers',
+    /* incense and ash */
+    'zodiac-sun-ashtray-ceremonial-bowl', 'blue-lotus-ashtray', 'nepali-sandalwood-rope-incense-and-burner',
+    'soapstone-smudge-bowl', 'tsubota-pearl-queue-lighter', 'agarwood',
+    /* a few CBD things, all THC-free or plain CBD */
+    'sleep-25mg-thc-free-cbd-gummies', 'cbd-oil-drops', 'rapid-relief-cbd-cream', 'cbd-gummies'
+  ];
+  var PICK_RANK = {}; PICKS.forEach(function (h, i) { PICK_RANK[h] = i; });
+
+  /* The cover story rotates daily among these, each with its own line of copy. Every one is a photo
+   * that holds up at full width. Product facts only: no health or effect claims. */
+  var COVERS = [
+    { h: 'whole-blue-lotus-flowers-extra-large', d: 'Whole flowers, petals and all. Steep them for tea or crumble them into a blend.' },
+    { h: 'll-chill-chill-limited-edition-rainbow-mirror', d: 'Steel that will not shatter, in a finish nobody misses. The one big piece on this page.' },
+    { h: 'zodiac-sun-ashtray-ceremonial-bowl', d: 'A vintage sun dish that works as an ashtray or a ceremonial bowl.' },
+    { h: '10-oz-glass-apothecary-jar-with-airtight-bamboo-lid', d: 'Ten ounces of glass under an airtight bamboo lid. Keeps a blend fresh and looks good on the shelf.' },
+    { h: 'll-gg-gg-lamp', d: 'A small Greek Glass rig shaped like a lava lamp.' },
+    { h: 'kaleidoscope', d: 'Red, white and blue lotus in one gourmet blend. Roll it or steep it.' },
+    { h: 'll-grasscity-la-pipes-mini-sherlock-with-slyme-cane-and-dichro', d: 'Hand-blown with slyme cane and dichro, and small enough for a pocket.' }
+  ];
 
   var MAX_PRICE = 250;
   var GLASS_ONLY_OVER = 150;
   var FEED_SIZE = 60;
+  var VENDOR_CAP = 5;       /* rules-filled cards per maker; picks are exempt */
+  var VENDOR_LANE_CAP = 2;  /* rules-filled cards per maker per shelf: no wall of one shop's ashtrays */
 
   /* ---------------- shared helpers ---------------- */
   function esc(s) {
@@ -65,26 +127,59 @@
     return page(1);
   }
 
+  /* Shelves. `re` is only the last resort for a product with no product_type; plurals are matched
+   * on purpose ("Grinders" and "Bongs & Rigs" both missed a singular-only test). */
   var LANES = [
-    { k: 'glass', name: 'Glass', re: /\b(bong|water ?pipe|bubbler|beaker|rig|dab|recycler|percolator|hand ?pipe|spoon pipe|chillum|one ?hitter|steamroller|banger|carb cap|ash ?catcher|downstem|bowl piece|glass pipe)\b/ },
-    { k: 'herbal', name: 'Herbal Leaf', re: /\b(herbal|smoking blend|blend|tea|botanical|mullein|damiana|lavender|chamomile|raspberry leaf|mugwort|blue lotus)\b/ },
-    { k: 'cbd', name: 'CBD', re: /\b(cbd|cbg|cbn|hemp)\b/ },
-    { k: 'storage', name: 'Jars & Stash', re: /\b(jar|apothecary|stash|container|canister|humidor|tin|storage|case|box)\b/ },
-    { k: 'grinder', name: 'Grinders', re: /\b(grinder|crusher|mill)\b/ },
-    { k: 'rolling', name: 'Rolling', re: /\b(paper|papers|cone|cones|rolling|roller|tray|tips|filter|wrap|wraps)\b/ },
-    { k: 'vape', name: 'Vapes', re: /\b(vape|vaporizer|e-?rig|battery|510|cartridge|pod)\b/ },
-    { k: 'nicotia', name: 'Nicotia', re: /\b(nicotine|pouch|pouches|snus|cigar|cigars|cigarillo|tobacco)\b/ },
+    { k: 'glass', name: 'Glass', re: /\b(bongs?|water ?pipes?|bubblers?|beakers?|rigs?|recyclers?|hand ?pipes?|spoon pipes?|chillums?|one ?hitters?|steamrollers?|glass pipes?|pipes?)\b/ },
+    { k: 'herbal', name: 'Herbal Leaf', re: /\b(herbal|smoking blends?|blends?|teas?|botanical|mullein|damiana|lavender|chamomile|raspberry leaf|mugwort|lotus)\b/ },
+    { k: 'storage', name: 'Jars & Stash', re: /\b(jars?|apothecary|stash|containers?|canisters?|storage)\b/ },
+    { k: 'grinder', name: 'Grinders', re: /\b(grinders?|crushers?|herb mills?)\b/ },
+    { k: 'rolling', name: 'Rolling', re: /\b(papers?|cones?|rolling|rollers?|trays?|tips)\b/ },
+    { k: 'ritual', name: 'Incense & Ash', re: /\b(incense|ashtrays?|smudge|sage|palo santo|resin|burners?|lighters?)\b/ },
+    { k: 'cbd', name: 'CBD', re: /\b(cbd|cbg|cbn)\b/ },
+    { k: 'vape', name: 'Vapes', re: /\b(vapes?|vaporizers?|e-?rigs?|nectar collectors?)\b/ },
+    { k: 'nicotia', name: 'Nicotia', re: /\b(nicotine|pouch|pouches|snus|cigars?|cigarillos?|tobacco|humidors?)\b/ },
     { k: 'gear', name: 'Gear', re: /./ }
   ];
   var LANE_NAME = {}; LANES.forEach(function (l) { LANE_NAME[l.k] = l.name; });
+
+  /* Shopify product_type -> shelf. The catalogue fills product_type cleanly (2 Nov 2026), so this
+   * decides, and the title only breaks a tie for the WEAK types below. */
+  var TYPE_LANE = {
+    'bongs & rigs': 'glass', 'bongs': 'glass', 'pipes': 'glass', 'dab rigs': 'glass',
+    'herbal smokes': 'herbal', 'herbal blends': 'herbal', 'single herbs': 'herbal', 'herbal bundles': 'herbal',
+    'herbal teas': 'herbal', 'herbal wellness': 'herbal', 'herbal diffusers': 'herbal',
+    'grinders': 'grinder', 'rolling': 'rolling', 'storage & trays': 'storage', 'incense & ritual': 'ritual',
+    'cbd edibles': 'cbd', 'cbd oils & capsules': 'cbd', 'cbd topicals': 'cbd', 'cbd drinks': 'cbd',
+    'vaporizers': 'vape',
+    'nicotine pouches': 'nicotia', 'nicotine-free pouches': 'nicotia', 'nicotine long cut': 'nicotia', 'cigars': 'nicotia', 'tobacco wraps': 'nicotia',
+    'accessories': 'gear', 'parts & tools': 'gear'
+  };
+  /* A weak type is a bin, not a shelf: an herb shop files its apothecary jars under Incense &
+   * Ritual, a stash brand files rolling trays under Storage & Trays. For those, what the thing
+   * plainly IS wins, in this order (a cigar ashtray is Nicotia before it is an ashtray; a "Secret
+   * Stash Rolling Tray" is a tray before it is stash). */
+  var WEAK = { gear: 1, ritual: 1, storage: 1, rolling: 1 };
+  var WHAT = [
+    ['nicotia', /\b(cigars?|cigarillos?|humidors?)\b/],
+    ['rolling', /\b(rolling trays?|rolling tray|trays?)\b/],
+    ['grinder', /\b(grinders?|herb mills?|crushers?)\b/],
+    ['storage', /\b(jars?|apothecary|stash|containers?|canisters?|re ?cache)\b/],
+    ['ritual', /\b(ashtrays?|ash tray|incense|smudge|sage|palo santo|resin|burners?|lighters?|wick)\b/],
+    ['rolling', /\b(papers?|cones?|rolling)\b/]
+  ];
 
   function textOf(p) {
     return low([p.title, p.product_type, p.vendor, (p.tags || []).join(' ')].join(' '));
   }
   function laneOf(p) {
     var tags = (p.tags || []).map(low);
-    if (tags.indexOf('nicotia') > -1) return 'nicotia';
-    if (tags.indexOf('herbal-leaf') > -1) return /\bcbd|cbg\b/.test(textOf(p)) ? 'cbd' : 'herbal';
+    var title = low(p.title);
+    var byType = TYPE_LANE[low(p.product_type)];
+    if (byType && !WEAK[byType]) return byType;
+    if (tags.indexOf('nicotia') > -1 || tags.indexOf('cigar-accessories') > -1) return 'nicotia';
+    for (var w = 0; w < WHAT.length; w++) if (WHAT[w][1].test(title)) return WHAT[w][0];
+    if (byType) return byType;
     var t = textOf(p);
     for (var i = 0; i < LANES.length; i++) if (LANES[i].re.test(t)) return LANES[i].k;
     return 'gear';
@@ -101,67 +196,149 @@
     var pick = (live.length ? live : vs).slice().sort(function (a, b) { return a.price - b.price; })[0];
     if (!pick) return null;
     var images = (p.images || []).map(function (i) { return i.src; });
+    var first = (p.images || [])[0] || {};
+    var ar = first.width && first.height ? first.width / first.height : 1;
     return {
       p: p, id: p.id, handle: p.handle, title: p.title, vendor: p.vendor || '', type: p.product_type || '',
       tags: (p.tags || []).map(low), lane: laneOf(p), vs: vs, v: pick, price: pick.price,
       sale: pick.cmp > pick.price, stock: live.length > 0, img: images[0] || '', img2: images[1] || '',
+      nImg: images.length, ar: Math.max(0.75, Math.min(1.34, ar)),
       text: textOf(p), created: Date.parse(p.published_at || p.created_at || '') || 0,
       options: (p.options || []).map(function (o) { return { name: o.name, pos: o.position, values: o.values }; })
     };
   }
 
-  /* A bulk lot is a box of things priced as one: "100 Cigars", "Case of 24", "50 pack". */
+  /* A bulk lot is a box of things priced as one: "100 Cigars", "Case of 24", "50 pack". A capacity
+   * is not a lot: "Humidor ... Holds 20-30 Cigars" is one humidor, so capacity phrases are struck
+   * before the count is read. */
+  var CAPACITY = /\b(holds?|hold up to|up to|for up to|fits?|capacity(?: of)?|stores?)\s+(?:about\s+)?\d+(?:\s*-\s*\d+)?\s*(?:pcs\s+)?(?:cigars?|sticks?|pcs|joints?|cones?)\b/g;
   function isBulk(x) {
-    var t = low(x.title + ' ' + x.v.title);
+    var t = low(x.title + ' ' + x.v.title).replace(CAPACITY, ' ');
     var m = t.match(/\b(\d{2,4})\s*(?:-|\s)?(?:ct|count|pc|pcs|pack|pk|cigars?|sticks?|units?|jars?|tins?)\b/);
     if (m && parseInt(m[1], 10) >= 20) return true;
+    if (/\b([4-9]|\d{2,})\s*-?\s*(?:pcs|pc|pk)\b/.test(t)) return true;   /* "6PCS Pumpkin Grinder": six grinders */
     return /\b(case of|box of \d{2,}|wholesale|bulk|master case|display box)\b/.test(t);
+  }
+
+  /* Never on the front page, whatever the score. Tested against title + handle only (tags carry
+   * shelf names like "Bongs & Rigs" that would trip these). Every line is something that got there.
+   * Collections are unaffected: this is the front page's editorial line, not a delisting. */
+  var FEED_SKIP_TYPES = { 'nicotine pouches': 1, 'nicotine-free pouches': 1, 'nicotine long cut': 1, 'parts & tools': 1, 'herbal diffusers': 1 };
+  var FEED_SKIP = [
+    /* Indiana: no marijuana wording on our own shelf (CLAUDE.md, "Indiana is not Michigan") */
+    /\b(weed|ganja|marijuana|cannabis|stoner|420)\b/,
+    /* importer and marketplace junk */
+    /\b(mystery|superangebot|geschenkgutschein|gutschein|gravur|edelstahl|gift ?card|package protection|savedby|test product|deposit|insurance)\b/,
+    /* merch and novelties that are not the shop */
+    /\b(stickers?|brooch|keychains?|t-?shirt|hoodie|dice|card dealer|shuffler|ice cube|penis|genitals?)\b/,
+    /* parts: right for someone who knows exactly what they need, wrong for a scroll */
+    /\b(replacement|mouth ?pieces?|carbon filters?|coils?|screens?|o-?rings?|cartridges?|510|batter(?:y|ies)|neckpieces?|downstems?|bangers?|quartz|nails?|slides?|carb caps?|spinners?|auto-spinner|slurpers?|attachments?|dry top|bong bowls?|bowl pieces?|ash catchers?|dab tools?|dab straws?|sapphire|ceramic tips?|heating tips?|rolling tip|torch(?:es)?|chamber base)\b/
+  ];
+  var THC = /\bthc\b/, THC_FREE = /\bthc-? ?free\b/;
+  function skipped(x) {
+    if (FEED_SKIP_TYPES[low(x.type)]) return true;
+    var t = low(x.title + ' ' + x.handle.replace(/-/g, ' '));
+    if (THC.test(t) && !THC_FREE.test(t)) return true;   /* "a few CBD things" means CBD, not THC gummies */
+    for (var i = 0; i < FEED_SKIP.length; i++) if (FEED_SKIP[i].test(t)) return true;
+    return false;
   }
   function feedEligible(x) {
     if (!x.stock || !x.img) return false;
     if (x.price > MAX_PRICE) return false;
     if (x.price > GLASS_ONLY_OVER && x.lane !== 'glass') return false;
     if (isBulk(x)) return false;
-    if (/\b(gift ?card|shipping|insurance|deposit|test product)\b/.test(x.text)) return false;
+    if (skipped(x)) return false;
     return true;
   }
 
   /* Things the owner called out as loved on the front page get a nudge, not a guarantee. */
-  var LOVED = /\b(apothecary|glass jar|grinder|smoking blend|herbal blend|tea|cbd|ashtray|rolling tray|mullein|lavender)\b/;
+  var LOVED = /\b(apothecary|glass jar|grinder|smoking blend|herbal blend|lotus|tea|cbd|ashtray|rolling tray|mullein|lavender|incense)\b/;
   function score(x, seed) {
     var s = 0;
-    if (LOVED.test(x.text)) s += 3;
-    if (x.img2) s += 1;
-    if (x.sale) s += 1;
-    if (x.price >= 8 && x.price <= 80) s += 1;      /* the impulse band that makes a feed feel generous */
-    if (x.lane === 'glass' && x.price > GLASS_ONLY_OVER) s += 1; /* the one big piece earns its slot */
+    if (PICK_RANK[x.handle] != null) s += 8;          /* a pick leads its shelf */
+    if (LOVED.test(low(x.title))) s += 2;
+    s += Math.min(x.nImg, 5) * 0.3;                   /* a maker that shot five photos usually shot one good one */
+    if (x.nImg <= 1) s -= 0.8;
+    if (x.sale) s += 0.6;
+    if (x.price >= 8 && x.price <= 80) s += 1;        /* the impulse band that makes a feed feel generous */
+    if (x.price < 4) s -= 1;                          /* a $2 wick belongs in a set, not a post */
     s += (hash(seed + ':' + x.handle) % 1000) / 1000 * 2.5; /* daily freshness, stable within a day */
     return s;
   }
 
-  /* Magazine rhythm: no two neighbours from one shelf, lanes rotate, the weightiest lanes recur. */
-  var RHYTHM = ['glass', 'herbal', 'storage', 'cbd', 'grinder', 'rolling', 'herbal', 'glass', 'nicotia', 'storage', 'gear', 'cbd', 'vape', 'rolling'];
-  var LANE_CAP = { nicotia: 6, vape: 5, gear: 8 };
+  /* Two listings are one family when the same maker names them the same way: eight colourways of
+   * "Chill - Limited Edition - ... Bong", nine "Jay and Silent Bob Rolling Tray | Medium | ...".
+   * A family gets one card. The key is the maker and the shelf plus the first three words of the
+   * title once the maker's own name and anything after a " - ", " | " or "(" are dropped. The
+   * shelf is in it because one licence sells different things under one name: the Cheech & Chong
+   * grinder and the Cheech & Chong tray are not colourways of each other. */
+  var STOP = { the: 1, of: 1, and: 1, a: 1, an: 1, with: 1, for: 1, in: 1, s: 1 };
+  function famKey(x) {
+    var t = low(x.title);
+    var v = low(x.vendor);
+    if (v && t.indexOf(v) > -1) t = t.replace(v, ' ');
+    t = t.split(/\s[|–—-]\s|\(/)[0];
+    var w = t.replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(function (s) { return s && !STOP[s]; });
+    if (!w.length) w = low(x.title).replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(Boolean);
+    return v + ':' + x.lane + ':' + w.slice(0, 3).join(' ');
+  }
+
+  /* Magazine rhythm: no two neighbours from one shelf or one maker, shelves rotate, the weightiest
+   * shelves recur. Nicotia and vapes appear, briefly; they have their own pages. */
+  var RHYTHM = ['glass', 'herbal', 'storage', 'grinder', 'ritual', 'rolling', 'cbd', 'herbal', 'glass', 'ritual', 'storage', 'rolling', 'grinder', 'nicotia', 'herbal', 'gear', 'glass', 'cbd', 'vape'];
+  var LANE_CAP = { nicotia: 2, vape: 2, gear: 4, cbd: 5 };
   function curate(items, seed) {
-    var byHandle = {}; items.forEach(function (x) { byHandle[x.handle] = x; });
-    var used = {}, out = [];
-    PICKS.forEach(function (h) { var x = byHandle[h]; if (x && feedEligible(x) && !used[h]) { used[h] = 1; out.push(x); } });
     var buckets = {};
-    items.filter(function (x) { return feedEligible(x) && !used[x.handle]; })
+    items.filter(feedEligible)
       .map(function (x) { return { x: x, s: score(x, seed) }; })
       .sort(function (a, b) { return b.s - a.s; })
       .forEach(function (r) { (buckets[r.x.lane] = buckets[r.x.lane] || []).push(r.x); });
-    var taken = {}, i = 0, guard = 0;
+    var fam = {}, ven = {}, venLane = {}, seen = {};
+    function room(x) {
+      if (seen[x.handle] || fam[famKey(x)]) return false;
+      if (PICK_RANK[x.handle] != null) return true;
+      if ((ven[x.vendor] || 0) >= VENDOR_CAP) return false;
+      if ((venLane[x.vendor + '|' + x.lane] || 0) >= VENDOR_LANE_CAP) return false;
+      return true;
+    }
+    function nextFrom(b, prev) {
+      var any = -1;
+      for (var k = 0; k < b.length; k++) {
+        if (!room(b[k])) continue;
+        if (!prev || b[k].vendor !== prev.vendor) return k;
+        if (any < 0) any = k;
+      }
+      return any;
+    }
+    var out = [], taken = {}, i = 0, guard = 0;
     var start = hash(seed) % RHYTHM.length;
-    while (out.length < FEED_SIZE && guard++ < FEED_SIZE * RHYTHM.length) {
+    while (out.length < FEED_SIZE && guard++ < FEED_SIZE * RHYTHM.length * 2) {
       var lane = RHYTHM[(start + i++) % RHYTHM.length];
       var b = buckets[lane];
       if (!b || !b.length) continue;
       if ((taken[lane] || 0) >= (LANE_CAP[lane] || 99)) continue;
-      if (out.length && out[out.length - 1].lane === lane) continue;
-      out.push(b.shift()); taken[lane] = (taken[lane] || 0) + 1;
+      var prev = out[out.length - 1];
+      if (prev && prev.lane === lane) continue;
+      var k = nextFrom(b, prev);
+      if (k < 0) { buckets[lane] = []; continue; }
+      var x = b.splice(k, 1)[0];
+      seen[x.handle] = 1; fam[famKey(x)] = 1;
+      ven[x.vendor] = (ven[x.vendor] || 0) + 1;
+      venLane[x.vendor + '|' + x.lane] = (venLane[x.vendor + '|' + x.lane] || 0) + 1;
+      out.push(x); taken[lane] = (taken[lane] || 0) + 1;
     }
     return out;
+  }
+
+  /* Today's cover: the first COVERS entry, counted from a daily offset, that is eligible today. */
+  function pickCover(items, seed) {
+    var byHandle = {}; items.forEach(function (x) { byHandle[x.handle] = x; });
+    var n = COVERS.length, off = hash(seed + ':cover') % n;
+    for (var i = 0; i < n; i++) {
+      var c = COVERS[(off + i) % n], x = byHandle[c.h];
+      if (x && feedEligible(x)) return { x: x, d: c.d };
+    }
+    return null;
   }
 
   function addToCart(id, qty) {
@@ -249,11 +426,17 @@
     '.ll-x .ll-save{all:unset;cursor:pointer;position:absolute;right:8px;bottom:8px;width:32px;height:32px;border-radius:50%;background:rgba(11,15,23,.7);color:#fff;display:grid;place-items:center;font-size:16px}',
     '.ll-x .ll-save[aria-pressed="true"]{color:#ff6b8a}',
     /* cover + editorial cards */
-    '.ll-x .ll-cover{display:grid;grid-template-columns:1.2fr 1fr;gap:0;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;margin:6px 0 18px}',
+    /* the cover shows the whole photo: most are product shots on white, and a bong cropped to a
+       landscape frame loses its top and its base */
+    '.ll-x .ll-cover{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;margin:6px 0 18px}',
     '@media(max-width:760px){.ll-x .ll-cover{grid-template-columns:1fr}}',
-    '.ll-x .ll-cover img{display:block;width:100%;height:100%;max-height:440px;object-fit:cover;background:#fff}',
+    '.ll-x .ll-cover a.ci{display:block;background:#fff}',
+    '.ll-x .ll-cover img{display:block;width:100%;aspect-ratio:1;max-height:520px;object-fit:contain;background:#fff}',
+    '@media(max-width:760px){.ll-x .ll-cover img{max-height:380px}}',
     '.ll-x .ll-cover .cb{padding:22px;display:flex;flex-direction:column;justify-content:center;gap:10px}',
     '.ll-x .ll-cover h3{margin:0;font:800 clamp(22px,3vw,32px)/1.1 Georgia,serif}',
+    '.ll-x .ll-cover .dek{margin:0;color:#c9d2e3;font-size:15px;line-height:1.55;max-width:36em}',
+    '.ll-x .ll-set p.dk{margin:2px 0 0;color:#c9d2e3;font-size:12.5px;line-height:1.45}',
     '.ll-x .ll-note{padding:16px;background:linear-gradient(160deg,#1b2440,#16122a);}',
     '.ll-x .ll-note h4{margin:0 0 6px;font:800 19px/1.15 Georgia,serif}',
     '.ll-x .ll-note p{margin:0 0 10px;color:#c9d2e3;font-size:13.5px;line-height:1.5}',
@@ -303,7 +486,7 @@
 
   function postHTML(x, opts) {
     opts = opts || {};
-    var ar = opts.ar || 1;
+    var ar = opts.ar || x.ar || 1;   /* the photo's own shape, clamped: that is what staggers the columns */
     var isSaved = saved().indexOf(x.handle) > -1;
     var multi = x.vs.length > 1;
     var cta = !x.stock ? '<span class="oos">Sold out</span>'
@@ -330,12 +513,29 @@
     { k: 'Delivery', h: 'Free local delivery', p: 'We deliver free across South Central Indiana. We do not ship.', href: '/cart', go: 'View your cart' },
     { k: 'Nicotia', h: 'Pouches, cigars and more', p: 'Nicotia is the nicotine side of the shop, kept on its own shelf.', href: '/collections/nicotia-market', go: 'Browse Nicotia' }
   ];
-  /* Sets: one thing from each of three shelves that belong together. */
+  /* Sets: three things that are bought together, by handle. Each slot lists fallbacks in order; the
+   * first in stock wins, and a set with an empty slot is not shown at all (two-thirds of a set is
+   * not a set). The cheapest in-stock size is the one added, and its size is printed. */
   var SETS = [
-    { h: 'The rolling session', lanes: ['rolling', 'grinder', 'herbal'] },
-    { h: 'The stash shelf', lanes: ['storage', 'grinder', 'cbd'] },
-    { h: 'Glass night', lanes: ['glass', 'storage', 'herbal'] }
+    { h: 'Mix your own blend', d: 'A mullein base, lavender for the nose, and a jar to keep it in.',
+      slots: [['10-oz-glass-apothecary-jar-with-airtight-bamboo-lid', 'glass-apothecary-jar-with-wood-lid'], ['mullein'], ['lavender-flowers-lavandula-certified-organic', 'damiana-leaf-turnera-diffusa']] },
+    { h: 'The rolling session', d: 'A blend made for cones, the cones, and something to grind with.',
+      slots: [['coneheads', 'chiapas-green-label'], ['raw-classic-pre-rolled-cone-6-piece', 'rose-cone'], ['herbs-only-wood-grinder', 'revolution-herb-mill']] },
+    { h: 'Wind down', d: 'Sandalwood incense, a lavender-and-mint blend, and a THC-free gummy.',
+      slots: [['nepali-sandalwood-rope-incense-and-burner', 'nepali-sandalwood-rope-incense'], ['luna', 'blue-sky'], ['sleep-25mg-thc-free-cbd-gummies', 'calm-25mg-thc-free-cbd-gummies']] },
+    { h: 'Glass night', d: 'A blown-glass bottle, a steel stash jar and a grinder to go with them.',
+      slots: [['ll-gg-gg-saki-bottle', 'll-grasscity-empire-glassworks-bomber-spoon-pipe'], ['ll-chill-re-cache-storage-container-matte-black', 'll-grasscity-famous-x-ceramic-stash-jar-with-lid-black'], ['ll-grasscity-cheech-chong-s-up-in-smoke-grinder-old', 'll-grasscity-the-beach-bum-4-part-magnetic-aluminum-grinder-moondog-silver']] }
   ];
+  function setPicks(def, byHandle) {
+    var picks = [];
+    def.slots.forEach(function (slot) {
+      for (var i = 0; i < slot.length; i++) {
+        var x = byHandle[slot[i]];
+        if (x && x.stock && x.img && x.price <= MAX_PRICE && picks.indexOf(x) < 0) { picks.push(x); return; }
+      }
+    });
+    return picks.length === def.slots.length ? picks : null;
+  }
 
   function feed(mount) {
     injectCss();
@@ -346,14 +546,31 @@
       var seed = new Date().toISOString().slice(0, 10);
       var list = curate(all, seed);
       if (!list.length) { mount.innerHTML = ''; mount.style.display = 'none'; return; }
-      renderFeed(mount, list, all, seed);
+      var cover = pickCover(all, seed);
+      if (cover) list = [cover.x].concat(list.filter(function (x) { return x !== cover.x; }));
+      renderFeed(mount, list, all, seed, cover ? cover.d : '');
     }).catch(function () { mount.innerHTML = ''; mount.style.display = 'none'; });
   }
 
-  function renderFeed(mount, list, all, seed) {
-    var st = { lane: '', q: '', price: '', sort: 'curated', savedOnly: false, shown: 24 };
-    var lanesPresent = LANES.filter(function (l) { return list.some(function (x) { return x.lane === l.k; }); });
+  /* Which shop a product belongs to. Herbal Leaf and Nicotia already have their own cards above
+   * the feed, so they are a separate selector, never circles (owner, 2 Nov 2026: "they are already
+   * up top ... it should at least be its own selector"). The circles are categories only. */
+  var SHOPS = [
+    { k: 'legal-leaf', name: 'Legal-Leaf' }, { k: 'herbal-leaf', name: 'Herbal Leaf' }, { k: 'nicotia', name: 'Nicotia' }
+  ];
+  var NOT_A_CIRCLE = { herbal: 1, nicotia: 1 };
+  function shopOf(x) {
+    if (x.tags.indexOf('nicotia') > -1) return 'nicotia';
+    if (x.tags.indexOf('herbal-leaf') > -1) return 'herbal-leaf';
+    return 'legal-leaf';
+  }
+
+  function renderFeed(mount, list, all, seed, dek) {
+    var st = { lane: '', shop: '', q: '', price: '', sort: 'curated', savedOnly: false, shown: 24 };
+    var lanesPresent = LANES.filter(function (l) { return !NOT_A_CIRCLE[l.k] && list.some(function (x) { return x.lane === l.k; }); });
+    var shopsPresent = SHOPS.filter(function (s) { return list.some(function (x) { return shopOf(x) === s.k; }); });
     var cover = list[0];
+    var byHandle = {}; all.forEach(function (x) { byHandle[x.handle] = x; });
 
     var storyHTML = '<button class="ll-story" type="button" data-lane="" aria-pressed="true"><span class="r"><i style="background:linear-gradient(135deg,#f0b93c,#8b5cf6)"></i></span><b>All</b></button>' +
       lanesPresent.map(function (l) {
@@ -369,6 +586,8 @@
       '<div class="ll-stories" role="toolbar" aria-label="Shelves">' + storyHTML + '</div>' +
       '<div class="ll-bar">' +
       '<input type="search" placeholder="Search the feed" aria-label="Search the feed">' +
+      (shopsPresent.length > 1 ? '<select aria-label="Shop" data-f="shop"><option value="">All shops</option>' +
+        shopsPresent.map(function (s) { return '<option value="' + s.k + '">' + esc(s.name) + '</option>'; }).join('') + '</select>' : '') +
       '<select aria-label="Price" data-f="price"><option value="">Any price</option><option value="0-25">Under $25</option><option value="25-50">$25 to $50</option><option value="50-100">$50 to $100</option><option value="100-250">$100 to $250</option></select>' +
       '<select aria-label="Sort" data-f="sort"><option value="curated">Curated</option><option value="new">Newest</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select>' +
       '</div>' +
@@ -381,6 +600,7 @@
       var r = list.filter(function (x) {
         if (st.savedOnly && sv.indexOf(x.handle) < 0) return false;
         if (st.lane && x.lane !== st.lane) return false;
+        if (st.shop && shopOf(x) !== st.shop) return false;
         if (st.price) { var b = st.price.split('-'); if (x.price < +b[0] || x.price > +b[1]) return false; }
         if (st.q) { var words = low(st.q).split(/\s+/).filter(Boolean); for (var i = 0; i < words.length; i++) if (x.text.indexOf(words[i]) < 0) return false; }
         return true;
@@ -390,20 +610,18 @@
       if (st.sort === 'new') r.sort(function (a, b) { return b.created - a.created; });
       return r;
     }
-    function untouched() { return !st.lane && !st.q && !st.price && st.sort === 'curated' && !st.savedOnly; }
+    function untouched() { return !st.lane && !st.shop && !st.q && !st.price && st.sort === 'curated' && !st.savedOnly; }
 
-    function setCard(def, pool) {
-      var used = {}, picks = [];
-      def.lanes.forEach(function (l) {
-        var x = pool.filter(function (y) { return y.lane === l && y.vs.length === 1 && !used[y.handle]; })[0];
-        if (x) { used[x.handle] = 1; picks.push(x); }
-      });
-      if (picks.length < 3) return '';
+    function setCard(def) {
+      var picks = setPicks(def, byHandle);
+      if (!picks) return '';
       var total = picks.reduce(function (s, x) { return s + x.price; }, 0);
+      function size(x) { return x.vs.length > 1 && x.v.title && !/default title/i.test(x.v.title) ? ' <small style="opacity:.7">(' + esc(x.v.title) + ')</small>' : ''; }
       return '<article class="ll-post ll-set"><p class="ll-kicker" style="margin:0">Shop the set</p><h4 style="margin:2px 0 0;font:800 18px Georgia,serif">' + esc(def.h) + '</h4>' +
+        (def.d ? '<p class="dk">' + esc(def.d) + '</p>' : '') +
         '<div class="th">' + picks.map(function (x) { return '<a href="/products/' + esc(x.handle) + '"><img loading="lazy" alt="' + esc(x.title) + '" src="' + esc(img(x.img, 300)) + '"></a>'; }).join('') + '</div>' +
-        '<ul>' + picks.map(function (x) { return '<li><span>' + esc(x.title) + '</span><b>' + money(x.price) + '</b></li>'; }).join('') + '</ul>' +
-        '<button class="ll-add" type="button" data-add="' + picks.map(function (x) { return x.v.id; }).join(',') + '">Add all three, ' + money(total) + '</button></article>';
+        '<ul>' + picks.map(function (x) { return '<li><span>' + esc(x.title) + size(x) + '</span><b>' + money(x.price) + '</b></li>'; }).join('') + '</ul>' +
+        '<button class="ll-add" type="button" data-add="' + picks.map(function (x) { return x.v.id; }).join(',') + '">Add all ' + picks.length + ', ' + money(total) + '</button></article>';
     }
     function noteCard(n) {
       return '<article class="ll-post ll-note"><p class="ll-kicker">' + esc(n.k) + '</p><h4>' + esc(n.h) + '</h4><p>' + esc(n.p) + '</p><a class="go" href="' + esc(n.href) + '">' + esc(n.go) + ' &rarr;</a></article>';
@@ -414,18 +632,19 @@
       var plain = untouched();
       var html = '';
       if (plain && cover) {
-        html += '<div class="ll-cover"><a href="/products/' + esc(cover.handle) + '"><img alt="' + esc(cover.title) + '" src="' + esc(img(cover.img, 1000)) + '"></a>' +
+        html += '<div class="ll-cover"><a class="ci" href="/products/' + esc(cover.handle) + '"><img alt="' + esc(cover.title) + '" src="' + esc(img(cover.img, 1000)) + '"></a>' +
           '<div class="cb"><p class="ll-kicker" style="margin:0">Cover story &middot; ' + esc(LANE_NAME[cover.lane]) + '</p><h3>' + esc(cover.title) + '</h3>' +
-          '<p class="ll-sub" style="margin:0">' + esc(cover.vendor) + '</p><div class="m" style="display:flex;gap:12px;align-items:center"><b style="font-size:20px">' + money(cover.price) + '</b>' +
+          (dek ? '<p class="dek">' + esc(dek) + '</p>' : '') +
+          '<p class="ll-sub" style="margin:0">' + esc(cover.vendor) + '</p><div class="m" style="display:flex;gap:12px;align-items:center"><b style="font-size:20px">' + (cover.vs.length > 1 ? 'From ' : '') + money(cover.price) + '</b>' +
           (cover.vs.length > 1 ? '<a class="ll-add" href="/products/' + esc(cover.handle) + '">See options</a>' : '<button class="ll-add" type="button" data-add="' + cover.v.id + '">Add to cart</button>') + '</div></div></div>';
         r = r.slice(1);
       }
       var shown = r.slice(0, st.shown);
-      var parts = [], ni = 0, si = 0, ars = [1, 1.25, 1, 0.8, 1.25, 1];
+      var parts = [], ni = 0, si = 0;
       shown.forEach(function (x, i) {
-        parts.push(postHTML(x, { ar: plain ? ars[i % ars.length] : 1 }));
+        parts.push(postHTML(x, plain ? {} : { ar: 1 }));
         if (plain && i % 9 === 4 && ni < NOTES.length) parts.push(noteCard(NOTES[ni++]));
-        if (plain && i % 9 === 8 && si < SETS.length) { var s = setCard(SETS[si++], list); if (s) parts.push(s); }
+        if (plain && i % 9 === 8) { while (si < SETS.length) { var s = setCard(SETS[si++]); if (s) { parts.push(s); break; } } }
       });
       html += r.length ? '<div class="ll-cols">' + parts.join('') + '</div>'
         : '<p class="ll-empty">' + (st.savedOnly ? 'Nothing saved yet. Tap the heart on anything you like.' : 'Nothing matches that. Try another shelf.') + '</p>';
@@ -619,7 +838,8 @@
   }
 
   /* exposed for tests */
-  window.LLShop = { norm: norm, curate: curate, feedEligible: feedEligible, isBulk: isBulk, laneOf: laneOf };
+  window.LLShop = { norm: norm, curate: curate, feedEligible: feedEligible, isBulk: isBulk, laneOf: laneOf,
+    famKey: famKey, pickCover: pickCover, setPicks: setPicks, skipped: skipped, shopOf: shopOf, PICKS: PICKS, COVERS: COVERS, SETS: SETS };
 
   function boot() {
     var f = document.getElementById('ll-feed');
