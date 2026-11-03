@@ -435,7 +435,16 @@
   /* ---------------- styles ---------------- */
   var CSS = [
     '.ll-x{--bg:#0b0f17;--card:#141a26;--line:#263044;--ink:#f4f6fb;--muted:#9aa6bd;--accent:#4ec9ff;--a2:#8b5cf6;--gold:#f0b93c;',
-    'font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);border-radius:18px;padding:22px 16px 36px;max-width:1400px;margin:24px auto;box-sizing:border-box}',
+    'font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);border-radius:18px;padding:22px 16px 36px;max-width:1400px;margin:24px auto;box-sizing:border-box;width:100%;min-width:0;contain:inline-size}',
+    /* MOBILE WIDTH (3 Nov 2026): Horizon puts a Custom Liquid section in a grid column, and a grid
+       column is as wide as its content's min-content. The story circles are one long scrolling row,
+       so their natural width (every circle side by side, ~830px) widened the column, the page went
+       sideways and the phone zoomed out: the feed rendered at desktop width. contain:inline-size
+       stops anything inside from widening the mount; the scroll rows are pinned to the width they
+       are given rather than the width they would like. */
+    '#ll-feed,#ll-slicer{min-width:0;max-width:100%}',
+    '.ll-x .ll-stories,.ll-x .ll-srow,.ll-x .ll-bar,.ll-x .ll-meta{width:0;min-width:100%;max-width:100%}',
+    '.ll-x img{max-width:100%}',
     '.ll-x *{box-sizing:border-box}',
     '.ll-x a{color:inherit}',
     '.ll-x .ll-kicker{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}',
@@ -533,6 +542,12 @@
     '.ll-x .ll-grid .ll-post .m{margin-top:auto;padding-top:8px}',
     '.ll-x .ll-grid .oos{color:var(--muted);font-size:12px;font-weight:700}',
     '.ll-x details.ll-more-f summary{cursor:pointer;color:var(--muted);font-size:13px;margin:10px 0}',
+    /* phones: less frame around the feed, so two columns of cards get the room */
+    '@media(max-width:560px){.ll-x{padding:16px 12px 28px;margin:12px auto;border-radius:14px}',
+    '.ll-x .ll-post{border-radius:12px;margin-bottom:10px}.ll-x .ll-post .bd{padding:8px 10px 10px}',
+    '.ll-x .ll-post .t{font-size:13px}.ll-x .ll-post .m{flex-wrap:wrap;gap:6px}.ll-x .ll-post .pr{font-size:14px}',
+    '.ll-x .ll-add{padding:6px 10px}.ll-x .ll-cover{border-radius:14px}.ll-x .ll-cover .cb{padding:16px}',
+    '.ll-x .ll-cover .dek{font-size:14px}.ll-x .ll-note,.ll-x .ll-set{padding:12px}}',
     '.ll-toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,40px);opacity:0;background:#141a26;color:#fff;border:1px solid #263044;padding:11px 16px;border-radius:12px;font:600 14px system-ui,sans-serif;z-index:99999;transition:.2s}',
     '.ll-toast.on{transform:translate(-50%,0);opacity:1}',
     '.ll-toast a{color:#4ec9ff;margin-left:6px}'

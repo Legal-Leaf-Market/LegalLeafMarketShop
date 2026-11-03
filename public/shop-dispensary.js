@@ -43,7 +43,8 @@
     '#ll-dispensary{--bg:#080f14;--panel:rgba(16,27,35,.78);--line:#22303a;--muted:#9fb4c2;--ink:#eef6fb;',
     '--accent:#4ec9ff;--leaf2:#22a8e8;--leaf3:#1787c4;--gold:#f0b93c;--lab:#8b5cf6;',
     'font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);',
-    'padding:20px 16px 40px;border-radius:16px;box-sizing:border-box;max-width:1400px;margin:0 auto}',
+    'padding:20px 16px 40px;border-radius:16px;box-sizing:border-box;max-width:1400px;margin:0 auto;width:100%;min-width:0;contain:inline-size}',
+    /* Horizon sizes a Custom Liquid grid column to its content; this keeps the shelf at the phone's width (see ll-shop.js) */
     '#ll-dispensary *{box-sizing:border-box}',
     '#ll-dispensary .lld-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin:0 0 14px}',
     '#ll-dispensary .lld-head h2{margin:0;font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:.02em;color:#fff}',
