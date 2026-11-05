@@ -117,6 +117,10 @@ const REDIRECTS = {
   "/coldwater-list": "/trip",
   "/consumable": "/consumables",
   "/index.html": "/",
+  /* Production serves the cafe at "/" and folds /cafe into it (netlify.toml).
+     Locally "/" stays the engine the browser suites load, so the cafe is at
+     /cafe.html here. */
+  "/cafe": "/",
 }
 // serverless functions
 const API = {
