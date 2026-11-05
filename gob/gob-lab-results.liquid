@@ -1,0 +1,98 @@
+<!--
+  G.O.B. lab results page: where the QR code on every device wrap and box lands.
+  Paste into a Custom Liquid section on a page with handle "gob-lab-results".
+
+  Each batch is one "gob_batch" metaobject (Settings > Custom data > Metaobjects):
+    strain    single line text   Strawberry Pie, Lemon Cherry Gelato or Purple Haze (exactly)
+    batch     single line text   the batch number printed on the device and box
+    made_on   date               production date
+    best_by   date               best-by date printed on the device
+    lab       single line text   the testing lab's name
+    coa       file               the lab's report (PDF)
+  Storefront access must be on or this page shows no batches.
+
+  The QR on each wrap points at this page plus #strawberry-pie, #lemon-cherry-gelato
+  or #purple-haze, so a scan lands on that flavor. Each batch row also has its own
+  anchor (#batch-<number>) for a per-batch QR later.
+
+  THE LEGAL STATEMENT IS DELIBERATELY EMPTY. Fill `legal` below only with wording a
+  lawyer has approved. While it is blank, that block does not render.
+-->
+{%- capture legal -%}{%- endcapture -%}
+<style>
+.glr{--g:#0f2a1d;--g2:#173826;--cu:#c9853f;--cu2:#e2a866;--cream:#efe6cf;background:var(--g);color:var(--cream);
+  border:1px solid rgba(201,133,63,.45);border-radius:14px;padding:26px 18px;font-family:Georgia,"Times New Roman",serif}
+.glr *{box-sizing:border-box}
+.glr h2{color:var(--cu2);text-align:center;margin:0 0 4px;font-size:clamp(1.5rem,4vw,2.2rem)}
+.glr .sub{text-align:center;margin:0 auto 22px;max-width:56ch;font:400 .95rem/1.55 system-ui,sans-serif}
+.glr nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:22px}
+.glr nav a{color:var(--cream);text-decoration:none;border:1px solid rgba(201,133,63,.5);border-radius:999px;padding:7px 14px;font:600 .82rem system-ui,sans-serif}
+.glr nav a:hover,.glr nav a:focus-visible{border-color:var(--cu2)}
+.glr section{background:rgba(0,0,0,.2);border:1px solid rgba(201,133,63,.3);border-radius:12px;padding:16px;margin:0 auto 14px;max-width:900px;scroll-margin-top:80px}
+.glr section:target{border-color:var(--cu2)}
+.glr h3{margin:0 0 10px;color:var(--cu2);font-size:1.3rem}
+.glr table{width:100%;border-collapse:collapse;font:400 .9rem/1.4 system-ui,sans-serif}
+.glr th,.glr td{text-align:left;padding:8px 6px;border-top:1px solid rgba(239,230,207,.15)}
+.glr th{font-weight:600;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;opacity:.8;border-top:0}
+.glr tr:target td{background:rgba(226,168,102,.15)}
+.glr a.coa{color:var(--cu2);font-weight:600}
+.glr .none{font:400 .9rem/1.5 system-ui,sans-serif;opacity:.85;margin:0}
+.glr ul{font:400 .9rem/1.6 system-ui,sans-serif;margin:6px 0 0;padding-left:18px}
+@media (max-width:560px){.glr th:nth-child(3),.glr td:nth-child(3){display:none}}
+</style>
+{%- assign batches = shop.metaobjects.gob_batch.values -%}
+{%- assign strains = 'Strawberry Pie,Lemon Cherry Gelato,Purple Haze' | split: ',' -%}
+<div class="glr">
+  <h2>G.O.B. lab results</h2>
+  <p class="sub">Every batch is tested by an independent lab before it ships. Find your flavor, then match the batch number printed on your device.</p>
+  <nav aria-label="Flavors">
+    {%- for s in strains -%}<a href="#{{ s | handleize }}">{{ s }}</a>{%- endfor -%}
+    <a href="#warnings">Warnings</a>
+  </nav>
+
+  {%- for s in strains -%}
+  <section id="{{ s | handleize }}" aria-labelledby="h-{{ s | handleize }}">
+    <h3 id="h-{{ s | handleize }}">{{ s }}</h3>
+    {%- capture rows -%}
+      {%- for b in batches reversed -%}
+        {%- if b.strain.value == s -%}
+        <tr id="batch-{{ b.batch.value | handleize }}">
+          <td>{{ b.batch.value | escape }}</td>
+          <td>{% if b.made_on.value %}{{ b.made_on.value | date: '%b %-d, %Y' }}{% endif %}</td>
+          <td>{{ b.lab.value | escape }}</td>
+          <td>{% if b.best_by.value %}{{ b.best_by.value | date: '%b %-d, %Y' }}{% endif %}</td>
+          <td>{% if b.coa.value %}<a class="coa" href="{{ b.coa.value.url }}" target="_blank" rel="noopener">View report (PDF)</a>{% else %}Pending{% endif %}</td>
+        </tr>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+    {%- if rows != blank -%}
+    <table>
+      <thead><tr><th>Batch</th><th>Made</th><th>Lab</th><th>Best by</th><th>Report</th></tr></thead>
+      <tbody>{{ rows }}</tbody>
+    </table>
+    {%- else -%}
+    <p class="none">No batch posted yet. Lab results are posted here before a batch ships.{% if shop.email != blank %} Questions: <a href="mailto:{{ shop.email }}" style="color:var(--cu2)">{{ shop.email }}</a>{% endif %}</p>
+    {%- endif -%}
+  </section>
+  {%- endfor -%}
+
+  <section id="warnings" aria-labelledby="h-warn">
+    <h3 id="h-warn">Warnings</h3>
+    <ul>
+      <li>For adults 21 and older only.</li>
+      <li>Keep out of reach of children and pets.</li>
+      <li>Do not use if pregnant or breastfeeding.</li>
+      <li>Do not drive or operate machinery after use.</li>
+      <li>Talk to a doctor before use if you have a medical condition or take medication.</li>
+      <li>This product has not been evaluated by the FDA. It is not intended to diagnose, treat, cure or prevent any disease.</li>
+    </ul>
+  </section>
+
+  {%- if legal != blank -%}
+  <section id="legal" aria-labelledby="h-legal">
+    <h3 id="h-legal">To whom it may concern</h3>
+    {{ legal }}
+  </section>
+  {%- endif -%}
+</div>
