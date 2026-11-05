@@ -1,0 +1,108 @@
+/* ============================================================
+   cafe.css — /cafe only.
+   Loads AFTER tokens.css, library.css, plate.css and shop.css, and adds
+   the pieces the other pages do not have: the stock grid, the status
+   chips, the floor-plan and mug-wall mockups, the draft menu board and
+   the dated rules timeline. Prose furniture (.st-hero, .st-chapter,
+   .st-sources, .st-fine, .uc-band) is reused, not copied.
+   Colours are the :root tokens only; nothing here is a new literal
+   except the two translucent fills that tokens.css has no name for.
+   ============================================================ */
+
+/* ---- status chips: say what a thing is, never imply it exists yet ---- */
+.cf-chip{display:inline-block;font-family:var(--sans);font-weight:700;font-size:10px;
+  letter-spacing:.16em;text-transform:uppercase;padding:4px 10px;border-radius:999px;
+  border:1px solid var(--line);color:var(--dim);background:rgba(255,255,255,.02);
+  vertical-align:middle;white-space:nowrap}
+.cf-chip.is-1a{color:var(--leaf);border-color:rgba(var(--accent-rgb),.45);
+  background:rgba(var(--accent-rgb),.08)}
+.cf-chip.is-1b{color:var(--gold);border-color:rgba(240,185,60,.45);
+  background:rgba(240,185,60,.08)}
+.cf-chip.is-hold{color:var(--red);border-color:rgba(239,83,80,.4);
+  background:rgba(239,83,80,.07)}
+
+/* ---- stock grid ---- */
+.cf-grid{display:grid;gap:14px;margin:26px 0 0;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cf-card{padding:20px 20px 18px;border-radius:var(--r);border:1px solid var(--line);
+  background:var(--panel)}
+.cf-card h3{margin:10px 0 8px !important;font-family:var(--display);font-weight:900;
+  font-size:1.2rem;letter-spacing:-.01em;color:var(--text)}
+.cf-card ul{margin:0 !important;padding:0 0 0 18px !important;font-size:.95rem !important;
+  line-height:1.6 !important}
+.cf-card li{margin:0 0 5px !important}
+.cf-card .cf-note{margin:12px 0 0 !important;font-size:.84rem !important;line-height:1.6 !important;
+  color:var(--dim) !important}
+
+/* ---- figures (the mockups) ---- */
+.cf-fig{margin:28px 0 0;padding:16px;border-radius:var(--r);border:1px solid var(--line);
+  background:var(--panel2)}
+.cf-fig svg{display:block;width:100%;height:auto}
+.cf-fig figcaption{margin:12px 2px 0;font-size:.84rem;line-height:1.6;color:var(--dim)}
+.cf-fig figcaption b{color:var(--muted);font-weight:600}
+.cf-draft{display:inline-block;margin:0 0 10px;font-family:var(--sans);font-weight:700;
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+
+/* floor plan strokes and fills, on classes so the SVG stays theme-aware */
+.fp-wall{fill:none;stroke:var(--glass-line);stroke-width:3}
+.fp-zone{fill:rgba(var(--accent-rgb),.07);stroke:rgba(var(--accent-rgb),.5);stroke-width:1.5}
+.fp-gold{fill:rgba(240,185,60,.08);stroke:rgba(240,185,60,.55);stroke-width:1.5}
+.fp-dash{stroke-dasharray:5 4}
+.fp-solid{fill:var(--chip);stroke:var(--line);stroke-width:1.5}
+.fp-rug{fill:rgba(240,185,60,.14);stroke:rgba(240,185,60,.4);stroke-width:1.2}
+.fp-t{font-family:var(--sans);font-size:12px;font-weight:600;fill:var(--text);
+  letter-spacing:.02em}
+.fp-s{font-family:var(--sans);font-size:10.5px;fill:var(--dim)}
+.fp-door{stroke:var(--bg);stroke-width:5}
+
+/* mug wall */
+.mw-board{fill:var(--chip);stroke:var(--line);stroke-width:1.5}
+.mw-hook{fill:var(--gold)}
+.mw-mug{fill:rgba(var(--accent-rgb),.16);stroke:rgba(var(--accent-rgb),.6);stroke-width:1.5}
+.mw-mug.alt{fill:rgba(240,185,60,.14);stroke:rgba(240,185,60,.6)}
+.mw-tag{fill:var(--bg);stroke:var(--gold);stroke-width:1}
+
+/* ---- draft menu board ---- */
+.cf-menu{margin:28px 0 0;padding:24px 26px;border-radius:var(--r);
+  border:1px solid rgba(240,185,60,.32);background:rgba(240,185,60,.05)}
+.cf-menu h3{margin:0 0 4px !important;font-family:var(--display);font-weight:900;
+  font-size:1.35rem;color:var(--text)}
+.cf-menu .cf-menu-sub{margin:0 0 16px !important;font-family:var(--script);font-style:italic;
+  font-size:1.05rem !important;color:var(--gold) !important}
+.cf-menu dl{margin:0;display:grid;gap:10px}
+.cf-menu dt{font-family:var(--sans);font-weight:600;font-size:.98rem;color:var(--text)}
+.cf-menu dd{margin:2px 0 0;font-size:.88rem;line-height:1.55;color:var(--muted)}
+.cf-menu .cf-menu-foot{margin:16px 0 0 !important;font-size:.82rem !important;color:var(--dim) !important}
+
+/* ---- phases ---- */
+.cf-phases{display:grid;gap:14px;margin:24px 0 0;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cf-phase{padding:18px 20px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel)}
+.cf-phase h3{margin:10px 0 8px !important;font-family:var(--display);font-weight:900;font-size:1.1rem;
+  color:var(--text)}
+.cf-phase ul{margin:0 !important;padding-left:18px !important;font-size:.93rem !important;line-height:1.6 !important}
+
+/* ---- the rules timeline ---- */
+.cf-time{margin:26px 0 0;padding:0;list-style:none;position:relative;border-left:1px solid var(--line)}
+.cf-time li{position:relative;margin:0 0 22px !important;padding:0 0 0 22px}
+.cf-time li::before{content:"";position:absolute;left:-5px;top:7px;width:9px;height:9px;
+  border-radius:50%;background:var(--leaf);box-shadow:0 0 0 3px var(--bg)}
+.cf-time li.is-next::before{background:var(--gold)}
+.cf-time li.is-open::before{background:var(--bg);border:1.5px solid var(--gold);left:-6px;top:6px}
+.cf-when{display:block;font-family:var(--sans);font-weight:700;font-size:10.5px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.cf-time b{display:block;margin:4px 0 4px;font-family:var(--display);font-weight:600;
+  font-size:1.05rem;color:var(--text)}
+.cf-time p{margin:0 !important;font-size:.97rem !important;line-height:1.65 !important}
+.cf-asof{display:inline-block;margin:6px 0 0;font-family:var(--sans);font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+
+.cf-check{margin:20px 0 0;padding:18px 20px;border-radius:var(--r);
+  border:1px solid rgba(239,83,80,.3);background:rgba(239,83,80,.05)}
+.cf-check h3{margin:0 0 8px !important;font-family:var(--display);font-weight:600;font-size:1.05rem;
+  color:var(--text)}
+.cf-check ul{margin:0 !important;padding-left:18px !important;font-size:.93rem !important;line-height:1.6 !important}
+
+@media (max-width:560px){
+  .cf-fig{padding:10px}
+  .cf-menu{padding:20px 18px}
+}
