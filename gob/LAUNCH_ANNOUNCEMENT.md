@@ -94,8 +94,15 @@ Post from the brand account. Put the Founders Club link in the bio before postin
 > [QR code to the Founders Club page]
 > 21+ · Merch and perks, not an investment
 
-A QR code for the page can be made once the page is live. Ask Claude Code to generate it
-in the brand colors so it matches.
+Ready to print: `gob/print/founders-counter-card-4x6.pdf` (4 x 6 in) and a PNG of
+the same card. The QR code alone is in `gob/print/`: `founders-qr.svg` for a printer
+(scales to any size), `founders-qr.png` with the G.O.B. badge in the middle. Both were
+decoded with a QR reader and land on
+`shop.legalleafmarket.shop/pages/founders-club?utm_source=counter-card&utm_medium=print`.
+The `utm_` tag lets Shopify's analytics count visits from the card separately.
+
+Keep the code at least 1.5 in wide when printed. The card has no bleed. If the printer
+asks for 1/8 in bleed, have Claude Code rebuild it from `founders-counter-card.html`.
 
 ## 5. Launch night invite (Summit members only, send later)
 
