@@ -16,8 +16,10 @@
  *     (every other page there redirects to the Shopify store).
  *   - shop.legalleafmarket.shop: ONE line in the header group's Custom Liquid section (the same
  *     section that already loads ll-cart.css, so it is on every page):
- *       <script src="https://cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@<commit>/public/gob-promo.js" defer></script>
- *     Pinned to a commit for the reason ll-shop.js gives (Netlify deploys were paused).
+ *       <script src="https://legalleafmarket.shop/gob-promo.js" defer></script>
+ *     Unpinned on purpose: Netlify deploys main again, so a merge here updates the store with no
+ *     theme edit. If Netlify deploys ever pause again, swap in the jsDelivr form ll-shop.js uses
+ *     (https://cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@<commit>/public/gob-promo.js).
  *
  * IMAGES come from img/gob/ beside this script, worked out from the script's own src, so a
  * pinned jsDelivr src also pins the pictures and the apex copy uses the apex pictures.
@@ -45,6 +47,18 @@
     { key: 'strawberry-pie', name: 'Strawberry Pie', notes: 'Strawberry · Vanilla', tint: '#c8463f',
       href: SHOP + '/pages/gob-lab-results#strawberry-pie' }
   ];
+  // Every flavor comes three ways (owner, 5 Nov 2026). Sizes only: no potency numbers (copy rules above).
+  // Drawn as line icons rather than photos because no packshot exists yet for the cart or the puck,
+  // and a photo of the disposable labelled "cart" would show the wrong product.
+  var SVG = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  var FORMATS = [
+    { name: '2 mL disposable', icon: SVG + '<rect x="9" y="2" width="6" height="20" rx="3"/><path d="M9 7h6"/><circle cx="12" cy="18" r=".6" fill="currentColor"/></svg>' },
+    { name: '1 g cart', icon: SVG + '<rect x="10" y="2" width="4" height="3.5" rx="1"/><rect x="8" y="5.5" width="8" height="11" rx="1.5"/><path d="M8 11h8"/><path d="M10.5 16.5v5h3v-5"/></svg>' },
+    { name: '3.5 g wax puck', icon: SVG + '<ellipse cx="12" cy="9" rx="8" ry="3.5"/><path d="M4 9v5.5c0 1.9 3.6 3.5 8 3.5s8-1.6 8-3.5V9"/></svg>' }
+  ];
+  function formatRow(cls) {
+    return '<ul class="' + cls + '" aria-label="Comes as">' + FORMATS.map(function (f) { return '<li>' + f.icon + '<span>' + f.name + '</span></li>'; }).join('') + '</ul>';
+  }
   var FOUNDERS = SHOP + '/collections/g-o-b-founders-club';
   var FIND_US = SHOP + '/pages/find-us';
 
@@ -75,6 +89,13 @@
     '#gob-bar .gc{display:inline-block;padding:10px 18px;border-radius:999px;text-decoration:none;font:700 14px/1 system-ui,sans-serif;',
     'color:#1a120a;background:linear-gradient(180deg,var(--cu2),var(--cu));border:1px solid #f6d29c;box-shadow:0 2px 10px rgba(201,133,63,.45)}',
     '#gob-bar .gc:hover,#gob-bar .gc:focus-visible{filter:brightness(1.08);color:#000}',
+    '#gob-bar .gw,#gob-float .fw{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px}',
+    '#gob-bar .gw{width:100%;font:600 13px/1.2 system-ui,sans-serif;color:var(--cr)}',
+    '#gob-bar .gw li,#gob-float .fw li{display:flex;align-items:center;gap:5px}',
+    '#gob-bar .gw svg,#gob-float .fw svg{color:var(--cu2);flex:none}',
+    '#gob-bar .gw .gwl{color:var(--cu2);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:11px}',
+    '#gob-float .fw{flex-direction:column;align-items:flex-start;gap:3px;margin:0 auto 10px;width:max-content;font:12px/1.25 system-ui,sans-serif;color:var(--cr)}',
+    '#gob-float .fw svg{width:15px;height:15px}',
     '#gob-bar .gs{width:100%;font:12px/1.3 system-ui,sans-serif;color:rgba(243,234,210,.78)}',
     '#gob-bar .gs a{color:var(--cu2)}',
     '#gob-bar a:focus-visible,#gob-float a:focus-visible,#gob-float button:focus-visible{outline:3px solid #fff;outline-offset:2px}',
@@ -110,8 +131,9 @@
     /* phone: a short strip along the bottom, not a tall card over the page */
     '#gob-float:not(.min){width:auto;left:10px;right:10px;bottom:10px;padding:8px 40px 8px 8px;display:grid;grid-template-columns:64px 1fr;',
     'column-gap:12px;align-items:center;text-align:left;border-radius:14px}',
-    '#gob-float:not(.min) .fm{grid-row:1/5;width:64px;height:64px;margin:0}',
+    '#gob-float:not(.min) .fm{grid-row:1/7;width:64px;height:64px;margin:0}',
     '#gob-float .fk{margin:0 0 3px}#gob-float .fn{font-size:16px}#gob-float .fo{margin:0 0 6px}',
+    '#gob-float .fw{flex-direction:row;justify-content:flex-start;gap:2px 10px;margin:0 0 6px;width:auto;font-size:11px}#gob-float .fw svg{width:13px;height:13px}',
     '#gob-float .fd,#gob-float .fs{display:none}#gob-float .fb{display:inline-block;justify-self:start;padding:7px 12px}}',
     '@media (prefers-reduced-motion:reduce){#gob-bar::before,#gob-float .fm,#gob-float .fopen{animation:none}#gob-float .fm img{transition:none}}',
     '@media print{#gob-bar,#gob-float{display:none}}'
@@ -138,7 +160,8 @@
         return '<a href="' + f.href + '"><img src="' + img(f.key + '-medallion-240.webp') + '" alt="" width="30" height="30">' + esc(f.name) + '</a>';
       }).join('') + '</nav>' +
       '<a class="gc" href="' + FOUNDERS + '">Join the Founders Club</a>' +
-      '<p class="gs">21+ only. 2 mL disposables, three flavors, sold in person. <a href="' + FIND_US + '">Find us</a>.</p>';
+      formatRow('gw').replace('<li>', '<li class="gwl">Every flavor, three ways</li><li>') +
+      '<p class="gs">21+ only. Disposables, carts and wax, three flavors, sold in person. <a href="' + FIND_US + '">Find us</a>.</p>';
     document.body.insertBefore(bar, document.body.firstChild);
 
     // 2. The floating card.
@@ -155,6 +178,7 @@
       }).join('') + '</a>' +
       '<a class="fn" href="' + FLAVORS[0].href + '">' + esc(FLAVORS[0].name) + '</a>' +
       '<p class="fo">' + FLAVORS[0].notes + '</p>' +
+      formatRow('fw') +
       '<div class="fd">' + FLAVORS.map(function (f, i) {
         return '<button type="button" aria-label="Show ' + esc(f.name) + '"' + (i ? '' : ' class="on" aria-current="true"') + '></button>';
       }).join('') + '</div>' +
