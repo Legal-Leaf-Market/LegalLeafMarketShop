@@ -7,6 +7,9 @@ and are served through jsDelivr pinned to commit `a13f7e1`, the same way
 
 ## Files
 
+The browser half (importing, collections, pages, the Founders Club) is written up for Claude in Chrome in `HANDOFF_CHROME_GOB.md`.
+
+
 - `gob-products.csv`: Shopify product import, three products, four images each
   (packshot, staged scene, medallion, flat wrap).
 - `gob-section.liquid`: paste into a Custom Liquid section on the collection.
