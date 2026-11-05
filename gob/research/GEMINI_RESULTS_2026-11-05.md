@@ -17,8 +17,12 @@ independently.
 
 ## Gemini's findings not yet checked independently (treat as leads)
 
-- Indiana's smokable-hemp ban (IC 35-48-1-26.6) may reach vapes. The statute's wording is
-  "smoke", and vapor is arguable, so this needs a lawyer.
+- **Corrected: Indiana's smokable-hemp ban is about flower, not vapes.** Checked against the
+  statute text (IC 35-48-1-26.6, still in the 2026 code): it covers a product that delivers
+  THC "by inhalation of smoke" and names hemp bud and hemp flower. Vapes, cartridges and
+  disposables are not mentioned. Gemini's claim that it reaches vapes came from a compliance
+  blog's reading, not the law. This matches the owner's experience of vapes being sold
+  openly at Indiana gas stations.
 - 2026 Indiana bill SB 250 passed a House committee and did not become law.
 - USPS (PACT Act) and UPS, FedEx and DHL all refuse hemp THC vapes to consumers. This
   matches what `CLAUDE.md` already records.
@@ -36,6 +40,6 @@ independently.
 
 1. The federal change makes the product unsellable as hemp from 11 Dec 2026.
 2. No carrier may legally deliver THC vapes to consumers.
-3. Indiana's smokable-hemp ban and the Attorney General's position.
+3. (Corrected: the smokable-hemp ban covers flower, not vapes. See above.)
 4. Payment processors refusing or freezing the store.
 5. An unverified supplier, and pre-ban stock being dumped at $10 to $15 a unit.
