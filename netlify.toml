@@ -51,15 +51,27 @@
 # 302 not 301: browsers cache a 301 for good, and this is reversible by deleting
 # this block. force = true because every one of these paths is a real file, and a
 # file shadows an unforced rule.
+# THE CAFE IS THE HOMEPAGE (owner, 5 Nov 2026, from the SEO audit). "/" SERVES
+# cafe.html as a 200 rewrite, so the address bar stays on legalleafmarket.shop/,
+# and /cafe 301s here so the old URL folds into one page instead of competing
+# with it. public/index.html is the old engine that tools/make-*.mjs read, so it
+# stays on disk; /index.html just sends people home. Rules are matched against
+# the URL that was asked for, so the rewrite to /cafe.html is not re-matched.
 [[redirects]]
   from = "/"
-  to = "https://shop.legalleafmarket.shop/"
-  status = 302
+  to = "/cafe.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/cafe"
+  to = "/"
+  status = 301
   force = true
 
 [[redirects]]
   from = "/index.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/"
   status = 302
   force = true
 
