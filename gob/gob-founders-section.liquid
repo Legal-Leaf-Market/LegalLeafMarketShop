@@ -1,0 +1,93 @@
+<!--
+  G.O.B. Founders Club page. Paste into a Custom Liquid section on a page
+  (Online Store > Pages > "Founders Club", template with one Custom Liquid
+  section). Prices, stock and the Summit count come from Shopify itself, so
+  nothing here goes stale when a price changes. A tier whose product is not
+  published yet shows "Opening soon" instead of a dead button.
+-->
+<style>
+.gfc{--g:#0f2a1d;--g2:#173826;--cu:#c9853f;--cu2:#e2a866;--cream:#efe6cf;
+  background:radial-gradient(120% 70% at 50% 0,var(--g2),var(--g) 70%);color:var(--cream);
+  border:1px solid rgba(201,133,63,.45);border-radius:14px;padding:30px 18px;font-family:Georgia,"Times New Roman",serif}
+.gfc *{box-sizing:border-box}
+.gfc-top{text-align:center;max-width:62ch;margin:0 auto 24px}
+.gfc-top img{width:min(300px,70%);height:auto}
+.gfc-top h2{font-size:clamp(1.6rem,4vw,2.4rem);margin:10px 0 6px;color:var(--cu2)}
+.gfc-top p{margin:0;line-height:1.55;font-size:1.05rem}
+.gfc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:1200px;margin:0 auto}
+.gfc-tier{display:flex;flex-direction:column;background:rgba(0,0,0,.2);border:1px solid rgba(201,133,63,.35);border-radius:12px;padding:16px}
+.gfc-tier.hot{border-color:var(--cu2)}
+.gfc-tier img{width:100%;aspect-ratio:2/1;object-fit:contain;background:#0f2a1d;padding:8px;border-radius:8px;margin-bottom:12px}
+.gfc-tier h3{margin:0;font-size:1.3rem;color:var(--cu2)}
+.gfc-price{font:700 1.4rem/1.2 system-ui,sans-serif;margin:4px 0 2px}
+.gfc-left{font:600 .75rem/1.4 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--cu2)}
+.gfc-tier ul{margin:12px 0;padding-left:18px;font:400 .9rem/1.5 system-ui,sans-serif;flex:1}
+.gfc-tier label{display:block;font:500 .78rem/1.4 system-ui,sans-serif;margin:6px 0 4px}
+.gfc-tier input[type=text],.gfc-tier select{width:100%;padding:9px 10px;border-radius:8px;border:1px solid rgba(239,230,207,.35);background:rgba(0,0,0,.25);color:var(--cream);font:400 .9rem system-ui,sans-serif}
+.gfc-check{display:flex;gap:8px;align-items:flex-start}
+.gfc-btn{margin-top:12px;width:100%;padding:12px;border:0;border-radius:999px;background:linear-gradient(180deg,var(--cu2),var(--cu));color:#1b1208;font:700 .95rem system-ui,sans-serif;cursor:pointer}
+.gfc-btn[disabled]{opacity:.5;cursor:not-allowed}
+.gfc-fine{max-width:70ch;margin:22px auto 0;text-align:center;font:400 .82rem/1.6 system-ui,sans-serif;opacity:.85}
+.gfc-fine strong{color:var(--cu2)}
+@media (max-width:1000px){.gfc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.gfc-grid{grid-template-columns:1fr}.gfc{padding:22px 14px}}
+</style>
+{%- assign cdn = 'https://cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@e5455c5c7be3938378c9ae940a8a4a6a1b7026be/public/img/gob/' -%}
+<section class="gfc" aria-labelledby="gfc-h">
+  <div class="gfc-top">
+    <img src="{{ cdn }}logo-gold.png" alt="G.O.B. Good Old Boys Cannabis" width="1200" height="925">
+    <h2 id="gfc-h">The Founders Club</h2>
+    <p>Back the Good Old Boys from the first run. Every tier is a merch pack, a vote on what we make next, and your name on the wall if you want it there.</p>
+  </div>
+  <div class="gfc-grid">
+  {%- assign tiers = 'trailhead,ridge,summit,lodge' | split: ',' -%}
+  {%- for t in tiers -%}
+    {%- assign h = 'gob-founders-' | append: t -%}
+    {%- assign p = all_products[h] -%}
+    {%- if p.id -%}
+    {%- assign v = p.selected_or_first_available_variant -%}
+    <form class="gfc-tier{% if t == 'ridge' %} hot{% endif %}" method="post" action="/cart/add">
+      <input type="hidden" name="id" value="{{ v.id }}">
+      <input type="hidden" name="quantity" value="1">
+      <img src="{{ p.featured_image | image_url: width: 800 }}" alt="" width="800" height="400" loading="lazy">
+      <h3>{{ p.title | remove: 'G.O.B. Founders Club: ' }}</h3>
+      <div class="gfc-price">{{ v.price | money }}{% if t == 'lodge' %}<span style="font-size:.8rem;font-weight:500"> / month</span>{% endif %}</div>
+      {%- if t == 'summit' and v.inventory_management -%}
+        <div class="gfc-left">{% if v.inventory_quantity > 0 %}{{ v.inventory_quantity }} of 50 left{% else %}All 50 claimed{% endif %}</div>
+      {%- endif -%}
+      {{ p.description | split: '<p><strong>How it works' | first | split: '</p>' | last }}
+      {%- if t != 'lodge' -%}
+      <label for="wall-{{ t }}">Name for the Founders Wall (optional)</label>
+      <input type="text" id="wall-{{ t }}" name="properties[Founders Wall name]" maxlength="40" autocomplete="nickname">
+      <label class="gfc-check"><input type="checkbox" name="properties[Show on wall]" value="Yes"> Show my name publicly</label>
+      <label for="note-{{ t }}">A short note for the wall (optional, we read every one first)</label>
+      <input type="text" id="note-{{ t }}" name="properties[Wall note]" maxlength="120">
+      {%- endif -%}
+      {%- comment -%} Referral, ported from Crossroads' pilot referral program. {%- endcomment -%}
+      <label for="ref-{{ t }}">Referred by a member? Their name (optional)</label>
+      <input type="text" id="ref-{{ t }}" name="properties[Referred by]" maxlength="60">
+      <p style="font:400 .75rem/1.4 system-ui,sans-serif;margin:4px 0 0;opacity:.8">Name the member who sent you and you both get a bonus medallion patch in your pack.</p>
+      {%- comment -%} What the member SAYS, kept beside what the tagged link says
+      (utm_source, in Shopify analytics). Self-report alone is unreliable and the link
+      only covers doors we tagged; together they answer "where do members come from".
+      Ported from CrossroadsWeddingCo lib/lead-sources.ts. {%- endcomment -%}
+      <label for="found-{{ t }}">How did you find us? (optional)</label>
+      <select id="found-{{ t }}" name="properties[Found us]">
+        <option value="">Choose one</option>
+        <option>A friend or member</option>
+        <option>Instagram</option>
+        <option>Facebook</option>
+        <option>Our table at a market or event</option>
+        <option>A flyer or card</option>
+        <option>A shop that carries G.O.B.</option>
+        <option>Somewhere else</option>
+      </select>
+      <button class="gfc-btn" type="submit"{% unless v.available %} disabled{% endunless %}>{% if v.available %}Join at {{ p.title | remove: 'G.O.B. Founders Club: ' | split: ' (' | first }}{% else %}Sold out{% endif %}</button>
+    </form>
+    {%- else -%}
+    <div class="gfc-tier"><h3>{{ t | capitalize }}</h3><p style="font:400 .9rem system-ui,sans-serif">Opening soon.</p></div>
+    {%- endif -%}
+  {%- endfor -%}
+  </div>
+  <p class="gfc-fine"><strong>Not an investment.</strong> A Founders membership is a merch pack and member perks. It does not buy a share of the company or a return of any kind. Packs ship when the founders merch run arrives; full refund any time before yours ships. 21+ to join. Member pricing on G.O.B. devices applies where they can legally be sold. Sold by Legal-Leaf Market.</p>
+</section>
