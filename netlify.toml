@@ -364,18 +364,6 @@
   force = true
 
 [[redirects]]
-  from = "/terms"
-  to = "https://shop.legalleafmarket.shop/policies/terms-of-service"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/terms.html"
-  to = "https://shop.legalleafmarket.shop/policies/terms-of-service"
-  status = 302
-  force = true
-
-[[redirects]]
   from = "/the-body-was-listening"
   to = "https://shop.legalleafmarket.shop/"
   status = 302
