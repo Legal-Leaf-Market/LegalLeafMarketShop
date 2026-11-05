@@ -13,7 +13,15 @@
  *
  * Run: node test-cbdhempdirect.mjs
  */
-import handler from './api/products.js';
+import handler, { STORES } from './api/products.js';
+
+/* CBD Hemp Direct was taken off the shelf on 2 Nov 2026 (enabled:false), so
+   the handler skips it and every assertion below found nothing. The store is
+   still the fixture this suite is built from, and the wooSweep() it exercises
+   is shared by every WooCommerce store still live, so it is switched back on
+   here, in this process only. fetch is stubbed below: no real shop is called. */
+const cbd = STORES.find((s) => s.key === 'cbdhempdirect');
+if (cbd) cbd.enabled = true;
 
 let fails = 0;
 const ok = (c, m) => { console.log((c ? '  ok   ' : '  FAIL ') + m); if (!c) fails++; };
