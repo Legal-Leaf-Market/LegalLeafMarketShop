@@ -23,7 +23,7 @@
 .gfc-left{font:600 .75rem/1.4 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--cu2)}
 .gfc-tier ul{margin:12px 0;padding-left:18px;font:400 .9rem/1.5 system-ui,sans-serif;flex:1}
 .gfc-tier label{display:block;font:500 .78rem/1.4 system-ui,sans-serif;margin:6px 0 4px}
-.gfc-tier input[type=text]{width:100%;padding:9px 10px;border-radius:8px;border:1px solid rgba(239,230,207,.35);background:rgba(0,0,0,.25);color:var(--cream);font:400 .9rem system-ui,sans-serif}
+.gfc-tier input[type=text],.gfc-tier select{width:100%;padding:9px 10px;border-radius:8px;border:1px solid rgba(239,230,207,.35);background:rgba(0,0,0,.25);color:var(--cream);font:400 .9rem system-ui,sans-serif}
 .gfc-check{display:flex;gap:8px;align-items:flex-start}
 .gfc-btn{margin-top:12px;width:100%;padding:12px;border:0;border-radius:999px;background:linear-gradient(180deg,var(--cu2),var(--cu));color:#1b1208;font:700 .95rem system-ui,sans-serif;cursor:pointer}
 .gfc-btn[disabled]{opacity:.5;cursor:not-allowed}
@@ -61,6 +61,21 @@
       <input type="text" id="wall-{{ t }}" name="properties[Founders Wall name]" maxlength="40" autocomplete="nickname">
       <label class="gfc-check"><input type="checkbox" name="properties[Show on wall]" value="Yes"> Show my name publicly</label>
       {%- endif -%}
+      {%- comment -%} What the member SAYS, kept beside what the tagged link says
+      (utm_source, in Shopify analytics). Self-report alone is unreliable and the link
+      only covers doors we tagged; together they answer "where do members come from".
+      Ported from CrossroadsWeddingCo lib/lead-sources.ts. {%- endcomment -%}
+      <label for="found-{{ t }}">How did you find us? (optional)</label>
+      <select id="found-{{ t }}" name="properties[Found us]">
+        <option value="">Choose one</option>
+        <option>A friend or member</option>
+        <option>Instagram</option>
+        <option>Facebook</option>
+        <option>Our table at a market or event</option>
+        <option>A flyer or card</option>
+        <option>A shop that carries G.O.B.</option>
+        <option>Somewhere else</option>
+      </select>
       <button class="gfc-btn" type="submit"{% unless v.available %} disabled{% endunless %}>{% if v.available %}Join at {{ p.title | remove: 'G.O.B. Founders Club: ' | split: ' (' | first }}{% else %}Sold out{% endif %}</button>
     </form>
     {%- else -%}

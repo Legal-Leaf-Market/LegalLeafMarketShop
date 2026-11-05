@@ -3,7 +3,9 @@
 Ready-to-post copy for opening the Founders Club. Fill the **[brackets]** before posting.
 Nothing here names a date, a member count or a product we cannot back up yet.
 
-**Link everywhere:** `shop.legalleafmarket.shop/pages/founders-club`
+**Link:** the Founders Club page, but use **the tagged link for each channel** from
+`gob/LINKS.md` (email link in the email, Instagram link in the bio, and so on), so you can
+see which one brings members in.
 
 ## Rules this copy follows, so keep them when you edit
 
