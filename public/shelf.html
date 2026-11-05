@@ -143,7 +143,7 @@
   @keyframes glow { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
   .evening > * { position: relative; z-index: 1; }
   .evening .dark { background: none; }
-  .note { max-width: 720px; margin: 0 auto; padding: clamp(26px, 5vw, 44px); background: var(--paper); color: var(--ink); border: 9px solid #7A4E2A; outline: 2px solid #4C2F17; border-radius: 3px; box-shadow: 0 18px 36px rgba(0, 0, 0, .4); }
+  .signup-card { max-width: 720px; margin: 0 auto; padding: clamp(26px, 5vw, 44px); background: var(--paper); color: var(--ink); border: 9px solid #7A4E2A; outline: 2px solid #4C2F17; border-radius: 3px; box-shadow: 0 18px 36px rgba(0, 0, 0, .4); }
   .nightfall { height: 110px; background: linear-gradient(#7A4A4F, #4A3A63 45%, #24304F); border-top: 14px solid #7A4E2A; }
   .nightcap { background: #24304F; }
   footer { background: #0E1913; }
@@ -175,6 +175,35 @@
   #a-locked .perch img { mix-blend-mode: normal; }
   #a-locked .info { color: var(--ink); }
   .how { padding-bottom: 30px; }
+  .r-dialog { width: min(920px, calc(100% - 24px)); }
+  .r-lead { margin: 10px 0 16px; font-size: 17px; }
+  .r-moments { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .r-moment { display: flex; flex-direction: column; padding: 0 0 14px; text-align: left; background: #fff; color: var(--ink); border: 7px solid #7A4E2A; outline: 1px solid #4C2F17; border-radius: 3px; cursor: pointer; font: inherit; overflow: hidden; }
+  .r-moment:hover { box-shadow: 0 8px 18px rgba(50, 30, 10, .3); }
+  .r-moment img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 1.5; object-fit: cover; }
+  .r-t { padding: 12px 14px 2px; font: 700 20px/1.2 var(--serif); }
+  .r-s { padding: 0 14px; font-size: 15px; line-height: 1.35; color: var(--muted); }
+  .r-fine { margin: 14px 0 0 !important; }
+  .r-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; margin: 8px 0 14px; }
+  .r-head h3 { margin: 0; font-size: 22px; }
+  .r-back { padding: 8px 0; border: 0; background: none; color: var(--teal); font: 700 15px/1.2 var(--sans); cursor: pointer; text-decoration: underline; }
+  .r-bundles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .r-bundle { display: flex; flex-direction: column; padding: 12px; background: #fff; border: 1px solid var(--line); border-radius: 4px; }
+  .r-bhead { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; font: 700 18px/1.2 var(--serif); }
+  .r-vote { margin: 0 6px 0 0; padding: 5px 8px; border: 1px solid var(--teal); border-radius: 999px; background: none; color: var(--teal); font: 600 12px/1.2 var(--sans); cursor: pointer; }
+  .r-vote:hover { background: rgba(44, 74, 51, .1); }
+  .r-item { position: relative; display: flex; gap: 10px; padding: 9px 26px 9px 0; border-top: 1px solid var(--line); }
+  .r-item img, .r-noimg { flex: none; width: 60px; height: 60px; object-fit: cover; border-radius: 3px; background: #E8D2A8; }
+  .r-info { min-width: 0; }
+  .r-name { font: 700 14px/1.25 var(--serif); }
+  .r-maker { margin-top: 2px; font-size: 12px; color: var(--muted); }
+  .r-note { margin-top: 3px; font-size: 13px; line-height: 1.3; }
+  .r-x { position: absolute; top: 5px; right: 0; width: 26px; height: 26px; border: 0; background: none; color: var(--ink); font-size: 20px; line-height: 1; cursor: pointer; }
+  .r-total { display: flex; justify-content: space-between; margin-top: auto; padding: 10px 0; border-top: 1px solid var(--line); font-size: 15px; }
+  .r-add { width: 100%; padding: 11px 8px; font-size: 15px; }
+  .r-shuffle { width: 100%; margin-top: 12px; }
+  @media (max-width: 760px) { .r-bundles { grid-template-columns: 1fr; } .r-bhead { flex-direction: row; justify-content: space-between; align-items: center; } }
+  @media (max-width: 480px) { .r-moments { grid-template-columns: 1fr; } }
   .info h3.name { margin: 0; color: var(--ink); }
   .tag.spo { background: #8F3A22; color: #fff; }
   .filler .perch::after { display: none; }
@@ -200,7 +229,8 @@
           <h1>The Shelf</h1>
           <p class="lede">The doors aren't open yet, but the shelf is. Here's what it's going to look like. Pick what you want, and we'll order it in for you.</p>
           <div class="actions">
-            <a class="btn btn-main" href="#a-planned">See what's staying</a>
+            <a class="btn btn-main" href="#ritual" data-open-ritual="1">Build your ritual</a>
+            <a class="btn btn-alt" href="#a-planned">See what's staying</a>
             <a class="btn btn-alt" href="#shelf-top">Browse everything</a>
           </div>
         </div>
@@ -247,6 +277,13 @@
 </main>
 
 <button class="tray" id="tray" type="button" hidden>My special order</button>
+
+<dialog id="ritual" class="r-dialog" aria-labelledby="ritual-title">
+  <div class="dlg">
+    <div class="dlg-top"><h2 id="ritual-title" style="font-size:28px">Build your ritual</h2><button class="x" id="ritual-close" type="button" aria-label="Close">&times;</button></div>
+    <div id="ritual-body"></div>
+  </div>
+</dialog>
 
 <dialog id="order" aria-labelledby="order-title">
   <div class="dlg">
@@ -453,6 +490,136 @@
       .then(function () { btn.disabled = false; });
   });
   load();
+  /* ---- Build your ritual: pairing ideas by moment, described by flavor only ---- */
+  var BOTANICALS = {
+    yerba: { re: /yerba/i, note: 'Grassy and a little smoky, with natural caffeine.' },
+    mint: { re: /peppermint|spearmint|field mint/i, note: 'Bright, cool and clean.' },
+    nettle: { re: /nettle/i, note: 'Green and earthy.' },
+    mullein: { re: /mullein/i, note: 'Mild, soft and a little earthy.' },
+    lavender: { re: /lavender/i, note: 'Floral and softly sweet.' },
+    lemonbalm: { re: /lemon ?balm/i, note: 'Light and lemony.' },
+    damiana: { re: /damiana/i, note: 'Herbal, with a light citrus edge.' },
+    rose: { re: /rose petal/i, note: 'Rosy and gently perfumed.' },
+    calendula: { re: /calendula/i, note: 'Mild, sunny and a little peppery.' },
+    mugwort: { re: /mugwort/i, note: 'Earthy and slightly bitter.' },
+    lotus: { re: /lotus|water lily/i, note: 'Soft, floral and a little sweet.' },
+    hops: { re: /\bhops\b/i, note: 'Bitter, floral and familiar.' },
+    blend: { re: /kaleidoscope|luna|blue sky|sunset/i, note: 'A ready-made floral blend.' }
+  };
+  var JARS = ['ll-kozo-glass-jar', 'll-ceramic-stash-jar', 'll-recache-steel', 'll-zam-container'];
+  var TRAYS = ['ll-fabric-tray', 'll-space-tray'];
+  var FIRE = ['nm-glass-ashtray', 'nm-wood-ashtray-kit', 'nm-bronze-ashtray', 'nm-metal-ashtray', 'nm-clipper-camo', 'nm-clipper-solid', 'll-groove-torch'];
+  var MOMENTS = {
+    morning: { title: 'Morning on the porch', blurb: 'Bright, green and easy. The day can wait five minutes.', art: '11-tea-still-life-alternate', herbs: ['yerba', 'mint', 'nettle', 'calendula'], extras: JARS, incense: false },
+    afternoon: { title: 'A slow afternoon', blurb: 'Floral, soft and in no hurry at all.', art: '05-herb-shelf', herbs: ['lavender', 'mullein', 'lemonbalm', 'rose', 'calendula', 'blend'], extras: JARS.concat(TRAYS), incense: false },
+    evening: { title: 'Lights down', blurb: 'Earthy and mellow for the end of a long day.', art: '12-herb-jars-alternate', herbs: ['lavender', 'mugwort', 'lotus', 'hops'], extras: JARS, incense: true },
+    fire: { title: 'Around the fire', blurb: 'Smoky, resinous and better with a guitar nearby.', art: '02-acoustic-corner-APPROVED', herbs: ['damiana', 'mullein', 'lotus', 'mugwort', 'blend'], extras: FIRE.concat(TRAYS), incense: true }
+  };
+  var rDlg = document.getElementById('ritual');
+  var rBody = document.getElementById('ritual-body');
+  var rMoment = null, rBundles = [], rFb = {};
+  try { rFb = JSON.parse(localStorage.getItem('cabin_ritual_fb') || '{}') || {}; } catch (e) { rFb = {}; }
+  function rSave() { try { localStorage.setItem('cabin_ritual_fb', JSON.stringify(rFb)); } catch (e) {} }
+  function rNudge(k, d) { rFb[k] = Math.max(-3, Math.min(6, (rFb[k] || 0) + d)); }
+  function rPickFrom(list) {
+    var pool = list.slice().sort(function (a, b) { return a.price - b.price; });
+    return pool[Math.floor(Math.random() * Math.min(3, pool.length))];
+  }
+  function rHerbProducts(key) {
+    var re = BOTANICALS[key].re;
+    return products.filter(function (p) { return !p._locked && !p._lab && !p._acc && (p.category === 'Single Herbs' || p.category === 'Herbal Blends') && re.test(p.raw || p.name); });
+  }
+  function rExtras(m) {
+    var list = m.extras.map(byId).filter(Boolean);
+    if (m.incense) list = list.concat(products.filter(function (p) { return !p._locked && !p._lab && /incense|smudge/i.test(p.raw || p.name); }));
+    return list;
+  }
+  function rBuild(key) {
+    var m = MOMENTS[key], used = {}, picks = [];
+    var options = m.herbs.filter(function (h) { return rHerbProducts(h).length; });
+    var extras = rExtras(m);
+    var wantExtra = extras.length && Math.random() < Math.max(.15, Math.min(.95, .7 + (rFb.__extra || 0) * .1));
+    var slots = wantExtra ? 2 : 3;
+    while (picks.length < slots && options.length) {
+      var total = options.reduce(function (s, h) { return s + Math.max(.3, 2 + (rFb[h] || 0)); }, 0), r = Math.random() * total, chosen = options[0];
+      for (var i = 0; i < options.length; i++) { r -= Math.max(.3, 2 + (rFb[options[i]] || 0)); if (r <= 0) { chosen = options[i]; break; } }
+      options = options.filter(function (h) { return h !== chosen; });
+      var avail = rHerbProducts(chosen).filter(function (p) { return !used[p.id]; });
+      if (!avail.length) continue;
+      var pl = avail.filter(function (p) { return p._planned; });
+      var p = pl.length && Math.random() < .5 ? pl[0] : rPickFrom(avail);
+      used[p.id] = 1;
+      picks.push({ key: chosen, note: BOTANICALS[chosen].note, p: p });
+    }
+    if (wantExtra) {
+      var ex = rPickFrom(extras.filter(function (p) { return !used[p.id]; }));
+      if (ex) picks.push({ key: '__extra', note: 'Something handy to go with it.', p: ex });
+    }
+    return picks.length ? picks : null;
+  }
+  function rSig(b) { return b.map(function (x) { return x.p.id; }).sort().join('|'); }
+  function rRoll() {
+    rBundles = [];
+    for (var t = 0; t < 16 && rBundles.length < 3; t++) {
+      var b = rBuild(rMoment);
+      if (b && !rBundles.some(function (o) { return rSig(o) === rSig(b); })) rBundles.push(b);
+    }
+    rRender();
+  }
+  function rShowMoments() {
+    rMoment = null;
+    rBody.innerHTML = '<p class="r-lead">Pick a moment, and we\'ll put together three little sets you can special order.</p><div class="r-moments">' + Object.keys(MOMENTS).map(function (k) {
+      var m = MOMENTS[k];
+      return '<button type="button" class="r-moment" data-moment="' + k + '"><img src="/art/cafe/' + m.art + '-800.webp" width="800" height="533" alt="" loading="lazy" decoding="async"><span class="r-t">' + esc(m.title) + '</span><span class="r-s">' + esc(m.blurb) + '</span></button>';
+    }).join('') + '</div><p class="note r-fine">These are pairing ideas based on flavor and feel, not health advice.</p>';
+    rBody.scrollTop = 0;
+  }
+  function rRender() {
+    var m = MOMENTS[rMoment];
+    var head = '<div class="r-head"><button type="button" class="r-back" data-back="1">&larr; All moments</button><h3>' + esc(m.title) + '</h3></div>';
+    if (!rBundles.length) { rBody.innerHTML = head + '<p class="r-lead">The shelf is thin for this one right now. Try another moment.</p>'; return; }
+    rBody.innerHTML = head + '<div class="r-bundles">' + rBundles.map(function (b, bi) {
+      var sum = b.reduce(function (s, x) { return s + x.p.price; }, 0);
+      return '<article class="r-bundle"><div class="r-bhead"><b>Set ' + (bi + 1) + '</b><span><button type="button" class="r-vote" data-vote="1" data-b="' + bi + '">More like this</button><button type="button" class="r-vote" data-vote="-1" data-b="' + bi + '">Less like this</button></span></div>' + b.map(function (x, ii) {
+        var pic = x.p.image ? '<img src="' + esc(x.p.image) + '" alt="" width="60" height="60" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'">' : '<span class="r-noimg"></span>';
+        return '<div class="r-item">' + pic + '<div class="r-info"><div class="r-name">' + esc(x.p.name) + '</div><div class="r-maker">' + esc(x.p.vendor) + ' &middot; ' + money(x.p.price) + '</div><div class="r-note">' + esc(x.note) + '</div></div><button type="button" class="r-x" data-b="' + bi + '" data-i="' + ii + '" aria-label="Swap out ' + esc(x.p.name) + '">&times;</button></div>';
+      }).join('') + '<div class="r-total"><span>Listed total</span><b>' + money(sum) + '</b></div><button type="button" class="btn btn-main r-add" data-b="' + bi + '">Add this set to my order</button></article>';
+    }).join('') + '</div><button type="button" class="btn btn-alt r-shuffle" data-shuffle="1">Shuffle all three</button><p class="note r-fine">These are pairing ideas based on flavor and feel, not health advice. Listed prices are confirmed before you pay.</p>';
+  }
+  function openRitual() { rShowMoments(); if (!rDlg.open) rDlg.showModal(); }
+  document.querySelectorAll('[data-open-ritual]').forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); openRitual(); }); });
+  document.getElementById('ritual-close').addEventListener('click', function () { rDlg.close(); });
+  rBody.addEventListener('click', function (e) {
+    var t = e.target.closest('button'); if (!t) return;
+    if (t.hasAttribute('data-moment')) { rMoment = t.getAttribute('data-moment'); rRoll(); rBody.scrollTop = 0; return; }
+    if (t.hasAttribute('data-back')) { rShowMoments(); return; }
+    if (t.hasAttribute('data-shuffle')) { rRoll(); return; }
+    var bi = Number(t.getAttribute('data-b')), b = rBundles[bi]; if (!b) return;
+    if (t.hasAttribute('data-vote')) {
+      var d = Number(t.getAttribute('data-vote'));
+      b.forEach(function (x) { rNudge(x.key, d); });
+      rSave(); rRoll(); return;
+    }
+    if (t.classList.contains('r-x')) {
+      rNudge(b[Number(t.getAttribute('data-i'))].key, -2); rSave();
+      var next = null;
+      for (var a = 0; a < 10 && !next; a++) {
+        var c = rBuild(rMoment);
+        if (c && !rBundles.some(function (o, ox) { return ox !== bi && rSig(o) === rSig(c); }) && rSig(c) !== rSig(b)) next = c;
+      }
+      if (next) rBundles[bi] = next;
+      rRender(); return;
+    }
+    if (t.classList.contains('r-add')) {
+      b.forEach(function (x) { cart[x.p.id] = (cart[x.p.id] || 0) + 1; rNudge(x.key, 1); });
+      rSave(); updateTray(); render(); rDlg.close();
+      msg.textContent = ''; form.style.display = ''; document.getElementById('order-note').style.display = '';
+      dlg.showModal();
+    }
+  });
+  if (location.hash === '#ritual') {
+    var rWait = setInterval(function () { if (!document.getElementById('gate') && products.length) { clearInterval(rWait); openRitual(); } }, 250);
+  }
 })();
 </script>
 <script>
