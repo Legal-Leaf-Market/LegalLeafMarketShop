@@ -56,3 +56,15 @@ The product copy is flavor only. It leaves out the effect claims ("mood-lifting"
 until Golden Hemp confirms what oil goes in the device and compliance review
 signs off. "Sold by Legal-Leaf Market" is on every product, which `terms.html`
 requires.
+
+## G.O.B. on every page (5 Nov 2026)
+
+`public/gob-promo.js` puts a G.O.B. banner at the top of every page and a floating flavor card
+in the bottom corner. It already runs on legalleafmarket.shop/cafe and /shelf. On the Shopify
+store, add ONE line to the header group's Custom Liquid section (the one that loads
+`ll-cart.css`, so it is on every page), with the commit filled in:
+
+    <script src="https://cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@<commit>/public/gob-promo.js" defer></script>
+
+The flavor links go to `/pages/gob-lab-results#<flavor>` because the vapes are in person only
+and their product pages stay drafts. Change the three `href`s in `FLAVORS` if that ever changes.
