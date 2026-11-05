@@ -26,7 +26,7 @@
   {%- else -%}
     {%- assign order = 'Summit,Ridge,Trailhead,Lodge' | split: ',' -%}
     {%- for tier in order -%}
-      {%- capture items -%}{%- for f in founders -%}{%- if f.tier.value == tier -%}<li>{{ f.name.value | escape }}{% if f.number.value %}<small>#{{ f.number.value }}</small>{% endif %}</li>{%- endif -%}{%- endfor -%}{%- endcapture -%}
+      {%- capture items -%}{%- for f in founders -%}{%- if f.tier.value == tier -%}<li>{{ f.name.value | escape }}{% if f.number.value %}<small>#{{ f.number.value }}</small>{% endif %}{% if f.note.value %}<br><em style="font-size:.85rem;opacity:.85">"{{ f.note.value | escape }}"</em>{% endif %}</li>{%- endif -%}{%- endfor -%}{%- endcapture -%}
       {%- if items != blank -%}
         <h3>{{ tier }}</h3>
         <ul>{{ items }}</ul>

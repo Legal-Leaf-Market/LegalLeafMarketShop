@@ -98,6 +98,22 @@ For each paid Founders order, check the line item properties **Founders Wall nam
 name exactly as typed and the tier. For Summit, set `number` in order of purchase (1 to 50).
 Never add someone who did not tick the box.
 
+### 9. Added 5 Nov: Find us page, lab results, notes and referrals
+1. **Founder metaobject:** add one more field, `note` (single line text). When filling the
+   wall (task 8), copy the order's **Wall note** into it only if **Show on wall** is `Yes`.
+   Read it first and skip anything unkind or off topic. Never edit a member's words.
+2. **Referrals:** when an order has **Referred by**, add a bonus medallion patch to that
+   member's pack and to the referrer's next pack. Tell the owner if you cannot tell who the
+   referrer is.
+3. **Stops:** add a metaobject definition `gob_stop` with fields `title`, `venue`,
+   `address` (single line text), `date` (date), `starts`, `ends`, `note` (single line
+   text). Storefront access on. Ask the owner for the first dates.
+4. **Pages:** create `Find us` (handle `find-us`) with `gob-find-us.liquid`, and `G.O.B. lab
+   results` (handle `gob-lab-results`) with `gob-lab-results.liquid`, the same way as task 5.
+   The lab page also needs a `gob_batch` metaobject (fields listed at the top of that file).
+5. **Links:** use the tagged links in `gob/LINKS.md`. The Instagram bio gets the
+   `instagram-bio` link.
+
 ## Before the owner switches Founders tiers to Active
 
 Read this list to him. It is his call, not yours.

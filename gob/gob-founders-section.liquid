@@ -60,7 +60,13 @@
       <label for="wall-{{ t }}">Name for the Founders Wall (optional)</label>
       <input type="text" id="wall-{{ t }}" name="properties[Founders Wall name]" maxlength="40" autocomplete="nickname">
       <label class="gfc-check"><input type="checkbox" name="properties[Show on wall]" value="Yes"> Show my name publicly</label>
+      <label for="note-{{ t }}">A short note for the wall (optional, we read every one first)</label>
+      <input type="text" id="note-{{ t }}" name="properties[Wall note]" maxlength="120">
       {%- endif -%}
+      {%- comment -%} Referral, ported from Crossroads' pilot referral program. {%- endcomment -%}
+      <label for="ref-{{ t }}">Referred by a member? Their name (optional)</label>
+      <input type="text" id="ref-{{ t }}" name="properties[Referred by]" maxlength="60">
+      <p style="font:400 .75rem/1.4 system-ui,sans-serif;margin:4px 0 0;opacity:.8">Name the member who sent you and you both get a bonus medallion patch in your pack.</p>
       {%- comment -%} What the member SAYS, kept beside what the tagged link says
       (utm_source, in Shopify analytics). Self-report alone is unreliable and the link
       only covers doors we tagged; together they answer "where do members come from".

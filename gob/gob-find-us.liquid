@@ -1,0 +1,115 @@
+<!--
+  G.O.B. "Find us" page: where the table is next, plus a stamp card.
+  Paste into a Custom Liquid section on a page with handle "find-us".
+
+  Ported from two sister repos:
+    gun-show-booth (data/events.json, events.html): the list of upcoming stops,
+      each with directions and an add-to-calendar link.
+    Heart-Of-Columbus (src/data/trails.mjs): an honor-system stamp card kept only
+      in the visitor's browser. No account, no prizes promised here, nothing sent.
+
+  Each stop is one "gob_stop" metaobject (Settings > Custom data > Metaobjects):
+    title     single line text   e.g. "Columbus Holiday Market"
+    venue     single line text   e.g. "The Commons"
+    address   single line text   street, city, state
+    date      date               the day
+    starts    single line text   24-hour time, e.g. 10:00
+    ends      single line text   24-hour time, e.g. 16:00
+    note      single line text   optional, e.g. "Booth 14, by the north doors"
+  Storefront access must be on.
+
+  The page says nothing about what is sold at the table on purpose: it is the
+  page social posts link to (see gob/LAUNCH_ANNOUNCEMENT.md for why).
+-->
+<style>
+.gfu{--g:#0f2a1d;--cu:#c9853f;--cu2:#e2a866;--cream:#efe6cf;background:var(--g);color:var(--cream);
+  border:1px solid rgba(201,133,63,.45);border-radius:14px;padding:26px 18px;font-family:Georgia,"Times New Roman",serif}
+.gfu *{box-sizing:border-box}
+.gfu h2{color:var(--cu2);text-align:center;margin:0 0 4px;font-size:clamp(1.5rem,4vw,2.2rem)}
+.gfu .sub{text-align:center;margin:0 auto 22px;max-width:56ch;font:400 .95rem/1.55 system-ui,sans-serif}
+.gfu ol{list-style:none;margin:0 auto;padding:0;max-width:820px;display:grid;gap:12px}
+.gfu li{background:rgba(0,0,0,.2);border:1px solid rgba(201,133,63,.3);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:86px 1fr;gap:14px;align-items:start}
+.gfu .day{text-align:center;border:1px solid rgba(201,133,63,.5);border-radius:10px;padding:8px 4px}
+.gfu .day b{display:block;font-size:1.8rem;color:var(--cu2);line-height:1}
+.gfu .day span{font:600 .72rem system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.gfu h3{margin:0;font-size:1.2rem;color:var(--cu2)}
+.gfu p{margin:4px 0 0;font:400 .9rem/1.5 system-ui,sans-serif}
+.gfu .acts{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
+.gfu .acts a,.gfu button{color:var(--cream);background:none;border:1px solid rgba(201,133,63,.5);border-radius:999px;padding:6px 12px;font:600 .8rem system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.gfu .acts a:hover,.gfu button:hover,.gfu .acts a:focus-visible,.gfu button:focus-visible{border-color:var(--cu2)}
+.gfu .none{text-align:center;font:400 .95rem/1.55 system-ui,sans-serif;opacity:.85}
+.gfu .card{max-width:820px;margin:28px auto 0;border-top:1px solid rgba(201,133,63,.35);padding-top:20px;text-align:center}
+.gfu .stamps{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:14px 0}
+.gfu .stamp{width:74px;height:74px;border-radius:50%;border:2px dashed rgba(201,133,63,.55);display:grid;place-items:center;font:600 .62rem/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;padding:6px;opacity:.6}
+.gfu .stamp.on{border-style:solid;border-color:var(--cu2);opacity:1;background:radial-gradient(circle,rgba(226,168,102,.25),transparent 70%)}
+@media (max-width:520px){.gfu li{grid-template-columns:64px 1fr}.gfu .day b{font-size:1.4rem}}
+</style>
+{%- assign today = 'now' | date: '%Y-%m-%d' -%}
+{%- assign stops = shop.metaobjects.gob_stop.values -%}
+<div class="gfu">
+  <h2>Find us</h2>
+  <p class="sub">Where the G.O.B. table is next. Come say hello, pick up merch and join the Founders Club in person.</p>
+
+  {%- capture upcoming -%}
+  {%- for s in stops -%}
+    {%- assign d = s.date.value | date: '%Y-%m-%d' -%}
+    {%- if d >= today -%}
+    {%- assign ymd = s.date.value | date: '%Y%m%d' -%}
+    {%- assign st = s.starts.value | default: '10:00' | remove: ':' | append: '00' -%}
+    {%- assign en = s.ends.value | default: '16:00' | remove: ':' | append: '00' -%}
+    <li>
+      <div class="day"><span>{{ s.date.value | date: '%b' }}</span><b>{{ s.date.value | date: '%-d' }}</b><span>{{ s.date.value | date: '%a' }}</span></div>
+      <div>
+        <h3>{{ s.title.value | escape }}</h3>
+        <p>{{ s.venue.value | escape }}{% if s.address.value %}, {{ s.address.value | escape }}{% endif %}</p>
+        <p>{% if s.starts.value %}{{ s.starts.value | escape }}{% if s.ends.value %} to {{ s.ends.value | escape }}{% endif %}{% endif %}{% if s.note.value %}. {{ s.note.value | escape }}{% endif %}</p>
+        <div class="acts">
+          {%- if s.address.value -%}<a href="https://www.google.com/maps/search/?api=1&query={{ s.venue.value | append: ' ' | append: s.address.value | url_encode }}" target="_blank" rel="noopener">Directions</a>{%- endif -%}
+          <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ 'G.O.B. at ' | append: s.title.value | url_encode }}&dates={{ ymd }}T{{ st }}/{{ ymd }}T{{ en }}&ctz=America/Indiana/Indianapolis&location={{ s.venue.value | append: ', ' | append: s.address.value | url_encode }}" target="_blank" rel="noopener">Add to calendar</a>
+        </div>
+      </div>
+    </li>
+    {%- endif -%}
+  {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- if upcoming != blank -%}
+    <ol>{{ upcoming }}</ol>
+  {%- else -%}
+    <p class="none">No dates posted yet. Follow us for the first one.</p>
+  {%- endif -%}
+
+  {%- if stops.size > 0 -%}
+  <div class="card" data-gob-card>
+    <h3>Your G.O.B. trail card</h3>
+    <p>Tap a stop when you have been there. It is an honor system, kept only on this phone or computer, and nothing is sent to us.</p>
+    <div class="stamps">
+      {%- for s in stops -%}
+      <button type="button" class="stamp" data-stop="{{ s.system.handle | escape }}" aria-pressed="false">{{ s.title.value | truncate: 28 | escape }}</button>
+      {%- endfor -%}
+    </div>
+    <p data-gob-count></p>
+  </div>
+  <script>
+  (function () {
+    var card = document.querySelector('[data-gob-card]'); if (!card) return;
+    var KEY = 'gob_trail_v1', got = {};
+    try { got = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { got = {}; }
+    var btns = card.querySelectorAll('.stamp'), out = card.querySelector('[data-gob-count]');
+    function paint() {
+      var n = 0;
+      btns.forEach(function (b) { var on = !!got[b.dataset.stop]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); if (on) n++; });
+      out.textContent = n ? n + ' of ' + btns.length + ' stops stamped.' : '';
+    }
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (got[b.dataset.stop]) delete got[b.dataset.stop]; else got[b.dataset.stop] = 1;
+        try { localStorage.setItem(KEY, JSON.stringify(got)); } catch (e) {}
+        paint();
+      });
+    });
+    paint();
+  })();
+  </script>
+  {%- endif -%}
+</div>
