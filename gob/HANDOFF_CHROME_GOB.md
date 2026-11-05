@@ -1,5 +1,11 @@
 # Handoff to Claude in Chrome: G.O.B. launch on Shopify
 
+> **STOP, 5 Nov 2026: do not import `gob-products.csv` (the three vapes) at all.** From
+> 11 Dec 2026 a 2 mL THC vape is no longer hemp under federal law (see
+> `gob/research/GEMINI_RESULTS_2026-11-05.md`). Skip task 2's first file until the owner says
+> a lawyer has cleared it. The Founders Club steps are also on hold until the owner decides
+> how the club changes. Ask him before starting anything here.
+
 You are taking over the browser half of the G.O.B. / Good Old Boys Cannabis launch on
 **shop.legalleafmarket.shop**. Claude Code built every file; your job is to get them into
 the Shopify admin. The owner (Jacob) is next to you. Work in a new tab, one task at a time,
