@@ -106,3 +106,49 @@
   .cf-fig{padding:10px}
   .cf-menu{padding:20px 18px}
 }
+
+/* ---- storefront sketch ---- */
+.sf-ground{fill:var(--chip)}
+.sf-wall{fill:rgba(var(--accent-rgb),.06);stroke:var(--glass-line);stroke-width:2}
+.sf-sign{fill:rgba(240,185,60,.12);stroke:rgba(240,185,60,.6);stroke-width:2}
+.sf-signt{font-family:var(--display);font-weight:900;font-size:24px;fill:var(--gold);letter-spacing:.01em}
+.sf-aw1{fill:rgba(var(--accent-rgb),.28)}
+.sf-aw2{fill:rgba(255,255,255,.1)}
+.sf-glass{fill:rgba(var(--accent-rgb),.09);stroke:rgba(var(--accent-rgb),.5);stroke-width:1.5}
+.sf-door{fill:var(--chip);stroke:rgba(240,185,60,.5);stroke-width:2}
+.sf-wire{stroke:var(--dim);stroke-width:1.2}
+.sf-bulb{fill:var(--gold)}
+.sf-leaf{fill:none;stroke:var(--leaf);stroke-width:2;stroke-linecap:round}
+.sf-pot{fill:var(--chip);stroke:var(--line);stroke-width:1.5}
+.sf-board{fill:var(--panel2);stroke:var(--gold);stroke-width:1.5}
+.sf-boardt{font-family:var(--script);font-style:italic;font-weight:600;font-size:15px;fill:var(--text)}
+
+/* ---- herb shelf sketch ---- */
+.sh-plank{fill:var(--line)}
+.sh-jar{fill:rgba(var(--accent-rgb),.1);stroke:rgba(var(--accent-rgb),.55);stroke-width:1.5}
+.sh-lid{fill:rgba(240,185,60,.5)}
+.sh-label{fill:var(--bg);stroke:var(--line);stroke-width:1}
+.sh-bag{fill:rgba(240,185,60,.12);stroke:rgba(240,185,60,.55);stroke-width:1.5}
+.sh-bag.alt{fill:rgba(var(--accent-rgb),.12);stroke:rgba(var(--accent-rgb),.55)}
+.sh-tin{fill:var(--chip);stroke:var(--glass-line);stroke-width:1.5}
+
+/* ---- opening checklist: nothing is ticked, so every box is empty ---- */
+.cf-road{margin:20px 0 0 !important;padding:0 !important;list-style:none;display:grid;gap:10px}
+.cf-road li{display:grid;grid-template-columns:22px 1fr;column-gap:12px;margin:0 !important;
+  padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.cf-road li::before{content:"";grid-row:1 / span 2;width:16px;height:16px;margin-top:3px;
+  border-radius:4px;border:1.5px solid var(--gold)}
+.cf-road b{display:block;font-family:var(--sans);font-weight:600;font-size:.98rem;color:var(--text)}
+.cf-road span{display:block;margin-top:3px;font-size:.88rem;line-height:1.55;color:var(--muted)}
+
+/* ---- FAQ ---- */
+.cf-faq{margin:22px 0 0;display:grid;gap:10px}
+.cf-faq details{border-radius:var(--r-sm);border:1px solid var(--line);background:var(--panel);
+  padding:0 16px}
+.cf-faq summary{cursor:pointer;list-style:none;padding:14px 0;font-family:var(--sans);font-weight:600;
+  font-size:.98rem;color:var(--text);display:flex;justify-content:space-between;gap:14px;align-items:center}
+.cf-faq summary::-webkit-details-marker{display:none}
+.cf-faq summary::after{content:"+";font-size:1.3rem;line-height:1;color:var(--gold);flex:none}
+.cf-faq details[open] summary::after{content:"\2212"}
+.cf-faq details[open]{border-color:rgba(var(--accent-rgb),.4)}
+.cf-faq details p{margin:0 0 14px !important;font-size:.95rem !important;line-height:1.65 !important}
