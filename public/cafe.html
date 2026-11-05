@@ -1,614 +1,249 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Legal Leaf Cafe &amp; Market: coming soon | Legal-Leaf Market</title>
-<!-- 21+ gate, same as every other page. See public/js/age-gate.js. -->
-<script src="/js/age-gate.js"></script>
-<meta name="description" content="Legal Leaf Cafe &amp; Market is a planned neighborhood cafe in South Central Indiana: coffee, loose-leaf tea, herbs, a community bodega and live acoustic music. Coming soon. Nothing is for sale through this page.">
+<meta name="description" content="Espresso, loose-leaf tea, herbs by the jar and live acoustic music. Legal Leaf Cafe &amp; Market is coming soon to South Central Indiana.">
 <link rel="canonical" href="https://legalleafmarket.shop/cafe">
-<meta name="theme-color" content="#080f14">
-<!-- STAGED, on purpose: noindex,nofollow and absent from sitemap.xml until the owner says the
-     page is ready to be found. Launch is flipping this one tag and adding the sitemap line,
-     the same two-step as /shipping and /returns (CLAUDE.md, "Direct sales were staged"). -->
-<meta name="robots" content="noindex,nofollow">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg">
 <link rel="manifest" href="/manifest.webmanifest">
-<meta property="og:title" content="Legal Leaf Cafe &amp; Market: coming soon">
-<meta property="og:description" content="A planned neighborhood cafe and community shop in South Central Indiana. Coming soon.">
 <meta property="og:type" content="website">
+<meta property="og:title" content="Legal Leaf Cafe &amp; Market: coming soon">
+<meta property="og:description" content="Espresso, loose-leaf tea, herbs by the jar and live acoustic music, coming soon to South Central Indiana.">
 <meta property="og:url" content="https://legalleafmarket.shop/cafe">
-<meta property="og:site_name" content="Legal-Leaf Market">
-<meta property="og:image" content="https://legalleafmarket.shop/og-image.png">
-<meta name="rating" content="adult">
-<link rel="stylesheet" href="/css/tokens.css">
-<link rel="stylesheet" href="/css/library.css">
-<!-- Load order matters and is the same as /wholesale: plate.css after library.css,
-     shop.css after plate.css, then this page's own sheet last. Each wins by order. -->
-<link rel="stylesheet" href="/css/plate.css">
-<link rel="stylesheet" href="/css/shop.css">
-<link rel="stylesheet" href="/css/wholesale.css">
-<link rel="stylesheet" href="/css/cafe.css">
-<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+<style>
+  :root {
+    --bg: #080f14; --leaf: #4ec9ff; --gold: #f0b93c;
+    --ink: #f2f8fb; --muted: #a9bdc9;
+    --line: rgba(255, 255, 255, .11);
+    --stack: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 18px/1.6 var(--stack); }
+  a { color: inherit; }
+  .wrap { width: min(1080px, 100% - 40px); margin-inline: auto; }
+
+  /* Hero */
+  .hero { position: relative; overflow: hidden; isolation: isolate; text-align: center;
+    background: radial-gradient(120% 90% at 50% -10%, #4b3aa0 0%, #3a2d86 22%, #274a7e 45%, #14615c 68%, #123b4e 84%, var(--bg) 100%); }
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .18;
+    background: url(/img/paisley.svg) center top / 420px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 22px 0; font-size: 15px; font-weight: 600; }
+  .topbar a { text-decoration: none; }
+  .brand { font-weight: 800; letter-spacing: .02em; }
+  .pill-link { padding: 8px 16px; border: 1px solid rgba(255,255,255,.22); border-radius: 999px; background: rgba(255,255,255,.1); backdrop-filter: blur(8px); white-space: nowrap; }
+  .pill-link:hover { background: rgba(255,255,255,.2); }
+  .soon { display: block; margin: 34px 0 0; color: var(--gold); font: italic 700 clamp(30px, 6vw, 50px)/1.1 Georgia, "Times New Roman", serif; }
+  h1 { margin: 8px auto 0; max-width: 13em; font-size: clamp(44px, 9.4vw, 92px); font-weight: 900; line-height: 1.02; letter-spacing: -.01em; text-shadow: 0 2px 28px rgba(80, 120, 255, .5); }
+  .lede { margin: 22px auto 0; max-width: 24em; font-size: clamp(21px, 3vw, 28px); font-weight: 600; line-height: 1.3; }
+  .place { margin: 14px 0 0; color: var(--leaf); font-size: 14px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 30px 0 44px; }
+  .btn { display: inline-block; padding: 15px 28px; border-radius: 999px; font-size: 17px; font-weight: 800; text-decoration: none; transition: transform .15s ease, filter .15s ease; }
+  .btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+  .btn:focus-visible, .pill-link:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+  .btn-main { background: linear-gradient(135deg, #7fdcff, #4ea3ff); color: #06202f; box-shadow: 0 10px 30px rgba(78, 170, 255, .35); }
+  .btn-alt { border: 1px solid rgba(255,255,255,.35); background: rgba(8,15,20,.3); color: #fff; }
+  .storefront { display: block; width: min(860px, 100%); height: auto; margin: 0 auto; }
+
+  /* Sections */
+  section { padding: clamp(60px, 9vw, 104px) 0; }
+  .kicker { margin: 0 0 12px; color: var(--gold); font-size: 13px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+  h2 { margin: 0; font-size: clamp(34px, 5.4vw, 54px); font-weight: 900; line-height: 1.08; }
+  .welcome { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(24px, 6vw, 72px); align-items: center; }
+  .welcome p:not(.kicker) { margin: 0; color: #d4e1e9; font-size: clamp(19px, 2.3vw, 23px); line-height: 1.55; }
+
+  .offer { padding-top: 0; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 34px; }
+  .card { padding: 30px 26px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(165deg, #123341, #0a161d 75%); }
+  .card svg { display: block; width: 44px; height: 44px; margin-bottom: 18px; color: var(--gold); }
+  .card h3 { margin: 0 0 8px; font-size: 24px; line-height: 1.2; }
+  .card p { margin: 0; color: var(--muted); font-size: 17px; }
+
+  .stage { position: relative; background: linear-gradient(120deg, #2c2470, #14505a); overflow: hidden; }
+  .stage::before { content: ""; position: absolute; inset: 0; opacity: .14; background: url(/img/paisley.svg) center / 380px; }
+  .stage .wrap { position: relative; display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(24px, 6vw, 72px); align-items: center; }
+  .stage p:not(.kicker) { margin: 16px 0 0; color: #dce7ee; font-size: 19px; }
+  .stage .kicker { color: #ffd35f; }
+  .callout { padding: 28px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(5,12,18,.42); }
+  .callout h3 { margin: 0 0 8px; font-size: 24px; line-height: 1.2; }
+  .callout p:not(.kicker) { margin: 0 0 18px; font-size: 17px; }
+  .callout a { color: #8fdfff; font-weight: 800; overflow-wrap: anywhere; }
+
+  .later { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 34px; }
+  .later .card { background: none; }
+
+  .final { text-align: center; }
+  .final h2 { max-width: 14em; margin-inline: auto; }
+  .final p:not(.kicker) { max-width: 32em; margin: 16px auto 0; color: var(--muted); font-size: 19px; }
+  .final .actions { margin-bottom: 0; }
+
+  footer { padding: 28px 0 36px; border-top: 1px solid var(--line); color: #8499a6; font-size: 14px; line-height: 1.5; }
+  footer p { margin: 0; max-width: 62em; }
+
+  @media (max-width: 820px) {
+    body { font-size: 17px; }
+    .welcome, .stage .wrap { grid-template-columns: 1fr; }
+    .cards { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .later { grid-template-columns: 1fr; }
+    .actions .btn { width: 100%; }
+    .brand { font-size: 14px; }
+    .pill-link { padding: 7px 12px; font-size: 13px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn { transition: none; }
+    .btn:hover { transform: none; }
+  }
+</style>
 </head>
 <body>
-
-<main class="shell story">
-  <a class="sbacklink" href="https://shop.legalleafmarket.shop/">&larr; Back to the shop</a>
-
-  <div class="uc-band">
-    <span class="uc-tag">Coming soon &middot; not open</span>
-    <p>
-      <b>The cafe does not exist yet, and nothing here can be bought or ordered.</b>
-      This page is the plan, laid out in the open while we build it: what we intend to stock,
-      what the room might look like, and the rules we are working around. Every mockup is a
-      sketch. Nothing described here has been inspected, licensed or approved, and the plans
-      will change as the answers come in.
-    </p>
-  </div>
-
-  <header class="st-hero">
-    <p class="eyebrow">South Central Indiana &middot; opening plans</p>
-    <h1><span class="st-lead">coffee, tea &amp; the corner shop</span>Legal Leaf Cafe</h1>
-    <p class="st-tagline">
-      <span class="st-tag-en">A neighborhood room for the people who already know the plants.</span>
-      <span class="st-tag-sub">espresso &middot; loose-leaf tea &middot; herbs &middot; a bodega shelf &middot; live acoustic music</span>
-    </p>
-    <p class="st-standfirst">
-      Legal-Leaf Market started as a screen: a place to compare what is out there.
-      The cafe is the other half, a real counter, a real kettle and a stage the size of a
-      rug. <em>It opens in phases, and only when each phase is cleared with the people who
-      have to clear it.</em>
-    </p>
+<main>
+  <header class="hero">
+    <div class="wrap">
+      <nav class="topbar" aria-label="Site">
+        <a class="brand" href="/">Legal-Leaf Market</a>
+        <a class="pill-link" href="https://shop.legalleafmarket.shop">Shop online</a>
+      </nav>
+      <span class="soon">Coming soon</span>
+      <h1>Legal Leaf Cafe &amp; Market</h1>
+      <p class="lede">Great coffee, loose-leaf tea, and a room worth staying in.</p>
+      <p class="place">South Central Indiana</p>
+      <div class="actions">
+        <a class="btn btn-main" href="mailto:hello@legalleafmarket.shop?subject=Tell%20me%20when%20the%20cafe%20opens">Tell me when you open</a>
+        <a class="btn btn-alt" href="#inside">See what's coming</a>
+      </div>
+      <svg class="storefront" viewBox="0 0 860 400" role="img" aria-label="Illustration of a glowing corner storefront with string lights, plants in the window and a Coming Soon sign">
+        <defs>
+          <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffdf9a"/><stop offset="1" stop-color="#e9a94a"/></linearGradient>
+          <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#17303f"/><stop offset="1" stop-color="#0b1a23"/></linearGradient>
+        </defs>
+        <rect x="40" y="40" width="780" height="360" rx="10" fill="url(#wall)" stroke="#2c4a5b" stroke-width="2"/>
+        <rect x="150" y="62" width="560" height="62" rx="8" fill="#0a151c" stroke="#f0b93c" stroke-width="2"/>
+        <text x="430" y="104" text-anchor="middle" fill="#f8e7bf" font-family="Georgia, serif" font-size="31" font-style="italic" font-weight="700">Legal Leaf Cafe &amp; Market</text>
+        <path d="M58 150 Q190 196 322 150 T590 150 T802 150" fill="none" stroke="#6d7f88" stroke-width="2"/>
+        <g fill="#ffd978">
+          <circle cx="104" cy="164" r="6"/><circle cx="170" cy="172" r="6"/><circle cx="236" cy="170" r="6"/><circle cx="300" cy="156" r="6"/>
+          <circle cx="366" cy="160" r="6"/><circle cx="432" cy="172" r="6"/><circle cx="498" cy="168" r="6"/><circle cx="562" cy="154" r="6"/>
+          <circle cx="628" cy="162" r="6"/><circle cx="694" cy="166" r="6"/><circle cx="760" cy="158" r="6"/>
+        </g>
+        <rect x="82" y="190" width="256" height="210" fill="url(#glow)" stroke="#07131a" stroke-width="7"/>
+        <rect x="522" y="190" width="256" height="210" fill="url(#glow)" stroke="#07131a" stroke-width="7"/>
+        <path d="M82 346h256M522 346h256" stroke="#5a3a18" stroke-width="7"/>
+        <g fill="#245f4d">
+          <path d="M122 344c-24-34-20-62-4-78 7 26 22 48 18 78z"/><path d="M130 344c-2-42 14-68 36-78 2 34-12 58-22 78z"/>
+          <path d="M280 344c-20-28-18-52-4-68 8 22 18 42 16 68z"/><path d="M288 344c0-32 10-52 28-62 2 26-8 46-16 62z"/>
+        </g>
+        <g fill="#6d4522">
+          <path d="M110 324h46l-5 22h-36z"/><path d="M268 324h44l-5 22h-34z"/>
+        </g>
+        <g>
+          <rect x="552" y="284" width="30" height="62" rx="5" fill="#8b5a2b"/><rect x="595" y="272" width="30" height="74" rx="5" fill="#4b6d73"/>
+          <rect x="638" y="290" width="30" height="56" rx="5" fill="#8b5a2b"/><rect x="681" y="278" width="30" height="68" rx="5" fill="#4b6d73"/>
+          <rect x="724" y="292" width="30" height="54" rx="5" fill="#8b5a2b"/>
+          <path d="M546 250h196" stroke="#5a3a18" stroke-width="6"/>
+          <path d="M578 250c0-16 3-27 3-27h26s3 11 3 27z" fill="#fff8e8"/><path d="M610 232c12 0 12 14 0 14" fill="none" stroke="#fff8e8" stroke-width="5"/>
+          <path d="M660 250c0-16 3-27 3-27h26s3 11 3 27z" fill="#fff8e8"/><path d="M692 232c12 0 12 14 0 14" fill="none" stroke="#fff8e8" stroke-width="5"/>
+        </g>
+        <rect x="360" y="178" width="140" height="222" fill="#0a151c" stroke="#07131a" stroke-width="7"/>
+        <rect x="376" y="196" width="108" height="120" fill="url(#glow)"/>
+        <circle cx="472" cy="336" r="6" fill="#f0b93c"/>
+        <rect x="384" y="228" width="92" height="56" rx="6" fill="#0b1a23"/>
+        <text x="430" y="252" text-anchor="middle" fill="#f8e7bf" font-family="Georgia, serif" font-size="18" font-style="italic" font-weight="700">coming</text>
+        <text x="430" y="273" text-anchor="middle" fill="#f8e7bf" font-family="Georgia, serif" font-size="18" font-style="italic" font-weight="700">soon</text>
+      </svg>
+    </div>
   </header>
 
-  <div class="st-body">
+  <section class="welcome-section">
+    <div class="wrap welcome">
+      <div>
+        <p class="kicker">Pull up a chair</p>
+        <h2>Part cafe, part bodega, part living room.</h2>
+      </div>
+      <p>We're opening a real neighborhood spot with a real counter and a real kettle. Grab a good cup of coffee or loose-leaf tea, pick up something from the shelf, and stay awhile. It's handmade, a little bohemian, and the kind of place you can walk into without being sold anything.</p>
+    </div>
+  </section>
 
-    <section class="st-chapter">
-      <span class="st-num">I</span>
-      <p class="st-when">why we are doing this</p>
-      <h2>A shop with no front door</h2>
-      <p>
-        Everything we have built so far lives on a phone. It is useful, and it is also
-        about as far from a neighborhood as a business can get. Nobody has ever run into a
-        friend at a comparison table.
-      </p>
-      <p>
-        The idea behind the cafe is old and simple: a room where you can get a good cup of
-        coffee or a pot of loose-leaf tea, pick up a few things off a small shelf, sit
-        for an hour and hear somebody play. Part cafe, part bodega, part living room. We
-        want it to feel handmade and a little bohemian, and we want it to be the sort of
-        place a regular can walk into without being sold anything.
-      </p>
-      <p>
-        It is also deliberately small. We would rather open a tidy room we can run
-        properly than a big one we cannot, so the first phase is built to need as little
-        infrastructure as possible while the harder questions get answered.
-      </p>
-      <p class="st-pull">
-        Open the part that is easy to do right.<br>
-        Earn the rest.
-      </p>
-    </section>
-
-    <section class="st-chapter">
-      <span class="st-num">II</span>
-      <p class="st-when">what we plan to stock</p>
-      <h2>The shelf, as it stands today</h2>
-      <p>
-        This is the working list, grouped by the sister shops it comes from. The tags
-        mark where each group sits in the opening plan. <b>Anything tagged &ldquo;after
-        sign-off&rdquo; will not go on the shelf until the license or answer it depends on is
-        in hand.</b>
-      </p>
-
-      <div class="cf-grid">
-        <article class="cf-card">
-          <span class="cf-chip is-1a">Phase 1A</span>
-          <h3>Coffee &amp; tea bar</h3>
-          <ul>
-            <li>Espresso drinks from a used commercial machine with a built-in grinder</li>
-            <li>Brewed coffee and whole-bean roasts to take home</li>
-            <li>Loose-leaf teas, steeped in a filter bag right in your cup</li>
-            <li>Served in single-use compostable cups to start</li>
-          </ul>
-          <p class="cf-note">The first menu stays simple on purpose. See the draft board below.</p>
+  <section class="offer" id="inside">
+    <div class="wrap">
+      <p class="kicker">What's coming</p>
+      <h2>Small menu, done properly.</h2>
+      <div class="cards">
+        <article class="card">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 20h26v12a8 8 0 0 1-8 8H16a8 8 0 0 1-8-8z"/><path d="M34 23h3a5 5 0 0 1 0 10h-3M16 13c0-3 3-3 3-6M25 13c0-3 3-3 3-6"/></svg>
+          <h3>The brew bar</h3>
+          <p>Espresso, Americanos and lattes pulled to order, plus drip coffee and whole beans to take home.</p>
         </article>
-
-        <article class="cf-card">
-          <span class="cf-chip is-1a">Phase 1A</span>
-          <h3>Herbal Leaf Market shelf</h3>
-          <ul>
-            <li>Loose herbs sold by the jar: mullein, lavender, blue lotus and others</li>
-            <li>Tea and herb blends from makers we already list online</li>
-            <li>Apothecary jars with bamboo lids for storing them</li>
-          </ul>
-          <p class="cf-note">Non-combustible, legal herbs only. No smokable hemp, because Indiana does not allow it.</p>
+        <article class="card">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M40 8C22 8 9 15 9 29c0 6 4 11 10 11 14 0 21-14 21-32z"/><path d="M6 43c6-11 14-18 24-23"/></svg>
+          <h3>Loose-leaf tea</h3>
+          <p>Steeped right in the cup you walk out with, including our lotus and mullein herbal tea with a soft, earthy finish.</p>
         </article>
-
-        <article class="cf-card">
-          <span class="cf-chip is-1b">Phase 1B &middot; after sign-off</span>
-          <h3>Glass &amp; gear</h3>
-          <ul>
-            <li>Glass pieces, wood grinders and rolling papers</li>
-            <li>Cigar accessories</li>
-            <li>Sold for tobacco and legal herbs</li>
-          </ul>
-          <p class="cf-note">Tobacco-adjacent items need the state tobacco sales certificate before anything goes on a shelf.</p>
-        </article>
-
-        <article class="cf-card">
-          <span class="cf-chip is-1b">Phase 1B &middot; after sign-off</span>
-          <h3>Community bodega</h3>
-          <ul>
-            <li>A small shelf of everyday convenience items</li>
-            <li>Merch: tees, stickers and the keepsake mug wall</li>
-          </ul>
-          <p class="cf-note">What goes here is decided by what the neighborhood actually asks for.</p>
-        </article>
-
-        <article class="cf-card">
-          <span class="cf-chip is-hold">On hold &middot; needs a lab report</span>
-          <h3>Wellness drops</h3>
-          <ul>
-            <li>CBD tinctures from established makers, if they qualify</li>
-          </ul>
-          <p class="cf-note">Federal hemp rules change on December 11, 2026 (see chapter VI). We will not stock any hemp-derived product until its current lab report shows it fits the new total-THC limit.</p>
-        </article>
-
-        <article class="cf-card">
-          <span class="cf-chip">Not planned</span>
-          <h3>What you will not find</h3>
-          <ul>
-            <li>Smokable hemp flower</li>
-            <li>Delta-8 and other synthetic cannabinoids</li>
-            <li>Anything held for someone else, such as package drop-offs for other sellers</li>
-          </ul>
+        <article class="card">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 6h16v7H16zM17 13c-5 3-8 7-8 12v13a4 4 0 0 0 4 4h22a4 4 0 0 0 4-4V25c0-5-3-9-8-12"/><path d="M9 26h30"/></svg>
+          <h3>The herb shelf</h3>
+          <p>Loose herbs by the jar, like mullein and lavender, plus tea and herb blends from makers we trust.</p>
         </article>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="st-chapter">
-      <span class="st-num">III</span>
-      <p class="st-when">the room</p>
-      <h2>Sketches, not blueprints</h2>
-      <p>
-        Three mockups to give the idea some shape. None of this is measured or final, and
-        the real layout will follow whatever the health department and the landlord say.
-      </p>
-
-      <figure class="cf-fig">
-        <svg viewBox="0 0 720 440" role="img" aria-labelledby="fpT fpD">
-          <title id="fpT">Concept floor plan of the cafe</title>
-          <desc id="fpD">A rectangular room. A brew bar runs along the top left with a handwashing sink behind it. A mug wall sits on the right wall and bodega shelves below it. Tables fill the middle. An acoustic corner with a low riser and rug is at the bottom right. The door is at the bottom left, with a shop tablet kiosk beside it.</desc>
-          <rect class="fp-wall" x="20" y="20" width="680" height="400" rx="6"/>
-          <!-- door -->
-          <line class="fp-door" x1="60" y1="420" x2="150" y2="420"/>
-          <text class="fp-s" x="70" y="438">Entrance</text>
-
-          <!-- brew bar -->
-          <rect class="fp-zone" x="44" y="44" width="330" height="62" rx="6"/>
-          <text class="fp-t" x="60" y="70">Brew bar</text>
-          <text class="fp-s" x="60" y="88">espresso &middot; hot water tower &middot; tea station</text>
-          <rect class="fp-solid" x="390" y="44" width="62" height="40" rx="4"/>
-          <text class="fp-s" x="394" y="68">Hand sink</text>
-
-          <!-- gear case -->
-          <rect class="fp-gold fp-dash" x="44" y="124" width="150" height="46" rx="6"/>
-          <text class="fp-t" x="56" y="145">Gear case</text>
-          <text class="fp-s" x="56" y="160">phase 1B</text>
-
-          <!-- mug wall -->
-          <rect class="fp-gold fp-dash" x="640" y="44" width="38" height="170" rx="6"/>
-          <text class="fp-s" transform="translate(664 196) rotate(-90)">Mug wall &middot; 1B</text>
-
-          <!-- bodega shelves -->
-          <rect class="fp-zone" x="574" y="44" width="52" height="170" rx="6"/>
-          <text class="fp-s" transform="translate(600 196) rotate(-90)">Herbs &amp; bodega shelf</text>
-
-          <!-- tables -->
-          <circle class="fp-solid" cx="270" cy="230" r="26"/>
-          <circle class="fp-solid" cx="370" cy="190" r="26"/>
-          <circle class="fp-solid" cx="440" cy="290" r="26"/>
-          <circle class="fp-solid" cx="250" cy="340" r="26"/>
-          <text class="fp-s" x="226" y="395">Mixed seating, about twelve</text>
-
-          <!-- stage -->
-          <rect class="fp-rug" x="500" y="300" width="180" height="100" rx="8"/>
-          <rect class="fp-gold" x="524" y="322" width="132" height="56" rx="4"/>
-          <text class="fp-t" x="540" y="348">Acoustic corner</text>
-          <text class="fp-s" x="540" y="366">6 in riser &middot; area rug</text>
-
-          <!-- kiosk -->
-          <rect class="fp-solid" x="44" y="352" width="64" height="38" rx="4"/>
-          <text class="fp-s" x="49" y="374">Shop tablet</text>
-        </svg>
-        <figcaption>
-          <b>Concept floor plan.</b> Not to scale. Dashed outlines are phase 1B. The seating count is a
-          guess until we have a real space and a real occupancy limit.
-        </figcaption>
-      </figure>
-
-      <figure class="cf-fig">
-        <svg viewBox="0 0 720 250" role="img" aria-labelledby="mwT mwD">
-          <title id="mwT">Concept of the keepsake mug wall</title>
-          <desc id="mwD">A wooden board with two rows of hooks. Six simple mugs hang from them, each with a price tag reading four ninety-five.</desc>
-          <rect class="mw-board" x="20" y="16" width="680" height="218" rx="10"/>
-          <!-- row 1 -->
-          <g>
-            <circle class="mw-hook" cx="100" cy="52" r="4"/><rect class="mw-mug" x="76" y="62" width="48" height="44" rx="6"/><path class="mw-mug" d="M124 72 q16 0 16 14 q0 12 -16 12" fill="none"/><rect class="mw-tag" x="84" y="112" width="32" height="14" rx="3"/><text class="fp-s" x="88" y="123">$4.95</text>
-            <circle class="mw-hook" cx="260" cy="52" r="4"/><rect class="mw-mug alt" x="236" y="62" width="48" height="44" rx="6"/><path class="mw-mug alt" d="M284 72 q16 0 16 14 q0 12 -16 12" fill="none"/><rect class="mw-tag" x="244" y="112" width="32" height="14" rx="3"/><text class="fp-s" x="248" y="123">$4.95</text>
-            <circle class="mw-hook" cx="420" cy="52" r="4"/><rect class="mw-mug" x="396" y="62" width="48" height="44" rx="6"/><path class="mw-mug" d="M444 72 q16 0 16 14 q0 12 -16 12" fill="none"/><rect class="mw-tag" x="404" y="112" width="32" height="14" rx="3"/><text class="fp-s" x="408" y="123">$4.95</text>
-            <circle class="mw-hook" cx="580" cy="52" r="4"/><rect class="mw-mug alt" x="556" y="62" width="48" height="44" rx="6"/><path class="mw-mug alt" d="M604 72 q16 0 16 14 q0 12 -16 12" fill="none"/><rect class="mw-tag" x="564" y="112" width="32" height="14" rx="3"/><text class="fp-s" x="568" y="123">$4.95</text>
-          </g>
-          <!-- row 2 -->
-          <g>
-            <circle class="mw-hook" cx="180" cy="156" r="4"/><rect class="mw-mug alt" x="156" y="166" width="48" height="44" rx="6"/><path class="mw-mug alt" d="M204 176 q16 0 16 14 q0 12 -16 12" fill="none"/>
-            <circle class="mw-hook" cx="340" cy="156" r="4"/><rect class="mw-mug" x="316" y="166" width="48" height="44" rx="6"/><path class="mw-mug" d="M364 176 q16 0 16 14 q0 12 -16 12" fill="none"/>
-            <circle class="mw-hook" cx="500" cy="156" r="4"/><rect class="mw-mug alt" x="476" y="166" width="48" height="44" rx="6"/><path class="mw-mug alt" d="M524 176 q16 0 16 14 q0 12 -16 12" fill="none"/>
-          </g>
-        </svg>
-        <figcaption>
-          <b>The keep-your-mug wall.</b> The idea: you buy a mug, it becomes yours, and you get 50 cents
-          off a refill when you bring it back. It only works if the sale is a real transfer of
-          ownership and the refill process meets the health code, so it waits for phase 1B and a
-          written answer from the health department. We would also buy new or newer mugs rather
-          than thrifted ones, since old glazes can be a problem.
-        </figcaption>
-      </figure>
-
-      <figure class="cf-fig">
-        <svg viewBox="0 0 720 320" role="img" aria-labelledby="sfT sfD">
-          <title id="sfT">Concept sketch of the storefront</title>
-          <desc id="sfD">A one-story shopfront with a striped awning, a hanging sign reading Legal Leaf Cafe and Market, a window with string lights, a door, a sandwich board that says coming soon, and two potted plants.</desc>
-          <rect class="sf-ground" x="0" y="268" width="720" height="52"/>
-          <rect class="sf-wall" x="90" y="70" width="540" height="200" rx="4"/>
-          <!-- sign -->
-          <rect class="sf-sign" x="190" y="30" width="340" height="52" rx="8"/>
-          <text class="sf-signt" x="360" y="64" text-anchor="middle">Legal Leaf Cafe &amp; Market</text>
-          <!-- awning -->
-          <g>
-            <rect class="sf-aw1" x="90"  y="96" width="60" height="34"/>
-            <rect class="sf-aw2" x="150" y="96" width="60" height="34"/>
-            <rect class="sf-aw1" x="210" y="96" width="60" height="34"/>
-            <rect class="sf-aw2" x="270" y="96" width="60" height="34"/>
-            <rect class="sf-aw1" x="330" y="96" width="60" height="34"/>
-            <rect class="sf-aw2" x="390" y="96" width="60" height="34"/>
-            <rect class="sf-aw1" x="450" y="96" width="60" height="34"/>
-            <rect class="sf-aw2" x="510" y="96" width="60" height="34"/>
-            <rect class="sf-aw1" x="570" y="96" width="60" height="34"/>
-          </g>
-          <!-- window -->
-          <rect class="sf-glass" x="120" y="146" width="250" height="118" rx="4"/>
-          <path class="sf-wire" d="M126 154 Q 160 176 195 154 T 264 154 T 333 154 T 364 154" fill="none"/>
-          <circle class="sf-bulb" cx="160" cy="166" r="3.5"/><circle class="sf-bulb" cx="195" cy="154" r="3.5"/>
-          <circle class="sf-bulb" cx="230" cy="166" r="3.5"/><circle class="sf-bulb" cx="264" cy="154" r="3.5"/>
-          <circle class="sf-bulb" cx="298" cy="166" r="3.5"/><circle class="sf-bulb" cx="333" cy="154" r="3.5"/>
-          <!-- hanging plants in window -->
-          <path class="sf-leaf" d="M150 150 v26 M150 176 q-14 6 -18 22 M150 176 q10 8 12 26 M150 176 q16 -2 24 12"/>
-          <path class="sf-leaf" d="M320 150 v20 M320 170 q-12 8 -14 24 M320 170 q12 6 16 22"/>
-          <!-- door -->
-          <rect class="sf-door" x="410" y="146" width="84" height="122" rx="4"/>
-          <circle class="sf-bulb" cx="480" cy="210" r="3.5"/>
-          <rect class="sf-glass" x="426" y="160" width="52" height="46" rx="3"/>
-          <!-- second window -->
-          <rect class="sf-glass" x="520" y="146" width="90" height="118" rx="4"/>
-          <!-- sandwich board -->
-          <path class="sf-board" d="M560 268 l14 -78 h46 l14 78 z"/>
-          <text class="sf-boardt" x="597" y="222" text-anchor="middle">coming</text>
-          <text class="sf-boardt" x="597" y="240" text-anchor="middle">soon</text>
-          <!-- plants -->
-          <rect class="sf-pot" x="52" y="238" width="28" height="30" rx="3"/>
-          <path class="sf-leaf" d="M66 238 q-18 -22 -10 -44 M66 238 q2 -28 16 -40 M66 238 q18 -14 26 -34"/>
-          <rect class="sf-pot" x="640" y="238" width="28" height="30" rx="3"/>
-          <path class="sf-leaf" d="M654 238 q-16 -20 -8 -42 M654 238 q4 -26 18 -36 M654 238 q16 -12 22 -30"/>
-        </svg>
-        <figcaption>
-          <b>Storefront sketch.</b> An idea of the feeling, not a design: warm string lights, plants in the window
-          and a hand-lettered sign. The real storefront depends on the space we find and what the landlord and the
-          town allow for signage.
-        </figcaption>
-      </figure>
-
-      <figure class="cf-fig">
-        <svg viewBox="0 0 720 270" role="img" aria-labelledby="shT shD">
-          <title id="shT">Concept sketch of the herb shelf</title>
-          <desc id="shD">A wooden wall shelf with two rows of apothecary jars with bamboo lids. The jars carry placeholder herb labels.</desc>
-          <rect class="mw-board" x="20" y="14" width="680" height="238" rx="10"/>
-          <!-- shelf planks -->
-          <rect class="sh-plank" x="34" y="116" width="652" height="9" rx="2"/>
-          <rect class="sh-plank" x="34" y="226" width="652" height="9" rx="2"/>
-          <!-- row 1 -->
-          <g>
-            <rect class="sh-lid" x="66"  y="40" width="46" height="9" rx="2"/><rect class="sh-jar" x="62"  y="49" width="54" height="67" rx="6"/><rect class="sh-label" x="68"  y="70" width="42" height="22" rx="2"/><text class="fp-s" x="89"  y="85" text-anchor="middle">Mullein</text>
-            <rect class="sh-lid" x="166" y="40" width="46" height="9" rx="2"/><rect class="sh-jar" x="162" y="49" width="54" height="67" rx="6"/><rect class="sh-label" x="168" y="70" width="42" height="22" rx="2"/><text class="fp-s" x="189" y="85" text-anchor="middle">Lavender</text>
-            <rect class="sh-lid" x="266" y="40" width="46" height="9" rx="2"/><rect class="sh-jar" x="262" y="49" width="54" height="67" rx="6"/><rect class="sh-label" x="268" y="70" width="42" height="22" rx="2"/><text class="fp-s" x="289" y="85" text-anchor="middle">Blue lotus</text>
-            <rect class="sh-lid" x="366" y="40" width="46" height="9" rx="2"/><rect class="sh-jar" x="362" y="49" width="54" height="67" rx="6"/><rect class="sh-label" x="368" y="70" width="42" height="22" rx="2"/><text class="fp-s" x="389" y="85" text-anchor="middle">Chamomile</text>
-            <rect class="sh-lid" x="466" y="40" width="46" height="9" rx="2"/><rect class="sh-jar" x="462" y="49" width="54" height="67" rx="6"/><rect class="sh-label" x="468" y="70" width="42" height="22" rx="2"/><text class="fp-s" x="489" y="85" text-anchor="middle">Mint</text>
-            <rect class="sh-lid" x="566" y="40" width="46" height="9" rx="2"/><rect class="sh-jar" x="562" y="49" width="54" height="67" rx="6"/><rect class="sh-label" x="568" y="70" width="42" height="22" rx="2"/><text class="fp-s" x="589" y="85" text-anchor="middle">Lemon balm</text>
-          </g>
-          <!-- row 2: whole beans and tea tins -->
-          <g>
-            <rect class="sh-bag" x="70"  y="156" width="60" height="70" rx="5"/><text class="fp-s" x="100" y="196" text-anchor="middle">House roast</text>
-            <rect class="sh-bag alt" x="170" y="156" width="60" height="70" rx="5"/><text class="fp-s" x="200" y="196" text-anchor="middle">Dark roast</text>
-            <rect class="sh-tin" x="290" y="176" width="52" height="50" rx="6"/><text class="fp-s" x="316" y="205" text-anchor="middle">Tea</text>
-            <rect class="sh-tin" x="360" y="176" width="52" height="50" rx="6"/><text class="fp-s" x="386" y="205" text-anchor="middle">Tea</text>
-            <rect class="sh-tin" x="430" y="176" width="52" height="50" rx="6"/><text class="fp-s" x="456" y="205" text-anchor="middle">Tea</text>
-            <rect class="sh-lid" x="548" y="196" width="46" height="9" rx="2"/><rect class="sh-jar" x="544" y="205" width="54" height="21" rx="4"/>
-          </g>
-        </svg>
-        <figcaption>
-          <b>The herb shelf.</b> Loose herbs by the jar over a row of whole-bean coffee and tea tins. The labels here are
-          placeholders. The real list is whatever we can source and sell lawfully, and nothing hemp-derived goes on a shelf
-          without a current lab report.
-        </figcaption>
-      </figure>
-
-      <div class="cf-menu">
-        <span class="cf-draft">Draft menu board &middot; no prices set</span>
-        <h3>The Brew Bar</h3>
-        <p class="cf-menu-sub">small menu, done properly</p>
-        <dl>
-          <div><dt>Espresso &middot; Americano &middot; Latte</dt><dd>Pulled to order on the house machine.</dd></div>
-          <div><dt>Drip coffee</dt><dd>One roast at a time, with whole beans on the shelf behind it.</dd></div>
-          <div><dt>Loose-leaf tea, steeped in your cup</dt><dd>Your tea goes in a filter bag and steeps in the cup you walk out with.</dd></div>
-          <div><dt>Lotus &amp; mullein</dt><dd>A herbal tea with a soft, earthy finish.</dd></div>
-          <div><dt>Bring-your-own-mug refill</dt><dd>50 cents off, once the mug wall opens.</dd></div>
-        </dl>
-        <p class="cf-menu-foot">Draft only. Items and names will change before opening.</p>
+  <section class="stage">
+    <div class="wrap">
+      <div>
+        <p class="kicker">The sound of the place</p>
+        <h2>A small stage with a rug under it.</h2>
+        <p>Live acoustic music nights are on the way: a stool, a quiet room, solo players and duos. It's the kind of set you can talk over if you want to, and listen to if you don't.</p>
       </div>
-    </section>
+      <aside class="callout">
+        <h3>Play, or know someone who does?</h3>
+        <p>We'd love to meet local musicians before the doors open.</p>
+        <a href="mailto:hello@legalleafmarket.shop?subject=Live%20music%20at%20the%20cafe">hello@legalleafmarket.shop</a>
+      </aside>
+    </div>
+  </section>
 
-    <section class="st-chapter">
-      <span class="st-num">IV</span>
-      <p class="st-when">the sound of the place</p>
-      <h2>A small stage with a rug under it</h2>
-      <p>
-        Live acoustic music is part of the idea from the start, not an afterthought. We are
-        picturing a low riser in the corner, an area rug, a stool and a quiet room: solo players and
-        duos, early evenings, the kind of set you can talk over if you want to and listen to if you
-        do not. No sound system bigger than it needs to be.
-      </p>
-      <p>
-        It waits for phase 1B, because a stage needs answers we do not have yet: what the space allows
-        for noise and occupancy, what music licensing the venue needs for live or recorded music, and
-        how it all fits around the health department&rsquo;s rules for the room.
-      </p>
-      <p>
-        <b>Play, or know someone who does?</b> We would like to hear from local musicians long before the
-        doors open. Write to
-        <a href="mailto:hello@legalleafmarket.shop?subject=Playing%20at%20the%20cafe">hello@legalleafmarket.shop</a>.
-        There is no booking process yet, only a list of people we want to call first.
-      </p>
-    </section>
-
-    <section class="st-chapter">
-      <span class="st-num">V</span>
-      <p class="st-when">how it opens</p>
-      <h2>Two phases, in this order</h2>
-      <p>
-        Food-service rules decide a lot about what a cafe can do on day one. Indiana replaced
-        its old retail food code with a new one, <b>410 IAC 7-26</b>, which took effect on
-        April 16, 2025. We are planning against the new code, and any reference to the old
-        one is out of date.
-      </p>
-
-      <div class="cf-phases">
-        <div class="cf-phase">
-          <span class="cf-chip is-1a">Phase 1A</span>
-          <h3>Open the simple version</h3>
-          <ul>
-            <li>Single-use cups and tea filter bags, so customers are not handed reusable dishes</li>
-            <li>A small, well-run brew bar</li>
-            <li>The herb and tea shelf</li>
-            <li>A handwashing sink, and whatever dish setup the health department requires for the bar tools we reuse</li>
-          </ul>
-        </div>
-        <div class="cf-phase">
-          <span class="cf-chip is-1b">Phase 1B</span>
-          <h3>Add the rest, once cleared</h3>
-          <ul>
-            <li>The mug wall and refill program</li>
-            <li>Glass and gear, after the tobacco sales certificate</li>
-            <li>The bodega shelf</li>
-            <li>Live music nights</li>
-          </ul>
-        </div>
+  <section>
+    <div class="wrap">
+      <p class="kicker">And down the road</p>
+      <h2>A few things worth coming back for.</h2>
+      <div class="later">
+        <article class="card">
+          <h3>The keep-your-mug wall</h3>
+          <p>Pick a mug and make it yours. Bring it back and get 50 cents off your refill.</p>
+        </article>
+        <article class="card">
+          <h3>The neighborhood shelf</h3>
+          <p>Everyday essentials and merch, shaped by what the neighborhood actually asks for.</p>
+        </article>
       </div>
+    </div>
+  </section>
 
-      <div class="cf-check">
-        <h3>What still has to be answered, in writing</h3>
-        <ul>
-          <li>Whether the local health department accepts the Phase 1A setup, including what a compact three-compartment dish arrangement would need to look like for the bar tools</li>
-          <li>Whether the refill process for customer-owned mugs meets 410 IAC 7-26</li>
-          <li>Plan review, permit, zoning, fire and occupancy requirements for the actual space</li>
-          <li>Insurance, since policies often exclude hemp products and smoking accessories</li>
-          <li>Music licensing for live performance</li>
-        </ul>
+  <section class="final">
+    <div class="wrap">
+      <p class="kicker">Save your seat</p>
+      <h2>Be the first to know when the doors open.</h2>
+      <p>Send us a note and we'll tell you as soon as we have an address and an opening date. Can't wait? Visit our online shop.</p>
+      <div class="actions">
+        <a class="btn btn-main" href="mailto:hello@legalleafmarket.shop?subject=Tell%20me%20when%20the%20cafe%20opens">Tell me when you open</a>
+        <a class="btn btn-alt" href="https://shop.legalleafmarket.shop">Shop online</a>
       </div>
-
-      <h3>The road to opening</h3>
-      <p>
-        The checklist, in roughly the order it has to happen. Nothing is ticked, because nothing is done.
-        We will check things off here as they happen, in public, and not before.
-      </p>
-      <ul class="cf-road">
-        <li><b>Finish setting up the business</b><span>Entity, bank account and the paperwork that lets us sign a lease.</span></li>
-        <li><b>Find the space</b><span>Check zoning, occupancy and fire requirements for the real address before anything else is bought.</span></li>
-        <li><b>Get the health department&rsquo;s answers in writing</b><span>The Phase 1A setup, the dish arrangement for the bar tools, and the mug refill process.</span></li>
-        <li><b>Plan review and permit</b><span>Submit the food-service plan and wait for approval. Equipment gets bought after this, not before.</span></li>
-        <li><b>A certified food protection manager on the team</b><span>Indiana generally requires one in food establishments. We will confirm exactly what applies to our setup.</span></li>
-        <li><b>Insurance quotes</b><span>Including a straight answer on what a policy will and will not cover on the shelf.</span></li>
-        <li><b>Music licensing</b><span>Sorted before the first night of live music, not after.</span></li>
-        <li><b>Tobacco sales certificate</b><span>Required before any glass, papers or cigar accessories go on a shelf (phase 1B).</span></li>
-        <li><b>Lawyer review of the product mix</b><span>Especially anything hemp-derived, once the December rules are settled.</span></li>
-        <li><b>Pick an opening date</b><span>Last, because every item above can move it.</span></li>
-      </ul>
-    </section>
-
-    <section class="st-chapter st-warn">
-      <span class="st-num">VI</span>
-      <p class="st-when">the rules, and how they are shifting</p>
-      <h2>Hemp law is moving under everyone&rsquo;s feet</h2>
-      <p>
-        Our shelf is built mostly around plain herbs, coffee and tea, partly because the law
-        around hemp is changing fast. Here is where it stands, in order.
-        <span class="cf-asof">as of November 5, 2026</span>
-      </p>
-
-      <ul class="cf-time">
-        <li>
-          <span class="cf-when">2019</span>
-          <b>Indiana bans smokable hemp</b>
-          <p>
-            Indiana allowed hemp farming after the 2018 federal farm bill, but made smokable hemp
-            illegal. Retailers sued over the ban, and attempts to reverse it in the legislature
-            have not succeeded. It remains in place today.
-          </p>
-        </li>
-        <li>
-          <span class="cf-when">November 2025</span>
-          <b>Congress redefines &ldquo;hemp&rdquo;</b>
-          <p>
-            A funding bill that ended the federal shutdown rewrote the legal definition of hemp.
-            Under it, hemp products are capped at 0.4 milligrams of total THC per container, which
-            takes most intoxicating hemp products out of the definition. It was written with a
-            one-year runway.
-          </p>
-        </li>
-        <li>
-          <span class="cf-when">2026 &middot; Indiana session</span>
-          <b>The state ban on intoxicating hemp does not pass</b>
-          <p>
-            Senate Bill 250 would have lined Indiana up with the federal change and put hemp
-            retail under the Alcohol and Tobacco Commission. It cleared the Senate but the
-            session ended without a ban, so Indiana still has no state-level hemp-specific
-            rules for intoxicating products beyond the smokable ban.
-          </p>
-        </li>
-        <li>
-          <span class="cf-when">August &ndash; September 2026</span>
-          <b>Congress buys a month</b>
-          <p>
-            A stopgap funding bill moves most of the federal restrictions from November 12 to
-            December 11, 2026. The Senate rejected an attempt to strip the delay by a wide margin.
-            Lawyers covering the industry are blunt that this is a pause, not a safe harbor.
-          </p>
-        </li>
-        <li class="is-next">
-          <span class="cf-when">November 12, 2026</span>
-          <b>Synthetic cannabinoids are prohibited</b>
-          <p>
-            The delay has a carve-out: the ban on cannabinoids that a hemp plant cannot make
-            naturally still starts on the original date.
-          </p>
-        </li>
-        <li class="is-next">
-          <span class="cf-when">December 11, 2026</span>
-          <b>The new total-THC standard takes effect</b>
-          <p>
-            Unless Congress acts again, the 0.4 milligram per container limit applies. Many
-            full-spectrum hemp products, and most THCa flower, would fall outside the federal
-            definition of hemp.
-          </p>
-        </li>
-        <li class="is-open">
-          <span class="cf-when">After December</span>
-          <b>What happens next is open</b>
-          <p>
-            The delay was meant to give Congress time to write a regulatory framework for
-            hemp-derived products, and the industry is lobbying for one. Indiana lawmakers could
-            take the question up again in 2027. Federal marijuana scheduling is also in play and
-            could complicate hemp rules further. We have not found a settled proposal for any of
-            these, so we are not guessing at one. This page will be updated as that changes.
-          </p>
-        </li>
-      </ul>
-
-      <h3>What it means for the cafe</h3>
-      <p>
-        The shelf does not depend on any of this: no smokable hemp, no synthetics, and no
-        hemp-derived product at all until its lab report shows the current total THC per container.
-        If the rules shift again, the plan can follow without rebuilding the room.
-      </p>
-    </section>
-
-    <section class="st-chapter">
-      <span class="st-num">VII</span>
-      <p class="st-when">questions people ask</p>
-      <h2>The short answers</h2>
-
-      <div class="cf-faq">
-        <details>
-          <summary>Is it open?</summary>
-          <p>No. There is no opening date yet, and the roadmap above is why. This page is the plan, not a menu.</p>
-        </details>
-        <details>
-          <summary>Where is it?</summary>
-          <p>South Central Indiana. We have not announced an address because we have not signed for one.</p>
-        </details>
-        <details>
-          <summary>Will you sell smokable hemp, delta-8 or marijuana?</summary>
-          <p>
-            No to all three. Indiana bans smokable hemp, we are not stocking synthetic cannabinoids, and Indiana
-            does not have a legal adult-use cannabis market. Any hemp-derived product, such as a CBD tincture,
-            only goes on the shelf if its current lab report fits the total-THC limit that takes effect
-            December 11, 2026.
-          </p>
-        </details>
-        <details>
-          <summary>Can I buy things online in the meantime?</summary>
-          <p>
-            The online shop is separate and lives at
-            <a href="https://shop.legalleafmarket.shop/" rel="noopener">shop.legalleafmarket.shop</a>.
-            Nothing on this page can be ordered.
-          </p>
-        </details>
-        <details>
-          <summary>Will there be food?</summary>
-          <p>Not at first. The plan is drinks and packaged goods, and anything more waits on what the health department says.</p>
-        </details>
-        <details>
-          <summary>Is it 21 and over?</summary>
-          <p>
-            Not decided. This website is for adults 21 and over. How the room itself works will depend on what we
-            end up selling and what each license requires, and we will say so plainly before opening.
-          </p>
-        </details>
-        <details>
-          <summary>How do I follow along?</summary>
-          <p>
-            There is no mailing list yet. Write to
-            <a href="mailto:hello@legalleafmarket.shop">hello@legalleafmarket.shop</a>
-            and we will reply, and this page will be updated as the checklist moves.
-          </p>
-        </details>
-      </div>
-    </section>
-
-  </div>
-
-  <footer class="st-sources">
-    <h2>Sources</h2>
-    <ol>
-      <li><a href="https://www.in.gov/health/food-protection/retail/food-code-updates-410-iac-7-26/" rel="noopener">Indiana Department of Health: Food Code updates, 410 IAC 7-26</a></li>
-      <li><a href="https://www.kriegdevault.com/insights/indiana-house-votes-to-reverse-indianas-ban-on-smokable-hemp/print" rel="noopener">Krieg DeVault: Indiana&rsquo;s 2019 smokable hemp ban and the effort to reverse it</a></li>
-      <li><a href="https://indianacapitalchronicle.com/2026/01/16/indiana-hemp-drug-ban-clears-first-hurdle/" rel="noopener">Indiana Capital Chronicle: hemp drug ban clears first hurdle (Jan 16, 2026)</a></li>
-      <li><a href="https://www.yahoo.com/news/articles/last-minute-attempt-revive-hemp-230311283.html" rel="noopener">Last-minute attempt to revive hemp drug ban fails in final hours (2026 session)</a></li>
-      <li><a href="https://www.axios.com/local/indianapolis/2026/02/26/indiana-hemp-industry-still-fighting-after-state-level-victory" rel="noopener">Axios Indianapolis: Indiana hemp industry still fighting state and federal bans (Feb 26, 2026)</a></li>
-      <li><a href="https://vicentellp.com/insights/federal-hemp-definition-change-delay/" rel="noopener">Vicente LLP: Federal hemp definition change delayed to December 11</a></li>
-      <li><a href="https://www.akerman.com/en/perspectives/congress-approves-one-month-delay-of-federal-hemp-thc-restrictions.html" rel="noopener">Akerman: Congress approves one-month delay of federal hemp THC restrictions</a></li>
-    </ol>
-    <p class="st-fine">
-      This page describes plans for a business that is not open. Nothing on it is for sale, and
-      no license, permit or approval has been granted for anything described here. Nothing on it is
-      legal, medical or business advice, and nothing on it is a statement that any product is
-      lawful to buy, sell, ship or receive where you are. Laws change quickly, so check the sources
-      above and talk to a lawyer before you rely on any of it. Adults 21+ only.
-    </p>
-  </footer>
+    </div>
+  </section>
 </main>
 
+<footer>
+  <div class="wrap">
+    <p>Legal Leaf Cafe &amp; Market is not open yet. Menu items and offerings are planned, may change, and some depend on licensing and local approvals. This website is for adults 21+.</p>
+  </div>
+</footer>
+
+<script src="/js/age-gate.js"></script>
+<script src="/js/analytics.js"></script>
 </body>
 </html>
