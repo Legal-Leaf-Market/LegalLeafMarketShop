@@ -60,11 +60,13 @@ requires.
 ## G.O.B. on every page (5 Nov 2026)
 
 `public/gob-promo.js` puts a G.O.B. banner at the top of every page and a floating flavor card
-in the bottom corner. It already runs on legalleafmarket.shop/cafe and /shelf. On the Shopify
+in the bottom corner, listing each flavor as a 2 mL disposable, a 1 g cart and a
+3.5 g wax puck. It already runs on legalleafmarket.shop/cafe and /shelf. On the Shopify
 store, add ONE line to the header group's Custom Liquid section (the one that loads
-`ll-cart.css`, so it is on every page), with the commit filled in:
+`ll-cart.css`, so it is on every page). It is not pinned, so every merge to main reaches
+the store without touching the theme again:
 
-    <script src="https://cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@<commit>/public/gob-promo.js" defer></script>
+    <script src="https://legalleafmarket.shop/gob-promo.js" defer></script>
 
 The flavor links go to `/pages/gob-lab-results#<flavor>` because the vapes are in person only
 and their product pages stay drafts. Change the three `href`s in `FLAVORS` if that ever changes.
