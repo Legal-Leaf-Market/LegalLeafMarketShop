@@ -1,0 +1,46 @@
+<!--
+  G.O.B. brand band for the "gob" collection page on shop.legalleafmarket.shop.
+  Paste the whole file into a Custom Liquid section above the product grid
+  (Online Store > Themes > Customize > the collection template, or a page).
+  Self-contained: scoped CSS, no script. Images are pinned to a commit on
+  jsDelivr, the same way ll-shop.js is, because Netlify deploys are paused.
+-->
+<style>
+.gob{--g:#0f2a1d;--g2:#173826;--cu:#c9853f;--cu2:#e2a866;--cream:#efe6cf;
+  background:radial-gradient(120% 80% at 50% 0,var(--g2),var(--g) 70%);color:var(--cream);
+  border:1px solid rgba(201,133,63,.45);border-radius:14px;padding:28px 18px;margin:0 0 24px;
+  font-family:Georgia,"Times New Roman",serif;text-align:center;overflow:hidden}
+.gob *{box-sizing:border-box}
+.gob-logo{width:min(320px,70%);height:auto;margin:0 auto 6px;display:block}
+.gob-lede{max-width:56ch;margin:6px auto 18px;font-size:1.05rem;line-height:1.55;color:var(--cream)}
+.gob-hero{width:100%;height:auto;border-radius:10px;display:block;margin:0 auto 22px;max-width:1100px}
+.gob-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1100px;margin:0 auto}
+.gob-card{display:block;text-decoration:none;color:inherit;background:rgba(0,0,0,.18);
+  border:1px solid rgba(201,133,63,.35);border-radius:12px;padding:16px 12px 18px;transition:border-color .2s}
+.gob-card:hover,.gob-card:focus-visible{border-color:var(--cu2)}
+.gob-card img{width:min(170px,80%);aspect-ratio:1;height:auto;display:block;margin:0 auto 10px}
+.gob-card h3{margin:0;font-size:1.25rem;letter-spacing:.02em;color:var(--cu2)}
+.gob-card p{margin:4px 0 0;font:600 .72rem/1.4 system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;opacity:.85}
+.gob-note{max-width:60ch;margin:22px auto 0;font:500 .82rem/1.55 system-ui,sans-serif;opacity:.85}
+.gob-note strong{color:var(--cu2)}
+@media (max-width:700px){.gob-row{grid-template-columns:1fr}.gob{padding:22px 14px}}
+</style>
+{%- assign cdn = 'https://cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@a13f7e106c51258b70c0627064c93faf540687d7/public/img/gob/' -%}
+<section class="gob" aria-labelledby="gob-h">
+  <h2 id="gob-h" style="position:absolute;left:-9999px">G.O.B. Good Old Boys Cannabis</h2>
+  <img class="gob-logo" src="{{ cdn }}logo-gold.png" alt="G.O.B. Good Old Boys Cannabis" width="1200" height="925">
+  <p class="gob-lede">Three flavors, one first run. Each 2 mL disposable wears its own stained-glass medallion on a forest-green wrap.</p>
+  <img class="gob-hero" src="{{ cdn }}family.jpg" alt="Strawberry Pie, Lemon Cherry Gelato and Purple Haze boxes and devices" width="2000" height="1024" loading="lazy">
+  <div class="gob-row">
+    <a class="gob-card" href="/products/gob-strawberry-pie-2ml-disposable">
+      <img src="{{ cdn }}strawberry-pie-medallion.webp" alt="" width="1000" height="1000" loading="lazy">
+      <h3>Strawberry Pie</h3><p>Strawberry &middot; Vanilla</p></a>
+    <a class="gob-card" href="/products/gob-lemon-cherry-gelato-2ml-disposable">
+      <img src="{{ cdn }}lemon-cherry-gelato-medallion.webp" alt="" width="1000" height="1000" loading="lazy">
+      <h3>Lemon Cherry Gelato</h3><p>Lemon &middot; Cherry &middot; Cream</p></a>
+    <a class="gob-card" href="/products/gob-purple-haze-2ml-disposable">
+      <img src="{{ cdn }}purple-haze-medallion.webp" alt="" width="1000" height="1000" loading="lazy">
+      <h3>Purple Haze</h3><p>Lavender &middot; Berry</p></a>
+  </div>
+  <p class="gob-note"><strong>Pre-order.</strong> Orders ship when the first run lands, and lab results (COA) for each batch are posted before anything ships. 21+ only, adult signature on delivery. Sold by Legal-Leaf Market.</p>
+</section>
