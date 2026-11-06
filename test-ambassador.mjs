@@ -71,7 +71,7 @@ ok("GET reports that nothing is configured, before anybody types",
 const r1 = await post(good);
 ok("a valid application is REFUSED rather than accepted into a void", r1.status === 503, `http ${r1.status}`);
 ok("and the refusal tells the applicant how to reach a human",
-   /jake@nicotiamarket\.com/.test(r1.j.error || ""), (r1.j.error || "").slice(0, 80));
+   /jake@legalleafmarket\.shop/.test(r1.j.error || ""), (r1.j.error || "").slice(0, 80));
 ok("it never claims success", r1.j.ok === false);
 
 /* ---- validation, which must run whatever the backend is doing ------------ */

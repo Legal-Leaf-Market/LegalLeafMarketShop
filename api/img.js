@@ -108,7 +108,7 @@ export default async function handler(req, res) {
        contact, the same courtesy api/products.js extends when scraping. */
     const head = {
       'accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
-      'user-agent': 'Legal-Leaf-Market/1.0 (+https://legalleafmarket.shop; images@legalleafmarket.shop)',
+      'user-agent': 'Legal-Leaf-Market/1.0 (+https://legalleafmarket.shop; jake@legalleafmarket.shop)',
     };
     /* DIAGNOSTIC ONLY, and never on the serving path: `?probe=1&withref=1`
        sends the Referer a real browser would send. That is the difference
