@@ -827,6 +827,12 @@ the four sister sites: its `SITE_BY_HOST` key and `FAMILY` regex now name the .s
 that file to Nicotia, Herbal Leaf and Kawaii Katz, and change those sites' footer links to
 Legal-Leaf, which still point at the .com.
 
+**One address only: `jake@legalleafmarket.shop` (owner, 5 Nov 2026).** "All emails on the site
+should be jake@legalleafmarket.shop." hello@, images@ and the old jake@nicotiamarket.com were all
+replaced with it: mailto links, the JSON-LD `email`, error messages, the ambassador form and the
+image proxy's user-agent. Do not add another mailbox. The `you@example.com`-style strings are form
+placeholders and test fixtures, not addresses, and stay as they are.
+
 ### Direct sales are DROPSHIP, and Shipping/Returns are live (31 Oct 2026)
 
 **Suppliers hold the stock and ship our orders; we are the seller of record.** Shipping, Returns,
