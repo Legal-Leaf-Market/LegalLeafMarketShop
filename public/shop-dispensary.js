@@ -15,9 +15,18 @@
  * Access-Control-Allow-Origin: * for exactly this reader (see the top of api/products.js). A shop
  * whose slice fails is shown as unavailable rather than taking the page down with it.
  *
- * WHAT IT IS NOT. A checkout. Every card hands off to the partner shop, which is the seller; the
- * Shopify store sells accessories only (CLAUDE.md, "Dropship does not get around the hemp rules").
- * The CTA says "Shop at <store>" for that reason, never "Add to cart".
+ * THE CART. Owner, 13 Nov 2026: every card says "Add to Legal-Leaf Cart", never "Shop at <store>".
+ * It is the same multi-store cart the old /consumables page had (engine.js addCart/renderCart and
+ * the ll-checkout-fix block): items from all three shops collect in ONE Legal-Leaf Cart
+ * (localStorage "ll_cart" on this origin), grouped by shop in a drawer, and each group has its own
+ * "Checkout at <store>" link that pre-fills THAT shop's cart with the chosen sizes, the coupon and
+ * the affiliate ref. The partner shop is still the seller and runs the real checkout; nothing here
+ * touches the Shopify store's own cart (that one sells accessories only -- CLAUDE.md, "Dropship
+ * does not get around the hemp rules").
+ *   Shopify  -> https://<cartDomain>/cart/<vid>:<qty>,...?discount=<code>&<refParam>=<ref>
+ *   Woo      -> add-to-cart=<parent>&variation_id=<vid>&<attrs> (ONE item per link, Woo's rule),
+ *               on cartPath when the store publishes one, otherwise on the product page
+ *   other    -> the product page (carries the ref)
  *
  * UI, per the owner: one shelf with gallery toggles for the shops (not three split sections),
  * category chips, sort, and cards that stay the same height. Size choice is a <select> so a
@@ -108,9 +117,39 @@
     '#ll-dispensary .lld-card select{width:100%}',
     '#ll-dispensary .lld-more{font-size:13px;line-height:1.5;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}',
     '#ll-dispensary .lld-spacer{flex:1}',
-    '#ll-dispensary .lld-cta{display:block;text-align:center;padding:12px;border-radius:12px;font-weight:700;color:#fff;text-decoration:none;',
+    '#ll-dispensary .lld-cta{display:block;width:100%;border:0;cursor:pointer;font:inherit;font-size:15px;text-align:center;padding:12px;border-radius:12px;font-weight:700;color:#fff;text-decoration:none;',
     'background:linear-gradient(90deg,var(--leaf3),var(--accent))}',
     '#ll-dispensary .lld-cta:focus-visible{outline:2px solid #fff;outline-offset:2px}',
+    '#ll-dispensary .lld-cta[disabled]{opacity:.5;cursor:default}',
+    /* Legal-Leaf Cart: floating button + drawer (outside #ll-dispensary, so scoped by class) */
+    '.llc-fab{position:fixed;right:16px;bottom:16px;z-index:2147483600;display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:999px;border:0;cursor:pointer;',
+    'font:700 15px "Segoe UI",system-ui,sans-serif;color:#fff;background:linear-gradient(90deg,#1787c4,#4ec9ff);box-shadow:0 8px 24px rgba(0,0,0,.35)}',
+    '.llc-fab span{background:#fff;color:#1787c4;border-radius:999px;min-width:22px;padding:1px 7px;font-size:13px;text-align:center}',
+    '.llc-ov{position:fixed;inset:0;z-index:2147483601;background:rgba(4,8,11,.6);display:none}.llc-ov.on{display:block}',
+    '.llc-dr{position:fixed;top:0;right:0;bottom:0;z-index:2147483602;width:min(420px,100vw);background:#0d1820;color:#eef6fb;display:flex;flex-direction:column;',
+    'font-family:"Segoe UI",system-ui,sans-serif;transform:translateX(100%);transition:transform .2s;box-shadow:-8px 0 24px rgba(0,0,0,.4)}.llc-dr.on{transform:none}',
+    '.llc-dr *{box-sizing:border-box}',
+    '.llc-hd{display:flex;justify-content:space-between;align-items:flex-start;padding:16px;border-bottom:1px solid #22303a}',
+    '.llc-hd h2{margin:0;font-size:20px;color:#fff}.llc-hd p{margin:2px 0 0;color:#9fb4c2;font-size:12px}',
+    '.llc-x{all:unset;cursor:pointer;font-size:26px;line-height:1;color:#9fb4c2;padding:0 4px}',
+    '.llc-bd{flex:1;overflow:auto;padding:12px 16px}',
+    '.llc-st{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#f0b93c;margin:12px 0 6px}',
+    '.llc-it{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #22303a}',
+    '.llc-it img{width:52px;height:52px;object-fit:cover;border-radius:8px;background:#0b141a;flex:none}',
+    '.llc-it .t{font-size:13px;font-weight:600;line-height:1.3}.llc-it .s{font-size:12px;color:#9fb4c2}',
+    '.llc-row{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:13px}',
+    '.llc-row b{color:#4ec9ff;margin-right:auto}',
+    '.llc-row button{all:unset;cursor:pointer;border:1px solid #22303a;border-radius:6px;padding:1px 8px;color:#eef6fb}',
+    '.llc-row .rm{border:0;color:#9fb4c2;text-decoration:underline;font-size:12px}',
+    '.llc-go{display:block;margin:8px 0 6px;padding:11px;border-radius:10px;text-align:center;font-weight:700;color:#fff!important;text-decoration:none!important;',
+    'background:linear-gradient(90deg,#1787c4,#4ec9ff)}',
+    '.llc-nt{font-size:11px;color:#9fb4c2;margin:0 0 6px}',
+    '.llc-ft{padding:12px 16px;border-top:1px solid #22303a}',
+    '.llc-ft div{display:flex;justify-content:space-between;font-weight:700}.llc-ft div span{color:#4ec9ff}',
+    '.llc-ft p{font-size:11px;color:#9fb4c2;margin:6px 0 0}',
+    '.llc-empty{color:#9fb4c2;text-align:center;padding:30px 10px;font-size:14px;line-height:1.5}',
+    '.llc-toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);z-index:2147483603;background:#0d1820;color:#eef6fb;border:1px solid #4ec9ff;',
+    'border-radius:10px;padding:10px 14px;font:600 14px "Segoe UI",system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.4)}',
     '#ll-dispensary .lld-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--muted);min-height:18px}',
     '#ll-dispensary .lld-foot button{all:unset;cursor:pointer;color:var(--accent);font-weight:600}',
     '#ll-dispensary .lld-foot a{color:var(--accent)}',
@@ -152,9 +191,9 @@
     var rows = Array.isArray(p.sizes) ? p.sizes : [];
     var out = rows.map(function (r) {
       return { label: String(r[0] || ''), price: Number(r[1]), grams: Number(r[2]) || 0, vid: r[3] ? String(r[3]) : '',
-        stock: r[4] !== false, compare: typeof r[5] === 'number' ? r[5] : null };
+        stock: r[4] !== false, compare: typeof r[5] === 'number' ? r[5] : null, attrs: r[8] ? String(r[8]) : '' };
     }).filter(function (s) { return isFinite(s.price) && s.price > 0; });
-    if (!out.length && isFinite(Number(p.sale))) out = [{ label: 'One size', price: Number(p.sale), grams: 0, vid: '', stock: !!p.inStock, compare: null }];
+    if (!out.length && isFinite(Number(p.sale))) out = [{ label: 'One size', price: Number(p.sale), grams: 0, vid: '', stock: !!p.inStock, compare: null, attrs: '' }];
     return out;
   }
   /* Default to the ounce (or the biggest size at or under it) so a pound never opens as the headline price. */
@@ -306,7 +345,7 @@
       + (x.sz.length > 1 ? '<span class="lld-sz">Size / option</span><select aria-label="Size for ' + esc(p.name) + '">' + opts + '</select>' : '<span class="lld-sz">' + esc(s.label) + '</span>')
       + (open && desc ? '<div class="lld-more">' + esc(desc.slice(0, 900)) + (desc.length > 900 ? '\u2026' : '') + '</div>' : '')
       + '<div class="lld-spacer"></div>'
-      + '<a class="lld-cta" href="' + esc(hrefFor(p, s)) + '" target="_blank" rel="sponsored noopener">Shop at ' + esc(store.name) + ' \u2192</a>'
+      + '<button type="button" class="lld-cta lld-add"' + (s.stock ? '' : ' disabled') + '>' + (s.stock ? '\uFF0B Add to Legal-Leaf Cart' : 'Out of stock') + '</button>'
       + '<div class="lld-foot"><span>' + (coa ? '<a class="lld-lab" href="' + esc(coa) + '" target="_blank" rel="noopener">Lab data \u2197</a>' : 'Ships from ' + esc(store.name)) + '</span>'
       + (desc ? '<button type="button" class="lld-det" aria-expanded="' + open + '">' + (open ? 'Less \u25b4' : 'Details \u25be') + '</button>' : '')
       + '</div></div></article>';
@@ -329,7 +368,7 @@
         return '<button type="button" class="lld-chip" data-cat="' + esc(c) + '" aria-pressed="' + (state.cat === c) + '">' + esc(c) + '<small>' + cc[c] + '</small></button>';
       }).join('');
     var anyOpen = Object.keys(state.open).some(function (k) { return state.open[k]; });
-    mount.innerHTML = '<div class="lld-head"><h2>Dispensary</h2><p class="lld-sub">Live prices from partner shops. You check out on their site.</p></div>'
+    mount.innerHTML = '<div class="lld-head"><h2>Dispensary</h2><p class="lld-sub">Live prices from partner shops. Build one Legal-Leaf Cart across all of them, then check out at each store.</p></div>'
       + '<div class="lld-label">Shop by store</div><div class="lld-stores">' + storesHTML + '</div>'
       + '<div class="lld-label">Category</div><div class="lld-chips">' + chips + '</div>'
       + '<div class="lld-bar"><input type="search" placeholder="Search strains, brands, products" aria-label="Search" value="' + esc(state.q) + '">'
@@ -343,7 +382,7 @@
       + (list.length > state.shown ? '<div class="lld-moreBtn"><button type="button" class="lld-btn lld-more-cards">Show more (' + (list.length - state.shown) + ' left)</button></div>' : '')
       + '<p class="lld-disc">Products on this page are sold and shipped by the partner shop named on each card, not by Legal-Leaf Market. '
       + 'Prices and stock come from each shop and can change; the shop\'s checkout is final and verifies age. '
-      + 'Affiliate disclosure: Legal-Leaf Market may earn a commission on purchases made through these links, at no extra cost to you. '
+      + 'Your Legal-Leaf Cart hands each shop its own items at checkout. Affiliate disclosure: Legal-Leaf Market may earn a commission on purchases made through these links, at no extra cost to you. '
       + 'Hemp-derived products are for adults 21+ where legal; check your state\'s rules before ordering.</p>';
     mount.querySelector('.lld-bar select').value = state.sort;
   }
@@ -363,7 +402,10 @@
   mount.addEventListener('click', function (e) {
     var t = e.target.closest('button');
     if (!t || !mount.contains(t)) return;
-    if (t.classList.contains('lld-st')) {
+    if (t.classList.contains('lld-add')) {
+      var ac = t.closest('.lld-card'), ax = list[Number(ac.getAttribute('data-i'))];
+      if (ax) addCart(ax.p, ax.sz[ax.pick], t);
+    } else if (t.classList.contains('lld-st')) {
       var k = t.getAttribute('data-store');
       state.on[k] = !state.on[k];
       if (!storeKeys.some(function (s) { return state.on[s]; })) state.on[k] = true; /* never toggle to an empty shelf */
@@ -404,6 +446,135 @@
       if (box) { box.focus(); box.setSelectionRange(v.length, v.length); }
     }, 200);
   });
+
+  /* ---------- Legal-Leaf Cart (multi-store; see the header) ---------- */
+  var CART_KEY = 'll_cart';
+  var cart = [];
+  try { cart = JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch (e) { cart = []; }
+  if (!Array.isArray(cart)) cart = [];
+  function saveCart() { try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) { /* private mode: lives for this visit */ } }
+  function enc(s) { return encodeURIComponent(String(s)); }
+
+  var fab = document.createElement('button');
+  fab.type = 'button'; fab.className = 'llc-fab'; fab.setAttribute('aria-label', 'Open Legal-Leaf Cart');
+  var ov = document.createElement('div'); ov.className = 'llc-ov';
+  var dr = document.createElement('aside'); dr.className = 'llc-dr'; dr.setAttribute('aria-label', 'Legal-Leaf Cart');
+  dr.innerHTML = '<div class="llc-hd"><div><h2>Legal-Leaf Cart</h2><p>Build here \u00b7 checkout at each store</p></div>'
+    + '<button type="button" class="llc-x" aria-label="Close">\u00d7</button></div><div class="llc-bd"></div><div class="llc-ft"></div>';
+  document.body.appendChild(fab); document.body.appendChild(ov); document.body.appendChild(dr);
+  function openCart() { renderCart(); ov.classList.add('on'); dr.classList.add('on'); }
+  function closeCart() { ov.classList.remove('on'); dr.classList.remove('on'); }
+  fab.onclick = openCart; ov.onclick = closeCart; dr.querySelector('.llc-x').onclick = closeCart;
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCart(); });
+
+  function badge() {
+    var n = cart.reduce(function (a, i) { return a + (i.qty || 1); }, 0);
+    fab.innerHTML = '\uD83D\uDED2 Legal-Leaf Cart <span>' + n + '</span>';
+  }
+  var toastT = null;
+  function toast(msg) {
+    var old = document.querySelector('.llc-toast'); if (old) old.remove();
+    var d = document.createElement('div'); d.className = 'llc-toast'; d.setAttribute('role', 'status'); d.textContent = msg;
+    document.body.appendChild(d); clearTimeout(toastT); toastT = setTimeout(function () { d.remove(); }, 2200);
+  }
+
+  function addCart(p, s, btn) {
+    var key = p.id + '|' + (s.vid || s.label);
+    var hit = cart.filter(function (i) { return i.key === key; })[0];
+    if (hit) hit.qty = (hit.qty || 1) + 1;
+    else cart.push({ key: key, id: p.id, name: p.name, image: safeUrl(p.image), store: (state.stores[p.storeKey] || {}).name || p.store,
+      storeKey: p.storeKey, domain: p.domain, cartDomain: p.cartDomain || '', platform: p.platform || 'shopify',
+      ref: p.ref || '', refParam: p.refParam || '', coupon: p.coupon || '', url: safeUrl(p.url), productId: p.productId || '',
+      cartPath: p.cartPath || '', size: s.label, price: s.price, variantId: s.vid || '', attrs: s.attrs || '', qty: 1 });
+    saveCart(); badge(); renderCart();
+    toast('Added to Legal-Leaf Cart: ' + s.label);
+    if (btn) { btn.textContent = '\u2713 Added to Legal-Leaf Cart'; setTimeout(function () { btn.textContent = '\uFF0B Add to Legal-Leaf Cart'; }, 1400); }
+  }
+
+  /* One link per Woo item (Woo's handler takes one add-to-cart per request). */
+  function wooUrl(i) {
+    var add = '';
+    if (i.variantId && i.productId && i.attrs) add = 'add-to-cart=' + enc(i.productId) + '&variation_id=' + enc(i.variantId) + '&' + i.attrs;
+    else if (!i.variantId && i.productId) add = 'add-to-cart=' + enc(i.productId);
+    /* a variation without its attributes adds nothing on Woo: send the product page instead */
+    var qty = 'quantity=' + (i.qty || 1), u;
+    if (i.cartPath && add) {
+      u = 'https://' + (i.cartDomain || i.domain) + i.cartPath + '?' + add + '&' + qty;
+      if (i.ref) u += '&' + enc(i.refParam || 'ref') + '=' + enc(i.ref);
+    } else {
+      u = i.url || ('https://' + i.domain + '/');
+      if (add) u += (u.indexOf('?') >= 0 ? '&' : '?') + add + '&' + qty;
+    }
+    if (i.coupon) u += (u.indexOf('?') >= 0 ? '&' : '?') + 'coupon_code=' + enc(i.coupon);
+    return u;
+  }
+  function shopifyUrl(items) {
+    var first = items[0], qs = [];
+    if (first.coupon) qs.push('discount=' + enc(first.coupon));
+    if (first.ref) qs.push(enc(first.refParam || 'ref') + '=' + enc(first.ref));
+    var q = qs.length ? '?' + qs.join('&') : '';
+    var host = first.cartDomain || first.domain;
+    var line = items.filter(function (i) { return /^\d+$/.test(String(i.variantId)); })
+      .map(function (i) { return i.variantId + ':' + (i.qty || 1); }).join(',');
+    return line ? 'https://' + host + '/cart/' + line + q : (first.url || 'https://' + host + '/' + q);
+  }
+  /* -> [{label, href}] for one store's group */
+  function checkoutLinks(store, items) {
+    var plat = items[0].platform || 'shopify';
+    if (plat === 'shopify') return [{ label: 'Checkout at ' + store + ' \u2192', href: shopifyUrl(items) }];
+    if (plat === 'woocommerce') return items.map(function (i, n) {
+      return { label: 'Checkout at ' + store + (items.length > 1 ? ' (' + (n + 1) + ' of ' + items.length + ')' : '') + ' \u2192', href: wooUrl(i) };
+    });
+    return items.map(function (i, n) {
+      return { label: 'Checkout at ' + store + (items.length > 1 ? ' (' + (n + 1) + ' of ' + items.length + ')' : '') + ' \u2192', href: i.url || 'https://' + i.domain + '/' };
+    });
+  }
+
+  function renderCart() {
+    var bd = dr.querySelector('.llc-bd'), ft = dr.querySelector('.llc-ft');
+    if (!cart.length) {
+      bd.innerHTML = '<div class="llc-empty">Your Legal-Leaf Cart is empty.<br>Add products from any shop to build one multi-store cart.</div>';
+      ft.innerHTML = ''; return;
+    }
+    var by = {}, order = [], total = 0;
+    cart.forEach(function (i, ix) { if (!by[i.store]) { by[i.store] = []; order.push(i.store); } by[i.store].push({ i: i, ix: ix }); });
+    bd.innerHTML = order.map(function (store) {
+      var rows = by[store], items = rows.map(function (r) { return r.i; });
+      var html = '<div class="llc-st">' + esc(store) + '</div>' + rows.map(function (r) {
+        var i = r.i, q = i.qty || 1; total += i.price * q;
+        return '<div class="llc-it">' + (i.image ? '<img src="' + esc(i.image) + '" alt="">' : '')
+          + '<div style="flex:1;min-width:0"><div class="t">' + esc(i.name) + '</div><div class="s">' + esc(i.size) + '</div>'
+          + '<div class="llc-row"><b>' + money(i.price * q) + '</b><button type="button" data-q="-1" data-ix="' + r.ix + '" aria-label="Fewer">\u2212</button>'
+          + '<span>' + q + '</span><button type="button" data-q="1" data-ix="' + r.ix + '" aria-label="More">+</button>'
+          + '<button type="button" class="rm" data-rm="' + r.ix + '">Remove</button></div></div></div>';
+      }).join('');
+      var links = checkoutLinks(store, items);
+      if (links.length > 1) html += '<p class="llc-nt">' + esc(store) + ' takes one item per checkout link: open each one.</p>';
+      html += links.map(function (l) {
+        return '<a class="llc-go" href="' + esc(l.href) + '" target="_blank" rel="sponsored nofollow noopener">' + esc(l.label) + '</a>';
+      }).join('');
+      return html;
+    }).join('');
+    ft.innerHTML = '<div><b>Subtotal (est.)</b><span>' + money(total) + '</span></div>'
+      + '<p>Each store link pre-fills that shop\'s cart with your sizes, applies the coupon, and you check out on that store.</p>';
+  }
+  dr.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-ix],button[data-rm]');
+    if (!b) return;
+    if (b.hasAttribute('data-rm')) cart.splice(Number(b.getAttribute('data-rm')), 1);
+    else {
+      var it = cart[Number(b.getAttribute('data-ix'))];
+      it.qty = (it.qty || 1) + Number(b.getAttribute('data-q'));
+      if (it.qty < 1) cart.splice(cart.indexOf(it), 1);
+    }
+    saveCart(); badge(); renderCart();
+  });
+  window.addEventListener('storage', function (e) {
+    if (e.key !== CART_KEY) return;
+    try { cart = JSON.parse(e.newValue) || []; } catch (x) { cart = []; }
+    badge(); renderCart();
+  });
+  badge();
 
   gate(function () {
     load().then(function () {
