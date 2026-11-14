@@ -64,7 +64,7 @@
     '--accent:#4ec9ff;--leaf2:#22a8e8;--leaf3:#1787c4;--gold:#f0b93c;--lab:#8b5cf6;--ind:#a78bfa;--sat:#fbbf24;--hyb:#34d399;',
     'font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);',
     'background:radial-gradient(1200px 400px at 50% -120px,rgba(78,201,255,.16),transparent 70%),radial-gradient(800px 300px at 100% 0,rgba(139,92,246,.12),transparent 70%),var(--bg);',
-    'padding:22px 16px 40px;border-radius:16px;box-sizing:border-box;max-width:1400px;margin:0 auto;overflow:hidden}',
+    'padding:22px 16px 40px;border-radius:16px;box-sizing:border-box;max-width:1400px;margin:0 auto;overflow:hidden;width:100%;min-width:0;container-type:inline-size;container-name:lld}',
     '#ll-dispensary *{box-sizing:border-box}',
     /* neon sign header */
     '#ll-dispensary .lld-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;margin:0 0 6px}',
@@ -275,10 +275,51 @@
     '.lld-gate h2{margin:0 0 8px;font-size:22px;color:#fff}.lld-gate p{color:#9fb4c2;font-size:14px;line-height:1.5}',
     '.lld-gate button{margin:6px;padding:11px 18px;border-radius:10px;border:0;font-weight:700;cursor:pointer;font-size:14px}',
     '.lld-gate .y{background:linear-gradient(90deg,#1787c4,#4ec9ff);color:#fff}.lld-gate .n{background:#22303a;color:#eef6fb}',
-    '@media (max-width:600px){#ll-dispensary{padding:16px 12px 32px;border-radius:0}#ll-dispensary .lld-grid{grid-template-columns:1fr;gap:12px}',
-    '#ll-dispensary .lld-media{padding-top:58%}#ll-dispensary .lld-stores{grid-template-columns:repeat(3,1fr)}#ll-dispensary .lld-st img{width:48px;height:48px}',
-    '#ll-dispensary .lld-views{display:flex;width:100%}#ll-dispensary .lld-view{flex:1;text-align:center;padding:7px 6px}',
-    '#ll-dispensary .lld-tiles{grid-template-columns:1fr 1fr}#ll-dispensary .lld-tile b{font-size:19px}}'
+    /* ---- PHONE. The mount is an inline-size container, so these answer to the width the shelf
+       actually has, and (the bug this replaced) the nowrap jar row can no longer push the Shopify
+       section wider than the screen: that made Chrome zoom the whole page out to ~2x, so a phone
+       was shown the desktop shelf in miniature. ---- */
+    '@media (max-width:600px){#ll-dispensary{padding:14px 10px 28px;border-radius:0}}',
+    '@container lld (max-width:640px){',
+    '#ll-dispensary .lld-head h2{font-size:26px}#ll-dispensary .lld-sub{font-size:12px}',
+    '#ll-dispensary .lld-label{margin:14px 0 6px}',
+    '#ll-dispensary .lld-sizes,#ll-dispensary .lld-picks,#ll-dispensary .lld-stores,#ll-dispensary .lld-chips{display:flex;flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x proximity;',
+    '-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-10px;margin-right:-10px;padding-left:10px;padding-right:10px;gap:8px}',
+    '#ll-dispensary .lld-sizes::-webkit-scrollbar,#ll-dispensary .lld-picks::-webkit-scrollbar,#ll-dispensary .lld-stores::-webkit-scrollbar,#ll-dispensary .lld-chips::-webkit-scrollbar{display:none}',
+    '#ll-dispensary .lld-jar{min-width:74px;padding:8px 8px 7px;scroll-snap-align:start}#ll-dispensary .lld-jar b{font-size:14px}',
+    '#ll-dispensary .lld-pick{flex:0 0 82%;scroll-snap-align:start}',
+    '#ll-dispensary .lld-st{flex:none;flex-direction:row;gap:8px;padding:6px 12px 6px 6px;border-radius:999px;text-align:left;scroll-snap-align:start}',
+    '#ll-dispensary .lld-st img{width:34px;height:34px}#ll-dispensary .lld-st b{font-size:13px;white-space:nowrap}#ll-dispensary .lld-st small{font-size:11px;display:block}',
+    '#ll-dispensary .lld-chip{flex:none;white-space:nowrap;scroll-snap-align:start}',
+    '#ll-dispensary .lld-bar{gap:8px;margin:12px 0 10px}',
+    '#ll-dispensary .lld-views{display:flex;width:100%}#ll-dispensary .lld-view{flex:1;text-align:center;padding:8px 4px;font-size:12px}',
+    '#ll-dispensary .lld-bar input[type=search]{flex:1 1 100%}#ll-dispensary .lld-bar select{flex:1 1 0}',
+    /* two cards to a row, the way every phone shop reads */
+    '#ll-dispensary .lld-grid{grid-template-columns:1fr 1fr;gap:8px}',
+    '#ll-dispensary .lld-face{border-radius:12px}',
+    '#ll-dispensary .lld-media{padding-top:100%}',
+    '#ll-dispensary .lld-store{top:6px;left:6px;padding:2px 7px;font-size:8px;max-width:calc(100% - 12px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '#ll-dispensary .lld-trim{top:auto;bottom:6px;left:6px;right:auto;font-size:9px}#ll-dispensary .lld-hint{display:none}',
+    '#ll-dispensary .lld-body{padding:8px 9px 10px;gap:5px}',
+    '#ll-dispensary .lld-badges{min-height:17px;max-height:17px}#ll-dispensary .lld-badge{font-size:8px;padding:2px 5px}',
+    '#ll-dispensary .lld-name{font-size:13px;min-height:2.5em}',
+    '#ll-dispensary .lld-tags{display:none}',
+    '#ll-dispensary .lld-price{flex-wrap:wrap;gap:2px 6px}#ll-dispensary .lld-price b{font-size:18px}',
+    '#ll-dispensary .lld-pg{font-size:10px;padding:1px 5px}',
+    '#ll-dispensary .lld-meta{font-size:10.5px;min-height:0;line-height:1.35}',
+    '#ll-dispensary .lld-sz{font-size:9px;letter-spacing:.08em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
+    '#ll-dispensary .lld-card select{min-height:36px;padding:6px 8px;font-size:12px}',
+    '#ll-dispensary .lld-cta{font-size:13px;padding:10px 6px;border-radius:10px}',
+    '#ll-dispensary .lld-foot{font-size:11px}',
+    '#ll-dispensary .lld-back{padding:10px;gap:8px}#ll-dispensary .lld-back h3{font-size:13px}',
+    '#ll-dispensary .lld-bk-top{flex-direction:column;gap:4px}#ll-dispensary .lld-desc{font-size:12px}',
+    '#ll-dispensary .lld-bk-kv{grid-template-columns:1fr;gap:1px}#ll-dispensary .lld-bk-kv dd{margin-bottom:4px}',
+    '#ll-dispensary .lld-terp{grid-template-columns:1fr 34px;font-size:10px}#ll-dispensary .lld-terp u{grid-column:1/-1;grid-row:2}',
+    '#ll-dispensary .lld-col{flex-basis:86%}',
+    '#ll-dispensary .lld-tiles{grid-template-columns:1fr 1fr;gap:8px}#ll-dispensary .lld-tile{padding:10px}#ll-dispensary .lld-tile b{font-size:19px}',
+    '#ll-dispensary .lld-skel{height:300px}}',
+    '@container lld (max-width:340px){#ll-dispensary .lld-grid{grid-template-columns:1fr}}',
+    '@media (max-width:600px){.llc-fab{right:12px;bottom:12px;padding:10px 14px;font-size:14px}}'
   ].join('');
   var style = document.createElement('style');
   style.textContent = css;

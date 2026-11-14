@@ -48,7 +48,9 @@ function feed(key) {
 
 const PAGE = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>body{margin:0;background:#000}</style></head><body>
-<div id="ll-dispensary" data-stores="thcasmallbuds,puffweiser,blacktiecbd" data-api="http://127.0.0.1:${PORT}/api/products"></div>
+<!-- Wrapped the way Shopify's Horizon theme wraps a Custom Liquid section: a grid item, whose min-content
+     width is whatever the shelf asks for. The bare-body version passed while phones saw the page at ~2x. -->
+<div style="display:grid;grid-template-columns:1fr"><section><div id="ll-dispensary" data-stores="thcasmallbuds,puffweiser,blacktiecbd" data-api="http://127.0.0.1:${PORT}/api/products"></div></section></div>
 <script src="/shop-dispensary.js" defer></script></body></html>`;
 
 const srv = createServer(async (req, res) => {
