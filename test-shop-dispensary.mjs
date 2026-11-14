@@ -31,7 +31,7 @@ function prod(key, i) {
     id: key + "-" + i, name: STORES[key] + " Strain " + i, store: STORES[key], storeKey: key, domain: key + ".test",
     platform: "shopify", cannabinoid: "THCa", category: i % 4 === 3 ? "Pre-rolls" : "THCA Flower",
     type: ["Indica", "Sativa", "Hybrid", ""][i % 4], grow: "Indoor", potency: 20 + i, image: "/favicon.svg",
-    url: "https://" + key + ".test/products/s" + i, description: "<p>Back-face sentence for " + key + " " + i + ".</p>",
+    url: "https://" + key + ".test/products/s" + i, description: "<p>Back-face sentence for " + key + " " + i + "." + (i === 1 ? " Long copy about the grow and the cure.".repeat(60) : "") + "</p>",
     lineage: i === 0 ? { parents: ["Gelato", "Runtz"], stated: "Gelato x Runtz" } : null,
     lab: i === 0 ? { terps: [["Limonene", 0.82], ["Myrcene", 0.41]] } : null,
     inStock: true, ship: 0, badges: [], added: 1000 + i, sizes,
@@ -121,6 +121,8 @@ ok("tapping the photo flips it too", await ev(`document.querySelector('.lld-card
 await click(".lld-card .lld-unflip");
 ok("Back flips it home", !(await ev(`document.querySelector('.lld-card').classList.contains('is-flipped')`)));
 const lin = await ev(`(function(){var c=[].filter.call(document.querySelectorAll('.lld-card'),function(c){return /Small Buds Strain 0$/.test(c.querySelector('.lld-name').textContent)})[0];return c?c.querySelector('.lld-back').innerText:''})()`);
+{ const r = await ev(`(function(){var c=[].filter.call(document.querySelectorAll('.lld-card'),function(c){return /Small Buds Strain 1$/.test(c.querySelector('.lld-name').textContent)})[0];var b=c.querySelector('.lld-back'),f=c.querySelector('.lld-front');return [c.offsetHeight,f.offsetHeight,b.scrollHeight]})()`);
+  ok("a long description scrolls inside the back instead of stretching the card", r[2] > r[0] + 100 && Math.abs(r[0] - r[1]) < 2, r.join(" / ")); }
 ok("lineage and terpenes reach the back", /Gelato/.test(lin) && /Limonene/.test(lin), lin.replace(/\s+/g, " ").slice(0, 120));
 
 console.log("\n-- pick your size --");
