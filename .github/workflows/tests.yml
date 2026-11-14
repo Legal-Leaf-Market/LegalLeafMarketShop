@@ -233,6 +233,7 @@ jobs:
               test-collector-url.mjs
               test-lookah.mjs
               test-strain-drop-flip.mjs
+              test-shop-dispensary.mjs
           - shard: "3"          # ~189s of suite time
             suites: >-
               test-shelf-shuffle.mjs
