@@ -131,19 +131,20 @@
     /* type dot */
     '#ll-dispensary .lld-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle;background:#64748b}',
     '#ll-dispensary .t-Indica{background:var(--ind)}#ll-dispensary .t-Sativa{background:var(--sat)}#ll-dispensary .t-Hybrid{background:var(--hyb)}',
-    /* ---- SHELF: flip cards. Both faces share one grid cell, so the card is as tall as the taller face
-       and cards in a row stay level; the back scrolls inside itself if the copy is long. ---- */
+    /* ---- SHELF: flip cards. The FRONT sets the card's height and the back is laid over it and scrolls
+       inside itself. (Both faces used to share one grid cell, so a long description made the card, and
+       with it the whole row, as tall as the copy: fronts of ~570px drawn at 830.) ---- */
     '#ll-dispensary .lld-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;align-items:stretch}',
     '#ll-dispensary .lld-card{perspective:1400px;min-width:0}',
-    '#ll-dispensary .lld-flip{display:grid;height:100%;transition:transform .55s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}',
+    '#ll-dispensary .lld-flip{display:grid;position:relative;height:100%;transition:transform .55s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}',
     '#ll-dispensary .lld-card.is-flipped .lld-flip{transform:rotateY(180deg)}',
     '#ll-dispensary .lld-face{grid-area:1/1;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;',
     '-webkit-backface-visibility:hidden;backface-visibility:hidden;min-width:0}',
-    '#ll-dispensary .lld-back{transform:rotateY(180deg);background:linear-gradient(160deg,#101f2a,#0a141b);border-color:#2b4150;padding:16px;gap:10px;overflow:auto}',
+    '#ll-dispensary .lld-back{position:absolute;inset:0;transform:rotateY(180deg);background:linear-gradient(160deg,#101f2a,#0a141b);border-color:#2b4150;padding:16px;gap:10px;overflow:auto}',
     '#ll-dispensary .lld-card.is-flipped .lld-front{visibility:hidden;transition:visibility 0s .28s}',
     '#ll-dispensary .lld-card:not(.is-flipped) .lld-back{visibility:hidden;transition:visibility 0s .28s}',
     '@media (prefers-reduced-motion:reduce){#ll-dispensary .lld-flip{transition:none}#ll-dispensary .lld-open{animation:none}}',
-    '#ll-dispensary .lld-media{all:unset;cursor:pointer;display:block;position:relative;height:0;padding-top:72%;background:#0b141a;overflow:hidden}',
+    '#ll-dispensary .lld-media{all:unset;cursor:pointer;display:block;position:relative;height:0;padding-top:64%;background:#0b141a;overflow:hidden}',
     '#ll-dispensary .lld-media img{position:absolute!important;inset:0;width:100%!important;height:100%!important;max-width:none;object-fit:contain;margin:0}',
     '#ll-dispensary .lld-media:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}',
     '#ll-dispensary .lld-hint{position:absolute;z-index:2;right:10px;bottom:10px;background:rgba(8,15,20,.85);border:1px solid var(--line);border-radius:999px;',
@@ -297,7 +298,7 @@
     /* two cards to a row, the way every phone shop reads */
     '#ll-dispensary .lld-grid{grid-template-columns:1fr 1fr;gap:8px}',
     '#ll-dispensary .lld-face{border-radius:12px}',
-    '#ll-dispensary .lld-media{padding-top:100%}',
+    '#ll-dispensary .lld-media{padding-top:82%}',
     '#ll-dispensary .lld-store{top:6px;left:6px;padding:2px 7px;font-size:8px;max-width:calc(100% - 12px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
     '#ll-dispensary .lld-trim{top:auto;bottom:6px;left:6px;right:auto;font-size:9px}#ll-dispensary .lld-hint{display:none}',
     '#ll-dispensary .lld-body{padding:8px 9px 10px;gap:5px}',
@@ -309,8 +310,8 @@
     '#ll-dispensary .lld-meta{font-size:10.5px;min-height:0;line-height:1.35}',
     '#ll-dispensary .lld-sz{font-size:9px;letter-spacing:.08em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
     '#ll-dispensary .lld-card select{min-height:36px;padding:6px 8px;font-size:12px}',
-    '#ll-dispensary .lld-cta{font-size:13px;padding:10px 6px;border-radius:10px}',
-    '#ll-dispensary .lld-foot{font-size:11px}',
+    '#ll-dispensary .lld-cta{font-size:12px;padding:10px 4px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '#ll-dispensary .lld-foot{font-size:11px}#ll-dispensary .lld-foot>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ll-dispensary .lld-foot button{flex:none}',
     '#ll-dispensary .lld-back{padding:10px;gap:8px}#ll-dispensary .lld-back h3{font-size:13px}',
     '#ll-dispensary .lld-bk-top{flex-direction:column;gap:4px}#ll-dispensary .lld-desc{font-size:12px}',
     '#ll-dispensary .lld-bk-kv{grid-template-columns:1fr;gap:1px}#ll-dispensary .lld-bk-kv dd{margin-bottom:4px}',
