@@ -89,11 +89,28 @@ async function boot(width) {
 console.log("\n-- in stock only --");
 await boot(1280);
 await ev(`localStorage.clear()`); await boot(1280);
-const opts = await ev(`[].map.call(document.querySelectorAll('#ll-dispensary .lld-card select option'),function(o){return o.textContent})`);
-ok("cards carry size dropdowns", opts.length > 0, opts.length);
-ok("no dropdown option is sold out", opts.every((o) => !/sold out/i.test(o)));
-const p1 = await ev(`(function(){var c=[].filter.call(document.querySelectorAll('.lld-card'),function(c){return /Small Buds Strain 1$/.test(c.querySelector('.lld-name').textContent)})[0];return c?[].map.call(c.querySelectorAll('select option'),function(o){return o.textContent}):null})()`);
-ok("a product with its quarter sold out offers only the sizes it has", p1 && p1.length === 2 && !p1.some((o) => /^7g/.test(o)), JSON.stringify(p1));
+/* The size picker is a button plus a floating listbox, so the options exist only while it is open. */
+const cardOf = (name) => `[].filter.call(document.querySelectorAll('.lld-card'),function(c){return ${name}.test(c.querySelector('.lld-name').textContent)})[0]`;
+async function openPicker(name) {
+  await ev(`(function(){var c=${cardOf(name)};c.querySelector('.lld-dd').click()})()`);
+  return ev(`[].map.call(document.querySelectorAll('.lld-ddp .lld-opt'),function(o){return o.querySelector('.lb b').firstChild.textContent+' '+o.querySelector('.pr b').textContent})`);
+}
+ok("cards carry size pickers", (await ev(`document.querySelectorAll('#ll-dispensary .lld-card .lld-dd').length`)) > 0);
+ok("and no bare <select> is left on a card", !(await ev(`!!document.querySelector('#ll-dispensary .lld-card select')`)));
+const p0 = await openPicker("/Small Buds Strain 0$/");
+ok("the picker lists every in-stock size with its price", p0.length === 3 && p0.every((o) => /\$\d/.test(o)), JSON.stringify(p0));
+ok("it is a listbox with one option selected", (await ev(`document.querySelector('.lld-ddp').getAttribute('role')==='listbox'&&document.querySelectorAll('.lld-ddp [aria-selected=true]').length===1`)));
+ok("focus moves into the list", await ev(`document.activeElement.classList.contains('lld-opt')`));
+ok("the best $/g row is tagged", await ev(`!!document.querySelector('.lld-ddp .tg')`));
+await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+ok("Escape closes it and returns focus to the button", (await ev(`!document.querySelector('.lld-ddp')&&document.activeElement.classList.contains('lld-dd')`)));
+const p1 = await openPicker("/Small Buds Strain 1$/");
+ok("a product with its quarter sold out offers only the sizes it has", p1.length === 2 && !p1.some((o) => /^7g/.test(o)), JSON.stringify(p1));
+await ev(`document.querySelector('.lld-ddp .lld-opt[data-j="0"]').click()`);
+const after = await ev(`(function(){var c=${cardOf("/Small Buds Strain 1$/")};return [c.querySelector('.lld-dd-l b').textContent,c.querySelector('.lld-price b').textContent,!!document.querySelector('.lld-ddp')]})()`);
+ok("choosing a size updates the card and closes the list", after[0] === "3.5g" && after[1] === "$23.00" && !after[2], JSON.stringify(after));
+ok("cards carry real alt text", await ev(`[].every.call(document.querySelectorAll('.lld-card .lld-media img'),function(i){return i.alt.length>3})`));
+ok("today's best price per size is written on the page", /best price per gram/i.test(await ev(`(document.querySelector('.lld-seo')||{}).textContent||''`)));
 const names = await ev(`document.getElementById('ll-dispensary').textContent`);
 ok("an inStock:false product is not on the shelf", !/SOLDOUT/.test(names));
 ok("a product whose every size is sold out is not on the shelf", !/ROWSGONE/.test(names));
@@ -129,7 +146,9 @@ console.log("\n-- pick your size --");
 await click('.lld-jar[data-size="7"]');
 const prices = await ev(`[].map.call(document.querySelectorAll('.lld-card'),function(c){return c.querySelector('.lld-sz').textContent})`);
 ok("7 g shows only products that have a quarter in stock", prices.length === 15 && prices.every((x) => x === "7g"), prices.length + " cards");
-ok("and no per-card dropdown fights the jar", !(await ev(`!!document.querySelector('.lld-card select')`)));
+ok("and no per-card dropdown fights the jar", !(await ev(`!!document.querySelector('.lld-card .lld-dd')`)));
+ok("the size is in the address bar", /[?&]size=7(&|$)/.test(await ev(`location.search`)), await ev(`location.search`));
+ok("and a Clear filters button appears", await ev(`!!document.querySelector('.lld-count .lld-clear')`));
 await click('.lld-jar[data-size="28"]');
 ok("28 g matches every ounce", (await ev(`document.querySelectorAll('.lld-card').length`)) === 24);
 const sortedPg = await ev(`[].map.call(document.querySelectorAll('.lld-card .lld-pg'),function(e){return parseFloat(e.textContent.slice(1))})`);
@@ -160,6 +179,30 @@ await click('.lld-th[data-s="cheap"]');
 const tp2 = await ev(`[].map.call(document.querySelectorAll('.lld-table td.pr'),function(e){return parseFloat(e.textContent.slice(1))})`);
 ok("again reverses it", tp2.every((v, i) => i === 0 || v <= tp2[i - 1]));
 ok("no sold-out option in the table either", (await ev(`[].every.call(document.querySelectorAll('.lld-table option'),function(o){return !/sold out/i.test(o.textContent)})`)));
+
+console.log("\n-- links and clearing --");
+await send("Page.navigate", { url: `http://127.0.0.1:${PORT}/?size=28&cat=Pre-rolls&view=cards` });
+await until(() => ev(`document.querySelectorAll('#ll-dispensary .lld-card,#ll-dispensary .lld-empty').length>0`));
+ok("a shared link opens on its filters", (await ev(`[document.querySelector('.lld-jar[aria-pressed=true]').dataset.size,document.querySelector('.lld-chip[aria-pressed=true]').dataset.cat,document.querySelectorAll('.lld-card').length]`)).join() === "28,Pre-rolls,6");
+await click('.lld-clear');
+ok("Clear filters resets size, category and the address bar", (await ev(`[document.querySelector('.lld-jar[aria-pressed=true]').dataset.size,document.querySelector('.lld-chip[aria-pressed=true]').dataset.cat,/size=|cat=/.test(location.search),!!document.querySelector('.lld-count .lld-clear')]`)).join() === ",,false,false");
+await click('.lld-card .lld-add');
+ok("adding offers a View cart action", await ev(`!!document.querySelector('.llc-toast button')`));
+await click('.llc-toast button');
+ok("which opens the cart", await ev(`document.querySelector('.llc-dr').classList.contains('on')`));
+await ev(`document.querySelector('.llc-x').click()`);
+await ev(`localStorage.removeItem('ll_cart')`);
+
+console.log("\n-- the picker on a phone --");
+await boot(390);
+await click('.lld-view[data-view="cards"]');
+await ev(`document.querySelector('.lld-card .lld-dd').click()`);
+await wait(300);
+const sh = await ev(`(function(){var p=document.querySelector('.lld-ddp');if(!p)return 'none';var r=p.getBoundingClientRect();return [p.className,Math.round(r.bottom),innerHeight,Math.round(r.width)].join()})()`);
+ok("on a phone it opens as a bottom sheet", /sheet/.test(sh) && Math.abs(+sh.split(",")[1] - +sh.split(",")[2]) < 2 && +sh.split(",")[3] >= 380, sh);
+await ev(`document.querySelector('.lld-ddbg').click()`);
+ok("tapping outside closes it", await ev(`!document.querySelector('.lld-ddp')&&!document.querySelector('.lld-ddbg')`));
+await click('.lld-view[data-view="table"]');
 
 console.log("\n-- remembered, and fits a phone --");
 await boot(390);

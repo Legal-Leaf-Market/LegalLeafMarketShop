@@ -23,6 +23,11 @@
  * and it shouldn't"). A size row whose slot 4 is false never reaches a dropdown, and a product with
  * no sellable row (or inStock:false) never reaches the shelf. There is no toggle to bring them back.
  *
+ * SIZE PICKER, LINKS, COPY (15 Nov 2026). Sizes are a button + floating listbox (bottom sheet on a
+ * phone) showing price, list price, $/g and the best-value row. Filters live in the query string
+ * (?size=28&cat=...&shop=...&q=...), so a filtered shelf is a link; "Clear filters" resets it. Under
+ * the shelf, today's best price per size and a short FAQ are rendered as real, crawlable text.
+ *
  * THREE VIEWS, one state. "Shelf" is the card grid; a card FLIPS to its back for the description,
  * lineage, terpenes and lab link (click to flip; a mouse leaving the card flips it back). "Menu
  * board" is a kanban: columns by shop, price band, category or strain type. "Dashboard" is a
@@ -171,6 +176,66 @@
     '#ll-dispensary .lld-meta{font-size:12px;color:var(--muted);line-height:1.45;min-height:3.2em}',
     '#ll-dispensary .lld-meta strong{color:var(--ink)}',
     '#ll-dispensary .lld-code{color:var(--accent);font-weight:700}',
+    /* THE SIZE PICKER. A button on the card, and a list that floats above everything (body-level, so a
+       card's overflow:hidden cannot clip it). Every row shows what a native <select> could not: price,
+       the struck-through list price, $/g, and which size is the best value. Bottom sheet on a phone. */
+    '#ll-dispensary .lld-dd{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;min-height:42px;padding:6px 10px 6px 12px;border-radius:11px;',
+    'background:linear-gradient(180deg,rgba(78,201,255,.10),rgba(78,201,255,.03));border:1px solid #2c4252;transition:border-color .15s,box-shadow .15s}',
+    '#ll-dispensary .lld-dd:hover{border-color:var(--accent)}',
+    '#ll-dispensary .lld-dd:focus-visible,#ll-dispensary .lld-dd[aria-expanded="true"]{border-color:var(--accent);box-shadow:0 0 0 3px rgba(78,201,255,.22)}',
+    '#ll-dispensary .lld-dd-l{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}',
+    '#ll-dispensary .lld-dd-l b{font-size:14px;color:#fff;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '#ll-dispensary .lld-dd-l small{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '#ll-dispensary .lld-dd-n{flex:none;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--gold);background:rgba(240,185,60,.12);border-radius:999px;padding:2px 7px}',
+    '#ll-dispensary .lld-dd svg,.lld-ddp svg{flex:none;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}',
+    '#ll-dispensary .lld-dd svg{color:var(--accent);transition:transform .18s}#ll-dispensary .lld-dd[aria-expanded="true"] svg{transform:rotate(180deg)}',
+    '#ll-dispensary .lld-tk .lld-dd{grid-column:1/-1;min-height:36px}#ll-dispensary .lld-table .lld-dd{min-width:170px;min-height:36px}',
+    '.lld-ddbg{position:fixed;inset:0;z-index:2147483604;background:rgba(4,8,11,.55);animation:lldfade .15s}',
+    '.lld-ddp{position:fixed;z-index:2147483605;box-sizing:border-box;max-height:min(420px,70vh);overflow:auto;padding:6px;border-radius:14px;background:#0d1820;color:#eef6fb;',
+    'border:1px solid #2f4757;box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px rgba(78,201,255,.08);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;animation:lldpop .14s ease-out;overscroll-behavior:contain}',
+    '.lld-ddp *{box-sizing:border-box}',
+    '.lld-ddp.sheet{left:0!important;right:0;bottom:0;top:auto!important;width:100%!important;max-height:75vh;border-radius:18px 18px 0 0;padding:8px 8px calc(10px + env(safe-area-inset-bottom));animation:lldsheet .2s ease-out}',
+    '.lld-ddp-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px 8px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#f0b93c}',
+    '.lld-ddp-h span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '.lld-ddp.sheet .lld-ddp-h:before{content:"";position:absolute;left:50%;top:6px;width:38px;height:4px;margin-left:-19px;border-radius:2px;background:#33444f}',
+    '.lld-ddp.sheet .lld-ddp-h{padding-top:14px}',
+    '.lld-opt{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:4px 10px;width:100%;padding:10px 10px;border-radius:10px;border:1px solid transparent}',
+    '.lld-opt:hover,.lld-opt:focus-visible{background:rgba(78,201,255,.10);border-color:rgba(78,201,255,.35);outline:none}',
+    '.lld-opt[aria-selected="true"]{background:linear-gradient(90deg,rgba(23,135,196,.35),rgba(78,201,255,.12));border-color:#4ec9ff}',
+    '.lld-opt .ck{color:#4ec9ff;visibility:hidden}.lld-opt[aria-selected="true"] .ck{visibility:visible}',
+    '.lld-opt .lb{min-width:0}.lld-opt .lb b{display:block;font-size:14px;font-weight:800;color:#fff}',
+    '.lld-opt .lb small{display:block;font-size:11px;color:#9fb4c2;margin-top:1px}',
+    '.lld-opt .pr{text-align:right;white-space:nowrap}.lld-opt .pr b{display:block;font-size:15px;color:#4ec9ff;font-weight:800}',
+    '.lld-opt .pr s{font-size:11px;color:#9fb4c2;margin-right:4px}.lld-opt .pr small{display:block;font-size:11px;color:#c9d8e2;font-variant-numeric:tabular-nums}',
+    '.lld-opt .tg{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:5px;font-size:9px;font-weight:800;letter-spacing:.06em;vertical-align:2px;background:rgba(52,211,153,.16);color:#6ee7b7}',
+    '.lld-opt .tg.sv{background:rgba(240,185,60,.16);color:#f0b93c}',
+    '@keyframes lldpop{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}',
+    '@keyframes lldsheet{from{transform:translateY(100%)}to{transform:none}}@keyframes lldfade{from{opacity:0}to{opacity:1}}',
+    '@media (prefers-reduced-motion:reduce){.lld-ddp,.lld-ddbg{animation:none}}',
+    /* the sort menu: a native select (it is short and the OS picker is right for it), dressed to match */
+    '#ll-dispensary .lld-sort{-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:34px!important;font-weight:700;',
+    'background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%234ec9ff%27 stroke-width=%272.6%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M6 9l6 6 6-6%27/%3E%3C/svg%3E");',
+    'background-repeat:no-repeat;background-position:right 11px center;background-size:14px}',
+    '#ll-dispensary .lld-sort:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(78,201,255,.22)}',
+    '#ll-dispensary .lld-sort option{background:#0d1820;color:#eef6fb}',
+    /* workflow: active filters, clear, deep links */
+    '#ll-dispensary .lld-count{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}',
+    '#ll-dispensary .lld-clear{all:unset;cursor:pointer;font-size:12px;font-weight:800;color:var(--accent);padding:3px 10px;border-radius:999px;border:1px solid rgba(78,201,255,.4)}',
+    '#ll-dispensary .lld-clear:focus-visible{outline:2px solid var(--accent)}',
+    '#ll-dispensary .lld-empty .lld-clear{margin-top:10px;display:inline-block}',
+    '#ll-dispensary .lld-shop{font-weight:700}',
+    /* crawlable copy under the shelf: today's best price per size, and the questions shoppers ask */
+    '#ll-dispensary .lld-seo{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}',
+    '#ll-dispensary .lld-seo section{padding:14px 16px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}',
+    '#ll-dispensary .lld-seo h3{margin:0 0 8px;font-size:15px;color:#fff}',
+    '#ll-dispensary .lld-seo ul{margin:0;padding:0;list-style:none;font-size:13px;line-height:1.5;color:#c9d8e2}',
+    '#ll-dispensary .lld-seo li{padding:5px 0;border-top:1px solid #1a2832}#ll-dispensary .lld-seo li:first-child{border-top:0}',
+    '#ll-dispensary .lld-seo li b{color:var(--gold)}#ll-dispensary .lld-seo li em{font-style:normal;color:var(--accent);font-weight:700}',
+    '#ll-dispensary .lld-seo details{border-top:1px solid #1a2832;padding:8px 0}#ll-dispensary .lld-seo details:first-of-type{border-top:0}',
+    '#ll-dispensary .lld-seo summary{cursor:pointer;font-size:13px;font-weight:700;color:#fff}',
+    '#ll-dispensary .lld-seo details p{margin:6px 0 0;font-size:13px;line-height:1.55;color:#c9d8e2}',
+    '.llc-toast{display:flex;align-items:center;gap:12px}.llc-toast button{all:unset;cursor:pointer;font-weight:800;color:#4ec9ff;padding:2px 4px}',
+    '.llc-fab.bump{animation:lldbump .45s}@keyframes lldbump{0%{transform:scale(1)}35%{transform:scale(1.12)}100%{transform:scale(1)}}',
     '#ll-dispensary .lld-sz{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--gold);text-transform:uppercase}',
     '#ll-dispensary .lld-card select,#ll-dispensary .lld-tk select,#ll-dispensary .lld-table select{width:100%}',
     '#ll-dispensary .lld-spacer{flex:1}',
@@ -269,7 +334,7 @@
     '.llc-ft div{display:flex;justify-content:space-between;font-weight:700}.llc-ft div span{color:#4ec9ff}',
     '.llc-ft p{font-size:11px;color:#9fb4c2;margin:6px 0 0}',
     '.llc-empty{color:#9fb4c2;text-align:center;padding:30px 10px;font-size:14px;line-height:1.5}',
-    '.llc-toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);z-index:2147483603;background:#0d1820;color:#eef6fb;border:1px solid #4ec9ff;',
+    '.llc-toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);z-index:2147483603;max-width:calc(100vw - 24px);background:#0d1820;color:#eef6fb;border:1px solid #4ec9ff;',
     'border-radius:10px;padding:10px 14px;font:600 14px "Segoe UI",system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.4)}',
     '.lld-gate{position:fixed;inset:0;z-index:2147483646;background:rgba(4,8,11,.94);display:flex;align-items:center;justify-content:center;padding:16px}',
     '.lld-gate div{max-width:420px;background:#0d1820;border:1px solid #22303a;border-radius:16px;padding:24px;color:#eef6fb;text-align:center;font-family:"Segoe UI",system-ui,sans-serif}',
@@ -310,6 +375,7 @@
     '#ll-dispensary .lld-meta{font-size:10.5px;min-height:0;line-height:1.35}',
     '#ll-dispensary .lld-sz{font-size:9px;letter-spacing:.08em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
     '#ll-dispensary .lld-card select{min-height:36px;padding:6px 8px;font-size:12px}',
+    '#ll-dispensary .lld-dd{min-height:40px;padding:5px 8px;gap:6px}#ll-dispensary .lld-dd-l b{font-size:13px}#ll-dispensary .lld-dd-l small{font-size:10px}#ll-dispensary .lld-dd-n{display:none}',
     '#ll-dispensary .lld-cta{font-size:12px;padding:10px 4px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
     '#ll-dispensary .lld-foot{font-size:11px}#ll-dispensary .lld-foot>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ll-dispensary .lld-foot button{flex:none}',
     '#ll-dispensary .lld-back{padding:10px;gap:8px}#ll-dispensary .lld-back h3{font-size:13px}',
@@ -529,11 +595,87 @@
   function sizeSelect(x, cls) {
     var s = cur(x);
     if (state.size || x.sz.length < 2) return '<span class="lld-sz">' + esc(s.label) + '</span>';
-    return '<select class="' + (cls || '') + '" aria-label="Size for ' + esc(x.p.name) + '">' + x.sz.map(function (z, j) {
-      var g = perG(z);
-      return '<option value="' + j + '"' + (j === x.pick ? ' selected' : '') + '>' + esc(z.label) + ' — ' + money(z.price) + (g ? ' · ' + money(g) + '/g' : '') + '</option>';
-    }).join('') + '</select>';
+    var g = perG(s);
+    return '<button type="button" class="lld-dd' + (cls ? ' ' + cls : '') + '" aria-haspopup="listbox" aria-expanded="false" aria-label="Size for '
+      + esc(x.p.name) + ': ' + esc(s.label) + ', ' + money(s.price) + '. ' + x.sz.length + ' sizes in stock">'
+      + '<span class="lld-dd-l"><b>' + esc(s.label) + '</b><small>' + money(s.price) + (g ? ' · ' + money(g) + '/g' : '') + '</small></span>'
+      + '<span class="lld-dd-n">' + x.sz.length + ' sizes</span>' + CHEV + '</button>';
   }
+  var CHEV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  var CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
+
+  /* ---------- the floating size list ---------- */
+  var dd = null;   /* {panel, bg, trigger, item} while open */
+  function ddClose(refocus) {
+    if (!dd) return;
+    var t = dd.trigger, item = dd.item;
+    dd.panel.remove(); if (dd.bg) dd.bg.remove();
+    dd = null;
+    if (t.isConnected) t.setAttribute('aria-expanded', 'false');
+    if (refocus) {
+      var again = t.isConnected ? t : mount.querySelector('[data-kind="' + item.kind + '"][data-i="' + item.i + '"] .lld-dd');
+      if (again) again.focus();
+    }
+  }
+  function ddOpen(trigger) {
+    var el = trigger.closest('[data-kind]');
+    var i = Number(el.getAttribute('data-i')), x = list[i];
+    if (!x) return;
+    ddClose(false);
+    var gs = x.sz.map(perG), best = null;
+    gs.forEach(function (g, j) { if (g != null && (best == null || g < gs[best])) best = j; });
+    var sheet = window.innerWidth < 600;
+    var panel = document.createElement('div');
+    panel.className = 'lld-ddp' + (sheet ? ' sheet' : '');
+    panel.setAttribute('role', 'listbox');
+    panel.setAttribute('aria-label', 'Sizes for ' + x.p.name);
+    panel.innerHTML = '<div class="lld-ddp-h"><span>' + esc(x.p.name) + '</span><span>' + x.sz.length + ' in stock</span></div>'
+      + x.sz.map(function (z, j) {
+        var g = gs[j], on = j === (x.ci == null ? x.pick : x.ci);
+        var save = z.compare && z.compare > z.price ? Math.round((1 - z.price / z.compare) * 100) : 0;
+        return '<button type="button" class="lld-opt" role="option" data-j="' + j + '" aria-selected="' + on + '">'
+          + '<span class="ck">' + CHECK + '</span>'
+          + '<span class="lb"><b>' + esc(z.label) + (j === best && x.sz.length > 1 ? '<span class="tg">BEST $/G</span>' : '') + (save >= 5 ? '<span class="tg sv">' + save + '% OFF</span>' : '') + '</b>'
+          + (z.grams && parseFloat(z.label) !== Math.round(z.grams * 100) / 100 ? '<small>' + (Math.round(z.grams * 100) / 100) + ' g</small>' : '') + '</span>'
+          + '<span class="pr">' + (save ? '<s>' + money(z.compare) + '</s>' : '') + '<b>' + money(z.price) + '</b>' + (g != null ? '<small>' + money(g) + '/g</small>' : '') + '</span></button>';
+      }).join('');
+    var bg = null;
+    if (sheet) { bg = document.createElement('div'); bg.className = 'lld-ddbg'; bg.addEventListener('click', function () { ddClose(true); }); document.body.appendChild(bg); }
+    document.body.appendChild(panel);
+    if (!sheet) {
+      var r = trigger.getBoundingClientRect(), w = Math.max(r.width, 260);
+      var left = Math.min(Math.max(8, r.left), window.innerWidth - w - 8);
+      panel.style.width = w + 'px'; panel.style.left = left + 'px';
+      var below = window.innerHeight - r.bottom - 8, h = panel.offsetHeight;
+      if (h > below && r.top > below) panel.style.top = Math.max(8, r.top - 6 - Math.min(h, r.top - 16)) + 'px', panel.style.maxHeight = (r.top - 16) + 'px';
+      else { panel.style.top = (r.bottom + 6) + 'px'; panel.style.maxHeight = Math.max(160, below - 6) + 'px'; }
+    }
+    trigger.setAttribute('aria-expanded', 'true');
+    dd = { panel: panel, bg: bg, trigger: trigger, item: { kind: el.getAttribute('data-kind'), i: i } };
+    var sel = panel.querySelector('[aria-selected="true"]') || panel.querySelector('.lld-opt');
+    sel.focus({ preventScroll: true });
+    if (sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
+    panel.addEventListener('click', function (e) {
+      var o = e.target.closest('.lld-opt'); if (!o) return;
+      var it = dd.item, xx = list[it.i];
+      xx.pick = Number(o.getAttribute('data-j'));
+      ddClose(false);
+      var node = mount.querySelector('[data-kind="' + it.kind + '"][data-i="' + it.i + '"]');
+      if (node) { rerenderItem(node); var b = mount.querySelector('[data-kind="' + it.kind + '"][data-i="' + it.i + '"] .lld-dd'); if (b) b.focus({ preventScroll: true }); }
+    });
+    panel.addEventListener('keydown', function (e) {
+      var opts = [].slice.call(panel.querySelectorAll('.lld-opt')), k = opts.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); opts[(k + (e.key === 'ArrowDown' ? 1 : opts.length - 1)) % opts.length].focus(); }
+      else if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); opts[e.key === 'Home' ? 0 : opts.length - 1].focus(); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); ddClose(true); }
+      else if (e.key === 'Tab') { e.preventDefault(); ddClose(true); }
+    });
+  }
+  document.addEventListener('pointerdown', function (e) {
+    if (dd && !dd.panel.contains(e.target) && !dd.trigger.contains(e.target) && (!dd.bg || e.target !== dd.bg)) ddClose(false);
+  }, true);
+  window.addEventListener('resize', function () { if (dd && !dd.bg) ddClose(false); });
+  window.addEventListener('scroll', function () { if (dd && !dd.bg) ddClose(false); }, { passive: true });
   function typeDot(x) { return '<span class="lld-dot' + (x.type ? ' t-' + x.type : '') + '" aria-hidden="true"></span>'; }
   function storeName(p) { return (state.stores[p.storeKey] || {}).name || p.store; }
 
@@ -555,7 +697,7 @@
     var front = '<div class="lld-face lld-front"' + (flipped ? ' aria-hidden="true"' : '') + '>'
       + '<button type="button" class="lld-media lld-flipbtn" aria-label="Flip ' + esc(p.name) + ' for details"><span class="lld-store">' + esc(store) + '</span>'
       + (p.offcut ? '<span class="lld-trim">TRIM / SHAKE</span>' : '')
-      + (safeUrl(p.image) ? '<img loading="lazy" decoding="async" src="' + esc(safeUrl(p.image)) + '" alt="">' : '')
+      + (safeUrl(p.image) ? '<img ' + (i < 4 ? 'loading="eager"' + (i < 2 ? ' fetchpriority="high"' : '') : 'loading="lazy"') + ' decoding="async" src="' + esc(safeUrl(p.image)) + '" alt="' + esc(p.name + ' from ' + store) + '">' : '')
       + '<span class="lld-hint">↻ Details</span></button><div class="lld-body">'
       + '<div class="lld-badges">' + badges + '</div>'
       + '<h3 class="lld-name" title="' + esc(p.name) + '">' + esc(p.name) + '</h3>'
@@ -594,7 +736,7 @@
       + '<p class="lld-desc">' + (desc ? esc(desc.slice(0, 700)) + (desc.length > 700 ? '…' : '') : 'The shop has not written a description for this one yet.') + '</p>'
       + '<div class="lld-spacer"></div>'
       + '<div class="lld-foot"><span>' + (coa ? '<a class="lld-lab" href="' + esc(coa) + '" target="_blank" rel="noopener"' + (flipped ? '' : ' tabindex="-1"') + '>Lab data ↗</a>' : 'Ships from ' + esc(storeName(p))) + '</span>'
-      + '<span><b style="color:var(--accent)">' + money(s.price) + '</b> · ' + esc(s.label) + '</span></div>'
+      + (safeUrl(p.url) ? '<a class="lld-shop" href="' + esc(safeUrl(p.url)) + '" target="_blank" rel="sponsored nofollow noopener"' + (flipped ? '' : ' tabindex="-1"') + '>View at ' + esc(storeName(p)) + ' ↗</a>' : '<span><b style="color:var(--accent)">' + money(s.price) + '</b> · ' + esc(s.label) + '</span>') + '</div>'
       + '<button type="button" class="lld-cta lld-add"' + (flipped ? '' : ' tabindex="-1"') + '>＋ Add ' + esc(s.label) + ' to cart</button>'
       + '</div>';
   }
@@ -732,7 +874,9 @@
     var views = [['cards', '▦ Shelf'], ['board', '☷ Menu board'], ['table', '☰ Dashboard']];
     var now = new Date();
     var body;
-    if (!list.length) body = '<div class="lld-empty">Nothing on the shelf matches. Try another size, turn a store back on, or clear the search.</div>';
+    var active = filtersActive();
+    if (!list.length) body = '<div class="lld-empty">Nothing on the shelf matches' + (state.q ? ' “' + esc(state.q) + '”' : '') + '. Try another size, turn a store back on, or clear the search.'
+      + (active ? '<br><button type="button" class="lld-clear">Clear all filters</button>' : '') + '</div>';
     else if (state.view === 'board') body = boardHTML();
     else if (state.view === 'table') body = tableHTML();
     else body = '<div class="lld-grid">' + list.slice(0, state.shown).map(cardHTML).join('') + '</div>'
@@ -754,13 +898,84 @@
       + '<input type="search" placeholder="Search strains, brands, lineage" aria-label="Search" value="' + esc(state.q) + '">'
       + '<select class="lld-sort" aria-label="Sort">' + sortOpts.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('') + '</select>'
       + '<label><input type="checkbox" data-f="trim"' + (state.trim ? ' checked' : '') + '> Trim &amp; shake</label></div>'
-      + '<p class="lld-count" aria-live="polite">' + list.length + ' in stock' + (state.size ? ' at ' + sizeDef(state.size).label : '') + '</p>'
-      + body
+      + '<div class="lld-count"><span aria-live="polite">' + list.length + ' in stock' + (state.size ? ' at ' + sizeDef(state.size).label : '') + (state.cat ? ' · ' + esc(state.cat) : '') + (state.q ? ' · “' + esc(state.q) + '”' : '') + '</span>'
+      + (active ? '<button type="button" class="lld-clear">Clear filters</button>' : '') + '</div>'
+      + body + seoHTML()
       + '<p class="lld-disc">Products on this page are sold and shipped by the partner shop named on each card, not by Legal-Leaf Market. '
       + 'Only sizes the shop reports in stock are listed; prices and stock come from each shop and can change, and the shop\'s checkout is final and verifies age. '
       + 'Your Legal-Leaf Cart hands each shop its own items at checkout. Affiliate disclosure: Legal-Leaf Market may earn a commission on purchases made through these links, at no extra cost to you. '
       + 'Hemp-derived products are for adults 21+ where legal; check your state\'s rules before ordering.</p>';
     mount.querySelector('.lld-sort').value = state.sort;
+    writeUrl();
+  }
+
+  /* ---------- workflow: what is filtered, clearing it, and the address bar ----------
+     Every filter is mirrored into the query string (replaceState, so Back still leaves the page), which
+     makes a filtered shelf a link someone can send: ?size=28&cat=THCA+Flower. Shopify's canonical tag
+     carries no query string, so these never compete with the page in search. */
+  function storesOff() { return storeKeys.filter(function (k) { return state.stores[k] && state.stores[k].ok && !state.on[k]; }); }
+  function filtersActive() { return !!(state.size || state.cat || state.q || state.trim || state.sort !== 'pg' || storesOff().length); }
+  function clearAll() {
+    state.size = ''; state.cat = ''; state.q = ''; state.trim = false; state.sort = 'pg'; state.dir = 1; state.shown = PAGE; state.colShown = {};
+    storeKeys.forEach(function (k) { if (state.stores[k] && state.stores[k].ok) state.on[k] = true; });
+    savePref();
+  }
+  var URL_KEYS = ['size', 'cat', 'q', 'shop', 'sort', 'view'];
+  function writeUrl() {
+    if (!window.history || !history.replaceState) return;
+    try {
+      var u = new URL(location.href);
+      URL_KEYS.forEach(function (k) { u.searchParams.delete(k); });
+      if (state.size) u.searchParams.set('size', state.size);
+      if (state.cat) u.searchParams.set('cat', state.cat);
+      if (state.q.trim()) u.searchParams.set('q', state.q.trim());
+      var on = storeKeys.filter(function (k) { return state.on[k]; });
+      if (storesOff().length) u.searchParams.set('shop', on.join(','));
+      if (state.sort !== 'pg') u.searchParams.set('sort', state.sort);
+      if (state.view !== 'cards') u.searchParams.set('view', state.view);
+      if (u.href !== location.href) history.replaceState(history.state, '', u.href);
+    } catch (e) { /* an old browser without URL: the shelf still works, it just is not linkable */ }
+  }
+  function readUrl() {
+    var u; try { u = new URL(location.href); } catch (e) { return; }
+    var v = u.searchParams;
+    if (v.has('size') && sizeDef(v.get('size')).k === v.get('size')) state.size = v.get('size');
+    if (v.get('cat') && state.all.some(function (x) { return x.p.category === v.get('cat'); })) state.cat = v.get('cat');
+    if (v.get('q')) state.q = v.get('q').slice(0, 80);
+    if (SORTS[v.get('sort')]) state.sort = v.get('sort');
+    if (/^(cards|board|table)$/.test(v.get('view') || '')) state.view = v.get('view');
+    if (v.get('shop')) {
+      var want = v.get('shop').toLowerCase().split(',');
+      var hit = storeKeys.filter(function (k) { return want.indexOf(k) >= 0 && state.stores[k] && state.stores[k].ok; });
+      if (hit.length) storeKeys.forEach(function (k) { state.on[k] = hit.indexOf(k) >= 0; });
+    }
+  }
+
+  /* ---------- crawlable copy: today's best price at each size, plus the questions shoppers ask ----------
+     Rendered text, not hidden text: it is useful on the page, and it gives search engines sentences with
+     real strain names, weights and prices that change as the menu does. Reads the full in-stock shelf,
+     not the filtered view, so the summary does not change meaning when somebody picks a category. */
+  function seoHTML() {
+    var pool = state.all.filter(function (x) { return state.on[x.p.storeKey] && (state.trim || !x.p.offcut); });
+    var lines = SIZES.filter(function (d) { return d.g; }).map(function (d) {
+      var bestX = null, bestJ = -1, bestG = null;
+      pool.forEach(function (x) { var j = matchRow(x.sz, d.k); if (j < 0) return; var g = perG(x.sz[j]); if (g != null && (bestG == null || g < bestG)) { bestG = g; bestX = x; bestJ = j; } });
+      if (!bestX) return '';
+      var z = bestX.sz[bestJ];
+      return '<li><b>' + d.label + (d.sub && !/^\d/.test(d.sub) ? ' (' + d.sub + ')' : '') + ':</b> ' + esc(bestX.p.name) + ' at ' + esc(storeName(bestX.p))
+        + ', <em>' + money(z.price) + '</em> · ' + money(bestG) + '/g</li>';
+    }).filter(Boolean);
+    var shops = storeKeys.filter(function (k) { return state.stores[k] && state.stores[k].ok; }).map(function (k) { return state.stores[k].name; });
+    var faq = [
+      ['How does the Legal-Leaf Cart work?', 'Add sizes from any partner shop to one cart. At checkout the cart opens each shop with your items, its coupon and its sizes already filled in, and you pay that shop directly.'],
+      ['Why compare by price per gram?', 'A $35 eighth and a $90 ounce are not the same deal. Dividing the price by the weight shows which one is cheaper for what you actually get, so the shelf sorts by best $/g unless you choose otherwise.'],
+      ['Are prices and stock live?', 'The menu is read from each shop when the page loads, and only sizes the shop reports in stock are listed. The shop’s own checkout has the final price.'],
+      ['Who ships my order?', 'The partner shop named on each card sells and ships it' + (shops.length ? ' (' + shops.map(esc).join(', ') + ')' : '') + '. Each verifies age at its own checkout; hemp products are for adults 21+ where legal.']
+    ];
+    return '<div class="lld-seo">'
+      + (lines.length ? '<section><h3>Today’s best price per gram, by size</h3><ul>' + lines.join('') + '</ul></section>' : '')
+      + '<section><h3>Shopping the dispensary</h3>' + faq.map(function (f) { return '<details><summary>' + f[0] + '</summary><p>' + f[1] + '</p></details>'; }).join('') + '</section>'
+      + '</div>';
   }
 
   /* re-render one card / ticket / row in place (size change) so the view does not jump */
@@ -780,7 +995,11 @@
     var t = e.target.closest('button');
     if (!t || !mount.contains(t)) return;
     var item = t.closest('[data-kind]');
-    if (t.classList.contains('lld-add')) {
+    if (t.classList.contains('lld-dd')) {
+      if (dd && dd.trigger === t) ddClose(true); else ddOpen(t);
+    } else if (t.classList.contains('lld-clear')) {
+      clearAll(); keepScroll(render);
+    } else if (t.classList.contains('lld-add')) {
       var ax = item && list[Number(item.getAttribute('data-i'))];
       if (ax) addCart(ax.p, cur(ax), t);
     } else if (t.classList.contains('lld-flipbtn')) {
@@ -827,6 +1046,9 @@
     clearTimeout(leaveT[i]);
     leaveT[i] = setTimeout(function () { if (c.isConnected && !c.matches(':hover')) setFlip(c, false); }, 300);
   }, true);
+  mount.addEventListener('keydown', function (e) {
+    if (e.target.classList && e.target.classList.contains('lld-dd') && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); ddOpen(e.target); }
+  });
   mount.addEventListener('change', function (e) {
     var t = e.target;
     var item = t.closest('[data-kind]');
@@ -877,10 +1099,12 @@
     fab.innerHTML = '\uD83D\uDED2 Legal-Leaf Cart <span>' + n + '</span>';
   }
   var toastT = null;
-  function toast(msg) {
+  function toast(msg, action) {
     var old = document.querySelector('.llc-toast'); if (old) old.remove();
-    var d = document.createElement('div'); d.className = 'llc-toast'; d.setAttribute('role', 'status'); d.textContent = msg;
-    document.body.appendChild(d); clearTimeout(toastT); toastT = setTimeout(function () { d.remove(); }, 2200);
+    var d = document.createElement('div'); d.className = 'llc-toast'; d.setAttribute('role', 'status');
+    var t = document.createElement('span'); t.textContent = msg; d.appendChild(t);
+    if (action) { var b = document.createElement('button'); b.type = 'button'; b.textContent = action[0]; b.onclick = function () { d.remove(); action[1](); }; d.appendChild(b); }
+    document.body.appendChild(d); clearTimeout(toastT); toastT = setTimeout(function () { d.remove(); }, action ? 4000 : 2200);
   }
 
   function addCart(p, s, btn) {
@@ -892,7 +1116,8 @@
       ref: p.ref || '', refParam: p.refParam || '', coupon: p.coupon || '', url: safeUrl(p.url), productId: p.productId || '',
       cartPath: p.cartPath || '', size: s.label, price: s.price, variantId: s.vid || '', attrs: s.attrs || '', qty: 1 });
     saveCart(); badge(); renderCart();
-    toast('Added to Legal-Leaf Cart: ' + s.label);
+    toast('Added ' + s.label + ' · ' + (state.stores[p.storeKey] || {}).name, ['View cart', openCart]);
+    fab.classList.remove('bump'); void fab.offsetWidth; fab.classList.add('bump');
     if (btn) { var was = btn.getAttribute('data-was') || btn.textContent; btn.setAttribute('data-was', was); btn.textContent = '\u2713 Added'; setTimeout(function () { btn.textContent = was; }, 1400); }
   }
 
@@ -987,6 +1212,7 @@
         mount.innerHTML = headHTML('Back in a minute.') + '<div class="lld-note">The partner shelves did not load. Refresh in a minute.</div>';
         return;
       }
+      readUrl();
       render();
     });
   });
