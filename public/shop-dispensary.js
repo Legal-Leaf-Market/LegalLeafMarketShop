@@ -606,6 +606,7 @@
 
   /* ---------- the floating size list ---------- */
   var dd = null;   /* {panel, bg, trigger, item} while open */
+  var ddOpenedAt = 0;
   function ddClose(refocus) {
     if (!dd) return;
     var t = dd.trigger, item = dd.item;
@@ -625,6 +626,10 @@
     var gs = x.sz.map(perG), best = null;
     gs.forEach(function (g, j) { if (g != null && (best == null || g < gs[best])) best = j; });
     var sheet = window.innerWidth < 600;
+    /* a button half off-screen (keyboard focus, or a tap at the very bottom) is brought into view first,
+       so the list opens beside it rather than off the page */
+    var tr = trigger.getBoundingClientRect();
+    if (!sheet && (tr.top < 0 || tr.bottom > window.innerHeight - 120)) trigger.scrollIntoView({ block: 'center' });
     var panel = document.createElement('div');
     panel.className = 'lld-ddp' + (sheet ? ' sheet' : '');
     panel.setAttribute('role', 'listbox');
@@ -654,7 +659,9 @@
     dd = { panel: panel, bg: bg, trigger: trigger, item: { kind: el.getAttribute('data-kind'), i: i } };
     var sel = panel.querySelector('[aria-selected="true"]') || panel.querySelector('.lld-opt');
     sel.focus({ preventScroll: true });
-    if (sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
+    /* scroll the LIST, never the page: a page scroll is what closes it */
+    if (sel.offsetTop + sel.offsetHeight > panel.clientHeight) panel.scrollTop = sel.offsetTop - panel.clientHeight / 2;
+    ddOpenedAt = Date.now();
     panel.addEventListener('click', function (e) {
       var o = e.target.closest('.lld-opt'); if (!o) return;
       var it = dd.item, xx = list[it.i];
@@ -675,7 +682,7 @@
     if (dd && !dd.panel.contains(e.target) && !dd.trigger.contains(e.target) && (!dd.bg || e.target !== dd.bg)) ddClose(false);
   }, true);
   window.addEventListener('resize', function () { if (dd && !dd.bg) ddClose(false); });
-  window.addEventListener('scroll', function () { if (dd && !dd.bg) ddClose(false); }, { passive: true });
+  window.addEventListener('scroll', function () { if (dd && !dd.bg && Date.now() - ddOpenedAt > 150) ddClose(false); }, { passive: true });
   function typeDot(x) { return '<span class="lld-dot' + (x.type ? ' t-' + x.type : '') + '" aria-hidden="true"></span>'; }
   function storeName(p) { return (state.stores[p.storeKey] || {}).name || p.store; }
 
