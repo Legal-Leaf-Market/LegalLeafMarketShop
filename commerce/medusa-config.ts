@@ -17,7 +17,8 @@ const nmiConfigured = Boolean(
 const paymentProviders = nmiConfigured
   ? [
       {
-        resolve: "medusa-payment-nmi",
+        resolve: "./src/modules/nmi-payment",
+        id: "nmi",
         options: {
           securityKey: process.env.NMI_SECURITY_KEY,
           tokenizationKey: process.env.NMI_TOKENIZATION_KEY,
