@@ -35,6 +35,11 @@
  * applies to all three: choose 3.5 g and every product shows its eighth, products without one drop
  * out, and price and $/g are finally compared like for like.
  *
+ * SHIP TO (25 Nov 2026). A state picker in the toolbar (remembered per device, and ?ship=IN in the link)
+ * hides products a shop will not send there, per the SHIPPING table below, and says how many it hid.
+ * A shop with no verified entry is never hidden; the shelf says its checkout decides. Not a filter:
+ * "Clear filters" keeps it. test-dispensary-shipping.mjs pins it.
+ *
  * THE CART. Owner, 13 Nov 2026: every card says "Add to Legal-Leaf Cart", never "Shop at <store>".
  * It is the same multi-store cart the old /consumables page had (engine.js addCart/renderCart and
  * the ll-checkout-fix block): items from all three shops collect in ONE Legal-Leaf Cart
@@ -54,6 +59,39 @@
   var PAGE = 24;
   var GATE_KEY = 'll_dispensary_21';
   var PREF_KEY = 'll_dispensary_view';
+  var SHIP_KEY = 'll_ship_state';
+
+  /* ---------- where each shop ships (owner, 25 Nov 2026: "block the products by shipping state like
+     we did on Nicotia Market") ----------
+     The Nicotia rule, carried over whole: a store's limits are written here ONLY from that store's own
+     published shipping policy, with the page and the date it was read. Nothing is guessed. A store with
+     no entry is shown everywhere, and once a shopper picks a state the shelf says plainly that we have
+     not confirmed that shop's list, so its checkout decides. A wrong "does not ship" hides real stock;
+     a wrong "ships" sells an order that cannot be filled. Both are worse than saying we do not know.
+       never: two-letter states the shop ships nothing to.
+       thca:  extra states it will not send THCa products to (cannabinoid "THCa" in the feed).
+     Example of a finished entry (CBD Hemp Direct's policy, 10 Aug 2026, CLAUDE.md, store delisted):
+       { never: ['CA','NV','OR'], thca: ['AR','ID','MN','RI'], source: 'https://.../shipping', checked: '2026-08-10' } */
+  var SHIPPING = {
+    thcasmallbuds: null, // TODO: read https://thcasmallbuds.com/policies/shipping-policy and fill in
+    puffweiser: null,    // TODO: read puffweiserstore.com's shipping page and fill in
+    blacktiecbd: null    // TODO: read https://www.blacktiecbd.net/policies/shipping-policy and fill in
+  };
+  var US_STATES = { AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut',
+    DE: 'Delaware', DC: 'District of Columbia', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana',
+    IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan',
+    MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire',
+    NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma',
+    OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas',
+    UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming' };
+  function shipRule(key) { var r = SHIPPING[key]; return r && r.source && r.checked ? r : null; }
+  function shipsTo(key, st, p) {
+    var r = shipRule(key);
+    if (!st || !r) return true;
+    if ((r.never || []).indexOf(st) > -1) return false;
+    if (p && /^thca$/i.test(p.cannabinoid || '') && (r.thca || []).indexOf(st) > -1) return false;
+    return true;
+  }
 
   var mount = document.getElementById('ll-dispensary');
   if (!mount || mount.getAttribute('data-ll-ready')) return;
@@ -124,6 +162,7 @@
     '#ll-dispensary .lld-view[aria-pressed="true"]{background:linear-gradient(90deg,var(--leaf3),var(--accent));color:#fff}',
     '#ll-dispensary .lld-view:focus-visible{outline:2px solid var(--accent)}',
     '#ll-dispensary .lld-count{color:var(--muted);font-size:13px;margin:0 0 10px}',
+    '#ll-dispensary .lld-shipnote{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;font-size:13px}',
     /* picks strip */
     '#ll-dispensary .lld-picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:4px 0 6px}',
     '#ll-dispensary .lld-pick{all:unset;cursor:pointer;display:flex;gap:10px;align-items:center;padding:10px;border-radius:14px;background:linear-gradient(135deg,rgba(240,185,60,.14),rgba(240,185,60,.03));border:1px solid rgba(240,185,60,.35)}',
@@ -462,7 +501,8 @@
     view: /^(cards|board|table)$/.test(pref.view) ? pref.view : 'cards',
     size: typeof pref.size === 'string' && sizeDef(pref.size).k === pref.size ? pref.size : '',
     group: /^(store|price|cat|type)$/.test(pref.group) ? pref.group : 'store',
-    dir: 1, flipped: {}, colShown: {}, picks: {}
+    dir: 1, flipped: {}, colShown: {}, picks: {},
+    ship: (function () { var v = lsGet(SHIP_KEY); return typeof v === 'string' && US_STATES[v] ? v : ''; })()
   };
   function savePref() { lsSet(PREF_KEY, { view: state.view, size: state.size, group: state.group }); }
 
@@ -535,6 +575,7 @@
     var q = state.q.trim().toLowerCase();
     return state.all.filter(function (x) {
       if (!state.on[x.p.storeKey]) return false;
+      if (!shipsTo(x.p.storeKey, state.ship, x.p)) return false;
       if (!state.trim && x.p.offcut) return false;
       if (state.cat && x.p.category !== state.cat) return false;
       if (q && x.text.indexOf(q) < 0) return false;
@@ -570,6 +611,7 @@
     var m = {};
     state.all.forEach(function (x) {
       if (!state.trim && x.p.offcut) return;
+      if (!shipsTo(x.p.storeKey, state.ship, x.p)) return;
       if (field === 'cat' && !state.on[x.p.storeKey]) return;
       var k = field === 'cat' ? x.p.category : x.p.storeKey;
       m[k] = (m[k] || 0) + 1;
@@ -854,6 +896,21 @@
 
   /* ---------- page ---------- */
   var list = [];
+  /* What the Ship-to choice did, in words. Hiding stock without saying so would read as a thin shelf. */
+  function shipNote() {
+    if (!state.ship) return '';
+    var name = US_STATES[state.ship], hid = {}, unknown = [];
+    state.all.forEach(function (x) {
+      if (!state.on[x.p.storeKey] || (!state.trim && x.p.offcut)) return;
+      if (!shipsTo(x.p.storeKey, state.ship, x.p)) hid[x.p.storeKey] = (hid[x.p.storeKey] || 0) + 1;
+    });
+    storeKeys.forEach(function (k) { if (state.stores[k] && state.stores[k].ok && !shipRule(k)) unknown.push(storeName({ storeKey: k, store: k })); });
+    var parts = Object.keys(hid).map(function (k) { return hid[k] + ' from ' + esc(storeName({ storeKey: k, store: k })); });
+    var out = '';
+    if (parts.length) out += 'Hidden because the shop does not ship them to ' + esc(name) + ': ' + parts.join(', ') + '. ';
+    if (unknown.length) out += 'We have not confirmed where ' + esc(unknown.join(', ')) + ' ship' + (unknown.length === 1 ? 's' : '') + ', so ' + (unknown.length === 1 ? 'its' : 'their') + ' checkout decides. ';
+    return out ? '<div class="lld-note lld-shipnote">' + out + '<button type="button" class="lld-btn lld-ship-any">Show every state</button></div>' : '';
+  }
   function render() {
     list = visible();
     var picks = picksOf(list);
@@ -863,7 +920,7 @@
       if (!s) return '';
       return '<button type="button" class="lld-st" data-store="' + esc(k) + '" aria-pressed="' + (!!state.on[k]) + '"' + (s.ok ? '' : ' disabled') + '>'
         + (s.img ? '<img src="' + esc(s.img) + '" alt="" loading="lazy">' : '')
-        + '<b>' + esc(s.name) + '</b><small>' + (s.ok ? (sc[k] || 0) + ' in stock' : 'unavailable right now') + '</small></button>';
+        + '<b>' + esc(s.name) + '</b><small>' + (!s.ok ? 'unavailable right now' : (state.ship && !(sc[k] || 0) && !shipsTo(k, state.ship) ? 'doesn\u2019t ship to ' + state.ship : (sc[k] || 0) + ' in stock')) + '</small></button>';
     }).join('');
     var cats = Object.keys(cc).sort(function (a, b) { return cc[b] - cc[a]; });
     var chips = '<button type="button" class="lld-chip" data-cat="" aria-pressed="' + (!state.cat) + '">All</button>'
@@ -904,9 +961,13 @@
       }).join('') + '</div>'
       + '<input type="search" placeholder="Search strains, brands, lineage" aria-label="Search" value="' + esc(state.q) + '">'
       + '<select class="lld-sort" aria-label="Sort">' + sortOpts.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('') + '</select>'
+      + '<select class="lld-ship" aria-label="Ship to"><option value="">Ship to: any state</option>' + Object.keys(US_STATES).map(function (c) {
+        return '<option value="' + c + '"' + (state.ship === c ? ' selected' : '') + '>Ship to ' + esc(US_STATES[c]) + '</option>';
+      }).join('') + '</select>'
       + '<label><input type="checkbox" data-f="trim"' + (state.trim ? ' checked' : '') + '> Trim &amp; shake</label></div>'
       + '<div class="lld-count"><span aria-live="polite">' + list.length + ' in stock' + (state.size ? ' at ' + sizeDef(state.size).label : '') + (state.cat ? ' · ' + esc(state.cat) : '') + (state.q ? ' · “' + esc(state.q) + '”' : '') + '</span>'
       + (active ? '<button type="button" class="lld-clear">Clear filters</button>' : '') + '</div>'
+      + shipNote()
       + body + seoHTML()
       + '<p class="lld-disc">Products on this page are sold and shipped by the partner shop named on each card, not by Legal-Leaf Market. '
       + 'Only sizes the shop reports in stock are listed; prices and stock come from each shop and can change, and the shop\'s checkout is final and verifies age. '
@@ -927,7 +988,7 @@
     storeKeys.forEach(function (k) { if (state.stores[k] && state.stores[k].ok) state.on[k] = true; });
     savePref();
   }
-  var URL_KEYS = ['size', 'cat', 'q', 'shop', 'sort', 'view'];
+  var URL_KEYS = ['size', 'cat', 'q', 'shop', 'sort', 'view', 'ship'];
   function writeUrl() {
     if (!window.history || !history.replaceState) return;
     try {
@@ -940,6 +1001,7 @@
       if (storesOff().length) u.searchParams.set('shop', on.join(','));
       if (state.sort !== 'pg') u.searchParams.set('sort', state.sort);
       if (state.view !== 'cards') u.searchParams.set('view', state.view);
+      if (state.ship) u.searchParams.set('ship', state.ship);
       if (u.href !== location.href) history.replaceState(history.state, '', u.href);
     } catch (e) { /* an old browser without URL: the shelf still works, it just is not linkable */ }
   }
@@ -951,6 +1013,7 @@
     if (v.get('q')) state.q = v.get('q').slice(0, 80);
     if (SORTS[v.get('sort')]) state.sort = v.get('sort');
     if (/^(cards|board|table)$/.test(v.get('view') || '')) state.view = v.get('view');
+    if (US_STATES[(v.get('ship') || '').toUpperCase()]) state.ship = v.get('ship').toUpperCase();
     if (v.get('shop')) {
       var want = v.get('shop').toLowerCase().split(',');
       var hit = storeKeys.filter(function (k) { return want.indexOf(k) >= 0 && state.stores[k] && state.stores[k].ok; });
@@ -1006,6 +1069,8 @@
       if (dd && dd.trigger === t) ddClose(true); else ddOpen(t);
     } else if (t.classList.contains('lld-clear')) {
       clearAll(); keepScroll(render);
+    } else if (t.classList.contains('lld-ship-any')) {
+      state.ship = ''; lsSet(SHIP_KEY, ''); keepScroll(render);
     } else if (t.classList.contains('lld-add')) {
       var ax = item && list[Number(item.getAttribute('data-i'))];
       if (ax) addCart(ax.p, cur(ax), t);
@@ -1064,6 +1129,8 @@
       rerenderItem(item);
       var again = mount.querySelector('[data-kind="' + item.getAttribute('data-kind') + '"][data-i="' + item.getAttribute('data-i') + '"] select');
       if (again) again.focus();
+    } else if (t.matches('.lld-ship')) {
+      state.ship = US_STATES[t.value] ? t.value : ''; lsSet(SHIP_KEY, state.ship); state.shown = PAGE; keepScroll(render);
     } else if (t.matches('.lld-sort')) {
       state.sort = t.value; state.dir = 1; state.shown = PAGE; keepScroll(render);
     } else if (t.matches('.lld-bar input[type=checkbox]')) {
