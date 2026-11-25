@@ -146,3 +146,11 @@ button.link { padding: 0; border: 0; background: none; color: var(--amber-ink); 
 .tbl { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 15px; }
 .tbl th, .tbl td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 .tbl th { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+/* Preview mode: card checkout is not switched on yet (static mode only). */
+.preview-bar { margin: 0; padding: 10px 16px; background: #F6E7B8; color: #3A2C05; text-align: center; font-size: 15px; border-bottom: 1px solid #E2CC83; }
+.soon-tag { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #F6E7B8; color: #3A2C05; font: 700 12px/1.4 system-ui, sans-serif; vertical-align: middle; }
+.pay-note { margin: 0 0 8px; font-size: 15px; }
+.pay-soon input:disabled { background: #F1F1EE; color: #77776F; cursor: not-allowed; }
+.notify { margin: 14px 0; padding: 12px; border: 1px solid #DCDCD4; border-radius: 6px; }
+.notify .btn { margin-top: 6px; }

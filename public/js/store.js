@@ -222,7 +222,7 @@
       <form class="checkout" data-checkout-form novalidate>
         <p class="step-note">${LIVE
           ? "Card payment is taken on the next step."
-          : "<strong>Card checkout opens soon.</strong> For now, send your order and we will text you to confirm it, arrange delivery and take card payment. No cash."}</p>
+          : "<strong>Preview: card checkout is coming soon.</strong> You can walk through every step, but no order is placed, nothing is charged, and nothing you type here is sent anywhere."}</p>
         <fieldset>
           <legend>You</legend>
           <label class="field"><span>Full name</span><input name="name" autocomplete="name" required></label>
@@ -239,6 +239,15 @@
           </div>
           <label class="field"><span>Notes for delivery (optional)</span><textarea name="notes" rows="2"></textarea></label>
         </fieldset>
+        <fieldset class="pay${LIVE ? "" : " pay-soon"}">
+          <legend>Payment ${LIVE ? "" : '<span class="soon-tag">Coming soon</span>'}</legend>
+          <p class="pay-note">Debit and credit cards: Visa, Mastercard, Discover and American Express. No cash.${LIVE ? "" : " Card payment switches on once our payment processor finishes setting up the account."}</p>
+          ${LIVE ? "" : `<label class="field"><span>Card number</span><input inputmode="numeric" placeholder="Card checkout coming soon" disabled></label>
+          <div class="two">
+            <label class="field"><span>Expiry</span><input placeholder="MM / YY" disabled></label>
+            <label class="field"><span>Security code</span><input placeholder="CVC" disabled></label>
+          </div>`}
+        </fieldset>
         <label class="check"><input type="checkbox" name="adult" required>
           <span>I am 21 or older, and I will show a valid photo ID at delivery. I understand the order will not be handed over without one.</span></label>
         <label class="check"><input type="checkbox" name="terms" required>
@@ -246,7 +255,7 @@
         <p class="err" data-err role="alert"></p>
         <div class="actions">
           <button type="button" class="btn btn-alt" data-back>Back to cart</button>
-          <button type="submit" class="btn btn-main">${LIVE ? "Continue to payment" : "Send order request"} &middot; ${money(cartTotal() * 1.07)}</button>
+          <button type="submit" class="btn btn-main">${LIVE ? "Continue to payment" : "Place order (coming soon)"} &middot; ${money(cartTotal() * 1.07)}</button>
         </div>
       </form>`
   }
@@ -269,17 +278,35 @@
 
     if (LIVE) return submitLive(f, err)
 
-    // Static mode: an order REQUEST by email. Nothing is charged.
-    const lines = cart.map((l) => `${l.qty} x ${l.title}${l.opt ? " (" + l.opt + ")" : ""} @ ${money(l.price)}`).join("\n")
-    const bodyText = `Order request\n\n${lines}\n\nSubtotal ${money(cartTotal())}\nTax (7%) ${money(cartTotal() * 0.07)}\nTotal ${money(cartTotal() * 1.07)}\n\nName: ${f.name}\nPhone: ${f.phone}\nEmail: ${f.email}\nDOB: ${f.dob}\nAddress: ${f.address}, ${f.city}, IN ${f.zip}\nNotes: ${f.notes || "-"}\n\nConfirmed 21+ and will show photo ID at delivery.`
-    location.href = `mailto:jake@legalleafmarket.shop?subject=${encodeURIComponent("Order request: " + f.name)}&body=${encodeURIComponent(bodyText)}`
-    $("[data-cart-body]").innerHTML = `<div class="done"><h3>Almost there</h3>
-      <p>Your email app should have opened with the order filled in. Press send there and we will text
-      <strong>${esc(f.phone)}</strong> to confirm and set a delivery time.</p>
-      <p>If nothing opened, email <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a>
-      or text <a href="sms:+18126711780">(812) 671-1780</a> with your order.</p>
-      <button type="button" class="btn btn-alt" data-clear>Clear cart</button></div>`
+    // Static mode is a PREVIEW. Card checkout is not switched on until the
+    // processor approves the account, so nothing is ordered, charged or sent.
+    // The only thing that can leave the page is an email address, and only if
+    // the shopper types one into the notify form below and presses its button.
+    $("[data-cart-body]").innerHTML = `<div class="done"><h3>Checkout preview complete</h3>
+      <p><strong>Card checkout isn't switched on yet</strong>, so this order was not placed and nothing was charged.
+      Your cart is saved on this device for when it opens.</p>
+      <form class="notify" data-notify-form>
+        <label class="field"><span>Email me when card checkout opens</span>
+          <input name="email" type="email" autocomplete="email" value="${esc(f.email)}" required></label>
+        <button type="submit" class="btn btn-main">Notify me</button>
+        <p class="fine" data-notify-msg role="status"></p>
+      </form>
+      <p>Questions in the meantime? Email <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a>
+      or call or text <a href="tel:+18126711780">(812) 671-1780</a>.</p>
+      <button type="button" class="btn btn-alt" data-back>Back to cart</button></div>`
     return true
+  }
+
+  async function notifyMe(form) {
+    const msg = $("[data-notify-msg]", form)
+    const email = String(new FormData(form).get("email") || "").trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = "Please enter a valid email address."; return }
+    msg.textContent = "Sending..."
+    try {
+      const r = await fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, site: "legal-leaf", meta: { source: "shop-checkout-preview" } }) })
+      msg.textContent = r.ok ? "Thanks. We'll email you when card checkout opens." : "That didn't go through. Please email jake@legalleafmarket.shop instead."
+    } catch { msg.textContent = "That didn't go through. Please email jake@legalleafmarket.shop instead." }
   }
 
   async function submitLive(f, err) {
@@ -330,6 +357,7 @@
   })
   document.addEventListener("submit", (e) => {
     if (e.target.matches("[data-checkout-form]")) { e.preventDefault(); submitCheckout(e.target) }
+    if (e.target.matches("[data-notify-form]")) { e.preventDefault(); notifyMe(e.target) }
   })
   let qTimer
   document.addEventListener("input", (e) => {
