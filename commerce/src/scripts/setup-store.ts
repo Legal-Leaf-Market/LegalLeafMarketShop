@@ -120,20 +120,15 @@ export default async function setupStore({ container }: ExecArgs) {
   }
 
   // ---- tax -----------------------------------------------------------------
-  let [usTax] = await taxService.listTaxRegions({
-    country_code: "us",
-    province_code: null,
-  })
+  const usTaxRegions = await taxService.listTaxRegions({ country_code: "us" })
+  let usTax = usTaxRegions.find((t) => !t.province_code)
   if (!usTax) {
     const { result } = await createTaxRegionsWorkflow(container).run({
       input: [{ country_code: "us", provider_id: "tp_system" }],
     })
     usTax = result[0]
   }
-  const [inTax] = await taxService.listTaxRegions({
-    country_code: "us",
-    province_code: "us-in",
-  })
+  const inTax = usTaxRegions.find((t) => t.province_code === "us-in")
   if (!inTax) {
     await createTaxRegionsWorkflow(container).run({
       input: [
@@ -256,7 +251,7 @@ export default async function setupStore({ container }: ExecArgs) {
       fields: ["id", "token", "title"],
       filters: { type: "publishable", title },
     })
-    let key = keys[0]
+    let key: { id: string; token: string } | undefined = keys[0]
     if (!key) {
       const { result } = await createApiKeysWorkflow(container).run({
         input: { api_keys: [{ title, type: "publishable", created_by: "" }] },
