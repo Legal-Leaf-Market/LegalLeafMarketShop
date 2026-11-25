@@ -463,6 +463,15 @@
     'font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);background:radial-gradient(1200px 420px at 10% -10%,rgba(78,201,255,.07),transparent 60%),radial-gradient(900px 380px at 100% 0,rgba(139,92,246,.07),transparent 60%),var(--bg);',
     'border-radius:20px;padding:24px 18px 38px;max-width:1400px;margin:24px auto;box-sizing:border-box;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}',
     '@media(max-width:560px){.ll-x{padding:18px 12px 28px;border-radius:16px;margin:12px auto}}',
+    /* MOBILE WIDTH (3 Nov 2026): Horizon puts a Custom Liquid section in a grid column, and a grid
+       column is as wide as its content's min-content. The story circles are one long scrolling row,
+       so their natural width widened the column, the page went sideways and the phone zoomed out.
+       contain:inline-size stops anything inside from widening the mount; the scroll rows are pinned
+       to the width they are given rather than the width they would like. */
+    '.ll-x{width:100%;min-width:0;contain:inline-size}',
+    '#ll-feed,#ll-slicer{min-width:0;max-width:100%}',
+    '.ll-x .ll-stories,.ll-x .ll-srow,.ll-x .ll-bar,.ll-x .ll-meta{width:0;min-width:100%;max-width:100%}',
+    '.ll-x img{max-width:100%}',
     '.ll-x *{box-sizing:border-box}',
     '.ll-x a{color:inherit}',
     '.ll-x .ll-kicker{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}',
