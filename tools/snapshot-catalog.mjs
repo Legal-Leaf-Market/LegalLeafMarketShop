@@ -50,12 +50,14 @@ const text = (html) => String(html || "").replace(/<style[\s\S]*?<\/style>|<scri
 // Shop sections, in menu order. First match wins.
 const SECTIONS = [
   ["cigars", "Cigars & Tobacco", /\b(cigar|cigars|cigarillo|humidor|hookah|shisha|pipe tobacco|cutter)\b/i],
-  ["vapes", "Vapes & Disposables", /\b(vape|vapes|disposable|e-?liquid|e-?juice|pod|pods|nicotine|pouch|pouches)\b/i],
+  // Not bare "pouch": Kavatza's joint pouches are cases, and Black Buffalo's
+  // ZERO pouches are nicotine-free herbal dip (Herbal, below).
+  ["vapes", "Vapes & Disposables", /\b(vape|vapes|disposable|e-?liquid|e-?juice|pod|pods|nicotine|nicotine pouch|nicotine pouches)\b/i],
   ["vaporizers", "Vaporizers & Rigs", /\b(vaporizer|e-?rig|dab|wax pen|510|battery|atomizer|coil)\b/i],
   ["glass", "Glass & Pipes", /\b(glass|pipe|pipes|bong|bubbler|water pipe|rig|chillum|one-?hitter|dugout|nectar collector)\b/i],
   ["papers", "Papers & Rolling", /\b(paper|papers|rolling|cone|cones|wrap|wraps|tips|filter|filters|tray|trays|roller)\b/i],
   ["grinders", "Grinders", /\b(grinder|grinders)\b/i],
-  ["herbal", "Herbal & Tobacco-free", /\b(herbal|herb|herbs|tea|blend|nicotine-?free|tobacco-?free|shaman|bear blend|ceremonial)\b/i],
+  ["herbal", "Herbal & Tobacco-free", /\b(herbal|herb|herbs|tea|blend|nicotine-?free|tobacco-?free|shaman|bear blend|ceremonial|zero pouches|zero long cut)\b/i],
   ["storage", "Storage & Accessories", /./],
 ]
 
