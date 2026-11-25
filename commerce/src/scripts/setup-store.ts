@@ -135,8 +135,9 @@ export default async function setupStore({ container }: ExecArgs) {
         {
           country_code: "us",
           province_code: "us-in",
+          // Sub-regions inherit the provider from the US region; setting one
+          // here violates Medusa's tax_region check constraint.
           parent_id: usTax.id,
-          provider_id: "tp_system",
           default_tax_rate: { rate: 7, code: "IN-SALES", name: "Indiana sales tax" },
         },
       ],
