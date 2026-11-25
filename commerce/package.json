@@ -1,0 +1,48 @@
+{
+  "name": "legal-leaf-commerce",
+  "version": "0.0.1",
+  "description": "Legal-Leaf Market store backend (Medusa v2): catalog, carts, orders, NMI card payments.",
+  "author": "Legal-Leaf Market",
+  "license": "MIT",
+  "keywords": [
+    "medusa",
+    "ecommerce"
+  ],
+  "scripts": {
+    "build": "medusa build",
+    "start": "medusa start",
+    "dev": "medusa develop",
+    "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
+    "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
+    "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
+    "setup": "medusa exec ./src/scripts/setup-store.ts",
+    "import:shopify": "medusa exec ./src/scripts/import-shopify.ts"
+  },
+  "dependencies": {
+    "@medusajs/admin-sdk": "2.18.0",
+    "@medusajs/cli": "2.18.0",
+    "@medusajs/framework": "2.18.0",
+    "@medusajs/medusa": "2.18.0",
+    "medusa-payment-nmi": "^0.6.1"
+  },
+  "devDependencies": {
+    "@medusajs/test-utils": "2.18.0",
+    "@swc/core": "^1.7.28",
+    "@swc/jest": "^0.2.36",
+    "@types/jest": "^29.5.13",
+    "@types/node": "^20.12.11",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.2.25",
+    "jest": "^29.7.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.14",
+    "yalc": "^1.0.0-pre.53"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
