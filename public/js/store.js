@@ -77,11 +77,23 @@
   }
 
   // ---------- render ----------
+  // "Everything" deals the sections out in turn, so the first screen shows the
+  // range of the shop instead of one section's first 24 items.
+  function dealt(list) {
+    const by = new Map()
+    for (const p of list) (by.get(p.s) || by.set(p.s, []).get(p.s)).push(p)
+    const queues = [...by.values()]
+    const out = []
+    while (queues.some((q) => q.length)) for (const q of queues) if (q.length) out.push(q.shift())
+    return out
+  }
+
   function filtered() {
     const q = state.q.trim().toLowerCase()
-    return state.all.filter((p) =>
+    const hits = state.all.filter((p) =>
       (state.section === "all" || p.s === state.section) &&
       (!q || (p.t + " " + p.b).toLowerCase().includes(q)))
+    return state.section === "all" && !q ? dealt(hits) : hits
   }
 
   function paintSections() {

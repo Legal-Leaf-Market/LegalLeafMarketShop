@@ -68,7 +68,10 @@ for (const p of products) {
   if (EXCLUDE.test(hay)) { excluded.push(p.title); continue }
   const prices = p.variants.map((v) => Number(v.price)).filter((n) => n > 0)
   if (!prices.length) { excluded.push(`${p.title} (no price)`); continue }
-  const section = SECTIONS.find(([, , re]) => re.test(hay))
+  // Sections read the title and type first: tags carry store names
+  // ("nicotia-cigars") that would file a vape under cigars.
+  const own = [p.title, p.product_type].join(" ")
+  const section = SECTIONS.slice(0, -1).find(([, , re]) => re.test(own)) || SECTIONS.find(([, , re]) => re.test(hay))
   const realOptions = p.options.filter((o) => !(o.name === "Title" && o.values.length === 1 && o.values[0] === "Default Title"))
   kept.push({
     h: p.handle,
