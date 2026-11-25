@@ -1,283 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Terms: what this site is, and what it is not | Legal-Leaf Market</title>
-<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any product is
-     rendered, and the page content stays in the DOM behind the overlay so a crawler still
-     sees a full page. See public/js/age-gate.js for why an attestation gate is the right
-     shape here and what it deliberately does not do.
-     Anchored after </title> because three of these pages (consumables, devices,
-     international) have no explicit </head> at all -- an anchor that works on twelve of
-     fifteen pages is how a gate ends up missing from the ones that sell things. -->
-<script src="/js/age-gate.js"></script>
-<meta name="description" content="Legal-Leaf Market compares prices across hemp retailers and sells some smoking accessories of its own. Which is which, what you agree to when you buy from us, how we make money, and what we do not promise. Written plainly rather than in legal language.">
+<title>Terms of sale | Legal-Leaf Market</title>
+<meta name="description" content="The terms for ordering from Legal-Leaf Market: 21+, Indiana delivery, prices, payment and returns.">
 <link rel="canonical" href="https://legalleafmarket.shop/terms">
-<meta name="theme-color" content="#080f14">
-<meta name="robots" content="index,follow">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="manifest" href="/manifest.webmanifest">
-<meta property="og:title" content="Terms: Legal-Leaf Market">
-<meta property="og:description" content="We compare prices, and we sell some accessories ourselves. Here is exactly which is which, and what each means for you.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://legalleafmarket.shop/terms">
-<meta property="og:site_name" content="Legal-Leaf Market">
-<meta property="og:image" content="https://legalleafmarket.shop/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://legalleafmarket.shop/og-image.png">
-<link rel="stylesheet" href="/css/tokens.css">
-<link rel="stylesheet" href="/css/library.css">
-<!-- The objects the words sit on. MUST load after library.css: it wins by order,
-     not by weight, and moving it above silently restores the old surface. -->
-<link rel="stylesheet" href="/css/plate.css">
-<!-- The shop's skin: same type, hero band, cards and pills as the shelf. MUST load
-     after plate.css; it wins by order. See the header of /css/shop.css. -->
-<link rel="stylesheet" href="/css/shop.css">
-<!-- Analytics. One tag, four sites; see /js/analytics.js for the taxonomy and for why
-     this is not Vercel custom events (they are Pro-only and capped at 2 props). -->
-<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+<meta name="theme-color" content="#2C4A33">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%232C4A33' d='M16 1 7 13h4l-6 8h5l-6 7h24l-6-7h5l-6-8h4z'/%3E%3Crect x='14' y='28' width='4' height='4' fill='%237A4E2A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Karla:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="/css/store.css">
+<!-- 21+ attestation gate, shared with the rest of the site. -->
+<script src="/js/age-gate.js"></script>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/shop">Legal-Leaf Market</a>
+    <nav aria-label="Site">
+      <a href="/" class="ext">The Cafe</a>
+      <a href="/shop">Shop</a>
+      <a href="/delivery">Delivery</a>
+      <a href="/contact">Contact</a>
+      
+    </nav>
+  </div>
+</header>
+<main id="main" class="doc"><div class="wrap">
+<h1>Terms of sale</h1>
+<p class="updated">Last updated 25 November 2026</p>
 
-<main class="shell story">
-  <a class="sbacklink" href="/">&larr; Back to the market</a>
+<div class="short">
+<p><strong>The short version.</strong> You must be 21 or older to order. We deliver by hand in Indiana and check photo ID at the door. You pay at delivery. Our <a href="/delivery">Delivery</a>, <a href="/returns">Returns</a> and <a href="/privacy">Privacy</a> policies are part of these terms.</p>
+</div>
 
-  <header class="st-hero">
-    <p class="eyebrow">Terms</p>
-    <h1><span class="st-lead">what this is,</span>and what it is not</h1>
-    <p class="st-standfirst">
-      Written in plain English rather than in legal language, because a page nobody can read
-      protects nobody. <em>Last updated 31 October 2026.</em>
-    </p>
-  </header>
+<h2>Who we are</h2>
+<p>Legal-Leaf Market is an Indiana business based in Columbus, Indiana, run by Jacob Kennedy as a sole proprietor doing business as Legal-Leaf Market. You can reach us at <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a>.</p>
 
-  <article class="st-body">
+<h2>Age</h2>
+<p>Everything we sell is for adults 21 and over. By ordering, you confirm you are 21 or older and are not buying for anyone under 21. We check a valid government photo ID at every delivery and will refuse an order that does not pass.</p>
 
-    <section class="st-chapter st-hilite">
-      <span class="st-num">I</span>
-      <p class="st-when">the whole thing in one paragraph</p>
-      <h2>A price list, with a small shop of our own</h2>
-      <p>
-        Legal-Leaf Market does two things, and it matters which one you are using.
-      </p>
-      <p>
-        <b>Most of the site is a price list.</b> We read the public product pages of other
-        shops and work out what each listing actually costs <b>per gram</b>. For those
-        listings we hold no stock, take no payment and set no prices. When you buy one, you
-        buy from that shop, on their site, under their terms, and your contract is with them.
-        If something goes wrong with that order, it is between you and the seller. We can
-        sometimes help you find the right contact, and we have no power beyond that.
-      </p>
-      <p>
-        <b>Some smoking accessories we sell ourselves.</b> Those are marked
-        <i>Sold by Legal-Leaf Market</i> and check out on our own store. For those, we are
-        the seller, and chapter III sets out what that means. If an item does not carry that
-        mark, we did not sell it.
-      </p>
-    </section>
+<h2>What we sell</h2>
+<p>Smoking accessories (glass, pipes, water pipes, grinders, papers, trays, storage and cleaning products), vaporizers and parts, e-liquid, and tobacco and nicotine products. Accessories are sold for use with tobacco and legal herbs only. We do not sell cannabis, marijuana or THC products. Products must be used lawfully and as the manufacturer intends.</p>
+<p><strong>WARNING:</strong> Nicotine is an addictive chemical. Keep nicotine products and e-liquid out of reach of children and pets.</p>
 
-    <section class="st-chapter">
-      <span class="st-num">II</span>
-      <p class="st-when">how we get paid</p>
-      <h2>Affiliate links, and our own sales, stated plainly</h2>
-      <p>
-        Most links out of this site carry a referral tag. If you buy after following one, the
-        shop may pay us a commission. <b>It costs you nothing extra</b>, and any coupon shown
-        is yours whether or not we earn anything. When you buy one of our own items, we earn
-        the margin on it, the way any shop does.
-      </p>
-      <p>
-        What none of that money buys is placement. The default sort is cheapest per gram, and
-        it is computed from the price. A shop cannot pay to appear higher, and our own items
-        get no boost either. The ordering is arithmetic.
-      </p>
-    </section>
+<h2>Orders</h2>
+<p>Placing an order is an offer to buy. It is accepted when we confirm it with you by phone or email. We may decline or cancel an order, for example if an item is unavailable, the address is outside our delivery area, a price was listed in error, or we cannot verify age. If we cancel, you are not charged.</p>
 
-    <section class="st-chapter">
-      <span class="st-num">III</span>
-      <p class="st-when">when you buy from us</p>
-      <h2>Orders we sell and ship ourselves</h2>
-      <p>
-        This chapter applies only to items marked <i>Sold by Legal-Leaf Market</i>. The seller
-        is Legal-Leaf Market LLC, an Indiana limited liability company.
-      </p>
-      <p>
-        <b>Who can buy.</b> You must be 21 or over and buying for yourself. Every order is
-        age-verified at checkout, and age-restricted items need an adult signature with ID on
-        delivery. We cancel any order we cannot verify.
-      </p>
-      <p>
-        <b>What the products are for.</b> Everything we sell is sold for use with tobacco and
-        legal herbs. We do not sell flower, cannabis, nicotine or tobacco, and nothing we say
-        about a product is a suggestion that you use it with anything unlawful where you are.
-      </p>
-      <p>
-        <b>Where we ship.</b> US addresses only. Some items cannot be sent to some states or
-        cities; checkout refuses those, and if a rule changes after you order, we cancel and
-        refund that item. Working out what is lawful where you live is still your
-        responsibility.
-      </p>
-      <p>
-        <b>Prices and orders.</b> The price, shipping and any sales tax are shown at checkout
-        before you pay. Your order is an offer to buy; it becomes a sale when we ship it and
-        email you tracking. Until then we may cancel it, with a full refund, if the item is
-        out of stock, the price was plainly a mistake, or we cannot lawfully send it.
-      </p>
-      <p>
-        <b>Payment.</b> Card payments are handled by our store platform and its payment
-        processor. We never see or keep your full card number. If something is wrong with a
-        charge, email us before going to your bank; we can usually fix it faster.
-      </p>
-      <p>
-        <b>Who ships it.</b> We do not keep our own warehouse. Independent suppliers hold the
-        stock and ship orders straight to you on our behalf. That changes nothing about who you
-        deal with: we are the seller, we take the payment, and every question, return or problem
-        comes to us. A supplier is never your contact and never a party to your purchase.
-      </p>
-      <p>
-        <b>Shipping, breakage and returns</b> are set out on their own pages, and those pages
-        are part of these terms: <a href="https://shop.legalleafmarket.shop/policies/shipping-policy">Shipping</a> and
-        <a href="https://shop.legalleafmarket.shop/policies/refund-policy">Returns</a>. In short: broken on arrival is replaced or refunded,
-        unused items can come back within 30 days, and anything that has been used cannot.
-      </p>
-      <p>
-        <b>Warranty.</b> Where a maker gives a warranty, it passes to you, and we will help
-        you claim on it. Beyond that and what the Returns page promises, our items are sold as
-        described on their product pages, with no further promise, to the extent the law
-        allows. If we owe you anything for an order, it will not be more than you paid for it.
-      </p>
-      <p>
-        <b>Which law.</b> Indiana law governs sales we make, and any dispute that cannot be
-        settled by email goes to the courts of Indiana. Nothing here takes away rights the law
-        of your own state gives you as a consumer.
-      </p>
-    </section>
+<h2>Prices and tax</h2>
+<p>Prices are in US dollars. Indiana sales tax of 7% is added at checkout and shown before you order. Any delivery fee is agreed before we confirm. We may change prices at any time, but not for an order we have already confirmed.</p>
 
-    <section class="st-chapter">
-      <span class="st-num">IV</span>
-      <p class="st-when">the numbers</p>
-      <h2>What the prices and lab figures mean, and do not</h2>
-      <p>
-        <b>Other shops' prices are read from their pages and can be wrong.</b> They may be
-        stale, mid-change, or out of stock by the time you click. Shipping estimates for those
-        shops are for comparison only and are not quotes. Always confirm the real price at
-        checkout on the seller's site. If our number and theirs disagree, theirs is the real
-        one. For our own items, the price at our checkout is the price.
-      </p>
-      <p>
-        <b>Lab figures are read from the seller's own published certificates.</b> Where a card
-        shows a potency figure, we parsed a certificate for that specific product and checked
-        that the report's own arithmetic reconciles. Where we could not, the card shows no
-        figure rather than a guess.
-      </p>
-      <p>
-        The card also says <i>what kind</i> of document is behind it, a certificate for
-        that product, a store-wide compliance sheet, or a link to the shop's lab-results page.
-        Those are three different things and we do not merge them. The method is written up in
-        What the Certificates Say.
-      </p>
-      <p class="st-pull">
-        We report what the lab said.<br>
-        We do not vouch for the product.
-      </p>
-      <p>
-        We are not a laboratory and we do not test anything ourselves. A figure here is a
-        faithful reading of a document the seller published, not our own verification of what
-        is in the bag.
-      </p>
-    </section>
+<h2>Payment</h2>
+<p>You pay at delivery, by credit or debit card or by cash. You are charged only when the order is handed over.</p>
 
-    <section class="st-chapter st-warn">
-      <span class="st-num">V</span>
-      <p class="st-when">read this bit twice</p>
-      <h2>What we do not promise</h2>
-      <p>
-        <b>Nothing here is a health claim.</b> We make no statement that any product treats,
-        prevents or cures anything, or that it is safe for you. Nothing on this site is
-        medical advice. If you have a medical question, ask a doctor.
-      </p>
-      <p>
-        <b>Nothing here is legal advice, and a product appearing on this site is not a
-        statement that it is lawful where you are.</b> What may be bought, sold, shipped or
-        received varies by state and sometimes by city, and it changes. Working out what
-        applies to you is your responsibility, and if the answer matters, ask a lawyer in your
-        state. The background is set out in The Seam, which is history
-        and explanation, not advice, and not a compliance check.
-      </p>
-      <p>
-        <b>You must be 21 or over</b> to use this site. Browsing asks you to confirm it on your
-        first visit, and that is a confirmation, not a verification: we take your word for it.
-        Buying from us is different, and is verified at checkout (chapter III). If you are
-        under 21, this is not for you.
-      </p>
-      <p>
-        <b>The price list is provided as it is.</b> We do our best to keep it accurate and
-        running, and we cannot promise it will be either. We are not liable for losses
-        arising from relying on another shop's price, a lab figure, an availability flag or
-        anything else we read from someone else's site, which is the honest position for a
-        free comparison service, not a clause we are hiding behind.
-      </p>
-    </section>
+<h2>Delivery</h2>
+<p>We deliver by hand in Indiana only, as described in our <a href="/delivery">Delivery policy</a>. We do not ship by mail or carrier. Vaping, e-liquid, nicotine and tobacco products are only handed to the adult who ordered them, after the ID check.</p>
 
-    <section class="st-chapter">
-      <span class="st-num">VI</span>
-      <p class="st-when">the boring but real bits</p>
-      <h2>Content, conduct and the rest</h2>
-      <p>
-        <b>Our writing is ours.</b> The library pieces, the code and the comparison data are
-        ours. Quote us with a link and we will be pleased. Republish a piece wholesale and we
-        will ask you to stop.
-      </p>
-      <p>
-        <b>Product names, images, brands and certificates belong to the shops and brands they
-        came from</b>, and appear here to identify what is being compared or sold.
-      </p>
-      <p>
-        <b>Do not scrape us into a competing price list, and do not hammer the site.</b> Ironic,
-        given what we do, so to be fair about it: if you want the data for something
-        non-commercial, email and ask. We will probably say yes.
-      </p>
-      <p>
-        <b>The wholesale page is a preview.</b> It is not an offer to sell, there is nothing to
-        order, and it may change or disappear.
-      </p>
-      <p>
-        <b>If we change these terms</b>, we will change this page and move the date at the top.
-        An order is governed by the terms in place when you placed it.
-      </p>
-    </section>
+<h2>Returns</h2>
+<p>See our <a href="/returns">Returns and refunds policy</a>: 30 days on unused items, and broken, faulty or wrong items replaced or refunded.</p>
 
-    <section class="st-chapter st-final">
-      <span class="st-num">VII</span>
-      <p class="st-when">saying hello</p>
-      <h2>Contact</h2>
-      <p>
-        Everything, orders, questions, corrections, takedowns, data requests, a price we have
-        got wrong, goes to
-        <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a>. For an
-        order, put the order number in the subject line.
-      </p>
-      <p>
-        Corrections are genuinely welcome. This site's only asset is that its numbers are
-        right, so telling us one is wrong is doing us a favour, not picking a fight.
-      </p>
-      <a class="st-cta" href="https://shop.legalleafmarket.shop/policies/privacy-policy">Privacy: what we collect &rarr;</a>
-    </section>
+<h2>Warranties and liability</h2>
+<p>Products carry their manufacturer's warranty where one exists, and we will help you use it. Beyond that and what the law requires, products are sold as described. Our liability for any order is limited to the amount you paid for it. Nothing in these terms limits rights you have under Indiana or federal consumer law.</p>
 
-  </article>
+<h2>Law</h2>
+<p>These terms are governed by the laws of the State of Indiana. We may update them; the version on this page when you order is the one that applies to that order.</p>
 
-  <footer class="st-sources">
-    <p class="st-fine">
-      Legal-Leaf Market compares prices across other shops and sells a range of smoking
-      accessories of its own, marked as such. This page is a plain statement of how we
-      operate, written by the people who run the site, and is not legal advice. See also
-      <a href="https://shop.legalleafmarket.shop/policies/shipping-policy">Shipping</a>, <a href="https://shop.legalleafmarket.shop/policies/refund-policy">Returns</a> and
-      <a href="https://shop.legalleafmarket.shop/policies/privacy-policy">Privacy</a>. Adults 21+ only.
-    </p>
-  </footer>
-</main>
-
-<script src="/gob-promo.js" defer></script>
+</div></main>
+<footer class="foot">
+  <div class="wrap">
+    <nav aria-label="Policies">
+      <a href="/shop">Shop</a>
+      <a href="/delivery">Delivery</a>
+      <a href="/returns">Returns and refunds</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>Legal-Leaf Market, Columbus, Indiana. <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a></p>
+    <p>For adults 21 and over only. Vaping, e-liquid, nicotine and tobacco products are sold to adults 21+ and hand-delivered in Indiana only, with a valid photo ID checked at the door. They are never shipped. Accessories are for use with tobacco and legal herbs. WARNING: Nicotine is an addictive chemical.</p>
+  </div>
+</footer>
 </body>
 </html>

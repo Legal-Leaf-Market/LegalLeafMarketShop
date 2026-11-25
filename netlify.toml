@@ -51,6 +51,25 @@
 # 302 not 301: browsers cache a 301 for good, and this is reversible by deleting
 # this block. force = true because every one of these paths is a real file, and a
 # file shadows an unforced rule.
+# OUR OWN STOREFRONT (25 Nov 2026). Shopify banned vape products, and vapes are
+# core here, so the shop moves off it. /shop is ours (public/shop.html, reading
+# /api/catalog and posting to /api/order), and the policy pages are served here
+# again instead of redirecting to Shopify's: the card processor reviewing this
+# site needs delivery, returns, privacy, terms and contact on this domain.
+# /delivery is the policy's name now (public/delivery.html, was shipping.html),
+# because we hand-deliver and never ship; old /shipping links fold into it.
+[[redirects]]
+  from = "/shipping"
+  to = "/delivery"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/shipping.html"
+  to = "/delivery"
+  status = 301
+  force = true
+
 # THE CAFE IS THE HOMEPAGE (owner, 5 Nov 2026, from the SEO audit). "/" SERVES
 # cafe.html as a 200 rewrite, so the address bar stays on legalleafmarket.shop/,
 # and /cafe 301s here so the old URL folds into one page instead of competing
@@ -328,18 +347,6 @@
   force = true
 
 [[redirects]]
-  from = "/privacy"
-  to = "https://shop.legalleafmarket.shop/policies/privacy-policy"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/privacy.html"
-  to = "https://shop.legalleafmarket.shop/policies/privacy-policy"
-  status = 302
-  force = true
-
-[[redirects]]
   from = "/reels"
   to = "https://shop.legalleafmarket.shop/"
   status = 302
@@ -348,30 +355,6 @@
 [[redirects]]
   from = "/reels.html"
   to = "https://shop.legalleafmarket.shop/"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/returns"
-  to = "https://shop.legalleafmarket.shop/policies/refund-policy"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/returns.html"
-  to = "https://shop.legalleafmarket.shop/policies/refund-policy"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/shipping"
-  to = "https://shop.legalleafmarket.shop/policies/shipping-policy"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/shipping.html"
-  to = "https://shop.legalleafmarket.shop/policies/shipping-policy"
   status = 302
   force = true
 

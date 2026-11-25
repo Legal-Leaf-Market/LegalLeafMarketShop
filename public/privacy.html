@@ -1,246 +1,84 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Privacy: what we collect, and why | Legal-Leaf Market</title>
-<!-- 21+ gate. No `defer`: it mounts as soon as the DOM is parsed, before any product is
-     rendered, and the page content stays in the DOM behind the overlay so a crawler still
-     sees a full page. See public/js/age-gate.js for why an attestation gate is the right
-     shape here and what it deliberately does not do.
-     Anchored after </title> because three of these pages (consumables, devices,
-     international) have no explicit </head> at all -- an anchor that works on twelve of
-     fifteen pages is how a gate ends up missing from the ones that sell things. -->
-<script src="/js/age-gate.js"></script>
-<meta name="description" content="What Legal-Leaf Market collects, why, and who it goes to. Browsing sets no cookies and needs no login; buying from us collects what delivery and the law require. Written plainly rather than in legal language.">
+<title>Privacy | Legal-Leaf Market</title>
+<meta name="description" content="What Legal-Leaf Market collects when you order, why, and what we never do with it.">
 <link rel="canonical" href="https://legalleafmarket.shop/privacy">
-<meta name="theme-color" content="#080f14">
-<meta name="robots" content="index,follow">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="manifest" href="/manifest.webmanifest">
-<meta property="og:title" content="Privacy: Legal-Leaf Market">
-<meta property="og:description" content="What we collect, why, and who it goes to. Browsing is anonymous; an order collects only what delivery and the law need.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://legalleafmarket.shop/privacy">
-<meta property="og:site_name" content="Legal-Leaf Market">
-<meta property="og:image" content="https://legalleafmarket.shop/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://legalleafmarket.shop/og-image.png">
-<link rel="stylesheet" href="/css/tokens.css">
-<link rel="stylesheet" href="/css/library.css">
-<!-- The objects the words sit on. MUST load after library.css: it wins by order,
-     not by weight, and moving it above silently restores the old surface. -->
-<link rel="stylesheet" href="/css/plate.css">
-<!-- The shop's skin: same type, hero band, cards and pills as the shelf. MUST load
-     after plate.css; it wins by order. See the header of /css/shop.css. -->
-<link rel="stylesheet" href="/css/shop.css">
-<!-- Analytics. One tag, four sites; see /js/analytics.js for the taxonomy and for why
-     this is not Vercel custom events (they are Pro-only and capped at 2 props). -->
-<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+<meta name="theme-color" content="#2C4A33">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%232C4A33' d='M16 1 7 13h4l-6 8h5l-6 7h24l-6-7h5l-6-8h4z'/%3E%3Crect x='14' y='28' width='4' height='4' fill='%237A4E2A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Karla:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="/css/store.css">
+<!-- 21+ attestation gate, shared with the rest of the site. -->
+<script src="/js/age-gate.js"></script>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/shop">Legal-Leaf Market</a>
+    <nav aria-label="Site">
+      <a href="/" class="ext">The Cafe</a>
+      <a href="/shop">Shop</a>
+      <a href="/delivery">Delivery</a>
+      <a href="/contact">Contact</a>
+      
+    </nav>
+  </div>
+</header>
+<main id="main" class="doc"><div class="wrap">
+<h1>Privacy</h1>
+<p class="updated">Last updated 25 November 2026</p>
 
-<main class="shell story">
-  <a class="sbacklink" href="/">&larr; Back to the market</a>
+<div class="short">
+<p><strong>The short version.</strong> Browsing is anonymous. When you order, we collect what we need to confirm your age and deliver your order, and nothing else. We never sell your information.</p>
+</div>
 
-  <header class="st-hero">
-    <p class="eyebrow">Privacy</p>
-    <h1><span class="st-lead">what we collect,</span>and why</h1>
-    <p class="st-standfirst">
-      This is written in plain English on purpose. It describes what the site actually does,
-      which we can be precise about because we wrote it. <em>Last updated 31 October 2026.</em>
-    </p>
-  </header>
+<h2>What we collect when you order</h2>
+<table>
+<tr><th>What</th><th>Why</th></tr>
+<tr><td>Name, date of birth</td><td>To confirm you are 21 or older, and to match the photo ID we check at delivery.</td></tr>
+<tr><td>Delivery address</td><td>To deliver your order and to check it is in our Indiana delivery area.</td></tr>
+<tr><td>Phone and email</td><td>To confirm your order, agree a delivery time, and answer questions.</td></tr>
+<tr><td>What you ordered</td><td>To fill the order, handle returns, and keep the sales records Indiana tax law requires.</td></tr>
+</table>
+<p>We look at your ID at the door; we do not photograph, scan or keep a copy of it.</p>
 
-  <article class="st-body">
+<h2>Payments</h2>
+<p>You pay at delivery. Card payments are handled by our card processor on their reader; we never see or store your full card number. When online card payment arrives, it will be handled the same way, on the processor's secure payment form.</p>
 
-    <section class="st-chapter st-hilite">
-      <span class="st-num">I</span>
-      <p class="st-when">the short version</p>
-      <h2>Browsing is anonymous. Buying needs your details.</h2>
-      <p>
-        <b>Browsing the price list:</b> we set no cookies, there is no login, and we do not
-        know who you are.
-      </p>
-      <p>
-        <b>Buying something we sell ourselves:</b> checkout needs your name, address, email
-        and payment, and confirms your age. We use those to deliver your order and for the
-        records the law makes us keep. Checkout runs on our store platform, which uses its
-        own cookies to hold your basket.
-      </p>
-      <p>
-        Either way, we do not sell, rent or trade personal information to anybody, and we
-        never have.
-      </p>
-    </section>
+<h2>What stays in your browser</h2>
+<p>Your cart and your answer to the 21+ question are saved in your own browser's local storage, so they are there when you come back. They never leave your device until you place an order. This shop sets no advertising cookies and runs no ad trackers.</p>
 
-    <section class="st-chapter">
-      <span class="st-num">II</span>
-      <p class="st-when">what stays on your device</p>
-      <h2>Your cart and watchlist never leave your browser</h2>
-      <p>
-        The comparison site keeps a handful of things in your browser's own storage so it can
-        remember what you were doing between visits. These are <b>not</b> cookies and are not
-        sent to us. They stay on your machine until you clear them.
-      </p>
-      <ul>
-        <li>your cart and your watchlist</li>
-        <li>a random id for the browsing session, so the page can tell one visit from another</li>
-        <li>your filter and display preferences</li>
-        <li>restock reminders you have set</li>
-        <li>if you have ever opened the admin console, whether you are signed into it</li>
-      </ul>
-      <p>
-        You can wipe all of it at any time by clearing site data for this domain in your
-        browser settings. Nothing breaks; the site simply forgets you.
-      </p>
-    </section>
+<h2>Who we share it with</h2>
+<p>Only the people needed to complete your order: our card processor for a card payment, and the email and hosting services that run this site and deliver your order details to us. We do not sell, rent or trade your information, and we do not share it for advertising.</p>
 
-    <section class="st-chapter">
-      <span class="st-num">III</span>
-      <p class="st-when">when you buy from us</p>
-      <h2>What an order collects, and where it goes</h2>
-      <p>
-        This applies only to items marked <i>Sold by Legal-Leaf Market</i>. Buying from
-        another shop through one of our links is covered in chapter VII.
-      </p>
-      <table class="st-table">
-        <tr><th>what</th><th>why</th></tr>
-        <tr><td><b>name, shipping and billing address</b></td><td>to deliver the order and match it to the payment</td></tr>
-        <tr><td><b>email, and phone if you give one</b></td><td>order confirmation, tracking, and questions about the order</td></tr>
-        <tr><td><b>what you bought and what you paid</b></td><td>to fulfil it, handle returns, and keep tax records</td></tr>
-        <tr><td><b>your date of birth, or the result of the age check</b></td><td>the law requires us to sell only to adults 21 and over</td></tr>
-        <tr><td><b>payment</b></td><td>taken by the payment processor. We see the card type and last four digits, never the full number</td></tr>
-      </table>
-      <p>
-        <b>Order emails are about your order.</b> We will not add you to the mailing list
-        because you bought something. That only happens if you tick the box for it.
-      </p>
-      <p>
-        <b>How long we keep it.</b> Order records are kept as long as tax and sales law
-        require, which can be up to seven years, and then deleted. The age check is kept only
-        as a pass or fail result where the provider allows, not a copy of your ID.
-      </p>
-    </section>
+<h2>How long we keep it</h2>
+<p>Order records are kept as long as Indiana and federal tax rules require (generally several years). Anything not needed for that, we delete when it is no longer needed.</p>
 
-    <section class="st-chapter">
-      <span class="st-num">IV</span>
-      <p class="st-when">what you send us on purpose</p>
-      <h2>The two forms</h2>
-      <h3>The email signup</h3>
-      <p>
-        If you give us an email address, we record the address, any name you typed, the fact
-        that you ticked the consent box, your browser's time zone, and which page the signup
-        came from. It goes into our mailing list so we can email you. That is all it is for.
-      </p>
-      <h3>The wholesale interest form</h3>
-      <p>
-        The form on <a href="/wholesale">/wholesale</a> also asks for company, state, rough
-        monthly volume, and whether you buy or sell. Those are optional and they exist so we
-        can judge whether a business side to this site is worth building. <b>We do not pass
-        your address or any of those answers to any seller.</b>
-      </p>
-      <p>
-        To be removed from either, email <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a>
-        and say so. We will delete the record; we do not require a reason and we will not try
-        to talk you out of it.
-      </p>
-    </section>
+<h2>Your choices</h2>
+<p>You can ask what we hold about you, ask us to correct it, or ask us to delete anything we are not required to keep. Email <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a>.</p>
 
-    <section class="st-chapter">
-      <span class="st-num">V</span>
-      <p class="st-when">the technical record</p>
-      <h2>Our own counter, and what our host sees</h2>
-      <p>
-        We count page views and clicks with <b>our own small tracker</b>. It sets no cookies.
-        It records the page, what was clicked, a random id for that browser tab, and the kind
-        of browser, and it lands in our host's logs. We use it to see which pages people read
-        and which shops they click through to, not who did. If we ever add a third-party
-        analytics service, it will be named here first.
-      </p>
-      <p>
-        The site is <b>hosted by Netlify</b>, and like any web host their servers keep ordinary
-        request logs, which include IP addresses. We do not use those logs to identify anyone,
-        but they exist and we would be misleading you to leave them out.
-      </p>
-      <p>
-        Some pages, the library and the wholesale preview, load typefaces from
-        <b>Google Fonts</b>. That means your browser makes a request to Google to fetch them,
-        and Google sees that request. If that matters to you, it is worth knowing.
-      </p>
-    </section>
+<h2>Children</h2>
+<p>This site and everything on it is for adults 21 and over. We do not knowingly collect information from anyone under 21.</p>
 
-    <section class="st-chapter">
-      <span class="st-num">VI</span>
-      <p class="st-when">who else touches it</p>
-      <h2>The list of other companies</h2>
-      <table class="st-table">
-        <tr><th>who</th><th>what they get</th><th>why</th></tr>
-        <tr><td><b>Netlify</b></td><td>request logs, our page-view counter</td><td>hosting</td></tr>
-        <tr><td><b>Google</b></td><td>a font request from your browser</td><td>typefaces on the library pages</td></tr>
-        <tr><td><b>Resend</b></td><td>your email address, if you signed up</td><td>sending the emails</td></tr>
-        <tr><td><b>Google Sheets</b></td><td>your signup record, if you signed up</td><td>where the mailing list is kept</td></tr>
-        <tr><td><b>Shopify</b></td><td>your order, contact and address details</td><td>runs our store and checkout</td></tr>
-        <tr><td><b>Our payment processor</b></td><td>your card details and billing address</td><td>takes the payment</td></tr>
-        <tr><td><b>Our age-verification provider</b></td><td>your name, address and date of birth</td><td>confirms you are 21 or over</td></tr>
-        <tr><td><b>The supplier who ships your item</b></td><td>your name, shipping address, phone and what you ordered from them</td><td>they pack and ship it on our behalf. They do not get your payment details or your email, and may not market to you</td></tr>
-        <tr><td><b>USPS, UPS or FedEx</b></td><td>your name, address and phone</td><td>delivering the parcel</td></tr>
-      </table>
-      <p>
-        That is the whole list. There is no advertising network, no tag manager, no session
-        recorder, no chat widget and no data broker anywhere on this site. Each company on it
-        has its own privacy policy and uses your details only to do its part.
-      </p>
-      <p class="st-aside">
-        Everything below Google Fonts only receives anything if you submitted a form or placed
-        an order with us. If you have done neither, they have nothing of yours.
-      </p>
-    </section>
-
-    <section class="st-chapter">
-      <span class="st-num">VII</span>
-      <p class="st-when">when you leave</p>
-      <h2>Clicking through to another shop</h2>
-      <p>
-        When you click a product link for another shop you go to that shop's own website, and
-        from that point you are on their site under their privacy policy, not ours. Those
-        links usually carry a referral tag, which tells the shop the visit came from us so
-        that any commission is credited. It does not tell them who you are, because we do not
-        know either.
-      </p>
-    </section>
-
-    <section class="st-chapter st-final">
-      <span class="st-num">VIII</span>
-      <p class="st-when">asking us things</p>
-      <h2>Your data, and how to get rid of it</h2>
-      <p>
-        Email <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a> and
-        ask. You can ask what we hold on you, ask for a copy, ask us to correct it, or ask us
-        to delete it. We delete everything the law lets us; order records we must keep for
-        tax we keep, and we will tell you which those are.
-      </p>
-      <p>
-        This site is for adults 21 and over. We do not knowingly collect anything from anyone
-        under 21, and if we learn that we have, we will delete it.
-      </p>
-      <p>
-        If we change how any of this works, we will change this page and move the date at the
-        top. We are not going to quietly widen what we collect and leave the old page up.
-      </p>
-    </section>
-
-  </article>
-
-  <footer class="st-sources">
-    <p class="st-fine">
-      Legal-Leaf Market compares prices across other shops and sells a range of smoking
-      accessories of its own, marked as such. This page is a plain description of how the
-      site behaves, written by the people who built it, and is not a legal instrument or
-      legal advice. See also <a href="/terms">Terms</a>. Adults 21+ only.
-    </p>
-  </footer>
-</main>
-
+</div></main>
+<footer class="foot">
+  <div class="wrap">
+    <nav aria-label="Policies">
+      <a href="/shop">Shop</a>
+      <a href="/delivery">Delivery</a>
+      <a href="/returns">Returns and refunds</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>Legal-Leaf Market, Columbus, Indiana. <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a></p>
+    <p>For adults 21 and over only. Vaping, e-liquid, nicotine and tobacco products are sold to adults 21+ and hand-delivered in Indiana only, with a valid photo ID checked at the door. They are never shipped. Accessories are for use with tobacco and legal herbs. WARNING: Nicotine is an addictive chemical.</p>
+  </div>
+</footer>
 </body>
 </html>
