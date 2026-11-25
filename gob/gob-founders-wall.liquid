@@ -1,0 +1,36 @@
+<!--
+  G.O.B. Founders Wall. Paste into a Custom Liquid section on a page.
+  Reads the "founder" metaobject (Settings > Custom data > Metaobjects):
+    name   single line text   what the member typed, as they typed it
+    tier   single line text   Trailhead, Ridge, Summit or Lodge
+    number integer            optional, the Summit coin number
+  The definition must have Storefront access turned on or this renders empty.
+  Only add someone who ticked "Show my name publicly" on their order.
+-->
+<style>
+.gfw{--g:#0f2a1d;--cu:#c9853f;--cu2:#e2a866;--cream:#efe6cf;background:var(--g);color:var(--cream);
+  border:1px solid rgba(201,133,63,.45);border-radius:14px;padding:28px 18px;font-family:Georgia,"Times New Roman",serif;text-align:center}
+.gfw h2{color:var(--cu2);margin:0 0 6px;font-size:clamp(1.5rem,4vw,2.2rem)}
+.gfw>p{margin:0 auto 22px;max-width:56ch;line-height:1.55}
+.gfw h3{font:700 .8rem/1 system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--cu2);margin:22px 0 12px}
+.gfw ul{list-style:none;margin:0 auto;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;max-width:1000px}
+.gfw li{font-size:1.05rem}
+.gfw li small{font:600 .7rem system-ui,sans-serif;color:var(--cu2);margin-left:4px}
+</style>
+<section class="gfw" aria-labelledby="gfw-h">
+  <h2 id="gfw-h">The Founders Wall</h2>
+  <p>The people who backed the Good Old Boys before the first run shipped.</p>
+  {%- assign founders = shop.metaobjects.founder.values -%}
+  {%- if founders.size == 0 -%}
+    <p>No names yet. <a href="/pages/founders-club" style="color:var(--cu2)">Be the first.</a></p>
+  {%- else -%}
+    {%- assign order = 'Summit,Ridge,Trailhead,Lodge' | split: ',' -%}
+    {%- for tier in order -%}
+      {%- capture items -%}{%- for f in founders -%}{%- if f.tier.value == tier -%}<li>{{ f.name.value | escape }}{% if f.number.value %}<small>#{{ f.number.value }}</small>{% endif %}{% if f.note.value %}<br><em style="font-size:.85rem;opacity:.85">"{{ f.note.value | escape }}"</em>{% endif %}</li>{%- endif -%}{%- endfor -%}{%- endcapture -%}
+      {%- if items != blank -%}
+        <h3>{{ tier }}</h3>
+        <ul>{{ items }}</ul>
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+</section>

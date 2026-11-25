@@ -162,7 +162,7 @@ export default async function handler(req, res) {
     return res.status(503).json({
       ok: false,
       error: "We cannot record applications right now, and we would rather say so than lose yours. "
-           + "Please email jake@nicotiamarket.com with your town and we will pick it up from there.",
+           + "Please email jake@legalleafmarket.shop with your town and we will pick it up from there.",
     });
   }
 
@@ -190,7 +190,7 @@ export default async function handler(req, res) {
       else if (rows.length >= MAX) {
         return res.status(503).json({
           ok: false,
-          error: "Our application list is full at the moment. Please email jake@nicotiamarket.com.",
+          error: "Our application list is full at the moment. Please email jake@legalleafmarket.shop.",
         });
       } else rows.push(row);
       stored = await writeAll(rows);
@@ -199,7 +199,7 @@ export default async function handler(req, res) {
         return res.status(503).json({
           ok: false,
           error: "We could not save that just now, and we would rather say so than lose it. "
-               + "Please email jake@nicotiamarket.com with your town.",
+               + "Please email jake@legalleafmarket.shop with your town.",
         });
       }
     }

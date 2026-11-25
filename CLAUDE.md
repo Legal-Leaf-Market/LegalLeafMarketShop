@@ -785,6 +785,14 @@ do not mirror the block yet.
   back into Shopify. Shops come from `data-stores` on the mount (thcasmallbuds, puffweiser,
   blacktiecbd) and are read through `/api/products?store=<key>`, which now sends
   `Access-Control-Allow-Origin: *` for this reader.
+- **The dispensary shelf is in-stock only and has three views (14 Nov 2026).** A size row whose
+  slot 4 is false never reaches a dropdown, and a product with no sellable row is not listed; there is
+  no toggle back. Cards flip to a back face (description, lineage, lab terpenes, COA) and a mouse
+  leaving flips them back. "Shelf" / "Menu board" (kanban by shop, price, category or strain type) /
+  "Dashboard" (sortable table + tiles) share one state, and the "Pick your size" jars drive all three.
+  `node test-shop-dispensary.mjs` pins it. Netlify deploys are paused, so the theme's script tag has to
+  point at jsDelivr pinned to the merged commit (`.../LegalLeafMarketShop@<commit>/public/shop-dispensary.js`)
+  for any of it to reach the page.
 - **Bloomz Hemp, CBD Hemp Direct and Exhale Wellness are `enabled:false`** (owner: "take off").
 - **Herbal Leaf Market and Nicotia Market products are Shopify products now**, tagged
   `herbal-leaf` / `nicotia`, `special-order`, `src:<maker>`, behind smart collections
@@ -826,6 +834,12 @@ together. Nothing may reintroduce the .com. `analytics.js` is meant to be byte-i
 the four sister sites: its `SITE_BY_HOST` key and `FAMILY` regex now name the .shop host, so port
 that file to Nicotia, Herbal Leaf and Kawaii Katz, and change those sites' footer links to
 Legal-Leaf, which still point at the .com.
+
+**One address only: `jake@legalleafmarket.shop` (owner, 5 Nov 2026).** "All emails on the site
+should be jake@legalleafmarket.shop." hello@, images@ and the old jake@nicotiamarket.com were all
+replaced with it: mailto links, the JSON-LD `email`, error messages, the ambassador form and the
+image proxy's user-agent. Do not add another mailbox. The `you@example.com`-style strings are form
+placeholders and test fixtures, not addresses, and stay as they are.
 
 ### Direct sales are DROPSHIP, and Shipping/Returns are live (31 Oct 2026)
 

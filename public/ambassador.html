@@ -148,7 +148,7 @@ footer{margin-top:30px;color:var(--dim);font-size:12px;line-height:1.65}
     .then(function(j){
       if (j && j.accepting === false) {
         say("err", "Our form is down at the moment, and we would rather tell you than lose your "
-          + "application. Please email jake@nicotiamarket.com with your town and we will pick it up there.");
+          + "application. Please email jake@legalleafmarket.shop with your town and we will pick it up there.");
         go.disabled = true;
       }
     })
@@ -176,12 +176,12 @@ footer{margin-top:30px;color:var(--dim);font-size:12px;line-height:1.65}
             + (out.j.town ? out.j.town + (out.j.state ? ", " + out.j.state : "") : "your town") + ".");
         } else {
           go.disabled = false; go.textContent = was;
-          say("err", (out.j && out.j.error) || "That did not go through. Please try again, or email jake@nicotiamarket.com.");
+          say("err", (out.j && out.j.error) || "That did not go through. Please try again, or email jake@legalleafmarket.shop.");
         }
       })
       .catch(function(){
         go.disabled = false; go.textContent = was;
-        say("err", "That did not go through - you may be offline. Please try again, or email jake@nicotiamarket.com.");
+        say("err", "That did not go through - you may be offline. Please try again, or email jake@legalleafmarket.shop.");
       });
   });
 })();

@@ -100,18 +100,53 @@ const LOCAL_API = pairs(block("API"));
 ok("server.mjs's own three maps were located",
    Object.keys(LOCAL_REDIRECTS).length >= 2 && Object.keys(LOCAL_REWRITES).length >= 10 && Object.keys(LOCAL_API).length >= 10);
 
-for (const r of redirects.filter(r => r.status !== 200)) {
+/* NETLIFY USES THE FIRST RULE THAT MATCHES A PATH, so a later rule for the same
+   path never runs. Compare against what production actually does, not against
+   every line in the file. */
+const effective = [];
+for (const r of redirects) if (!effective.some(e => e.from === r.from)) effective.push(r);
+
+/* THE SITE IS CLOSED IN PRODUCTION ONLY (2 Nov 2026, CLAUDE.md "The base site is
+   closed"). Every page 302s to the Shopify store, and the local preview
+   deliberately does NOT copy that block: the browser suites load / and the pages
+   from server.mjs, and a preview that sends / to Shopify would fail every one of
+   them. So the closed-site rules are checked for their own shape here, and the
+   preview is held to the rest. */
+const SHOP = /^https:\/\/shop\.legalleafmarket\.shop\//;
+const closed = effective.filter(r => r.status !== 200 && SHOP.test(r.to));
+ok("the closed-site block was located", closed.length >= 10, closed.length + " paths");
+const bad = closed.filter(r => r.status !== 302);
+ok("...and every one is a 302, so closing the site stays reversible", bad.length === 0, bad.map(r => r.from).join(", ") || "all 302");
+
+for (const r of effective.filter(r => r.status !== 200 && !SHOP.test(r.to))) {
   ok(`${r.from} -> ${r.to} is a redirect in both`, LOCAL_REDIRECTS[r.from] === r.to, LOCAL_REDIRECTS[r.from] || "absent locally");
+}
+/* While the site is closed the loop above has nothing to compare, so it cannot
+   catch drift on its own. The pre-closure rules still sit under the closed block
+   and come back the day it is deleted: hold the preview to those instead, so
+   reopening the site does not reopen a mismatch. */
+const waiting = redirects.filter(r => r.status !== 200 && !SHOP.test(r.to) && !effective.includes(r));
+ok("the rules waiting under the closed block were located", waiting.length >= 2, waiting.length + " rules");
+for (const r of waiting) {
+  ok(`${r.from} -> ${r.to} (after reopening) is a redirect in both`, LOCAL_REDIRECTS[r.from] === r.to, LOCAL_REDIRECTS[r.from] || "absent locally");
 }
 /* /index.html -> / is the one the preview makes and netlify.toml does not list.
    / is served FROM index.html, and a forced rule on that path is the classic
    way to redirect / to itself; it has not been tried on Netlify, and every
-   page carries a canonical link, which is what the redirect was for (CLAUDE.md §3). */
-const unlisted = Object.keys(LOCAL_REDIRECTS).filter(f => f !== "/index.html" && !redirects.some(r => r.from === f && r.status !== 200));
+   page carries a canonical link, which is what the redirect was for (CLAUDE.md §3).
+   A local redirect whose path production now sends to the shop is the
+   pre-closure route, kept so the preview still serves the page it points at. */
+const unlisted = Object.keys(LOCAL_REDIRECTS).filter(f => f !== "/index.html"
+  && !effective.some(r => r.from === f && r.status !== 200));
 ok("every redirect the preview makes is one production makes", unlisted.length === 0, unlisted.join(", ") || "all present");
 
-const loud = redirects.find(r => r.from === "/p/theloudpack");
-ok("/p/theloudpack is rewritten to its file, not redirected", !!loud && loud.status === 200 && existsSync("public" + loud.to), loud && loud.to);
+/* /p/theloudpack: production sends it to the shop with the rest of the site.
+   The old 200 rewrite to its file is still in netlify.toml below the closed
+   block, shadowed, so reopening the site is deleting that block and nothing more. */
+const loud = effective.find(r => r.from === "/p/theloudpack");
+const loudFile = redirects.find(r => r.from === "/p/theloudpack" && r.status === 200);
+ok("/p/theloudpack goes to the shop in production, like every other page", !!loud && SHOP.test(loud.to), loud && loud.to);
+ok("...and its rewrite to the file is kept for when the site reopens", !!loudFile && existsSync("public" + loudFile.to), loudFile && loudFile.to);
 ok("...and the function is told to stand aside for it", (config.excludedPath || []).includes("/p/theloudpack"));
 ok("...as the preview already does", LOCAL_REWRITES["/p/theloudpack"] === "/theloudpack");
 
