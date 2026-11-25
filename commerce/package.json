@@ -23,7 +23,7 @@
     "@medusajs/cli": "2.18.0",
     "@medusajs/framework": "2.18.0",
     "@medusajs/medusa": "2.18.0",
-    "medusa-payment-nmi": "^0.6.1"
+    "medusa-payment-nmi": "^0.6.0 || ^0.5.1"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.18.0",
