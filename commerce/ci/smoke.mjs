@@ -43,7 +43,7 @@ for (let offset = 0; offset < list.count && !restricted; offset += 100) {
 }
 must(restricted, `found a 21+ product: ${restricted?.title}`)
 
-async function buildCart(metadata) {
+async function buildCart(metadata, province = "IN") {
   const { json: c } = await api("POST", "/store/carts", { region_id: region.id })
   const id = c.cart.id
   const add = await api("POST", `/store/carts/${id}/line-items`, {
@@ -55,13 +55,13 @@ async function buildCart(metadata) {
     email: "ci@legalleafmarket.shop",
     shipping_address: {
       first_name: "CI", last_name: "Test", address_1: "1 Washington St",
-      city: "Columbus", province: "IN", postal_code: "47201", country_code: "us",
+      city: "Columbus", province, postal_code: "47201", country_code: "us",
     },
     ...(metadata ? { metadata } : {}),
   })
   must(upd.status === 200, `address set (${upd.status} ${upd.json.message || ""})`)
   const { json: opts } = await api("GET", `/store/shipping-options?cart_id=${id}`)
-  must(opts.shipping_options?.length, "local delivery is offered for Columbus, IN")
+  must(opts.shipping_options?.length, `delivery is offered (${province})`)
   const ship = await api("POST", `/store/carts/${id}/shipping-methods`, {
     option_id: opts.shipping_options[0].id,
   })
@@ -85,6 +85,10 @@ must(/21/.test(refusedMsg), "refusal explains the 21+ rule")
 const young = await buildCart({ dob: new Date(Date.now() - 18 * 365.25 * 864e5).toISOString().slice(0, 10) })
 const youngRes = await api("POST", `/store/carts/${young}/complete`)
 must(youngRes.json.type !== "order", "18-year-old -> refused")
+
+const ohio = await buildCart({ dob: "1990-05-01" }, "OH")
+const ohioRes = await api("POST", `/store/carts/${ohio}/complete`)
+must(ohioRes.json.type !== "order", "out-of-state address -> refused")
 
 const adult = await buildCart({ dob: "1990-05-01" })
 const done = await api("POST", `/store/carts/${adult}/complete`)

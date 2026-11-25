@@ -187,6 +187,13 @@ export default async function importShopify({ container }: ExecArgs) {
   const todo = products.filter((p) => !existing.has(p.handle))
   logger.info(`${existing.size} already in Medusa, importing ${todo.length}`)
 
+  // SKUs must be unique across the whole catalog. Some makers reuse a SKU on
+  // several listings; the first one keeps it, later ones go without.
+  const usedSkus = new Set<string>()
+  for (const v of await productService.listProductVariants({}, { select: ["sku"], take: 1000000 })) {
+    if (v.sku) usedSkus.add(v.sku)
+  }
+
   let made = 0
   let restricted = 0
   for (let i = 0; i < todo.length; i += BATCH) {
@@ -230,12 +237,10 @@ export default async function importShopify({ container }: ExecArgs) {
         }
       })
 
-      // SKUs must be unique in Medusa; drop repeats rather than fail the batch.
-      const skus = new Set<string>()
       for (const v of variants) {
         if (!v.sku) continue
-        if (skus.has(v.sku)) v.sku = undefined
-        else skus.add(v.sku)
+        if (usedSkus.has(v.sku)) v.sku = undefined
+        else usedSkus.add(v.sku)
       }
 
       return {

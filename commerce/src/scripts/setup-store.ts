@@ -198,8 +198,12 @@ export default async function setupStore({ container }: ExecArgs) {
       type: "shipping",
       service_zones: [
         {
+          // Country-level zone: Medusa matches province zones against the
+          // address's free-text state, which is unreliable ("IN", "Indiana").
+          // The Indiana-only rule is enforced at checkout instead
+          // (src/workflows/hooks/age-check.ts).
           name: "Indiana",
-          geo_zones: [{ type: "province", country_code: "us", province_code: "us-in" }],
+          geo_zones: [{ type: "country", country_code: "us" }],
         },
       ],
     })

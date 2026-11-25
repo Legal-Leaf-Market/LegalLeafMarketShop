@@ -4,6 +4,8 @@ import { ContainerRegistrationKeys, MedusaError } from "@medusajs/framework/util
 /**
  * 21+ gate at checkout, enforced on the server so a page edit cannot skip it.
  *
+ * Every order is hand-delivered, so every order must be delivered in Indiana.
+ *
  * If any item in the cart is age_restricted (set by import-shopify.ts for vape,
  * nicotine and tobacco items), the order is refused unless:
  *   - the storefront saved the buyer's date of birth on the cart
@@ -42,6 +44,15 @@ completeCartWorkflow.hooks.validate(async ({ cart }, { container }) => {
   const full = data[0]
   if (!full) return
 
+  const province = String(full.shipping_address?.province || "").toLowerCase()
+  const country = String(full.shipping_address?.country_code || "").toLowerCase()
+  if (country !== "us" || !["in", "us-in", "indiana"].includes(province)) {
+    throw new MedusaError(
+      MedusaError.Types.NOT_ALLOWED,
+      "We hand-deliver in Indiana only. Please use an Indiana delivery address."
+    )
+  }
+
   const restricted = (full.items || []).filter(
     (i: any) => i?.product?.metadata?.age_restricted === true
   )
@@ -53,16 +64,6 @@ completeCartWorkflow.hooks.validate(async ({ cart }, { container }) => {
       MedusaError.Types.NOT_ALLOWED,
       "You must be 21 or older to buy vaping, nicotine and tobacco products. " +
         "Please enter your date of birth at checkout."
-    )
-  }
-
-  const province = String(full.shipping_address?.province || "").toLowerCase()
-  const country = String(full.shipping_address?.country_code || "").toLowerCase()
-  if (country !== "us" || !["in", "us-in", "indiana"].includes(province)) {
-    throw new MedusaError(
-      MedusaError.Types.NOT_ALLOWED,
-      "Vaping, nicotine and tobacco products are hand-delivered in Indiana only, " +
-        "with a 21+ ID check at the door."
     )
   }
 })
