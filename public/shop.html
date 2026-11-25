@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop | Legal-Leaf Market, Columbus, Indiana</title>
+<!-- 21+ gate. Same tag as every other page: see public/js/age-gate.js. -->
+<script src="/js/age-gate.js"></script>
+<meta name="description" content="Glass, papers, grinders, vaporizers, vapes and herbal blends, hand-delivered in Columbus, Indiana. Adults 21+ only, ID checked at delivery.">
+<link rel="canonical" href="https://legalleafmarket.shop/shop">
+<meta name="theme-color" content="#2C4A33">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="Shop Legal-Leaf Market">
+<meta property="og:description" content="Smoke-shop goods hand-delivered in Columbus, Indiana. 21+ only.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://legalleafmarket.shop/shop">
+<meta property="og:site_name" content="Legal-Leaf Market">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Karla:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="/css/store.css">
+<script src="/js/commerce-config.js"></script>
+<script src="/js/store.js" defer></script>
+<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap bar-in">
+    <a class="brand" href="/">Legal-Leaf Market</a>
+    <nav aria-label="Site">
+      <a href="/">Cafe</a>
+      <a href="/shop" aria-current="page">Shop</a>
+      <a href="/shipping">Delivery</a>
+      <a href="#contact">Contact</a>
+      <button class="cart-btn" type="button" data-open-cart aria-haspopup="dialog">
+        Cart <span class="cart-count" data-cart-count>0</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <div class="wrap">
+      <p class="kicker">Columbus, Indiana &middot; local delivery</p>
+      <h1>The shop</h1>
+      <p class="lede">
+        Glass, papers, grinders, vaporizers, vapes and herbal blends, hand-delivered to your door
+        in Columbus. Most items are special order, so they arrive in a few days.
+      </p>
+      <ul class="promises">
+        <li><strong>Adults 21+ only.</strong> Photo ID is checked at the door, every order.</li>
+        <li><strong>Free local delivery</strong> in Columbus, IN. We do not ship.</li>
+        <li><strong>Card payment.</strong> No cash.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="catalog" aria-label="Products">
+    <div class="wrap">
+      <div class="tools">
+        <label class="search">
+          <span class="sr">Search products</span>
+          <input type="search" placeholder="Search the shop" data-search autocomplete="off">
+        </label>
+        <div class="chips" role="tablist" aria-label="Sections" data-sections></div>
+      </div>
+      <p class="status" data-status role="status">Loading the catalog&hellip;</p>
+      <ul class="grid" data-grid></ul>
+      <div class="more"><button class="btn btn-alt" type="button" data-more hidden>Show more</button></div>
+    </div>
+  </section>
+
+  <section class="info" id="contact">
+    <div class="wrap info-grid">
+      <div>
+        <h2>How ordering works</h2>
+        <ol>
+          <li>Add what you want to your cart and check out with your delivery address and date of birth.</li>
+          <li>We confirm the order and a delivery time by text.</li>
+          <li>We hand-deliver in Columbus and check a valid photo ID showing you are 21 or older.
+            No ID, no hand-over.</li>
+        </ol>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <p>
+          Legal-Leaf Market<br>
+          Jacob Kennedy, owner<br>
+          Columbus, Indiana
+        </p>
+        <p>
+          <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a><br>
+          <a href="tel:+18126711780">(812) 671-1780</a>, call or text
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>
+      <a href="/shipping">Delivery</a> &middot; <a href="/returns">Returns &amp; refunds</a> &middot;
+      <a href="/terms">Terms</a> &middot; <a href="/privacy">Privacy</a>
+    </p>
+    <p>
+      Sales to adults 21 and over only. We do not sell to anyone under 21, and we check ID at
+      delivery. Vaping and nicotine products contain or are used with nicotine, an addictive
+      chemical. Not for use by minors, pregnant or breastfeeding women, or people with heart
+      conditions.
+    </p>
+    <p>&copy; <span data-year>2026</span> Legal-Leaf Market, Columbus, Indiana.</p>
+  </div>
+</footer>
+
+<!-- Product detail -->
+<dialog class="sheet" data-product aria-labelledby="pd-title">
+  <form method="dialog" class="sheet-close"><button aria-label="Close">&times;</button></form>
+  <div class="pd" data-pd></div>
+</dialog>
+
+<!-- Cart and checkout -->
+<dialog class="sheet sheet-side" data-cart aria-labelledby="cart-title">
+  <form method="dialog" class="sheet-close"><button aria-label="Close">&times;</button></form>
+  <h2 id="cart-title">Your cart</h2>
+  <div data-cart-body></div>
+</dialog>
+
+<noscript><p class="wrap status">The shop needs JavaScript to show products. Call or text (812) 671-1780 to order.</p></noscript>
+</body>
+</html>

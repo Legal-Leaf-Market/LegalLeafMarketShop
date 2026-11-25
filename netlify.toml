@@ -44,6 +44,10 @@
 # takes the dispensary page down with the rest. A list only touches what it names.
 # A NEW PAGE IN public/ IS SERVED UNTIL IT IS ADDED HERE.
 #
+# SERVED AGAIN (25 Nov 2026): /shop and the four policy pages (/shipping, /returns,
+# /terms, /privacy), rewritten for the hand-delivery store. Card-processor
+# underwriting reads them, so they live here rather than on Shopify.
+#
 # KEPT UP, deliberately: /api/* and /p/* (function), /admin*, /shop-dispensary.js, /ll-shop.js,
 # /js /css /img /assets, and the two operator tools /ig-studio and
 # /coldwater-collect (noindex, used by the owner, not shoppers).
@@ -327,17 +331,7 @@
   status = 302
   force = true
 
-[[redirects]]
-  from = "/privacy"
-  to = "https://shop.legalleafmarket.shop/policies/privacy-policy"
-  status = 302
-  force = true
 
-[[redirects]]
-  from = "/privacy.html"
-  to = "https://shop.legalleafmarket.shop/policies/privacy-policy"
-  status = 302
-  force = true
 
 [[redirects]]
   from = "/reels"
@@ -351,29 +345,9 @@
   status = 302
   force = true
 
-[[redirects]]
-  from = "/returns"
-  to = "https://shop.legalleafmarket.shop/policies/refund-policy"
-  status = 302
-  force = true
 
-[[redirects]]
-  from = "/returns.html"
-  to = "https://shop.legalleafmarket.shop/policies/refund-policy"
-  status = 302
-  force = true
 
-[[redirects]]
-  from = "/shipping"
-  to = "https://shop.legalleafmarket.shop/policies/shipping-policy"
-  status = 302
-  force = true
 
-[[redirects]]
-  from = "/shipping.html"
-  to = "https://shop.legalleafmarket.shop/policies/shipping-policy"
-  status = 302
-  force = true
 
 [[redirects]]
   from = "/the-body-was-listening"
