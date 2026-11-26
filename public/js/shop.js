@@ -2,7 +2,7 @@
  *
  * Reads /api/catalog, keeps the cart in localStorage, and posts orders to
  * /api/order, which re-prices them and enforces 21+ and Indiana-only delivery
- * on the server. Payment is taken at delivery until the card processor is live.
+ * on the server. Payment is cash at delivery; there is no card processing (owner, 26 Nov 2026).
  *
  * Kiosk mode for partner-shop tablets: open /shop?kiosk=<partner-slug>. The
  * partner is remembered for the tab, tagged on every order (for their cut),
@@ -205,7 +205,7 @@
       + opts
       + '<div class="qty"><div class="field"><label for="pd-qty">Qty</label><input id="pd-qty" type="number" min="1" max="20" value="1" inputmode="numeric"></div>'
       + '<button type="button" class="btn" id="pd-add">Add to cart</button></div>'
-      + (p.ageRestricted ? '<p class="fine"><strong>21+ only.</strong> Hand-delivered in Indiana. We check a valid photo ID at the door and cannot leave this item unattended.</p>' : '<p class="fine">Hand-delivered in Indiana. Pay at delivery, card or cash.</p>')
+      + (p.ageRestricted ? '<p class="fine"><strong>21+ only.</strong> Hand-delivered in Indiana. We check a valid photo ID at the door and cannot leave this item unattended.</p>' : '<p class="fine">Hand-delivered in Indiana. Pay cash at delivery.</p>')
       + (p.description ? '<div class="desc">' + esc(p.description) + '</div>' : '')
       + '</div></div>';
     var sel = $('#variant');
@@ -341,7 +341,7 @@
     box.hidden = false;
     box.innerHTML = '<div class="done"><h2>Thank you, your order is in.</h2>'
       + '<p>Your order number is</p><p class="num">' + esc(order.number) + '</p>'
-      + '<p>Total ' + usd(order.total) + ', paid at delivery by card or cash.</p>'
+      + '<p>Total ' + usd(order.total) + ', paid in cash at delivery.</p>'
       + '<p>We will call or email to confirm and set a delivery time. Have a valid photo ID ready: the person who ordered must be there, 21 or older, and match the ID.</p>'
       + '<button type="button" class="btn" id="done-ok">' + (kiosk ? 'Start a new order' : 'Keep shopping') + '</button></div>';
     $('#done-ok').addEventListener('click', function () { cdlg.close(); });
