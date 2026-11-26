@@ -3,133 +3,126 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shop | Legal-Leaf Market, Columbus, Indiana</title>
-<!-- 21+ gate. Same tag as every other page: see public/js/age-gate.js. -->
-<script src="/js/age-gate.js"></script>
-<meta name="description" content="Glass, papers, grinders, vaporizers, vapes and herbal blends, hand-delivered in Columbus, Indiana. Adults 21+ only, ID checked at delivery.">
+<title>Shop | Legal-Leaf Market</title>
+<meta name="description" content="Smoke-shop accessories, glass, vaporizers and e-liquid, hand-delivered in Columbus, Indiana. 21+ only.">
 <link rel="canonical" href="https://legalleafmarket.shop/shop">
 <meta name="theme-color" content="#2C4A33">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta property="og:title" content="Shop Legal-Leaf Market">
-<meta property="og:description" content="Smoke-shop goods hand-delivered in Columbus, Indiana. 21+ only.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://legalleafmarket.shop/shop">
-<meta property="og:site_name" content="Legal-Leaf Market">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%232C4A33' d='M16 1 7 13h4l-6 8h5l-6 7h24l-6-7h5l-6-8h4z'/%3E%3Crect x='14' y='28' width='4' height='4' fill='%237A4E2A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Karla:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="/css/store.css">
-<script src="/js/commerce-config.js"></script>
-<script src="/js/store.js" defer></script>
-<script src="/js/analytics.js" defer data-site="legal-leaf"></script>
+<!-- 21+ attestation gate, shared with the rest of the site. -->
+<script src="/js/age-gate.js"></script>
 </head>
 <body>
-
-<header class="bar">
-  <div class="wrap bar-in">
-    <a class="brand" href="/">Legal-Leaf Market</a>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/shop">Legal-Leaf Market</a>
     <nav aria-label="Site">
-      <a href="/">Cafe</a>
+      <a href="/" class="ext">The Cafe</a>
       <a href="/shop" aria-current="page">Shop</a>
-      <a href="/shipping">Delivery</a>
-      <a href="#contact">Contact</a>
-      <button class="cart-btn" type="button" data-open-cart aria-haspopup="dialog">
-        Cart <span class="cart-count" data-cart-count>0</span>
-      </button>
+      <a href="/delivery">Delivery</a>
+      <a href="/contact">Contact</a>
+      <button type="button" class="cart-btn" id="cart-open" aria-label="Open cart">Cart <span class="count" id="cart-count">0</span></button>
     </nav>
   </div>
 </header>
-
-<main>
-  <p class="preview-bar" role="note"><strong>Preview store.</strong> Card checkout is coming soon. Browse and build a cart now; ordering opens once card payments are switched on.</p>
-  <section class="intro">
+<div class="kiosk-bar" role="status"><div class="wrap"><span>Ordering at <span id="kiosk-name">our partner shop</span>. Delivered to you, pay at delivery.</span><button type="button" id="kiosk-reset">Start over</button></div></div>
+<main id="main">
+  <section class="hero">
     <div class="wrap">
-      <p class="kicker">Columbus, Indiana &middot; local delivery</p>
-      <h1>The shop</h1>
-      <p class="lede">
-        Glass, papers, grinders, vaporizers, vapes and herbal blends, hand-delivered to your door
-        in Columbus. Most items are special order, so they arrive in a few days.
-      </p>
-      <ul class="promises">
-        <li><strong>Adults 21+ only.</strong> Photo ID is checked at the door, every order.</li>
-        <li><strong>Free local delivery</strong> in Columbus, IN. We do not ship.</li>
-        <li><strong>Card payment, coming soon.</strong> No cash.</li>
+      <h1>Order anything, delivered locally.</h1>
+      <p>Glass, grinders, papers, vaporizers, e-liquid and everyday smoke-shop accessories from the brands we trust, hand-delivered around Columbus, Indiana. Can't find it? Email us and we'll special order it.</p>
+      <ul class="points">
+        <li>Hand-delivered in Indiana</li>
+        <li>Pay at delivery, card or cash</li>
+        <li>21+ with photo ID at the door</li>
       </ul>
     </div>
   </section>
-
-  <section class="catalog" aria-label="Products">
+  <div class="toolbar">
     <div class="wrap">
-      <div class="tools">
-        <label class="search">
-          <span class="sr">Search products</span>
-          <input type="search" placeholder="Search the shop" data-search autocomplete="off">
-        </label>
-        <div class="chips" role="tablist" aria-label="Sections" data-sections></div>
-      </div>
-      <p class="status" data-status role="status">Loading the catalog&hellip;</p>
-      <ul class="grid" data-grid></ul>
-      <div class="more"><button class="btn btn-alt" type="button" data-more hidden>Show more</button></div>
+      <div class="search"><label class="skip" for="q">Search</label><input id="q" type="search" placeholder="Search products and brands" autocomplete="off"></div>
+      <div><label class="skip" for="brand">Brand</label><select id="brand"><option value="">All brands</option></select></div>
+      <div><label class="skip" for="sort">Sort</label><select id="sort">
+        <option value="featured">Featured</option>
+        <option value="low">Price: low to high</option>
+        <option value="high">Price: high to low</option>
+        <option value="az">Name: A to Z</option>
+      </select></div>
     </div>
-  </section>
-
-  <section class="info" id="contact">
-    <div class="wrap info-grid">
-      <div>
-        <h2>How ordering works</h2>
-        <ol>
-          <li>Add what you want to your cart and check out with your delivery address and date of birth.
-            <em>Card checkout is coming soon; until then checkout is a preview and no order is placed.</em></li>
-          <li>We confirm the order and a delivery time by text.</li>
-          <li>We hand-deliver in Columbus and check a valid photo ID showing you are 21 or older.
-            No ID, no hand-over.</li>
-        </ol>
-      </div>
-      <div>
-        <h2>Contact</h2>
-        <p>
-          Legal-Leaf Market<br>
-          Jacob Kennedy, owner<br>
-          Columbus, Indiana
-        </p>
-        <p>
-          <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a><br>
-          <a href="tel:+18126711780">(812) 671-1780</a>, call or text
-        </p>
-      </div>
-    </div>
-  </section>
+  </div>
+  <div class="wrap">
+    <div class="chips" id="chips" role="group" aria-label="Categories"></div>
+    <p class="status" id="status" aria-live="polite">Loading the catalogue...</p>
+    <noscript><p>This shop needs JavaScript to show products. You can also order by email at <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a>.</p></noscript>
+    <div class="grid" id="grid"></div>
+    <div class="more"><button type="button" class="btn alt" id="more" hidden>Show more</button></div>
+  </div>
 </main>
 
+<dialog id="product" aria-labelledby="product-h">
+  <div class="dlg"><button type="button" class="x" aria-label="Close">&times;</button><div id="product-body"></div></div>
+</dialog>
+
+<dialog id="cart" class="drawer" aria-labelledby="cart-h">
+  <div class="dlg">
+    <button type="button" class="x" aria-label="Close">&times;</button>
+    <h2 id="cart-h">Your cart</h2>
+    <ul class="lines" id="cart-lines"></ul>
+    <div class="totals" id="cart-totals"></div>
+    <button type="button" class="btn wide" id="to-checkout" disabled>Check out</button>
+    <p class="fine">Pay at delivery by card or cash. Delivery is in Indiana only, and we check a valid photo ID (21+) at the door.</p>
+  </div>
+</dialog>
+
+<dialog id="checkout" aria-labelledby="co-h">
+  <div class="dlg">
+    <button type="button" class="x" aria-label="Close">&times;</button>
+    <form id="order-form" novalidate>
+      <h2 id="co-h" style="margin:0 0 4px;font:700 26px/1.2 var(--serif)">Delivery details</h2>
+      <p class="fine" style="margin:0 0 14px">Total <strong id="co-total">$0.00</strong> including 7% Indiana sales tax, paid at delivery. We'll call or email to confirm a time.</p>
+      <div class="formerr" id="formerr" role="alert"></div>
+      <div class="row2">
+        <div class="field"><label for="f-name">Full name (as on your ID)</label><input id="f-name" name="name" autocomplete="name" required></div>
+        <div class="field"><label for="f-dob">Date of birth</label><input id="f-dob" name="dob" type="date" autocomplete="bday" required></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
+      </div>
+      <div class="field"><label for="f-line1">Street address</label><input id="f-line1" name="line1" autocomplete="address-line1" required></div>
+      <div class="field"><label for="f-line2">Apartment, unit (optional)</label><input id="f-line2" name="line2" autocomplete="address-line2"></div>
+      <div class="row3">
+        <div class="field"><label for="f-city">City</label><input id="f-city" name="city" autocomplete="address-level2" required></div>
+        <div class="field"><label for="f-state">State</label><select id="f-state" name="state" autocomplete="address-level1"><option value="IN">Indiana</option></select></div>
+        <div class="field"><label for="f-zip">ZIP</label><input id="f-zip" name="zip" inputmode="numeric" autocomplete="postal-code" required></div>
+      </div>
+      <div class="field"><label for="f-notes">Notes for delivery (optional)</label><textarea id="f-notes" name="notes" rows="2"></textarea></div>
+      <div class="field" style="position:absolute;left:-9999px" aria-hidden="true"><label for="f-web">Website</label><input id="f-web" name="website" tabindex="-1" autocomplete="off"></div>
+      <label class="check"><input type="checkbox" name="agree"> <span>I am 21 or older. I will be there at delivery with a valid government photo ID that matches this name, and I agree to the <a href="/terms" target="_blank">Terms</a>, <a href="/delivery" target="_blank">Delivery</a> and <a href="/returns" target="_blank">Returns</a> policies.</span></label>
+      <p style="margin:16px 0 0"><button type="submit" class="btn wide" id="place">Place order</button></p>
+      <p class="fine">Your details are used only to confirm and deliver this order. See our <a href="/privacy" target="_blank">Privacy policy</a>.</p>
+    </form>
+    <div id="order-done" hidden></div>
+  </div>
+</dialog>
 <footer class="foot">
   <div class="wrap">
-    <p>
-      <a href="/shipping">Delivery</a> &middot; <a href="/returns">Returns &amp; refunds</a> &middot;
-      <a href="/terms">Terms</a> &middot; <a href="/privacy">Privacy</a>
-    </p>
-    <p>
-      Sales to adults 21 and over only. We do not sell to anyone under 21, and we check ID at
-      delivery. Vaping and nicotine products contain or are used with nicotine, an addictive
-      chemical. Not for use by minors, pregnant or breastfeeding women, or people with heart
-      conditions.
-    </p>
-    <p>&copy; <span data-year>2026</span> Legal-Leaf Market, Columbus, Indiana.</p>
+    <nav aria-label="Policies">
+      <a href="/shop">Shop</a>
+      <a href="/delivery">Delivery</a>
+      <a href="/returns">Returns and refunds</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>Legal-Leaf Market, Columbus, Indiana. <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a></p>
+    <p>For adults 21 and over only. Vaping, e-liquid, nicotine and tobacco products are sold to adults 21+ and hand-delivered in Indiana only, with a valid photo ID checked at the door. They are never shipped. Accessories are for use with tobacco and legal herbs. WARNING: Nicotine is an addictive chemical.</p>
   </div>
 </footer>
-
-<!-- Product detail -->
-<dialog class="sheet" data-product aria-labelledby="pd-title">
-  <form method="dialog" class="sheet-close"><button aria-label="Close">&times;</button></form>
-  <div class="pd" data-pd></div>
-</dialog>
-
-<!-- Cart and checkout -->
-<dialog class="sheet sheet-side" data-cart aria-labelledby="cart-title">
-  <form method="dialog" class="sheet-close"><button aria-label="Close">&times;</button></form>
-  <h2 id="cart-title">Your cart</h2>
-  <div data-cart-body></div>
-</dialog>
-
-<noscript><p class="wrap status">The shop needs JavaScript to show products. Call or text (812) 671-1780 to order.</p></noscript>
+<script src="/js/shop.js" defer></script>
 </body>
 </html>

@@ -149,6 +149,7 @@ jobs:
             test-feed-host.mjs
             test-scene.mjs
             test-server-routes.mjs
+            test-shop.mjs
             test-netlify.mjs
             test-kit.mjs
             test-ig-research.mjs

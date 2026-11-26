@@ -44,10 +44,6 @@
 # takes the dispensary page down with the rest. A list only touches what it names.
 # A NEW PAGE IN public/ IS SERVED UNTIL IT IS ADDED HERE.
 #
-# SERVED AGAIN (25 Nov 2026): /shop and the four policy pages (/shipping, /returns,
-# /terms, /privacy), rewritten for the hand-delivery store. Card-processor
-# underwriting reads them, so they live here rather than on Shopify.
-#
 # KEPT UP, deliberately: /api/* and /p/* (function), /admin*, /shop-dispensary.js, /ll-shop.js,
 # /js /css /img /assets, and the two operator tools /ig-studio and
 # /coldwater-collect (noindex, used by the owner, not shoppers).
@@ -55,6 +51,25 @@
 # 302 not 301: browsers cache a 301 for good, and this is reversible by deleting
 # this block. force = true because every one of these paths is a real file, and a
 # file shadows an unforced rule.
+# OUR OWN STOREFRONT (25 Nov 2026). Shopify banned vape products, and vapes are
+# core here, so the shop moves off it. /shop is ours (public/shop.html, reading
+# /api/catalog and posting to /api/order), and the policy pages are served here
+# again instead of redirecting to Shopify's: the card processor reviewing this
+# site needs delivery, returns, privacy, terms and contact on this domain.
+# /delivery is the policy's name now (public/delivery.html, was shipping.html),
+# because we hand-deliver and never ship; old /shipping links fold into it.
+[[redirects]]
+  from = "/shipping"
+  to = "/delivery"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/shipping.html"
+  to = "/delivery"
+  status = 301
+  force = true
+
 # THE CAFE IS THE HOMEPAGE (owner, 5 Nov 2026, from the SEO audit). "/" SERVES
 # cafe.html as a 200 rewrite, so the address bar stays on legalleafmarket.shop/,
 # and /cafe 301s here so the old URL folds into one page instead of competing
@@ -331,8 +346,6 @@
   status = 302
   force = true
 
-
-
 [[redirects]]
   from = "/reels"
   to = "https://shop.legalleafmarket.shop/"
@@ -344,10 +357,6 @@
   to = "https://shop.legalleafmarket.shop/"
   status = 302
   force = true
-
-
-
-
 
 [[redirects]]
   from = "/the-body-was-listening"

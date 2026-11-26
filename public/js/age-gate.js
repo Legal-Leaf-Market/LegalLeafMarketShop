@@ -102,12 +102,12 @@
   wrap.innerHTML =
     '<div class="llg-card">'
     + '<h2 id="ll-age-h">Are you 21 or over?</h2>'
-    + '<p>Legal-Leaf Market sells smoking accessories, vapes and tobacco products to adults 21 and over only.</p>'
+    + '<p>Legal-Leaf Market sells smoking accessories, vaping and tobacco products to adults 21 and over only.</p>'
     + '<div class="llg-btns">'
     + '<button type="button" class="llg-yes">Yes, I am 21+</button>'
     + '<button type="button" class="llg-no">No, I am under 21</button>'
     + '</div>'
-    + '<p class="llg-fine">Answering yes is a confirmation, not a check: every order needs a date of birth at checkout and a valid photo ID at delivery. '
+    + '<p class="llg-fine">Answering yes is a confirmation, not a check. Every order is age-checked at checkout and by photo ID at delivery. '
     + 'See <a href="/terms">Terms</a> and <a href="/privacy">Privacy</a>.</p>'
     + '</div>';
 
