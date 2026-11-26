@@ -7,10 +7,16 @@
  * existing Shopify storefront's public JSON, so /shop works today and keeps
  * working the day the source changes.
  *
- * SOURCE ORDER, decided by env, one at a time:
+ * SOURCE ORDER, one at a time:
  *   MEDUSA_URL + MEDUSA_PUBLISHABLE_KEY  -> Medusa store API (/store/products)
+ *   api/_catalog-data.json, if present   -> our own copy of the catalogue,
+ *                                           photos in public/shop/img, written
+ *                                           by tools/export-shop-catalog.mjs.
+ *                                           This is what lets Shopify close.
  *   otherwise                            -> Shopify /products.json at
  *                                           SHOPIFY_STORE (default below)
+ * LL_CATALOG_SOURCE=shopify forces the live Shopify read (the test suites use
+ * it to point at a fixture server).
  * The shape that comes out is the same either way, so the page never knows.
  *
  * WHAT IS LEFT OUT, AND WHY. The card processor (PaymentCloud, tobacco/vape
@@ -24,6 +30,8 @@
  *
  * ZERO DEPENDENCIES like the rest of api/ (CLAUDE.md section 1).
  */
+
+import { existsSync, readFileSync } from 'node:fs';
 
 const DEFAULT_SHOPIFY = 'czmeq0-ik.myshopify.com';
 const PAGE = 250;
@@ -185,6 +193,17 @@ async function readShopify() {
   return { source: 'shopify', raw: raw.length, products: raw.map(fromShopify).filter(Boolean) };
 }
 
+/* The exported copy. Read off disk beside this file: netlify.toml's
+   included_files = ["api/**"] puts it in the function bundle. */
+function readBundled() {
+  const path = new URL('./_catalog-data.json', import.meta.url);
+  if (!existsSync(path)) return null;
+  const body = JSON.parse(readFileSync(path, 'utf8'));
+  const rows = (body && body.products) || [];
+  if (!rows.length) return null;
+  return { source: 'bundled', exportedAt: body.exportedAt, raw: rows.length, products: rows.map(fromShopify).filter(Boolean) };
+}
+
 async function readMedusa() {
   const base = process.env.MEDUSA_URL.replace(/\/+$/, '');
   const headers = { 'x-publishable-api-key': process.env.MEDUSA_PUBLISHABLE_KEY };
@@ -205,12 +224,14 @@ export async function loadCatalog({ fresh = false } = {}) {
   if (!fresh && cache.data && Date.now() - cache.at < TTL_MS) return cache.data;
   if (cache.inflight) return cache.inflight;
   const useMedusa = !!(process.env.MEDUSA_URL && process.env.MEDUSA_PUBLISHABLE_KEY);
-  cache.inflight = (useMedusa ? readMedusa() : readShopify())
+  const forced = process.env.LL_CATALOG_SOURCE;
+  const bundled = !useMedusa && forced !== 'shopify' ? readBundled() : null;
+  cache.inflight = (useMedusa ? readMedusa() : bundled ? Promise.resolve(bundled) : readShopify())
     .then((r) => {
       /* One row per handle; the first wins. */
       const seen = new Set();
       const products = r.products.filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true)));
-      const data = { products, meta: { source: r.source, raw: r.raw, count: products.length, hidden: r.raw - products.length, updated: new Date().toISOString() } };
+      const data = { products, meta: { source: r.source, ...(r.exportedAt ? { exportedAt: r.exportedAt } : {}), raw: r.raw, count: products.length, hidden: r.raw - products.length, updated: new Date().toISOString() } };
       cache.data = data;
       cache.at = Date.now();
       return data;

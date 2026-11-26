@@ -44,6 +44,7 @@ const shop = createServer((req, res) => {
 });
 await new Promise((r) => shop.listen(0, '127.0.0.1', r));
 process.env.SHOPIFY_STORE = `http://127.0.0.1:${shop.address().port}`;
+process.env.LL_CATALOG_SOURCE = "shopify"; // the fixture, not api/_catalog-data.json
 
 const cat = await import('./api/catalog.js');
 const ord = await import('./api/order.js');

@@ -1,0 +1,39 @@
+name: Export shop catalogue off Shopify
+# Copies every product and up to two photos each into this repo
+# (api/_catalog-data.json, public/shop/img/) so /shop stops depending on
+# Shopify, then commits the result to the branch it ran on. Re-run any time to
+# pick up new products; existing photos are not downloaded again.
+on:
+  workflow_dispatch:
+  push:
+    paths: ["tools/export-shop-catalog.mjs", ".github/workflows/export-shop-catalog.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: export-shop-catalog-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: ImageMagick webp support
+        run: convert -list format | grep -i webp
+      - name: Export
+        run: node tools/export-shop-catalog.mjs | tee /tmp/export.txt
+      - name: Commit
+        run: |
+          git config user.name "catalog-export"
+          git config user.email "actions@users.noreply.github.com"
+          git add api/_catalog-data.json public/shop/img
+          git diff --cached --quiet && exit 0
+          git commit -m "shop: catalogue and photos exported off Shopify" -m "$(grep -v 'image failed' /tmp/export.txt | tail -5)"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push
