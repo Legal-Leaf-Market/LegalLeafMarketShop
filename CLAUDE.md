@@ -904,6 +904,14 @@ Columbus with no storefront, paid in cash at the door.
 - `api/order.js` is the whole checkout: an order is a request, re-priced and 21+/Indiana-checked
   on the server, and its stored record (with the 7% tax line) is what sales tax is filed from.
   The `payment: 'at_delivery'` value is unchanged.
+- **Orders land in a Google Sheet.** `LL_ORDER_WEBHOOK` in Netlify is the `/exec` URL of
+  `APPS_SCRIPT_ORDERS.gs`, bound to the owner's "Legal-Leaf Market Orders" sheet
+  (jacobkennedy.47201@gmail.com): one row per order on the Orders tab, an email per order, and
+  a "Sales tax" tab totalling Delivered orders by month. Before this, NO sink was configured and
+  every live order ended at the customer's "email this order" fallback. The webhook counts only
+  when it answers JSON `{ok:true}`, because Apps Script answers 200 even when the script throws.
+  To change the script, edit it in the sheet's Extensions > Apps Script and publish a **new
+  version of the same deployment** (Deploy > Manage deployments), or the URL changes.
 - **`commerce/` (Medusa + the NMI provider) and `render.yaml` are PARKED.** Merged in #27, never
   deployed, nothing on the live site reads them. No Render service exists; do not create one, and
   do not point `/shop` at `MEDUSA_URL`, without the owner reversing this decision.
