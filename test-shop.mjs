@@ -149,7 +149,8 @@ console.log('\nORDER DELIVERY');
 }
 {
   let got = null;
-  const hook = createServer((req, res) => { let d = ''; req.on('data', (c) => d += c); req.on('end', () => { got = JSON.parse(d); res.end('ok'); }); });
+  let answer = '{"ok":true}';
+  const hook = createServer((req, res) => { let d = ''; req.on('data', (c) => d += c); req.on('end', () => { got = JSON.parse(d); res.end(answer); }); });
   await new Promise((r) => hook.listen(0, '127.0.0.1', r));
   process.env.LL_ORDER_WEBHOOK = `http://127.0.0.1:${hook.address().port}/exec`;
   const res = fakeRes();
@@ -157,6 +158,15 @@ console.log('\nORDER DELIVERY');
   ok('with a webhook, the order is accepted', res.statusCode === 200 && res.body.ok === true, String(res.statusCode));
   ok('...the webhook receives it, priced from the catalogue', got && got.type === 'order' && got.total === 219.32 && got.customer.age === 36, got && String(got.total));
   ok('...and the answer carries the number and total', /^LL-/.test(res.body.order.number) && res.body.order.total === 219.32);
+  /* Apps Script answers 200 even when the script throws, with an HTML page or
+     with the script's own {ok:false}. Neither is a received order. */
+  for (const [label, body] of [['an HTML error page', '<html><body>TypeError: Cannot read properties</body></html>'], ['{ok:false}', '{"ok":false,"error":"boom"}'], ['a bare "ok"', 'ok']]) {
+    answer = body;
+    const r2 = fakeRes();
+    await ord.default(fakeReq('POST', good()), r2);
+    ok(`a webhook answering 200 with ${label} is NOT a received order`, r2.statusCode === 503 && r2.body.fallback === 'email', String(r2.statusCode));
+  }
+  answer = '{"ok":true}';
   const bad = fakeRes();
   const b = good(); b.customer.dob = '2010-01-01';
   await ord.default(fakeReq('POST', b), bad);

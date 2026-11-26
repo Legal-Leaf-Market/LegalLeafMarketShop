@@ -24,7 +24,9 @@
  *   RESEND_API_KEY          an email to LL_ORDER_EMAIL (default jake@legalleafmarket.shop)
  *                           from LL_ORDER_FROM (default orders@legalleafmarket.shop,
  *                           which must be a domain verified in Resend)
- *   LL_ORDER_WEBHOOK        a POST of the JSON, e.g. an Apps Script /exec url
+ *   LL_ORDER_WEBHOOK        a POST of the JSON; counts only if it answers JSON
+ *                           {ok:true}. In production this is the owner's Google
+ *                           Sheet order log, APPS_SCRIPT_ORDERS.gs (26 Nov 2026).
  * If none is configured or all fail, the answer is 503 with the order summary,
  * and the page offers to send it by email instead. An order is never reported
  * as received when nothing received it.
@@ -178,9 +180,16 @@ async function deliver(o) {
     }).then((r) => { sinks.email = r.ok; }).catch(() => { sinks.email = false; }));
   }
   if (process.env.LL_ORDER_WEBHOOK) {
+    // The webhook must answer JSON {ok:true}. A bare 200 is not enough: the
+    // owner's Google Sheet log (APPS_SCRIPT_ORDERS.gs) is an Apps Script web
+    // app, and Apps Script replies 200 with an HTML error page when the script
+    // throws, so status alone would report a lost order as received.
     jobs.push(fetch(process.env.LL_ORDER_WEBHOOK, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'order', ...o }),
-    }).then((r) => { sinks.webhook = r.ok; }).catch(() => { sinks.webhook = false; }));
+    }).then(async (r) => {
+      const j = r.ok ? await r.json().catch(() => null) : null;
+      sinks.webhook = !!(j && j.ok === true);
+    }).catch(() => { sinks.webhook = false; }));
   }
   await Promise.all(jobs);
   return sinks;
