@@ -16,7 +16,8 @@
     "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
     "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "setup": "medusa exec ./src/scripts/setup-store.ts",
-    "import:shopify": "medusa exec ./src/scripts/import-shopify.ts"
+    "import:shopify": "medusa exec ./src/scripts/import-shopify.ts",
+    "import:catalog": "medusa exec ./src/scripts/import-shopify.ts"
   },
   "dependencies": {
     "@medusajs/admin-sdk": "2.18.0",

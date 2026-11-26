@@ -1,3 +1,5 @@
+import { existsSync, readFileSync } from "node:fs"
+import { resolve } from "node:path"
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, Modules, ProductStatus } from "@medusajs/framework/utils"
 import {
@@ -6,7 +8,8 @@ import {
 } from "@medusajs/medusa/core-flows"
 
 /**
- * Copies the catalog out of the Shopify storefront into Medusa.
+ * Copies the catalog into Medusa: from the site's own export
+ * (api/_catalog-data.json) when it exists, otherwise from a Shopify storefront.
  *
  *   SHOPIFY_STORE=czmeq0-ik.myshopify.com npx medusa exec ./src/scripts/import-shopify.ts
  *
@@ -89,6 +92,48 @@ async function allPages<T>(path: string, key: string): Promise<T[]> {
   return out
 }
 
+/**
+ * The site's own catalogue export, reshaped to what the rest of this script
+ * reads. Photos there are site paths (/shop/img/...); Medusa wants absolute
+ * URLs, so they are joined to IMAGE_BASE.
+ */
+function readExport(): ShopifyProduct[] | null {
+  const file = process.env.CATALOG_FILE || resolve(process.cwd(), "../api/_catalog-data.json")
+  if (!existsSync(file)) return null
+  const body = JSON.parse(readFileSync(file, "utf8"))
+  const base = (process.env.IMAGE_BASE || "https://legalleafmarket.shop").replace(/\/$/, "")
+  return (body.products || []).map((p: any, i: number) => {
+    const titles = (p.variants || []).map((v: any) => String(v.title || ""))
+    const real = titles.length > 1 || (titles[0] && titles[0] !== "Default Title")
+    return {
+      id: i + 1,
+      title: p.title,
+      handle: p.handle,
+      body_html: p.body_html || "",
+      vendor: p.vendor || "",
+      product_type: p.product_type || "",
+      tags: p.tags || [],
+      options: real
+        ? [{ name: "Option", values: [...new Set(titles.map((t: string) => t || "Standard"))] }]
+        : [{ name: "Title", values: ["Default Title"] }],
+      variants: (p.variants || []).map((v: any) => ({
+        id: Number(v.id) || 0,
+        title: v.title || "Default Title",
+        sku: v.sku || null,
+        price: String(v.price),
+        compare_at_price: v.compare_at_price || null,
+        option1: real ? String(v.title || "Standard") : "Default Title",
+        option2: null,
+        option3: null,
+        grams: 0,
+      })),
+      images: (p.images || []).map((im: any) => ({
+        src: /^https?:/.test(im.src) ? im.src : base + im.src,
+      })),
+    } as ShopifyProduct
+  })
+}
+
 const tagsOf = (p: ShopifyProduct) =>
   (Array.isArray(p.tags) ? p.tags : String(p.tags || "").split(","))
     .map((t) => t.trim())
@@ -99,22 +144,43 @@ export default async function importShopify({ container }: ExecArgs) {
   const productService = container.resolve(Modules.PRODUCT)
   const salesChannelService = container.resolve(Modules.SALES_CHANNEL)
 
-  // ---- read Shopify --------------------------------------------------------
-  const products = await allPages<ShopifyProduct>("/products.json", "products")
-  logger.info(`Shopify: ${products.length} published products`)
-  if (!products.length) throw new Error("No products came back from Shopify")
-
-  const collections = (
-    await allPages<ShopifyCollection>("/collections.json", "collections")
-  ).filter((c) => !SKIP_COLLECTIONS.has(c.handle))
-  const membership = new Map<string, string[]>() // product handle -> collection handles
-  for (const c of collections) {
-    const rows = await allPages<ShopifyProduct>(`/collections/${c.handle}/products.json`, "products")
-    for (const p of rows) {
-      membership.set(p.handle, [...(membership.get(p.handle) || []), c.handle])
+  // ---- read the catalogue ----------------------------------------------------
+  // Our own export first (api/_catalog-data.json, written by
+  // tools/export-shop-catalog.mjs), because Shopify is being closed. Shopify is
+  // read only when that file is absent or CATALOG_SOURCE=shopify.
+  const exported = process.env.CATALOG_SOURCE === "shopify" ? null : readExport()
+  let products: ShopifyProduct[]
+  let collections: ShopifyCollection[]
+  const membership = new Map<string, string[]>() // product handle -> category handles
+  if (exported) {
+    products = exported
+    // The export carries no Shopify collections, so the product type is the
+    // shop section, which is what /shop files things under too.
+    const types = new Map<string, string>()
+    for (const p of products) {
+      const t = (p.product_type || "").trim()
+      if (!t) continue
+      const h = t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+      types.set(h, t)
+      membership.set(p.handle, [h])
     }
+    collections = [...types].map(([handle, title]) => ({ handle, title }))
+    logger.info(`Export: ${products.length} products, ${collections.length} product types`)
+  } else {
+    products = await allPages<ShopifyProduct>("/products.json", "products")
+    logger.info(`Shopify: ${products.length} published products`)
+    collections = (
+      await allPages<ShopifyCollection>("/collections.json", "collections")
+    ).filter((c) => !SKIP_COLLECTIONS.has(c.handle))
+    for (const c of collections) {
+      const rows = await allPages<ShopifyProduct>(`/collections/${c.handle}/products.json`, "products")
+      for (const p of rows) {
+        membership.set(p.handle, [...(membership.get(p.handle) || []), c.handle])
+      }
+    }
+    logger.info(`Shopify: ${collections.length} collections`)
   }
-  logger.info(`Shopify: ${collections.length} collections`)
+  if (!products.length) throw new Error("No products to import")
 
   // ---- sales channels: imported products go on both Web and Kiosk ----------
   const channels = await salesChannelService.listSalesChannels({ name: ["Web", "Kiosk"] })

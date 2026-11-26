@@ -3,7 +3,7 @@ name: Commerce backend (Medusa)
 # the live Shopify catalog and runs the checkout smoke test against it.
 on:
   push:
-    paths: ["commerce/**", ".github/workflows/commerce.yml"]
+    paths: ["commerce/**", "api/_catalog-data.json", ".github/workflows/commerce.yml"]
   workflow_dispatch:
 
 concurrency:
@@ -58,8 +58,8 @@ jobs:
         run: yarn setup
       - name: Store setup again (must be a no-op)
         run: yarn setup
-      - name: Import Shopify catalog
-        run: yarn import:shopify
+      - name: Import the catalogue (the site's own export, api/_catalog-data.json)
+        run: yarn import:catalog
       - name: Start server
         run: |
           nohup yarn dev > /tmp/medusa.log 2>&1 &
@@ -71,7 +71,7 @@ jobs:
       - name: Smoke test
         run: |
           export PUBLISHABLE_KEY=$(psql "$DATABASE_URL" -tAc "select token from api_key where title='Web storefront' and deleted_at is null limit 1")
-          MIN_PRODUCTS=400 node ci/smoke.mjs
+          MIN_PRODUCTS=1000 node ci/smoke.mjs
       - name: Server log
         if: always()
         run: tail -n 200 /tmp/medusa.log || true
