@@ -149,6 +149,7 @@ jobs:
             test-feed-host.mjs
             test-scene.mjs
             test-server-routes.mjs
+            test-shop.mjs
             test-netlify.mjs
             test-kit.mjs
             test-ig-research.mjs
@@ -234,6 +235,7 @@ jobs:
               test-lookah.mjs
               test-strain-drop-flip.mjs
               test-shop-dispensary.mjs
+              test-dispensary-shipping.mjs
           - shard: "3"          # ~189s of suite time
             suites: >-
               test-shelf-shuffle.mjs
