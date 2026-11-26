@@ -890,6 +890,24 @@ vape ban and UPS/FedEx refuse them to consumers; dry-herb devices reportedly are
 
 ---
 
+### /shop is CASH ONLY, and card processing is off the table (26 Nov 2026)
+
+**Owner, 26 Nov 2026: "simplest and cheapest ... not taking card for now, accepting cash instead ...
+don't worry about payment processing at all, and just assume I'm going to be a cash business that
+reports on that and pays sales taxes on that myself."** The business is hand delivery around
+Columbus with no storefront, paid in cash at the door.
+
+- Every page that states how to pay says **cash at delivery** and nothing else: `/shop` (hero,
+  cart, checkout, confirmation, kiosk bar, product dialog), `/delivery`, `/terms`, `/returns`
+  (refunds are paid in cash) and `/privacy` (no card processor in the sharing list). Do not
+  reintroduce "card or cash", "card reader" or "online card payment coming soon".
+- `api/order.js` is the whole checkout: an order is a request, re-priced and 21+/Indiana-checked
+  on the server, and its stored record (with the 7% tax line) is what sales tax is filed from.
+  The `payment: 'at_delivery'` value is unchanged.
+- **`commerce/` (Medusa + the NMI provider) and `render.yaml` are PARKED.** Merged in #27, never
+  deployed, nothing on the live site reads them. No Render service exists; do not create one, and
+  do not point `/shop` at `MEDUSA_URL`, without the owner reversing this decision.
+
 ## 9. Environment variables (all optional; site works without them)
 
 Set in Netlify → Project configuration → Environment variables. Do not commit secrets. **A change

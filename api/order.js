@@ -1,11 +1,13 @@
 /* api/order.js -- an order from /shop, checked on the server.
  *
- * WHAT AN ORDER IS, UNTIL THE CARD PROCESSOR APPROVES US. PaymentCloud's
- * application went in on 25 Nov 2026. Until it issues NMI keys there is no
- * online card payment, so an order here is a request: we confirm it, deliver
- * it by hand, check ID at the door, and take payment there (card reader or
- * cash). When the keys arrive, checkout moves to the Medusa backend, which
- * already carries the NMI provider (commerce/src/modules/nmi-payment).
+ * WHAT AN ORDER IS. A request, paid in CASH at the door. Owner, 26 Nov 2026:
+ * "simplest and cheapest ... a cash business that reports on that and pays
+ * sales taxes on that myself." No card processing, online or in person, so an
+ * order is confirmed by phone or email, delivered by hand, the ID is checked
+ * at the door and the customer pays cash there. The Medusa backend in
+ * commerce/ (and its NMI card provider) is parked, not deployed; nothing on
+ * the live site depends on it. Every order is kept with its tax line, because
+ * those records are what the owner files Indiana sales tax from.
  *
  * THE RULES ARE ENFORCED HERE, NOT ON THE PAGE, so editing the page skips
  * nothing. They mirror commerce/src/workflows/hooks/age-check.ts:
@@ -154,7 +156,7 @@ export function orderText(o) {
     `Subtotal ${usd(o.subtotal)}`,
     `Delivery ${usd(o.delivery)}`,
     `Tax (7%) ${usd(o.tax)}`,
-    `Total    ${usd(o.total)}   payment at delivery`,
+    `Total    ${usd(o.total)}   cash at delivery`,
     o.notes ? `\nNotes: ${o.notes}` : '',
     o.ageRestricted ? '\nCheck a valid photo ID (21+) at the door before handing over.' : '\nCheck a valid photo ID (21+) at the door.',
   ].join('\n');
