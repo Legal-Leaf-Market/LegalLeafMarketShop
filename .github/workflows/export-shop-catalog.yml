@@ -24,8 +24,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: ImageMagick webp support
-        run: convert -list format | grep -i webp
+      - name: Install ImageMagick (not on the current runner image)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq imagemagick libwebp-dev >/dev/null
+          convert -list format | grep -i webp
       - name: Export
         run: node tools/export-shop-catalog.mjs | tee /tmp/export.txt
       - name: Commit
