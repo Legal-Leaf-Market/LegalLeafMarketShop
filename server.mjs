@@ -121,6 +121,10 @@ const REDIRECTS = {
      Locally "/" stays the engine the browser suites load, so the cafe is at
      /cafe.html here. */
   "/cafe": "/",
+  /* The delivery policy was shipping.html until 25 Nov 2026 (we hand-deliver,
+     never ship). Same two rules as netlify.toml. */
+  "/shipping": "/delivery",
+  "/shipping.html": "/delivery",
 }
 // serverless functions
 const API = {
@@ -155,6 +159,8 @@ const API = {
   "/api/img": "./api/img.js",                     // the restricted image proxy Lookah's photos ride through
   "/api/kit": "./api/kit.js",                     // the rig builder behind /kit
   "/api/comments": "./api/comments.js",           // per-product threads; public POST is queued, never published
+  "/api/catalog": "./api/catalog.js",             // /shop, our own storefront (Shopify or Medusa source)
+  "/api/order": "./api/order.js",                 // /shop order requests; 21+ and Indiana-only checked here
   "/api/admin/session": "./api/admin/session.js",
   // vercel.json rewrites these clean paths to serverless functions rather than
   // static files; mapped directly here since the API check runs before REWRITES.
