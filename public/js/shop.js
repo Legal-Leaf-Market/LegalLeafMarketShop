@@ -341,7 +341,7 @@
     box.hidden = false;
     box.innerHTML = '<div class="done"><h2>Thank you, your order is in.</h2>'
       + '<p>Your order number is</p><p class="num">' + esc(order.number) + '</p>'
-      + '<p>Total ' + usd(order.total) + ', paid at delivery by card or cash.</p>'
+      + '<p>Total ' + usd(order.total) + ', paid by card at delivery (no cash).</p>'
       + '<p>We will call or email to confirm and set a delivery time. Have a valid photo ID ready: the person who ordered must be there, 21 or older, and match the ID.</p>'
       + '<button type="button" class="btn" id="done-ok">' + (kiosk ? 'Start a new order' : 'Keep shopping') + '</button></div>';
     $('#done-ok').addEventListener('click', function () { cdlg.close(); });

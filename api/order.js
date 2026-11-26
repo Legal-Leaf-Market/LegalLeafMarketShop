@@ -3,8 +3,9 @@
  * WHAT AN ORDER IS, UNTIL THE CARD PROCESSOR APPROVES US. PaymentCloud's
  * application went in on 25 Nov 2026. Until it issues NMI keys there is no
  * online card payment, so an order here is a request: we confirm it, deliver
- * it by hand, check ID at the door, and take payment there (card reader or
- * cash). When the keys arrive, checkout moves to the Medusa backend, which
+ * it by hand, check ID at the door, and take payment there by card reader
+ * (cards only, no cash: owner, 24 Nov 2026). When the keys arrive, checkout
+ * moves to the Medusa backend, which
  * already carries the NMI provider (commerce/src/modules/nmi-payment).
  *
  * THE RULES ARE ENFORCED HERE, NOT ON THE PAGE, so editing the page skips
