@@ -32,7 +32,9 @@
 # A PAGE NEEDS NO ENTRY HERE. public/foo.html is already served at /foo. What is
 # listed is only what a file cannot say for itself.
 
-# ---- THE BASE SITE IS CLOSED; THE SHOP IS SHOPIFY (2 Nov 2026) ----------------
+# ---- THE BASE SITE IS CLOSED (2 Nov 2026); ITS PAGES GO TO /shop (26 Nov 2026) --
+# Shopify is being closed (owner, 25 Nov 2026), so every retired page that used
+# to 302 to shop.legalleafmarket.shop now lands on this site's own /shop.
 # Owner, 2 Nov 2026: every page here now redirects to shop.legalleafmarket.shop.
 # The deal shelves, library, reels and articles are retired in favour of the
 # Shopify store; /consumables lives on as shop.legalleafmarket.shop/pages/dispensary,
@@ -96,349 +98,349 @@
 
 [[redirects]]
   from = "/consumable"
-  to = "https://shop.legalleafmarket.shop/pages/dispensary"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/coldwater-list"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/p/theloudpack"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/arcade/*"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/a-word-for-the-plant"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/a-word-for-the-plant.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/ambassador"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/ambassador.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/arcade"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/arcade.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/burned-at-a-funeral"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/burned-at-a-funeral.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/club-des-hashischins"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/club-des-hashischins.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/coldwater-guide"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/coldwater-guide.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/coldwater"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/coldwater.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/combustion"
-  to = "https://shop.legalleafmarket.shop/collections/pipes"
+  to = "/shop?q=pipe"
   status = 302
   force = true
 
 [[redirects]]
   from = "/combustion.html"
-  to = "https://shop.legalleafmarket.shop/collections/pipes"
+  to = "/shop?q=pipe"
   status = 302
   force = true
 
 [[redirects]]
   from = "/consumables"
-  to = "https://shop.legalleafmarket.shop/pages/dispensary"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/consumables.html"
-  to = "https://shop.legalleafmarket.shop/pages/dispensary"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/detroit"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/detroit.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/devices"
-  to = "https://shop.legalleafmarket.shop/collections/vaporizers"
+  to = "/shop?q=vaporizer"
   status = 302
   force = true
 
 [[redirects]]
   from = "/devices.html"
-  to = "https://shop.legalleafmarket.shop/collections/vaporizers"
+  to = "/shop?q=vaporizer"
   status = 302
   force = true
 
 [[redirects]]
   from = "/grandrapids"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/grandrapids.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/greekglass"
-  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Greek%20Glass"
+  to = "/shop?brand=Greek%20Glass"
   status = 302
   force = true
 
 [[redirects]]
   from = "/greekglass.html"
-  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Greek%20Glass"
+  to = "/shop?brand=Greek%20Glass"
   status = 302
   force = true
 
 [[redirects]]
   from = "/international"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/international.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/kit"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/kit.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/library"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/library.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/lookah-preview"
-  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Lookah"
+  to = "/shop?brand=Lookah"
   status = 302
   force = true
 
 [[redirects]]
   from = "/lookah-preview.html"
-  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Lookah"
+  to = "/shop?brand=Lookah"
   status = 302
   force = true
 
 [[redirects]]
   from = "/lookah"
-  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Lookah"
+  to = "/shop?brand=Lookah"
   status = 302
   force = true
 
 [[redirects]]
   from = "/lookah.html"
-  to = "https://shop.legalleafmarket.shop/collections/vendors?q=Lookah"
+  to = "/shop?brand=Lookah"
   status = 302
   force = true
 
 [[redirects]]
   from = "/newbuffalo"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/newbuffalo.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/reels"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/reels.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/the-body-was-listening"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/the-body-was-listening.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/the-seam"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/the-seam.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/theloudpack"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/theloudpack.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/trip"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/trip.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/vaporizers"
-  to = "https://shop.legalleafmarket.shop/collections/vaporizers"
+  to = "/shop?q=vaporizer"
   status = 302
   force = true
 
 [[redirects]]
   from = "/vaporizers.html"
-  to = "https://shop.legalleafmarket.shop/collections/vaporizers"
+  to = "/shop?q=vaporizer"
   status = 302
   force = true
 
 [[redirects]]
   from = "/what-the-certificates-say"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/what-the-certificates-say.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/wholesale"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 
 [[redirects]]
   from = "/wholesale.html"
-  to = "https://shop.legalleafmarket.shop/"
+  to = "/shop"
   status = 302
   force = true
 

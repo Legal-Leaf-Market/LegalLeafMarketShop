@@ -112,7 +112,9 @@ for (const r of redirects) if (!effective.some(e => e.from === r.from)) effectiv
    from server.mjs, and a preview that sends / to Shopify would fail every one of
    them. So the closed-site rules are checked for their own shape here, and the
    preview is held to the rest. */
-const SHOP = /^https:\/\/shop\.legalleafmarket\.shop\//;
+/* Since 26 Nov 2026 the block lands on this site's own /shop rather than the
+   Shopify store, which is closing; either target marks a closed-site rule. */
+const SHOP = /^(https:\/\/shop\.legalleafmarket\.shop\/|\/shop(\?|$))/;
 const closed = effective.filter(r => r.status !== 200 && SHOP.test(r.to));
 ok("the closed-site block was located", closed.length >= 10, closed.length + " paths");
 const bad = closed.filter(r => r.status !== 302);

@@ -35,7 +35,7 @@ jobs:
         run: |
           git config user.name "catalog-export"
           git config user.email "actions@users.noreply.github.com"
-          git add api/_catalog-data.json public/shop/img
+          git add api/_catalog-data.json public/shop/img public/shelf.html
           git diff --cached --quiet && exit 0
           git commit -m "shop: catalogue and photos exported off Shopify" -m "$(grep -v 'image failed' /tmp/export.txt | tail -5)"
           git pull --rebase origin "${GITHUB_REF_NAME}"

@@ -15,12 +15,15 @@
 // WHAT IS WRITTEN
 //   api/_catalog-data.json   Shopify-shaped rows (only the fields api/catalog.js
 //                            reads), with image src rewritten to /shop/img/...
+//   public/shelf.html etc.   any cdn.shopify.com image link in LOCALIZE files is
+//                            downloaded and rewritten to /shop/img/cdn-<hash>.webp
 //   public/shop/img/*.webp   up to IMAGES_PER_PRODUCT photos per product, 700px,
 //                            quality 72 (about 30-40 KB each). Existing files are
 //                            kept, so a re-run only downloads what is new.
 // Products api/catalog.js would block anyway (cannabis-worded, THC, kratom...)
 // are not exported at all, so their photos are never hosted here.
-import { writeFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs"
+import { writeFileSync, readFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs"
+import { createHash } from "node:crypto"
 import { execFileSync } from "node:child_process"
 import { BLOCKED } from "../api/catalog.js"
 
@@ -119,3 +122,26 @@ for (const p of byHandle.values()) {
 out.sort((a, b) => a.handle.localeCompare(b.handle))
 writeFileSync(OUT_JSON, JSON.stringify({ exportedAt: new Date().toISOString(), sources: SOURCES, products: out }))
 console.log(`Exported ${out.length} products (${blocked} blocked, not exported). Images: ${imgNew} new, ${imgKept} kept, ${imgFailed} failed.`)
+
+// ---- hand-written pages that link Shopify's CDN directly ----
+const LOCALIZE = (process.env.LOCALIZE || "public/shelf.html").split(",").map((s) => s.trim()).filter(Boolean)
+for (const file of LOCALIZE) {
+  const path = new URL("../" + file, import.meta.url)
+  if (!existsSync(path)) continue
+  let html = readFileSync(path, "utf8")
+  const urls = [...new Set(html.match(/https:\/\/cdn\.shopify\.com\/[^"'\s)]+/g) || [])]
+  let done = 0
+  for (const url of urls) {
+    const name = `cdn-${createHash("sha1").update(url).digest("hex").slice(0, 12)}.webp`
+    const out = new URL(name, IMG_DIR).pathname
+    try {
+      if (!existsSync(out)) await fetchImage(url, out)
+      html = html.split(url).join(`/shop/img/${name}`)
+      done++
+    } catch (e) {
+      console.log(`  ${file}: image failed (${e.message}) ${url}`)
+    }
+  }
+  writeFileSync(path, html)
+  console.log(`${file}: ${done}/${urls.length} Shopify image links now served from /shop/img`)
+}
