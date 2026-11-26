@@ -83,6 +83,18 @@
       .then(function (r) { return r.json(); })
       .then(function (d) {
         state.products = (d && d.products) || [];
+        /* Card checkout switches itself on when the catalogue comes from the
+           Medusa store and that store offers the NMI card provider. */
+        if (d && d.meta && d.meta.store && window.LLCardPay) {
+          window.LLCardPay.ready(d.meta.store).then(function (make) {
+            state.cardPay = make;
+            if (make) {
+              $('#co-paywhen').textContent = 'paid by card now';
+              $('#place').textContent = 'Continue to payment';
+              Array.prototype.forEach.call(document.querySelectorAll('.paynote'), function (x) { x.textContent = 'Pay by card at checkout (no cash).'; });
+            }
+          });
+        }
         state.fee = Number(d && d.meta && d.meta.deliveryFee) || 0;
         state.byId = {};
         state.products.forEach(function (p) { state.byId[p.id] = p; });
@@ -298,6 +310,7 @@
   }
   form.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (state.cardPay) return cardSubmit();
     Array.prototype.forEach.call(form.querySelectorAll('.err'), function (x) { x.remove(); });
     $('#formerr').textContent = '';
     var f = new FormData(form);
@@ -332,6 +345,52 @@
       .then(function () { btn.disabled = false; btn.textContent = 'Place order'; });
   });
 
+  /* Card checkout, two presses of the same button: build the order and show
+     the card fields, then pay. See public/js/card-pay.js. */
+  var co = null;
+  function cardSubmit() {
+    Array.prototype.forEach.call(form.querySelectorAll('.err'), function (x) { x.remove(); });
+    $('#formerr').textContent = '';
+    var btn = $('#place');
+    var f = new FormData(form);
+    if (!co) {
+      if (f.get('agree') !== 'on') { fieldErr('agree', 'Please confirm you are 21 or older and will show ID at delivery.'); return; }
+      var missing = ['name', 'dob', 'email', 'phone', 'line1', 'city', 'zip'].filter(function (k) { return !String(f.get(k) || '').trim(); });
+      if (missing.length) { missing.forEach(function (k) { fieldErr(k, 'Required.'); }); return; }
+      btn.disabled = true;
+      btn.textContent = 'One moment...';
+      co = state.cardPay();
+      co.start(
+        cart.map(function (l) { return { variant: l.variant, qty: l.qty }; }),
+        { name: f.get('name'), email: f.get('email'), phone: f.get('phone'), dob: f.get('dob') },
+        { line1: f.get('line1'), line2: f.get('line2'), city: f.get('city'), zip: f.get('zip'), notes: f.get('notes') },
+        { channel: kiosk ? 'kiosk' : 'web', partner: kiosk || '' }
+      ).then(function (t) {
+        $('#card-step').hidden = false;
+        Array.prototype.forEach.call(form.querySelectorAll('input, select, textarea'), function (x) { if (!x.closest('#card-step')) x.readOnly = true; });
+        btn.textContent = 'Pay ' + usd(t.total);
+        $('#co-total').textContent = usd(t.total);
+      }).catch(function (err) {
+        co = null;
+        $('#formerr').textContent = err.message;
+        btn.textContent = 'Continue to payment';
+      }).then(function () { btn.disabled = false; });
+      return;
+    }
+    btn.disabled = true;
+    var label = btn.textContent;
+    btn.textContent = 'Paying...';
+    co.pay().then(function (order) {
+      co = null;
+      $('#card-step').hidden = true;
+      Array.prototype.forEach.call(form.querySelectorAll('[readonly]'), function (x) { x.readOnly = false; });
+      done({ number: order.display_id || order.id, total: order.total, paid: true });
+    }).catch(function (err) {
+      $('#formerr').textContent = err.message + ' Please check the card details and try again.';
+      btn.textContent = label;
+    }).then(function () { btn.disabled = false; });
+  }
+
   function done(order) {
     cart = [];
     saveCart();
@@ -341,7 +400,7 @@
     box.hidden = false;
     box.innerHTML = '<div class="done"><h2>Thank you, your order is in.</h2>'
       + '<p>Your order number is</p><p class="num">' + esc(order.number) + '</p>'
-      + '<p>Total ' + usd(order.total) + ', paid by card at delivery (no cash).</p>'
+      + '<p>Total ' + usd(order.total) + (order.paid ? ', paid by card.' : ', paid by card at delivery (no cash).') + '</p>'
       + '<p>We will call or email to confirm and set a delivery time. Have a valid photo ID ready: the person who ordered must be there, 21 or older, and match the ID.</p>'
       + '<button type="button" class="btn" id="done-ok">' + (kiosk ? 'Start a new order' : 'Keep shopping') + '</button></div>';
     $('#done-ok').addEventListener('click', function () { cdlg.close(); });

@@ -236,6 +236,7 @@ jobs:
               test-strain-drop-flip.mjs
               test-shop-dispensary.mjs
               test-dispensary-shipping.mjs
+              test-card-pay.mjs
           - shard: "3"          # ~189s of suite time
             suites: >-
               test-shelf-shuffle.mjs

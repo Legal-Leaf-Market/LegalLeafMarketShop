@@ -207,7 +207,15 @@ function readBundled() {
 async function readMedusa() {
   const base = process.env.MEDUSA_URL.replace(/\/+$/, '');
   const headers = { 'x-publishable-api-key': process.env.MEDUSA_PUBLISHABLE_KEY };
-  const region = process.env.MEDUSA_REGION_ID ? `&region_id=${encodeURIComponent(process.env.MEDUSA_REGION_ID)}` : '';
+  /* calculated_price is only filled in for a region; without one every
+     variant comes back priceless and the whole shelf is filtered out. */
+  let regionId = process.env.MEDUSA_REGION_ID || '';
+  if (!regionId) {
+    const { regions = [] } = await getJson(`${base}/store/regions`, headers);
+    const usd = regions.find((r) => r.currency_code === 'usd') || regions[0];
+    regionId = usd ? usd.id : '';
+  }
+  const region = regionId ? `&region_id=${encodeURIComponent(regionId)}` : '';
   const fields = '&fields=*variants.calculated_price,*images,*tags,*type,*collection,+metadata';
   const raw = [];
   for (let offset = 0; offset < PAGE * MAX_PAGES; offset += 100) {
@@ -216,7 +224,7 @@ async function readMedusa() {
     raw.push(...rows);
     if (rows.length < 100) break;
   }
-  return { source: 'medusa', raw: raw.length, products: raw.map(fromMedusa).filter(Boolean) };
+  return { source: 'medusa', regionId, raw: raw.length, products: raw.map(fromMedusa).filter(Boolean) };
 }
 
 /** The catalogue, cached per instance for 15 minutes. Shared with api/order.js. */
@@ -231,7 +239,7 @@ export async function loadCatalog({ fresh = false } = {}) {
       /* One row per handle; the first wins. */
       const seen = new Set();
       const products = r.products.filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true)));
-      const data = { products, meta: { source: r.source, ...(r.exportedAt ? { exportedAt: r.exportedAt } : {}), raw: r.raw, count: products.length, hidden: r.raw - products.length, updated: new Date().toISOString() } };
+      const data = { products, meta: { source: r.source, ...(r.exportedAt ? { exportedAt: r.exportedAt } : {}), ...(r.regionId ? { regionId: r.regionId } : {}), raw: r.raw, count: products.length, hidden: r.raw - products.length, updated: new Date().toISOString() } };
       cache.data = data;
       cache.at = Date.now();
       return data;
@@ -252,7 +260,13 @@ export default async function handler(req, res) {
     const data = await loadCatalog();
     res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=900, stale-while-revalidate=3600');
     const deliveryFee = Math.max(0, Number(process.env.LL_DELIVERY_FEE || 0)) || 0;
-    return res.status(200).json({ products: data.products, meta: { ...data.meta, deliveryFee } });
+    /* With the Medusa store live, the page checks out against it directly
+       (public/js/card-pay.js). The publishable key is public by design: it
+       only scopes the store API to a sales channel. */
+    const store = data.meta.source === 'medusa'
+      ? { url: process.env.MEDUSA_URL.replace(/\/+$/, ''), key: process.env.MEDUSA_PUBLISHABLE_KEY, region: data.meta.regionId || '' }
+      : null;
+    return res.status(200).json({ products: data.products, meta: { ...data.meta, deliveryFee, ...(store ? { store } : {}) } });
   } catch (err) {
     console.error('[catalog]', err && err.message ? err.message : err);
     res.setHeader('Cache-Control', 'no-store');
