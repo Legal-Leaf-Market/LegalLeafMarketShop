@@ -1,0 +1,62 @@
+# Render Blueprint for the store backend (commerce/, Medusa v2).
+# Render dashboard -> New -> Blueprint -> pick this repo. It creates the
+# Postgres database and the web service and wires them together. Netlify keeps
+# serving the website; this only runs the store API and the admin.
+#
+# Cost at the time of writing: web service "starter" + Postgres "basic-256mb",
+# roughly $13/month. The free plans would work for testing, but the free web
+# service sleeps when idle and the free database is deleted after 30 days.
+databases:
+  - name: legal-leaf-db
+    plan: basic-256mb
+    databaseName: legal_leaf
+    user: legal_leaf
+
+services:
+  - type: web
+    name: legal-leaf-commerce
+    runtime: node
+    plan: starter
+    rootDir: commerce
+    buildCommand: corepack enable && yarn install && yarn build && cd .medusa/server && yarn install --production
+    # Migrations, the store setup and the catalogue import are all safe to run
+    # again, so every deploy runs them: new products in api/_catalog-data.json
+    # reach the store on the next deploy, existing ones are left alone.
+    preDeployCommand: npx medusa db:migrate && yarn setup && yarn import:catalog
+    startCommand: cd .medusa/server && NODE_ENV=production npx medusa start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: YARN_ENABLE_IMMUTABLE_INSTALLS
+        value: "false"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: legal-leaf-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: COOKIE_SECRET
+        generateValue: true
+      - key: STORE_CORS
+        value: https://legalleafmarket.shop,https://www.legalleafmarket.shop
+      - key: ADMIN_CORS
+        value: https://legal-leaf-commerce.onrender.com
+      - key: AUTH_CORS
+        value: https://legal-leaf-commerce.onrender.com,https://legalleafmarket.shop
+      - key: MEDUSA_BACKEND_URL
+        value: https://legal-leaf-commerce.onrender.com
+      - key: IMAGE_BASE
+        value: https://legalleafmarket.shop
+      # Paste these from the PaymentCloud / NMI merchant portal once approved,
+      # then redeploy. Until they are set the store cannot charge a card.
+      - key: NMI_SECURITY_KEY
+        sync: false
+      - key: NMI_TOKENIZATION_KEY
+        sync: false
+      - key: NMI_WEBHOOK_SECRET
+        sync: false
+      - key: NMI_SANDBOX
+        value: "true"
