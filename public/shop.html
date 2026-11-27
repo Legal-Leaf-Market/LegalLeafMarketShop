@@ -95,7 +95,8 @@
 </main>
 
 <dialog id="product" aria-labelledby="product-h">
-  <div class="dlg"><button type="button" class="x" aria-label="Close">&times;</button><div id="product-body"></div></div>
+  <button type="button" class="x" aria-label="Close">&times;</button>
+  <div class="dlg" id="product-body"></div>
 </dialog>
 
 <dialog id="cart" class="drawer" aria-labelledby="cart-h">
@@ -111,8 +112,8 @@
 </dialog>
 
 <dialog id="checkout" aria-labelledby="co-h">
+  <button type="button" class="x" aria-label="Close">&times;</button>
   <div class="dlg">
-    <button type="button" class="x" aria-label="Close">&times;</button>
     <form id="order-form" novalidate>
       <h2 id="co-h" style="margin:0 0 4px;font:700 26px/1.2 var(--serif)">Delivery details</h2>
       <button type="button" class="back-to-cart" id="back-to-cart">Back to cart</button>

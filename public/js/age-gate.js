@@ -76,9 +76,9 @@
   css.textContent = [
     'html.ll-gated,html.ll-gated body{overflow:hidden !important}',
     '#ll-age{position:fixed;inset:0;z-index:' + Z + ';display:flex;align-items:center;',
-    '  justify-content:center;padding:22px;background:rgba(4,9,13,.94);',
+    '  justify-content:center;padding:clamp(10px,4vw,22px);background:rgba(4,9,13,.94);',
     '  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}',
-    '#ll-age .llg-card{max-width:440px;width:100%;padding:34px 30px;border-radius:16px;text-align:center;',
+    '#ll-age .llg-card{box-sizing:border-box;max-width:440px;width:100%;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:clamp(16px,5vw,34px);border-radius:16px;text-align:center;',
     '  background:#0d1820;border:1px solid rgba(78,201,255,.4);box-shadow:0 26px 70px rgba(0,0,0,.6);',
     '  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#eaf2f6}',
     '#ll-age h2{margin:0 0 10px;font-size:1.55rem;line-height:1.2}',
