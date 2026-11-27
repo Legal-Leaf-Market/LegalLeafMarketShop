@@ -27,6 +27,12 @@ img { max-width: 100%; }
 .top nav a:hover, .top nav a[aria-current] { color: #fff; text-decoration: underline; }
 .cart-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,.4); background: transparent; color: #fff; font: 700 15px/1 var(--sans); cursor: pointer; }
 .cart-btn .count { min-width: 22px; padding: 3px 6px; border-radius: 999px; background: var(--amber); color: var(--ink); text-align: center; font-size: 13px; }
+.store-top .wrap { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 20px; }
+.store-top nav { justify-content: center; gap: 4px 16px; }
+.store-top nav a { padding-block: 8px; }
+.store-top .cart-btn { min-height: 44px; justify-content: center; }
+.cart-btn[hidden], .btn[hidden] { display: none; }
+.store-top :focus-visible { outline-color: #fff; }
 .notice { background: #E9DDC2; color: var(--ink); font-size: 14px; }
 .notice .wrap { padding: 8px 0; }
 
@@ -60,7 +66,11 @@ label { display: block; font-weight: 700; font-size: 14px; margin: 0 0 4px; }
 .status { margin: 10px 0 0; color: var(--muted); font-size: 15px; }
 .shop-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 290px); gap: 28px; align-items: start; padding-block: 18px 36px; }
 .shop-layout h2 { margin: 0 0 12px; font: 700 28px/1.15 var(--serif); }
-.stock-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.stock-filters, .partner-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 16px; }
+.stock-filters .chip, .partner-filters .chip { display: inline-grid; place-items: center; min-height: 44px; text-decoration: none; text-align: center; }
+.partner-filters .chip[aria-current="page"] { background: var(--teal); border-color: var(--teal); color: #fff; }
+.stock-panel .chips { justify-content: safe center; padding: 12px 4px 8px; scroll-padding-inline: 4px; }
+.stock-panel .chips .chip { min-height: 38px; }
 .stock-label { color: var(--muted); font-size: 14px; font-weight: 700; }
 .stock-label.in-stock { color: var(--ok); }
 .shop-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
@@ -68,7 +78,7 @@ label { display: block; font-weight: 700; font-size: 14px; margin: 0 0 4px; }
 .affiliate-panel { padding: 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
 .affiliate-panel p { margin: 0; }
 .affiliate-panel ul { display: grid; gap: 10px; list-style: none; padding: 0; margin: 16px 0; }
-.affiliate-panel .btn { display: block; padding: 10px 12px; }
+.affiliate-panel .btn { display: grid; place-items: center; min-height: 44px; padding: 10px 12px; text-align: center; }
 .affiliate-panel .dispensary-partners { gap: 4px; margin: 8px 0 0 12px; padding-left: 12px; border-left: 1px solid var(--line); }
 .dispensary-partners a { display: block; padding-block: 4px; }
 .dispensary-page #main { padding-block: 24px 36px; }
@@ -76,6 +86,11 @@ label { display: block; font-weight: 700; font-size: 14px; margin: 0 0 4px; }
 .dispensary-page .dispensary-intro { margin: 0 0 16px; color: var(--muted); }
 .dispensary-page #ll-dispensary .lld-sign h2 { display: none; }
 .dispensary-page #ll-dispensary .lld-bar input[type=checkbox] { width: auto; }
+.dispensary-page #ll-dispensary .lld-chips,
+.dispensary-page #ll-dispensary .lld-stores { justify-content: safe center; }
+@media (min-width: 761px) {
+  .dispensary-page #ll-dispensary .lld-stores { grid-template-columns: repeat(3, minmax(0, 195px)); }
+}
 .kiosk .affiliate-panel, .kiosk .affiliate-jump { display: none; }
 .kiosk .shop-layout { grid-template-columns: minmax(0, 1fr); }
 
@@ -116,14 +131,18 @@ dialog::backdrop { background: rgba(20, 28, 18, .6); }
 .drawer { margin: 0 0 0 auto; height: 100dvh; max-height: 100dvh; width: min(440px, 100%); border-radius: 0; }
 .drawer .dlg { height: 100%; max-height: 100dvh; display: flex; flex-direction: column; }
 .drawer h2 { margin: 0 0 12px; font: 700 26px/1.2 var(--serif); }
+.drawer .btn + .btn { margin-top: 8px; }
+.drawer .fine { margin: 10px 0 0; }
+.lines .cart-empty { display: block; padding: 24px 12px; border: 0; text-align: center; color: var(--muted); }
+.back-to-cart { border: 0; background: none; color: var(--teal); font: 600 15px var(--sans); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0; }
 .lines { list-style: none; margin: 0; padding: 0; flex: 1; overflow: auto; }
 .lines li { display: grid; grid-template-columns: 56px 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .lines img { width: 56px; height: 56px; object-fit: contain; background: #fff; border-radius: 6px; }
 .lines .t { font-weight: 700; font-size: 15px; line-height: 1.25; }
 .lines .o { color: var(--muted); font-size: 13px; }
-.lines .q { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
-.lines .q button { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-weight: 700; }
-.lines .rm { background: none; border: 0; color: var(--bad); cursor: pointer; font-size: 13px; padding: 0; margin-left: 6px; }
+.lines .q { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 4px; }
+.lines .q button { min-width: 36px; min-height: 40px; border-radius: 6px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-weight: 700; }
+.lines .q .rm { background: none; border: 0; color: var(--bad); font-size: 13px; padding: 0 4px; }
 .totals { margin: 14px 0; font-size: 15px; }
 .totals div { display: flex; justify-content: space-between; padding: 2px 0; }
 .totals .grand { font-weight: 700; font-size: 18px; border-top: 1px solid var(--line); margin-top: 6px; padding-top: 8px; }
@@ -160,6 +179,12 @@ pre.ordertext { white-space: pre-wrap; text-align: left; background: #fff; borde
 .kiosk .kiosk-bar button { background: var(--ink); color: #fff; border: 0; border-radius: 6px; padding: 8px 14px; font: 700 15px/1 var(--sans); cursor: pointer; }
 
 @media (max-width: 760px) {
+  .store-top .wrap { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding-block: 10px; }
+  .store-top nav { grid-column: 1 / -1; grid-row: 2; justify-content: center; gap: 0 12px; }
+  .store-top .cart-btn { grid-column: 2; grid-row: 1; }
+  .store-top .brand { white-space: normal; }
+  .shop-page .hero, .dispensary-page h1, .dispensary-page .dispensary-intro { text-align: center; }
+  .shop-page .points { justify-content: center; }
   .shop-layout { grid-template-columns: minmax(0, 1fr); }
   .toolbar .wrap { grid-template-columns: 1fr 1fr; }
   .toolbar .wrap .search { grid-column: 1 / -1; }

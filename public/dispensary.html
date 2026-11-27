@@ -14,7 +14,7 @@
 </head>
 <body class="dispensary-page">
 <a class="skip" href="#main">Skip to content</a>
-<header class="top">
+<header class="top store-top">
   <div class="wrap">
     <a class="brand" href="/shop">Legal-Leaf Market</a>
     <nav aria-label="Site">
@@ -22,13 +22,21 @@
       <a href="/shelf">The Shelf</a>
       <a href="/shop">Shop</a>
       <a href="/dispensary" aria-current="page">Dispensary</a>
+      <a href="/delivery">Delivery</a>
       <a href="/contact">Contact</a>
     </nav>
+    <button type="button" class="cart-btn" id="partner-cart-open" aria-label="Open dispensary cart" aria-haspopup="dialog" aria-controls="partner-cart" hidden>Cart <span class="count" id="partner-cart-count">0</span></button>
   </div>
 </header>
 <main id="main" class="wrap">
   <h1>Dispensary</h1>
   <p class="dispensary-intro">Compare partner menus. Each partner handles its own checkout and shipping.</p>
+  <nav class="partner-filters" aria-label="Dispensary partners">
+    <a class="chip" href="/dispensary" aria-current="page">All partners</a>
+    <a class="chip" href="/dispensary?shop=puffweiser">Puffweiser Store</a>
+    <a class="chip" href="/dispensary?shop=thcasmallbuds">THCA Small Buds</a>
+    <a class="chip" href="/dispensary?shop=blacktiecbd">Black Tie CBD</a>
+  </nav>
   <div id="ll-dispensary" data-api="/api/products">
     <p>Loading the partner menus…</p>
   </div>
