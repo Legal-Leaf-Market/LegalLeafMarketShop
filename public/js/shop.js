@@ -26,7 +26,7 @@
     return url;
   };
 
-  var state = { products: [], byId: {}, type: '', brand: '', q: '', sort: 'featured', shown: PAGE, fee: 0 };
+  var state = { products: [], byId: {}, market: '', availability: '', type: '', brand: '', q: '', sort: 'featured', shown: PAGE, fee: 0 };
 
   /* ---------- kiosk ---------- */
   var params = new URLSearchParams(location.search);
@@ -123,8 +123,8 @@
           $('#status').innerHTML = 'The catalogue is not available right now. Please try again shortly, or email <a href="mailto:jake@legalleafmarket.shop">jake@legalleafmarket.shop</a> and we will take your order directly.';
           return;
         }
-        buildFilters();
         readUrl();
+        buildFilters();
         render();
         openFromHash();
       })
@@ -134,8 +134,8 @@
   }
 
   function buildFilters() {
-    var types = {}, brands = {};
-    state.products.forEach(function (p) {
+    var types = Object.create(null), brands = Object.create(null);
+    state.products.filter(matchesMarketAndStock).forEach(function (p) {
       types[p.type] = (types[p.type] || 0) + 1;
       if (p.brand) brands[p.brand] = (brands[p.brand] || 0) + 1;
     });
@@ -146,21 +146,26 @@
     var brandSel = $('#brand');
     brandSel.innerHTML = '<option value="">All brands</option>' + Object.keys(brands).sort(function (a, b) { return a.localeCompare(b); })
       .map(function (b) { return '<option value="' + esc(b) + '">' + esc(b) + ' (' + brands[b] + ')</option>'; }).join('');
+    brandSel.value = state.brand;
   }
 
   function readUrl() {
     var u = new URLSearchParams(location.search);
+    state.market = (u.get('market') || '');
+    $('#market').value = state.market;
+    state.market = $('#market').value;
+    var availability = u.get('availability');
+    state.availability = availability === 'stock' || availability === 'special' ? availability : '';
     state.q = u.get('q') || '';
     state.type = u.get('type') || '';
     state.brand = u.get('brand') || '';
     state.sort = u.get('sort') || 'featured';
     $('#q').value = state.q;
-    $('#brand').value = state.brand;
     $('#sort').value = state.sort;
   }
   function writeUrl() {
     var u = new URLSearchParams(location.search);
-    ['q', 'type', 'brand', 'sort'].forEach(function (k) {
+    ['q', 'type', 'brand', 'sort', 'market', 'availability'].forEach(function (k) {
       var v = state[k];
       if (v && !(k === 'sort' && v === 'featured')) u.set(k, v); else u.delete(k);
     });
@@ -168,7 +173,14 @@
     history.replaceState(null, '', location.pathname + (s ? '?' + s : '') + location.hash);
   }
 
+  function matchesMarketAndStock(p) {
+    var market = p.tags.includes('nicotia') ? 'nicotia' : p.tags.includes('herbal-leaf') ? 'herbal-leaf' : 'legal-leaf';
+    return (!state.market || state.market === market)
+      && (!state.availability || state.availability === (p.localStock ? 'stock' : 'special'));
+  }
+
   function matches(p) {
+    if (!matchesMarketAndStock(p)) return false;
     if (state.type && p.type !== state.type) return false;
     if (state.brand && p.brand !== state.brand) return false;
     if (state.q) {
@@ -187,6 +199,11 @@
     return bits.length ? '<span class="pack-note">' + esc(bits.join(' \u00b7 ')) + '</span>' : '';
   }
 
+  function stockLabel(p, variant) {
+    var inStock = p.localStock && (!variant || variant.available);
+    return '<span class="stock-label' + (inStock ? ' in-stock">In stock' : '">Special order') + '</span>';
+  }
+
   function render() {
     var list = state.products.filter(matches);
     if (state.sort === 'low') list.sort(function (a, b) { return a.price - b.price; });
@@ -196,9 +213,14 @@
     Array.prototype.forEach.call(document.querySelectorAll('#chips .chip'), function (c) {
       c.setAttribute('aria-pressed', String(c.getAttribute('data-type') === state.type));
     });
+    document.querySelectorAll('[data-availability]').forEach(function (button) {
+      button.setAttribute('aria-pressed', String(button.dataset.availability === state.availability));
+    });
     $('#status').textContent = list.length
       ? list.length + (list.length === 1 ? ' product' : ' products') + (state.q ? ' matching "' + state.q + '"' : '')
-      : 'Nothing matches that. Try another word, or email us and we will special order it.';
+      : state.availability === 'stock'
+        ? 'No in-stock items match. Switch to Special Order to see what you can request.'
+        : 'No products match these filters. Try another search.';
 
     var shown = list.slice(0, state.shown);
     $('#grid').innerHTML = shown.map(function (p) {
@@ -209,6 +231,7 @@
         + '<span class="body">'
         + (p.brand ? '<span class="brand-name">' + esc(p.brand) + '</span>' : '')
         + '<span class="name">' + esc(p.title) + '</span>'
+        + stockLabel(p)
         + (p.ageRestricted ? '<span class="badge21">21+ ID at delivery</span>' : '')
         + '<span class="price">' + from + usd(p.price) + was + '</span>'
         + packNote(p)
@@ -228,7 +251,7 @@
     current = p;
     var opts = p.variants.length > 1
       ? '<div class="field"><label for="variant">Option</label><select id="variant">' + p.variants.map(function (v) {
-        return '<option value="' + esc(v.id) + '">' + esc(v.title || 'Standard') + ' - ' + usd(v.price) + (v.available ? '' : ' (special order)') + '</option>';
+        return '<option value="' + esc(v.id) + '">' + esc(v.title || 'Standard') + ' - ' + usd(v.price) + (p.localStock && v.available ? '' : ' (special order)') + '</option>';
       }).join('') + '</select></div>'
       : '';
     var imgs = p.images.length ? p.images : (p.image ? [p.image] : []);
@@ -240,6 +263,7 @@
       + '<div>'
       + (p.brand ? '<div class="brand-name fine"><strong>' + esc(p.brand) + '</strong> · ' + esc(p.type) + '</div>' : '<div class="fine">' + esc(p.type) + '</div>')
       + '<h2 id="product-h">' + esc(p.title) + '</h2>'
+      + '<div id="pd-stock">' + stockLabel(p, p.variants[0]) + '</div>'
       + '<div class="price" id="pd-price">' + usd(p.variants[0].price) + '</div>'
       + packNote(p)
       + opts
@@ -251,7 +275,10 @@
     var sel = $('#variant');
     if (sel) sel.addEventListener('change', function () {
       var v = p.variants.filter(function (x) { return x.id === sel.value; })[0];
-      if (v) $('#pd-price').textContent = usd(v.price);
+      if (v) {
+        $('#pd-price').textContent = usd(v.price);
+        $('#pd-stock').innerHTML = stockLabel(p, v);
+      }
     });
     Array.prototype.forEach.call(document.querySelectorAll('#product-body .thumbs button'), function (b) {
       b.addEventListener('click', function () {
@@ -401,6 +428,21 @@
   }
 
   /* ---------- wiring ---------- */
+  function changeMarketOrStock() {
+    state.brand = ''; state.type = ''; state.shown = PAGE;
+    buildFilters();
+    writeUrl(); render();
+  }
+  $('#market').addEventListener('change', function (e) {
+    state.market = e.target.value;
+    changeMarketOrStock();
+  });
+  document.querySelectorAll('[data-availability]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      state.availability = button.dataset.availability;
+      changeMarketOrStock();
+    });
+  });
   $('#chips').addEventListener('click', function (e) {
     var c = e.target.closest('.chip');
     if (!c) return;
@@ -436,7 +478,9 @@
     Array.prototype.forEach.call(document.querySelectorAll('dialog[open]'), function (d) { d.close(); });
     form.reset(); form.hidden = false; $('#order-done').hidden = true;
     state.q = ''; state.type = ''; state.brand = ''; state.sort = 'featured'; state.shown = PAGE;
-    $('#q').value = ''; $('#brand').value = ''; $('#sort').value = 'featured';
+    state.market = ''; state.availability = '';
+    $('#q').value = ''; $('#market').value = ''; $('#sort').value = 'featured';
+    buildFilters();
     writeUrl(); render(); window.scrollTo(0, 0);
   }
   if (kiosk) {

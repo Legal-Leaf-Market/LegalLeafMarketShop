@@ -52,6 +52,7 @@ export const HOUSE_PRODUCTS = FLAVOURS.map((f) => {
     variants: [{ id: `gob-${f.key}-2ml`, title: '', price: 30, compareAt: null, available: true }],
     description: `${f.notes}. ${f.blurb} 2 mL disposable, black hardware, clear tank. $30 each or any 2 for $50, mix the flavours, Indiana sales tax included. Hand-delivered in Indiana, paid in cash at the door, with a valid 21+ photo ID checked before hand-over. Sold by Legal-Leaf Market.`,
     ageRestricted: true,
+    localStock: true,
     taxIncluded: true,
     pack: PACK,
   };
