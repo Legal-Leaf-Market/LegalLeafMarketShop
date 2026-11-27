@@ -82,6 +82,17 @@ current instructions.
   copy) and gives browsers the line without the shared-cache directives. The tell for a working
   edge cache is the `Cache-Status` response header (`"Netlify Edge"; hit`).
 - Node: the project builds on **24.x** against this repo's stated ≥ 18 floor; functions run on the
+- **Publishing in batches (2026-11-26, after the team ran out of Netlify credits).** Every
+  production deploy costs 15 credits; Deploy Previews and branch deploys cost nothing.
+  `.github/workflows/publish.yml` (copied from Heart of Columbus) fast-forwards a `live` branch
+  to `main` once 5 site changes are waiting or the oldest has waited 4 hours, at once for a pull
+  request with `[publish]` in its title, or on Actions > Publish to the live site > Run workflow.
+  Merges touching only `.github/`, `docs/`, `commerce/`, `tools/`, `test-*.mjs`, root `.md`/`.gs`
+  files or `render.yaml` never publish on their own. **It saves nothing until the Netlify project
+  `legalleafmarket-shop` builds production from `live`** (Project configuration > Build & deploy
+  > Branches: production branch `live`, branch deploys include `main`), and it does nothing until
+  a `live` branch exists. Once switched, a merged pull request is not live until the next publish;
+  say so when reporting one as done. Never commit on `live` or push to it by hand.
   same major.
 - **Production deploys are running again** (checked 27 Nov 2026 through the Netlify connector): the
   live production deploy is `main` at `7a0f875` (PR #33), state `ready`, published
