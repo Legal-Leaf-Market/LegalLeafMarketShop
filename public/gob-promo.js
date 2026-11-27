@@ -13,7 +13,7 @@
  *
  * WHERE IT RUNS.
  *   - legalleafmarket.shop: <script src="/gob-promo.js" defer></script> on /cafe and /shelf
- *     (every other page there redirects to the Shopify store).
+ *     on the first-party storefront's domain.
  *   - shop.legalleafmarket.shop: ONE line in the header group's Custom Liquid section (the same
  *     section that already loads ll-cart.css, so it is on every page):
  *       <script src="https://legalleafmarket.shop/gob-promo.js" defer></script>
@@ -27,8 +27,8 @@
  * WHERE THE FLAVOR LINKS GO. Since 27 Nov 2026 the 2 mL disposables are on /shop for cash at
  * delivery (api/_house.js), so each flavor opens its product there (/shop#p=gob-<flavor>-2ml).
  * They were in person only before that (5 Nov 2026, gob/HANDOFF_CHROME_GOB.md) and linked to the
- * Shopify lab results page, which closes with the Shopify store. The Founders Club and Find us
- * links below still point at Shopify and need a new home before it closes.
+ * Shopify lab results page. The Founders Club and Find us links now open the G.O.B. page
+ * on the first-party site.
  *
  * COPY RULES (gob/HANDOFF_CHROME_GOB.md): flavor notes only. No effect claims, no lineages, no
  * THC numbers, no em dashes. 21+ is stated on the banner and on the card.
@@ -38,10 +38,10 @@
   if (window.__gobPromo) return;
   window.__gobPromo = true;
 
-  var SHOP = 'https://shop.legalleafmarket.shop';
+  var SITE = 'https://legalleafmarket.shop';
   // The disposables are on /shop for cash at delivery (owner, 27 Nov 2026), so each flavor opens
   // its own product there. Absolute, because this script also runs on the Shopify store.
-  var BUY = 'https://legalleafmarket.shop/shop';
+  var BUY = SITE + '/shop';
   var FLAVORS = [
     { key: 'purple-haze', name: 'Purple Haze', notes: 'Lavender · Berry', tint: '#7b5aa6',
       href: BUY + '#p=gob-purple-haze-2ml' },
@@ -62,8 +62,8 @@
   function formatRow(cls) {
     return '<ul class="' + cls + '" aria-label="Comes as">' + FORMATS.map(function (f) { return '<li>' + f.icon + '<span>' + f.name + '</span></li>'; }).join('') + '</ul>';
   }
-  var FOUNDERS = SHOP + '/collections/g-o-b-founders-club';
-  var FIND_US = SHOP + '/pages/find-us';
+  var FOUNDERS = SITE + '/gob#founders-club';
+  var FIND_US = SITE + '/gob#find-us';
 
   // Image folder: img/gob/ next to this script, wherever it was loaded from.
   var src = (document.currentScript && document.currentScript.src) || '';
@@ -162,7 +162,7 @@
       '<nav class="gf" aria-label="G.O.B. flavors">' + FLAVORS.map(function (f) {
         return '<a href="' + f.href + '"><img src="' + img(f.key + '-medallion-240.webp') + '" alt="" width="30" height="30">' + esc(f.name) + '</a>';
       }).join('') + '</nav>' +
-      '<a class="gc" href="' + FOUNDERS + '">Join the Founders Club</a>' +
+      '<a class="gc" href="' + FOUNDERS + '">Founders Club</a>' +
       formatRow('gw').replace('<li>', '<li class="gwl">Every flavor, three ways</li><li>') +
       '<p class="gs">21+ only. 2 mL disposables $30, any 2 for $50, hand-delivered in Indiana, cash at the door. <a href="' + FIND_US + '">Find us</a>.</p>';
     document.body.insertBefore(bar, document.body.firstChild);
@@ -185,7 +185,7 @@
       '<div class="fd">' + FLAVORS.map(function (f, i) {
         return '<button type="button" aria-label="Show ' + esc(f.name) + '"' + (i ? '' : ' class="on" aria-current="true"') + '></button>';
       }).join('') + '</div>' +
-      '<a class="fb" href="' + FOUNDERS + '">Join the Founders Club</a>' +
+      '<a class="fb" href="' + FOUNDERS + '">Founders Club</a>' +
       '<p class="fs">21+ only. Sold in person.</p>' +
       '<button type="button" class="fopen" aria-label="Open the G.O.B. card"><img src="' + img(FLAVORS[0].key + '-medallion-240.webp') + '" alt=""></button>';
     document.body.appendChild(fl);
