@@ -29,7 +29,9 @@ api/
   subscribe.js       Email capture -> /api/subscribe (POST)
   track.js           Event sink -> /api/track (POST)
 public/
-  index.html         Main page (deals grid, filters, admin mode, COA modal)
+  cafe.html          served at / (rewrite in netlify.toml); /cafe 301s to /
+  shop.html          /shop, our own cash-at-delivery storefront (/api/catalog, /api/order) — §8
+  index.html         The old main page (deals grid, engine, admin mode); retired in production
   consumables.html   served at /consumables      devices.html      -> /devices
   international.html  -> /international            greekglass.html   -> /greekglass
   og-image.png favicon.svg robots.txt sitemap.xml
@@ -81,6 +83,11 @@ current instructions.
   edge cache is the `Cache-Status` response header (`"Netlify Edge"; hit`).
 - Node: the project builds on **24.x** against this repo's stated ≥ 18 floor; functions run on the
   same major.
+- **Production deploys are running again** (checked 27 Nov 2026 through the Netlify connector): the
+  live production deploy is `main` at `7a0f875` (PR #33), state `ready`, published
+  2026-11-26 18:23 UTC, with all four functions and both cron schedules deployed. The pause noted
+  under "The base site is closed" (2 Nov 2026, out of plan credits) is over, and a merge to `main`
+  reaches legalleafmarket.shop again. Check the latest deploy before believing either way.
 
 ---
 
@@ -119,12 +126,17 @@ production routing, but leaving `server.mjs` pointing at the deleted `consumable
 worked while the popped-out preview 404'd. Because the preview can lie either way, after a routing
 change verify every route in BOTH the local preview and a Netlify Deploy Preview.
 
-**One redirect the preview makes and production does not list: `/index.html` -> `/`.** It was
-left out on purpose and has NOT been tried on Netlify: `/` is served *from* `index.html`, and a
-forced rule on that path is the classic way to redirect `/` to itself. Every page carries a
-canonical link, which is what the redirect was for, so the cost of leaving it out is a duplicate
-URL that search engines are already told to ignore. If you add it, try it on a Deploy Preview and
-load `/` before merging.
+**`/` is the cafe, not `index.html` (5 Nov 2026).** Production rewrites `/` to `/cafe.html`
+(status 200, forced), 301s `/cafe` to `/`, and 302s `/index.html` to `/`. That last rule is safe
+now only because `/` is no longer served *from* `index.html`. `public/index.html` is the old engine
+page that `tools/make-*.mjs` read, so it stays on disk. Locally `server.mjs` keeps `/` as the engine,
+because the browser suites load it, so the cafe is at `/cafe.html` in the preview.
+
+**Rules near the bottom of `netlify.toml` are shadowed on purpose.** Netlify takes the first rule
+that matches, and the closed-site block (below, "The base site is closed") lists `/consumable`,
+`/coldwater-list` and `/p/theloudpack` first, so the older `/consumable -> /consumables`,
+`/coldwater-list -> /trip` and `/p/theloudpack` rewrite never fire in production. They are kept so
+that deleting the block restores them, and `test-netlify.mjs` holds the preview to them.
 
 ---
 
@@ -768,14 +780,29 @@ correct it.
 Groq strain info, any remaining per-store tuning.
 
 
-### The base site is closed; the shop is Shopify (2 Nov 2026)
+### The base site is closed (2 Nov 2026); its pages go to our own /shop (26 Nov 2026)
 
 **Owner, 2 Nov 2026: "nixing live portions of the site to favor pushing shop.legalleafmarket.shop."**
-Every page in `public/` now 302s to the Shopify store (the block at the top of the redirects in
-`netlify.toml`, listed page by page, never a `/*` catch-all, so `/api/*`, `/p/*`, `/admin*`, the
-crons, `/shop-dispensary.js`, `/ig-studio` and `/coldwater-collect` keep working). A new page
-added to `public/` is served until it is added to that list. `server.mjs` and `test-netlify.mjs`
-do not mirror the block yet.
+The retired pages in `public/` 302 away (the block at the top of the redirects in `netlify.toml`,
+listed page by page, never a `/*` catch-all, so `/api/*`, `/p/*`, `/admin*`, the crons,
+`/shop-dispensary.js`, `/ll-shop.js`, `/ig-studio` and `/coldwater-collect` keep working). A new
+page added to `public/` is served until it is added to that list.
+
+**Since 26 Nov 2026 they land on this site's own `/shop`, not on Shopify.** Shopify banned vape
+products and vapes are core here, so the Shopify store is being closed (owner, 25 Nov 2026). Some
+rules carry a query (`/shop?q=pipe`, `/shop?q=vaporizer`, `/shop?brand=Greek%20Glass`,
+`/shop?brand=Lookah`). What stays served here: `/` (the cafe), `/shop`, `/delivery`
+(`/shipping` 301s to it, because we hand-deliver and never ship), `/returns`, `/terms`,
+`/privacy`, `/contact`. `/shop` is `public/shop.html` reading `/api/catalog` (our own copy of the
+catalogue in `api/_catalog-data.json`, photos in `public/shop/img`, written by
+`tools/export-shop-catalog.mjs`) and posting to `/api/order` (see "/shop is CASH ONLY" below).
+
+`server.mjs` deliberately does NOT copy the closed-site block, because the browser suites load the
+retired pages from it. `test-netlify.mjs` checks the block's own shape (every rule a 302, to `/shop`
+or the old Shopify host) and holds the preview to the rest.
+
+**The Shopify notes below are history while the store is closing.** The dispensary page, `ll-shop.js`
+and `ll-cart.css` only matter for as long as `shop.legalleafmarket.shop` is still up.
 
 - **The dispensary lives at `shop.legalleafmarket.shop/pages/dispensary`.** Page template
   `dispensary` carries one Custom Liquid section with a mount div and
@@ -790,9 +817,9 @@ do not mirror the block yet.
   no toggle back. Cards flip to a back face (description, lineage, lab terpenes, COA) and a mouse
   leaving flips them back. "Shelf" / "Menu board" (kanban by shop, price, category or strain type) /
   "Dashboard" (sortable table + tiles) share one state, and the "Pick your size" jars drive all three.
-  `node test-shop-dispensary.mjs` pins it. Netlify deploys are paused, so the theme's script tag has to
-  point at jsDelivr pinned to the merged commit (`.../LegalLeafMarketShop@<commit>/public/shop-dispensary.js`)
-  for any of it to reach the page.
+  `node test-shop-dispensary.mjs` pins it. While Netlify deploys were paused the theme's script tag
+  pointed at jsDelivr pinned to the merged commit (`.../LegalLeafMarketShop@<commit>/public/shop-dispensary.js`);
+  check the theme for which source it uses now.
 - **Bloomz Hemp, CBD Hemp Direct and Exhale Wellness are `enabled:false`** (owner: "take off").
 - **Herbal Leaf Market and Nicotia Market products are Shopify products now**, tagged
   `herbal-leaf` / `nicotia`, `special-order`, `src:<maker>`, behind smart collections
@@ -812,13 +839,13 @@ do not mirror the block yet.
   It reads the storefront's own `/products.json`. Feed rules, owner's words: nothing over $250,
   over $150 only for glass, no bulk lots, sold-out never shows; `PICKS` (handles) leads, the rules
   fill the rest. The theme grid is hidden only after the slicers render, so a failure leaves it up.
-- **Netlify production deploys are PAUSED (2 Nov 2026, team out of plan credits)**, so nothing
-  merged since then is served from legalleafmarket.shop. The storefront loads `public/ll-shop.js`
-  and `public/ll-cart.css` from jsDelivr instead, pinned to a commit
-  (`cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@<commit>/public/...`). Shipping a
-  change = merge, then put the new commit in the theme: the homepage feed section, the collection
-  template's slicer section (`data-heading="off"`, Horizon's Heading section prints the title) and,
-  for the CSS, the header group's Custom Liquid section.
+- **Netlify production deploys were PAUSED from 2 Nov 2026 (team out of plan credits) and are
+  running again** (§2: production is `main` at `7a0f875` as of 27 Nov 2026). During the pause the
+  Shopify storefront loaded `public/ll-shop.js` and `public/ll-cart.css` from jsDelivr, pinned to a
+  commit (`cdn.jsdelivr.net/gh/Legal-Leaf-Market/LegalLeafMarketShop@<commit>/public/...`), and the
+  theme may still point there: if it does, shipping a change to it is still merge, then put the new
+  commit in the theme (the homepage feed section, the collection template's slicer section with
+  `data-heading="off"`, and the header group's Custom Liquid section for the CSS).
 - **The cart drawer is restyled by `public/ll-cart.css`** (header group, every page): one scroll
   area with the summary sticky, readable quantity and discount inputs. Its header says why.
   Adding from the feed uses Horizon's `CartLinesUpdateEvent`; `cart:refresh` does nothing here.
@@ -901,8 +928,10 @@ Columbus with no storefront, paid in cash at the door.
   cart, checkout, confirmation, kiosk bar, product dialog), `/delivery`, `/terms`, `/returns`
   (refunds are paid in cash) and `/privacy` (no card processor in the sharing list). Do not
   reintroduce "card or cash", "card reader" or "online card payment coming soon".
-- `api/order.js` is the whole checkout: an order is a request, re-priced and 21+/Indiana-checked
-  on the server, and its stored record (with the 7% tax line) is what sales tax is filed from.
+- **Columbus is Columbus, Indiana**, and delivery is Indiana only. `api/order.js` is the whole
+  checkout: an order is a request, re-priced from the catalogue and checked on the server (date of
+  birth 21+, state `IN`, ZIP 460xx-479xx), and its stored record (with the 7% Indiana sales tax
+  line, `TAX_RATE`) is what sales tax is filed from. The ID check at the door is the real age check.
   The `payment: 'at_delivery'` value is unchanged.
 - **Orders land in a Google Sheet.** `LL_ORDER_WEBHOOK` in Netlify is the `/exec` URL of
   `APPS_SCRIPT_ORDERS.gs`, bound to the owner's "Legal-Leaf Market Orders" sheet
