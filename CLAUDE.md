@@ -941,13 +941,39 @@ Columbus with no storefront, paid in cash at the door.
   when it answers JSON `{ok:true}`, because Apps Script answers 200 even when the script throws.
   To change the script, edit it in the sheet's Extensions > Apps Script and publish a **new
   version of the same deployment** (Deploy > Manage deployments), or the URL changes.
-- **`commerce/` (Medusa) runs on Render as a FREE TEST, and nothing on the live site reads it.**
-  Owner, 27 Nov 2026: put it on Render's free plans to try it. `render.yaml` asks for `plan: free`
-  for the web service and the database, and `commerce/render-build.sh` does the database work and
-  the first admin invite at the end of the build, because free services have no pre-deploy step and
-  no Shell (`commerce/DEPLOY.md`). The free database expires 30 days after creation. Still do not
-  point `/shop` at `MEDUSA_URL`, move to paid plans or wire the NMI provider back in without the
-  owner deciding so: `/shop` stays cash at delivery through `api/order.js`.
+- **The Medusa backend in `commerce/` runs on Render’s free plans for testing.** The web service
+  and database use `plan: free`. The build handles migrations, store setup and the first admin
+  invite. The free database expires 30 days after creation (see `commerce/DEPLOY.md`).
+- The live `/shop` uses the bundled catalogue and takes cash at delivery through `api/order.js`
+  and the Google Sheet. The owner plans to replace Shopify with Medusa and PaymentCloud. Get the
+  owner’s approval before moving the live storefront, changing Render plans or enabling NMI.
+- Before enabling cards, keep the system payment provider available alongside NMI in the Medusa
+  region and route `/api/order` orders to Medusa. Today the region setup drops the system provider
+  when live NMI keys are present, and `/api/order` writes through the existing Sheet flow.
+
+### G.O.B. is on /shop (27 Nov 2026)
+
+**Owner: "the three good old boys, 2 mil dispos ... I really want those to be on the site for cash
+on delivery."** Lemon Cherry Gelato, Purple Haze and Strawberry Pie 2 mL disposables are
+`api/_house.js`, appended to every catalogue source and listed FIRST, so Featured opens on them.
+`BLOCKED` in `api/catalog.js` still names `gob` / `good old boys`, so an imported copy can never
+sit beside these, and every other THC-family row an import carries stays off `/shop`.
+
+- **Price, owner's words: "1 should be $30 flat, I take the tax out, and 2 should be $50, I take
+  the tax out."** So `taxIncluded` (the 7% is carved out of the price for the books, never added)
+  and `pack` `{group:'gob-2ml', qty:2, price:50}`, flavours mixed freely: 3 are $80, 4 are $100.
+  `priceLines()` in `api/order.js` charges it; `totals()` in `public/js/shop.js` is its twin for
+  the cart. An order's `tax` is ALL the tax (added + carved out) and its `subtotal` is the sale
+  BEFORE tax ($30 is $28.04 + $1.96), so `subtotal + delivery + tax = total` on every order and the
+  Sheet's Sales and Tax collected columns are right for the return. The cart shows the customer
+  $30 / $50 with "tax already in the price" instead. `test-shop.mjs` pins the sums.
+- **This was decided against two recorded risks, by the owner, knowingly.** PaymentCloud's rule is
+  no THC on the site it reviews, so this can cost the card account; and from 11 Dec 2026 most THC
+  hemp products stop counting as hemp federally. The lab-results QR on the boxes was still a shared
+  placeholder when this went up. If any of that changes the decision, deleting the three rows in
+  `api/_house.js` is the whole reversal.
+- `public/gob-promo.js` flavour links now open `/shop#p=gob-<flavor>-2ml`. Its Founders Club and
+  Find us links still point at the Shopify store and need a home before it closes.
 
 ## 9. Environment variables (all optional; site works without them)
 

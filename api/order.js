@@ -74,6 +74,60 @@ function orderNumber(now = new Date()) {
   return `LL-${ymd}-${rand}`;
 }
 
+/** The money on an order, from its priced lines. Twin of totals() in public/js/shop.js.
+ *
+ *  - A line carrying `pack` {group, qty, price} joins every other line in that
+ *    group: each full set of `qty` units costs `price` (2 G.O.B. for $50), mixed
+ *    freely, and the units left over pay their own price. The pack takes the
+ *    dearest units first, so a mixed-price group can only get cheaper.
+ *  - A line carrying `taxIncluded` already contains the 7%: its tax is carved
+ *    out (gross - gross / 1.07) and nothing is added. Everything else, and the
+ *    delivery fee, has 7% added on top, as before.
+ *
+ *  subtotal is the SALE before tax (tax-included lines net of their carved-out
+ *  tax), tax is ALL the tax on the order (added + carved out), and total is the
+ *  cash at the door, so subtotal + delivery + tax = total on every order. That
+ *  is what the owner's Sheet adds up for the sales-tax return (APPS_SCRIPT_ORDERS.gs
+ *  sums Subtotal as "Sales" and Tax as "Tax collected"). The cart shows the
+ *  customer the friendlier view: $30 each, $50 a pair, tax already in it.
+ */
+export function priceLines(lines, fee = 0) {
+  const groups = new Map();
+  for (const l of lines) {
+    if (!l.pack || !(l.pack.qty > 1) || !(l.pack.price > 0)) continue;
+    const g = groups.get(l.pack.group) || { pack: l.pack, units: [] };
+    for (let i = 0; i < l.qty; i++) g.units.push({ price: l.price, taxIncluded: !!l.taxIncluded });
+    groups.set(l.pack.group, g);
+  }
+  let discount = 0, discountIncl = 0, packs = 0;
+  for (const g of groups.values()) {
+    const u = g.units.sort((a, b) => b.price - a.price);
+    const n = Math.floor(u.length / g.pack.qty);
+    for (let k = 0; k < n; k++) {
+      const set = u.slice(k * g.pack.qty, (k + 1) * g.pack.qty);
+      const off = set.reduce((s, x) => s + x.price, 0) - g.pack.price;
+      if (off <= 0) continue;
+      packs++;
+      discount += off;
+      /* Share the saving across the set by price, so the tax split is right
+         even if a pack ever mixes tax-included and tax-added units. */
+      const sum = set.reduce((s, x) => s + x.price, 0);
+      for (const x of set) if (x.taxIncluded) discountIncl += off * (x.price / sum);
+    }
+  }
+  const gross = lines.reduce((s, l) => s + l.total, 0);
+  const grossIncl = lines.filter((l) => l.taxIncluded).reduce((s, l) => s + l.total, 0) - discountIncl;
+  const added = gross - discount - grossIncl;
+  const taxIncluded = cents(grossIncl - grossIncl / (1 + TAX_RATE));
+  const taxAdded = cents((added + fee) * TAX_RATE);
+  const total = cents(gross - discount + fee + taxAdded);
+  const tax = cents(taxAdded + taxIncluded);
+  return {
+    subtotal: cents(total - fee - tax), discount: cents(discount), packs,
+    tax, taxIncluded, taxAdded, total,
+  };
+}
+
 /** Validate and price an order against the catalogue. Pure apart from `now`. */
 export function buildOrder(body, products, now = new Date()) {
   const errors = [];
@@ -112,14 +166,13 @@ export function buildOrder(body, products, now = new Date()) {
     const v = p.variants.find((x) => x.id === String(it.variant)) || (p.variants.length === 1 ? p.variants[0] : null);
     if (!v) { errors.push({ field: 'items', message: `Please choose an option for ${p.title}.` }); continue; }
     const qty = Math.max(1, Math.min(MAX_QTY, Math.floor(Number(it.qty) || 1)));
-    lines.push({ id: p.id, variant: v.id, title: p.title, option: v.title, brand: p.brand, qty, price: v.price, total: cents(v.price * qty), ageRestricted: p.ageRestricted });
+    lines.push({ id: p.id, variant: v.id, title: p.title, option: v.title, brand: p.brand, qty, price: v.price, total: cents(v.price * qty), ageRestricted: p.ageRestricted,
+      ...(p.taxIncluded ? { taxIncluded: true } : {}), ...(p.pack ? { pack: p.pack } : {}) });
   }
   if (!lines.length && !errors.some((e) => e.field === 'items')) errors.push({ field: 'items', message: 'Your cart is empty.' });
 
-  const subtotal = cents(lines.reduce((s, l) => s + l.total, 0));
   const fee = cents(Math.max(0, Number(process.env.LL_DELIVERY_FEE || 0)));
-  const tax = cents((subtotal + fee) * TAX_RATE);
-  const total = cents(subtotal + fee + tax);
+  const { subtotal, discount, packs, tax, taxIncluded, total } = priceLines(lines, fee);
 
   const channel = String((body && body.channel) || 'web') === 'kiosk' ? 'kiosk' : 'web';
   const partner = clip(body && body.partner, 60).toLowerCase().replace(/[^a-z0-9-]/g, '');
@@ -135,7 +188,7 @@ export function buildOrder(body, products, now = new Date()) {
       customer: { name, email, phone, dob: String(c.dob), age },
       address,
       notes: clip(body && body.notes, 1000),
-      lines, subtotal, delivery: fee, tax, taxRate: TAX_RATE, total,
+      lines, subtotal, ...(discount ? { discount, packs } : {}), delivery: fee, tax, ...(taxIncluded ? { taxIncluded } : {}), taxRate: TAX_RATE, total,
       ageRestricted: lines.some((l) => l.ageRestricted),
     },
   };
@@ -155,9 +208,10 @@ export function orderText(o) {
     '',
     ...rows,
     '',
-    `Subtotal ${usd(o.subtotal)}`,
+    ...(o.discount ? [`Pack price (${o.packs} ${o.packs === 1 ? 'set' : 'sets'})  -${usd(o.discount)}`] : []),
+    `Subtotal ${usd(o.subtotal)}${o.taxIncluded ? ' (before tax)' : ''}`,
     `Delivery ${usd(o.delivery)}`,
-    `Tax (7%) ${usd(o.tax)}`,
+    `Tax (7%) ${usd(o.tax)}${o.taxIncluded ? `  (${usd(o.taxIncluded)} of it already in the price)` : ''}`,
     `Total    ${usd(o.total)}   cash at delivery`,
     o.notes ? `\nNotes: ${o.notes}` : '',
     o.ageRestricted ? '\nCheck a valid photo ID (21+) at the door before handing over.' : '\nCheck a valid photo ID (21+) at the door.',
@@ -210,7 +264,7 @@ export default async function handler(req, res) {
 
   const sinks = await deliver(order);
   const received = Object.values(sinks).some(Boolean);
-  const summary = { number: order.number, lines: order.lines, subtotal: order.subtotal, delivery: order.delivery, tax: order.tax, total: order.total, payment: order.payment };
+  const summary = { number: order.number, lines: order.lines, subtotal: order.subtotal, discount: order.discount || 0, delivery: order.delivery, tax: order.tax, taxIncluded: order.taxIncluded || 0, total: order.total, payment: order.payment };
   if (!received) {
     console.error('[order] no sink accepted order', order.number, JSON.stringify(sinks));
     return res.status(503).json({ ok: false, fallback: 'email', email: 'jake@legalleafmarket.shop', text: orderText(order), order: summary });
