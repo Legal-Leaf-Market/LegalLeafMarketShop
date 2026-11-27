@@ -58,11 +58,41 @@
     return { p: p, v: v, qty: l.qty };
   }
   function cartLines() { return cart.map(lineOf).filter(Boolean); }
+  /* Twin of priceLines() in api/order.js, which is the one that charges. A
+     product with `pack` {group, qty, price} prices each full set of qty units in
+     its group at price (G.O.B.: any 2 for $50), dearest units first; one with
+     `taxIncluded` already holds the 7%, which is carved out, not added. */
+  var r2 = function (n) { return Math.round(n * 100) / 100; };
   function totals() {
-    var sub = cartLines().reduce(function (s, l) { return s + l.v.price * l.qty; }, 0);
+    var lines = cartLines();
     var fee = cart.length ? state.fee : 0;
-    var tax = Math.round((sub + fee) * TAX * 100) / 100;
-    return { sub: sub, fee: fee, tax: tax, total: sub + fee + tax };
+    var groups = {};
+    lines.forEach(function (l) {
+      var pk = l.p.pack;
+      if (!pk || !(pk.qty > 1) || !(pk.price > 0)) return;
+      var g = groups[pk.group] || (groups[pk.group] = { pack: pk, units: [] });
+      for (var i = 0; i < l.qty; i++) g.units.push({ price: l.v.price, incl: !!l.p.taxIncluded });
+    });
+    var discount = 0, discountIncl = 0;
+    Object.keys(groups).forEach(function (k) {
+      var g = groups[k];
+      var u = g.units.sort(function (a, b) { return b.price - a.price; });
+      var n = Math.floor(u.length / g.pack.qty);
+      for (var s = 0; s < n; s++) {
+        var set = u.slice(s * g.pack.qty, (s + 1) * g.pack.qty);
+        var sum = set.reduce(function (t, x) { return t + x.price; }, 0);
+        var off = sum - g.pack.price;
+        if (off <= 0) continue;
+        discount += off;
+        set.forEach(function (x) { if (x.incl) discountIncl += off * (x.price / sum); });
+      }
+    });
+    var gross = lines.reduce(function (t, l) { return t + l.v.price * l.qty; }, 0);
+    var grossIncl = lines.filter(function (l) { return l.p.taxIncluded; }).reduce(function (t, l) { return t + l.v.price * l.qty; }, 0) - discountIncl;
+    var taxIncl = r2(grossIncl - grossIncl / (1 + TAX));
+    var taxAdded = r2((gross - discount - grossIncl + fee) * TAX);
+    var sub = r2(gross - discount);
+    return { gross: r2(gross), discount: r2(discount), sub: sub, fee: fee, tax: r2(taxAdded + taxIncl), taxIncl: taxIncl, taxAdded: taxAdded, total: r2(sub + fee + taxAdded) };
   }
   function addToCart(id, variant, qty) {
     var hit = cart.filter(function (l) { return l.id === id && l.variant === variant; })[0];
@@ -149,6 +179,14 @@
     return true;
   }
 
+  /* "Any 2 for $50, tax included", on the card and in the product dialog. */
+  function packNote(p) {
+    var bits = [];
+    if (p.pack && p.pack.qty > 1 && p.pack.price > 0) bits.push('Any ' + p.pack.qty + ' for ' + usd(p.pack.price));
+    if (p.taxIncluded) bits.push('tax included');
+    return bits.length ? '<span class="pack-note">' + esc(bits.join(' \u00b7 ')) + '</span>' : '';
+  }
+
   function render() {
     var list = state.products.filter(matches);
     if (state.sort === 'low') list.sort(function (a, b) { return a.price - b.price; });
@@ -173,6 +211,7 @@
         + '<span class="name">' + esc(p.title) + '</span>'
         + (p.ageRestricted ? '<span class="badge21">21+ ID at delivery</span>' : '')
         + '<span class="price">' + from + usd(p.price) + was + '</span>'
+        + packNote(p)
         + '</span></button>';
     }).join('');
     var more = $('#more');
@@ -202,6 +241,7 @@
       + (p.brand ? '<div class="brand-name fine"><strong>' + esc(p.brand) + '</strong> · ' + esc(p.type) + '</div>' : '<div class="fine">' + esc(p.type) + '</div>')
       + '<h2 id="product-h">' + esc(p.title) + '</h2>'
       + '<div class="price" id="pd-price">' + usd(p.variants[0].price) + '</div>'
+      + packNote(p)
       + opts
       + '<div class="qty"><div class="field"><label for="pd-qty">Qty</label><input id="pd-qty" type="number" min="1" max="20" value="1" inputmode="numeric"></div>'
       + '<button type="button" class="btn" id="pd-add">Add to cart</button></div>'
@@ -253,9 +293,11 @@
         + '<div><strong>' + usd(l.v.price * l.qty) + '</strong></div></li>';
     }).join('') : '<li style="display:block;border:0">Your cart is empty.</li>';
     $('#cart-totals').innerHTML = lines.length
-      ? '<div><span>Subtotal</span><span>' + usd(t.sub) + '</span></div>'
+      ? (t.discount ? '<div><span>Pack price</span><span>-' + usd(t.discount) + '</span></div>' : '')
+        + '<div><span>Subtotal</span><span>' + usd(t.sub) + '</span></div>'
         + '<div><span>Local delivery</span><span>' + (t.fee ? usd(t.fee) : 'Free') + '</span></div>'
-        + '<div><span>Indiana sales tax (7%)</span><span>' + usd(t.tax) + '</span></div>'
+        + (t.taxAdded || !t.taxIncl ? '<div><span>Indiana sales tax (7%)</span><span>' + usd(t.taxAdded) + '</span></div>' : '')
+        + (t.taxIncl ? '<div><span>Sales tax already in the price</span><span>' + usd(t.taxIncl) + '</span></div>' : '')
         + '<div class="grand"><span>Total</span><span>' + usd(t.total) + '</span></div>'
       : '';
     $('#to-checkout').disabled = !lines.length;

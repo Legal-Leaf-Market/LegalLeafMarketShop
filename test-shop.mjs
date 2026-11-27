@@ -71,11 +71,16 @@ console.log('\nCATALOGUE');
   ok('GET /api/catalog answers 200', res.statusCode === 200, String(res.statusCode));
   const ids = (res.body.products || []).map((p) => p.id);
   ok('glass, vaporizer, pouches and tea are listed', ['beaker-bong-12', 'lookah-seahorse', 'nicotia-pouches', 'mullein-tea'].every((i) => ids.includes(i)), ids.join(','));
-  ok('the G.O.B. THC disposable is not', !ids.includes('gob-purple-haze'));
+  ok('a G.O.B. row from an import is not', !ids.includes('gob-purple-haze'));
+  const gob = (res.body.products || []).filter((p) => p.tags.includes('gob'));
+  ok('...but our own three G.O.B. 2 mL disposables are (api/_house.js)', gob.length === 3 && ['lemon-cherry-gelato', 'purple-haze', 'strawberry-pie'].every((k) => ids.includes(`gob-${k}-2ml`)), gob.map((p) => p.id).join(','));
+  ok('...at $30, any 2 for $50, tax included, 21+', gob.every((p) => p.price === 30 && p.pack.qty === 2 && p.pack.price === 50 && p.taxIncluded && p.ageRestricted));
+  ok('...and lead the catalogue, so Featured shows them first', ids.slice(0, 3).every((i) => /^gob-/.test(i)), ids.slice(0, 3).join(','));
+  ok('...with their own photos', gob.every((p) => /^\/img\/gob\/.+-packshot\.jpg$/.test(p.image) && p.images.length === 4));
   ok('THCa flower is not', !ids.includes('thca-flower'));
   ok('delta-8 is not', !ids.includes('delta8-gummies'));
   ok('a $0 row is not', !ids.includes('free-sample'));
-  ok('meta counts what was hidden', res.body.meta.hidden === 4 && res.body.meta.source === 'shopify', JSON.stringify(res.body.meta));
+  ok('meta counts what was hidden', res.body.meta.hidden === 4 && res.body.meta.house === 3 && res.body.meta.source === 'shopify', JSON.stringify(res.body.meta));
   const by = Object.fromEntries(res.body.products.map((p) => [p.id, p]));
   ok('the vaporizer is flagged 21+', by['lookah-seahorse'].ageRestricted === true);
   ok('nicotine pouches are flagged 21+', by['nicotia-pouches'].ageRestricted === true);
@@ -138,6 +143,30 @@ const fieldsOf = (r) => r.errors.map((e) => e.field).sort().join(',');
   ok('quantity is capped at 20', ord.buildOrder(e, products, NOW).order.lines[0].qty === 20);
   const f = good(); f.items = [];
   ok('an empty cart is refused', fieldsOf(ord.buildOrder(f, products, NOW)) === 'items');
+}
+
+console.log('\nG.O.B. PRICING (1 for $30, 2 for $50, tax included)');
+{
+  const lcg = { id: 'gob-lemon-cherry-gelato-2ml' }, ph = { id: 'gob-purple-haze-2ml' }, sp = { id: 'gob-strawberry-pie-2ml' };
+  const at = (items) => { const b = good(); b.items = items; return ord.buildOrder(b, products, NOW); };
+  let r = at([{ ...lcg, qty: 1 }]);
+  ok('one is $30 at the door, nothing added', r.errors.length === 0 && r.order.total === 30 && r.order.subtotal === 28.04, JSON.stringify([r.errors, r.order && r.order.total]));
+  ok('...and $1.96 of it is the 7% tax, for the books', r.order.tax === 1.96 && r.order.taxIncluded === 1.96, String(r.order.tax));
+  ok('...and it is a 21+ order', r.order.ageRestricted === true);
+  r = at([{ ...lcg, qty: 1 }, { ...ph, qty: 1 }]);
+  ok('two different flavours are $50', r.order.total === 50 && r.order.discount === 10 && r.order.packs === 1, `${r.order.total} ${r.order.discount}`);
+  ok('...with $3.27 tax inside it', r.order.tax === 3.27, String(r.order.tax));
+  r = at([{ ...sp, qty: 2 }]);
+  ok('two of one flavour are $50 too', r.order.total === 50);
+  r = at([{ ...lcg, qty: 1 }, { ...ph, qty: 1 }, { ...sp, qty: 1 }]);
+  ok('three are $80 (a pair and a single)', r.order.total === 80 && r.order.tax === 5.23, `${r.order.total} ${r.order.tax}`);
+  r = at([{ ...lcg, qty: 4 }]);
+  ok('four are $100', r.order.total === 100);
+  r = at([{ ...lcg, qty: 2 }, { id: 'beaker-bong-12', qty: 1 }]);
+  ok('a pair with a pipe: $50 tax-in plus $74.99 with 7% added', r.order.total === 130.24 && r.order.tax === 8.52, `${r.order.total} ${r.order.tax}`);
+  ok('the order text names the pack and the included tax', /Pack price \(1 set\)\s+-\$10\.00/.test(ord.orderText(r.order)) && /\$3\.27 of it already in the price/.test(ord.orderText(r.order)));
+  ok('subtotal + delivery + tax is the cash taken, so the Sheet\'s Sales and Tax columns file correctly', [at([{ ...lcg, qty: 3 }]).order, r.order].every((o) => Math.abs(o.subtotal + o.delivery + o.tax - o.total) < 0.005));
+  ok('priceLines with no pack or included tax is the old arithmetic', ord.priceLines([{ price: 10, qty: 1, total: 10 }], 0).total === 10.7);
 }
 
 console.log('\nORDER DELIVERY');

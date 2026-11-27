@@ -24,11 +24,11 @@
  * IMAGES come from img/gob/ beside this script, worked out from the script's own src, so a
  * pinned jsDelivr src also pins the pictures and the apex copy uses the apex pictures.
  *
- * WHERE THE FLAVOR LINKS GO. The vapes sell IN PERSON ONLY, never on Shopify (owner's decision,
- * 5 Nov 2026, gob/HANDOFF_CHROME_GOB.md), so the three product pages are drafts and would 404.
- * Each flavor links to its own section of the G.O.B. lab results page, which is also where the
- * QR code on that flavor's wrap points. If the owner ever puts them on sale online, change the
- * three `href`s in FLAVORS and nothing else.
+ * WHERE THE FLAVOR LINKS GO. Since 27 Nov 2026 the 2 mL disposables are on /shop for cash at
+ * delivery (api/_house.js), so each flavor opens its product there (/shop#p=gob-<flavor>-2ml).
+ * They were in person only before that (5 Nov 2026, gob/HANDOFF_CHROME_GOB.md) and linked to the
+ * Shopify lab results page, which closes with the Shopify store. The Founders Club and Find us
+ * links below still point at Shopify and need a new home before it closes.
  *
  * COPY RULES (gob/HANDOFF_CHROME_GOB.md): flavor notes only. No effect claims, no lineages, no
  * THC numbers, no em dashes. 21+ is stated on the banner and on the card.
@@ -39,13 +39,16 @@
   window.__gobPromo = true;
 
   var SHOP = 'https://shop.legalleafmarket.shop';
+  // The disposables are on /shop for cash at delivery (owner, 27 Nov 2026), so each flavor opens
+  // its own product there. Absolute, because this script also runs on the Shopify store.
+  var BUY = 'https://legalleafmarket.shop/shop';
   var FLAVORS = [
     { key: 'purple-haze', name: 'Purple Haze', notes: 'Lavender · Berry', tint: '#7b5aa6',
-      href: SHOP + '/pages/gob-lab-results#purple-haze' },
+      href: BUY + '#p=gob-purple-haze-2ml' },
     { key: 'lemon-cherry-gelato', name: 'Lemon Cherry Gelato', notes: 'Lemon · Cherry · Cream', tint: '#d9b23a',
-      href: SHOP + '/pages/gob-lab-results#lemon-cherry-gelato' },
+      href: BUY + '#p=gob-lemon-cherry-gelato-2ml' },
     { key: 'strawberry-pie', name: 'Strawberry Pie', notes: 'Strawberry · Vanilla', tint: '#c8463f',
-      href: SHOP + '/pages/gob-lab-results#strawberry-pie' }
+      href: BUY + '#p=gob-strawberry-pie-2ml' }
   ];
   // Every flavor comes three ways (owner, 5 Nov 2026). Sizes only: no potency numbers (copy rules above).
   // Drawn as line icons rather than photos because no packshot exists yet for the cart or the puck,
@@ -161,7 +164,7 @@
       }).join('') + '</nav>' +
       '<a class="gc" href="' + FOUNDERS + '">Join the Founders Club</a>' +
       formatRow('gw').replace('<li>', '<li class="gwl">Every flavor, three ways</li><li>') +
-      '<p class="gs">21+ only. Disposables, carts and wax, three flavors, sold in person. <a href="' + FIND_US + '">Find us</a>.</p>';
+      '<p class="gs">21+ only. 2 mL disposables $30, any 2 for $50, hand-delivered in Indiana, cash at the door. <a href="' + FIND_US + '">Find us</a>.</p>';
     document.body.insertBefore(bar, document.body.firstChild);
 
     // 2. The floating card.
