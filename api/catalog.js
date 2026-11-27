@@ -32,6 +32,7 @@
  */
 
 import { existsSync, readFileSync } from 'node:fs';
+import { HOUSE_PRODUCTS } from './_house.js';
 
 const DEFAULT_SHOPIFY = 'czmeq0-ik.myshopify.com';
 const PAGE = 250;
@@ -230,8 +231,12 @@ export async function loadCatalog({ fresh = false } = {}) {
     .then((r) => {
       /* One row per handle; the first wins. */
       const seen = new Set();
-      const products = r.products.filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true)));
-      const data = { products, meta: { source: r.source, ...(r.exportedAt ? { exportedAt: r.exportedAt } : {}), raw: r.raw, count: products.length, hidden: r.raw - products.length, updated: new Date().toISOString() } };
+      const sourced = r.products.filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true)));
+      /* Our own products (api/_house.js) go on whatever the source is, FIRST:
+         "Featured" is catalogue order, and these are the ones the owner wants seen. */
+      const house = HOUSE_PRODUCTS.filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true)));
+      const products = house.concat(sourced);
+      const data = { products, meta: { source: r.source, ...(r.exportedAt ? { exportedAt: r.exportedAt } : {}), raw: r.raw, count: products.length, hidden: r.raw - sourced.length, house: house.length, updated: new Date().toISOString() } };
       cache.data = data;
       cache.at = Date.now();
       return data;

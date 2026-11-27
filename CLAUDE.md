@@ -941,9 +941,39 @@ Columbus with no storefront, paid in cash at the door.
   when it answers JSON `{ok:true}`, because Apps Script answers 200 even when the script throws.
   To change the script, edit it in the sheet's Extensions > Apps Script and publish a **new
   version of the same deployment** (Deploy > Manage deployments), or the URL changes.
-- **`commerce/` (Medusa + the NMI provider) and `render.yaml` are PARKED.** Merged in #27, never
-  deployed, nothing on the live site reads them. No Render service exists; do not create one, and
-  do not point `/shop` at `MEDUSA_URL`, without the owner reversing this decision.
+- **`commerce/` (Medusa + the NMI provider) is UNPARKED (owner, 27 Nov 2026): "I'm taking down
+  any Shopify store that I set up and completely replacing it with custom code of Medusa and
+  Payment Cloud."** Cash at delivery stays the only payment until PaymentCloud approves the
+  account; then their NMI keys go into Render and cards switch on beside cash. Hosting is Render
+  via `render.yaml` (~$13/month), set up by the owner per `commerce/DEPLOY.md`. Not live yet: no
+  Render service exists until the owner creates it, and `/shop` keeps reading the bundled
+  catalogue until `MEDUSA_URL` is set in Netlify. Two code gaps before cards: the region setup
+  drops the cash (system) provider once NMI keys exist in production, and `/api/order` does not yet
+  write orders into Medusa.
+
+### G.O.B. is on /shop (27 Nov 2026)
+
+**Owner: "the three good old boys, 2 mil dispos ... I really want those to be on the site for cash
+on delivery."** Lemon Cherry Gelato, Purple Haze and Strawberry Pie 2 mL disposables are
+`api/_house.js`, appended to every catalogue source and listed FIRST, so Featured opens on them.
+`BLOCKED` in `api/catalog.js` still names `gob` / `good old boys`, so an imported copy can never
+sit beside these, and every other THC-family row an import carries stays off `/shop`.
+
+- **Price, owner's words: "1 should be $30 flat, I take the tax out, and 2 should be $50, I take
+  the tax out."** So `taxIncluded` (the 7% is carved out of the price for the books, never added)
+  and `pack` `{group:'gob-2ml', qty:2, price:50}`, flavours mixed freely: 3 are $80, 4 are $100.
+  `priceLines()` in `api/order.js` charges it; `totals()` in `public/js/shop.js` is its twin for
+  the cart. An order's `tax` is ALL the tax (added + carved out) and its `subtotal` is the sale
+  BEFORE tax ($30 is $28.04 + $1.96), so `subtotal + delivery + tax = total` on every order and the
+  Sheet's Sales and Tax collected columns are right for the return. The cart shows the customer
+  $30 / $50 with "tax already in the price" instead. `test-shop.mjs` pins the sums.
+- **This was decided against two recorded risks, by the owner, knowingly.** PaymentCloud's rule is
+  no THC on the site it reviews, so this can cost the card account; and from 11 Dec 2026 most THC
+  hemp products stop counting as hemp federally. The lab-results QR on the boxes was still a shared
+  placeholder when this went up. If any of that changes the decision, deleting the three rows in
+  `api/_house.js` is the whole reversal.
+- `public/gob-promo.js` flavour links now open `/shop#p=gob-<flavor>-2ml`. Its Founders Club and
+  Find us links still point at the Shopify store and need a home before it closes.
 
 ## 9. Environment variables (all optional; site works without them)
 
