@@ -941,15 +941,15 @@ Columbus with no storefront, paid in cash at the door.
   when it answers JSON `{ok:true}`, because Apps Script answers 200 even when the script throws.
   To change the script, edit it in the sheet's Extensions > Apps Script and publish a **new
   version of the same deployment** (Deploy > Manage deployments), or the URL changes.
-- **`commerce/` (Medusa + the NMI provider) is UNPARKED (owner, 27 Nov 2026): "I'm taking down
-  any Shopify store that I set up and completely replacing it with custom code of Medusa and
-  Payment Cloud."** Cash at delivery stays the only payment until PaymentCloud approves the
-  account; then their NMI keys go into Render and cards switch on beside cash. Hosting is Render
-  via `render.yaml` (~$13/month), set up by the owner per `commerce/DEPLOY.md`. Not live yet: no
-  Render service exists until the owner creates it, and `/shop` keeps reading the bundled
-  catalogue until `MEDUSA_URL` is set in Netlify. Two code gaps before cards: the region setup
-  drops the cash (system) provider once NMI keys exist in production, and `/api/order` does not yet
-  write orders into Medusa.
+- **The Medusa backend in `commerce/` runs on Render’s free plans for testing.** The web service
+  and database use `plan: free`. The build handles migrations, store setup and the first admin
+  invite. The free database expires 30 days after creation (see `commerce/DEPLOY.md`).
+- The live `/shop` uses the bundled catalogue and takes cash at delivery through `api/order.js`
+  and the Google Sheet. The owner plans to replace Shopify with Medusa and PaymentCloud. Get the
+  owner’s approval before moving the live storefront, changing Render plans or enabling NMI.
+- Before enabling cards, keep the system payment provider available alongside NMI in the Medusa
+  region and route `/api/order` orders to Medusa. Today the region setup drops the system provider
+  when live NMI keys are present, and `/api/order` writes through the existing Sheet flow.
 
 ### G.O.B. is on /shop (27 Nov 2026)
 

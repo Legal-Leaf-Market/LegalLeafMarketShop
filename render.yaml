@@ -3,12 +3,19 @@
 # Postgres database and the web service and wires them together. Netlify keeps
 # serving the website; this only runs the store API and the admin.
 #
-# Cost at the time of writing: web service "starter" + Postgres "basic-256mb",
-# roughly $13/month. The free plans would work for testing, but the free web
-# service sleeps when idle and the free database is deleted after 30 days.
+# FREE TEST PLANS (owner, 27 Nov 2026). $0, with the free tier's limits:
+# - the web service (512 MB RAM) sleeps after 15 minutes without a visitor and
+#   takes about a minute to wake;
+# - the free database expires 30 days after it is created and is deleted 14
+#   days after that, with everything in it, unless it is upgraded first;
+# - free services have no Shell and no pre-deploy step, so the database work and
+#   the first admin invite run at the end of the build (commerce/render-build.sh).
+# To keep it for real, change both plans below (for example web "starter" and
+# Postgres "basic-256mb", about $13/month when this was written). Nothing else
+# needs to change.
 databases:
   - name: legal-leaf-db
-    plan: basic-256mb
+    plan: free
     databaseName: legal_leaf
     user: legal_leaf
 
@@ -16,14 +23,12 @@ services:
   - type: web
     name: legal-leaf-commerce
     runtime: node
-    plan: starter
+    plan: free
     rootDir: commerce
-    buildCommand: corepack enable && yarn install && yarn build && cd .medusa/server && yarn install --production
-    # Migrations, the store setup and the catalogue import are all safe to run
-    # again, so every deploy runs them: new products in api/_catalog-data.json
-    # reach the store on the next deploy, existing ones are left alone.
-    preDeployCommand: npx medusa db:migrate && yarn setup && yarn import:catalog
-    startCommand: cd .medusa/server && NODE_ENV=production npx medusa start
+    buildCommand: bash render-build.sh
+    # A heap cap below the free plan's 512 MB, so Node collects garbage harder
+    # instead of the instance being killed for running out of memory.
+    startCommand: cd .medusa/server && NODE_OPTIONS=--max-old-space-size=400 npm run start
     healthCheckPath: /health
     envVars:
       - key: NODE_VERSION
@@ -50,8 +55,12 @@ services:
         value: https://legal-leaf-commerce.onrender.com
       - key: IMAGE_BASE
         value: https://legalleafmarket.shop
-      # Paste these from the PaymentCloud / NMI merchant portal once approved,
-      # then redeploy. Until they are set the store cannot charge a card.
+      # The build prints a one-time admin invite for this address (see
+      # commerce/render-build.sh). Delete it in Render once you have signed in.
+      - key: ADMIN_INVITE_EMAIL
+        value: jake@legalleafmarket.shop
+      # Card processing is archived (the shop is cash at delivery). These stay
+      # blank; Medusa only loads the NMI provider when they are set.
       - key: NMI_SECURITY_KEY
         sync: false
       - key: NMI_TOKENIZATION_KEY
