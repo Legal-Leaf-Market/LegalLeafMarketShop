@@ -107,15 +107,16 @@
   .add[disabled] { border-color: var(--line); color: var(--muted); background: transparent; cursor: not-allowed; }
   .tray { position: fixed; right: 16px; bottom: 16px; z-index: 8; padding: 13px 20px; border: 0; border-radius: 999px; background: #8F3A22; color: #fff; font: 700 16px/1.2 var(--sans); cursor: pointer; box-shadow: 0 8px 22px rgba(25,40,42,.35); }
   .tray[hidden] { display: none; }
-  dialog { width: min(560px, calc(100% - 24px)); max-height: 90vh; padding: 0; border: 0; border-radius: 8px; background: var(--paper); color: var(--ink); }
+  dialog { width: min(560px, calc(100% - 24px)); max-width: none; max-height: calc(100dvh - 24px); padding: 0; border: 0; border-radius: 8px; background: var(--paper); color: var(--ink); overscroll-behavior: contain; }
   dialog::backdrop { background: rgba(25,40,42,.6); }
-  .dlg { padding: 24px; }
-  .dlg-top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
-  .x { border: 0; background: none; font-size: 26px; line-height: 1; cursor: pointer; color: var(--ink); }
+  .dlg { padding: 0 clamp(14px, 4vw, 24px) clamp(14px, 4vw, 24px); }
+  .dlg-top { position: sticky; top: 0; z-index: 1; background: var(--paper); display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 8px; }
+  .dlg-top h2 { margin: 0; }
+  .x { display: grid; flex: none; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(34,48,31,.08); font-size: 24px; line-height: 1; cursor: pointer; color: var(--ink); }
   .lines { list-style: none; margin: 14px 0; padding: 0; border-top: 1px solid var(--line); }
   .lines li { display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
   .qty { display: flex; gap: 6px; align-items: center; flex: none; }
-  .qty button { width: 28px; height: 28px; border: 1px solid var(--teal); background: none; border-radius: 4px; cursor: pointer; color: var(--teal); font-weight: 700; }
+  .qty button { width: 36px; height: 40px; border: 1px solid var(--teal); background: none; border-radius: 4px; cursor: pointer; color: var(--teal); font-weight: 700; }
   .est { font-weight: 700; margin: 0 0 4px; }
   .note { margin: 0 0 14px; font-size: 14px; color: var(--muted); }
   .field { display: block; margin-bottom: 12px; font-size: 14px; font-weight: 600; }
@@ -632,7 +633,7 @@
   try { if (localStorage.getItem(KEY) === '1') return; } catch (e) {}
   if (CRAWLERS.test(navigator.userAgent || '')) return;
   var css = document.createElement('style');
-  css.textContent = 'html.gated,html.gated body{overflow:hidden}#gate{position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(20,31,51,.9);backdrop-filter:blur(6px)}#gate .card{width:100%;max-width:440px;padding:32px 28px;text-align:center;background:#FFFAEF;color:#22301F;border:9px solid #7A4E2A;outline:2px solid #4C2F17;border-radius:3px}#gate h2{margin:0 0 10px;font-size:28px;line-height:1.15}#gate p{margin:0 0 20px;font-size:17px;line-height:1.45}#gate .btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}#gate button{padding:13px 20px;border-radius:4px;border:1px solid #2C4A33;font:700 16px/1.2 var(--sans);cursor:pointer}#gate .yes{background:#2C4A33;color:#fff}#gate .no{background:none;color:#2C4A33}#gate .fine{margin:16px 0 0;font-size:13px;color:#515C48}#gate button:focus-visible,#gate a:focus-visible{outline:3px solid #8F3A22;outline-offset:2px}';
+  css.textContent = 'html.gated,html.gated body{overflow:hidden}#gate{position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;padding:clamp(10px,4vw,20px);background:rgba(20,31,51,.9);backdrop-filter:blur(6px)}#gate .card{box-sizing:border-box;width:100%;max-width:440px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:clamp(12px,5vw,28px);text-align:center;background:#FFFAEF;color:#22301F;border:9px solid #7A4E2A;outline:2px solid #4C2F17;border-radius:3px}#gate h2{margin:0 0 10px;font-size:28px;line-height:1.15}#gate p{margin:0 0 20px;font-size:17px;line-height:1.45}#gate .btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}#gate button{padding:13px 20px;border-radius:4px;border:1px solid #2C4A33;font:700 16px/1.2 var(--sans);cursor:pointer}#gate .yes{background:#2C4A33;color:#fff}#gate .no{background:none;color:#2C4A33}#gate .fine{margin:16px 0 0;font-size:13px;color:#515C48}#gate button:focus-visible,#gate a:focus-visible{outline:3px solid #8F3A22;outline-offset:2px}';
   var wrap = document.createElement('div');
   wrap.id = 'gate';
   wrap.setAttribute('role', 'dialog');

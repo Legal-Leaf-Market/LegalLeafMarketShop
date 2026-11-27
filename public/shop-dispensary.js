@@ -230,12 +230,16 @@
     '#ll-dispensary .lld-dd svg{color:var(--accent);transition:transform .18s}#ll-dispensary .lld-dd[aria-expanded="true"] svg{transform:rotate(180deg)}',
     '#ll-dispensary .lld-tk .lld-dd{grid-column:1/-1;min-height:36px}#ll-dispensary .lld-table .lld-dd{min-width:170px;min-height:36px}',
     '.lld-ddbg{position:fixed;inset:0;z-index:2147483604;background:rgba(4,8,11,.55);animation:lldfade .15s}',
-    '.lld-ddp{position:fixed;z-index:2147483605;box-sizing:border-box;max-height:min(420px,70vh);overflow:auto;padding:6px;border-radius:14px;background:#0d1820;color:#eef6fb;',
+    '.lld-ddp{position:fixed;z-index:2147483605;box-sizing:border-box;display:flex;flex-direction:column;max-height:min(420px,70dvh);overflow:hidden;padding:6px;border-radius:14px;background:#0d1820;color:#eef6fb;',
     'border:1px solid #2f4757;box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px rgba(78,201,255,.08);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;animation:lldpop .14s ease-out;overscroll-behavior:contain}',
     '.lld-ddp *{box-sizing:border-box}',
-    '.lld-ddp.sheet{left:0!important;right:0;bottom:0;top:auto!important;width:100%!important;max-height:75vh;border-radius:18px 18px 0 0;padding:8px 8px calc(10px + env(safe-area-inset-bottom));animation:lldsheet .2s ease-out}',
-    '.lld-ddp-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px 8px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#f0b93c}',
-    '.lld-ddp-h span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '.lld-ddp.sheet{left:0!important;right:0;bottom:0;top:auto!important;width:100%!important;max-height:min(75dvh,100dvh - 16px);border-radius:18px 18px 0 0;padding:8px 8px calc(10px + env(safe-area-inset-bottom));animation:lldsheet .2s ease-out}',
+    'html:has(.lld-ddp.sheet){overflow:hidden}',
+    '.lld-ddp-h{display:flex;flex:none;align-items:center;justify-content:space-between;gap:8px;padding:2px 6px 6px;font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#f0b93c}',
+    '.lld-ddp-h span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '.lld-ddp-close{display:grid;flex:none;place-items:center;width:44px;height:44px;border:1px solid #475c69;border-radius:8px;background:#182833;color:#eef6fb;font:24px/1 system-ui,sans-serif;cursor:pointer}',
+    '.lld-ddp-close:focus-visible{outline:2px solid #4ec9ff;outline-offset:2px}',
+    '.lld-ddp-list{position:relative;min-height:0;overflow:auto;overscroll-behavior:contain}',
     '.lld-ddp.sheet .lld-ddp-h:before{content:"";position:absolute;left:50%;top:6px;width:38px;height:4px;margin-left:-19px;border-radius:2px;background:#33444f}',
     '.lld-ddp.sheet .lld-ddp-h{padding-top:14px}',
     '.lld-opt{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:4px 10px;width:100%;padding:10px 10px;border-radius:10px;border:1px solid transparent}',
@@ -639,7 +643,7 @@
     var s = cur(x);
     if (state.size || x.sz.length < 2) return '<span class="lld-sz">' + esc(s.label) + '</span>';
     var g = perG(s);
-    return '<button type="button" class="lld-dd' + (cls ? ' ' + cls : '') + '" aria-haspopup="listbox" aria-expanded="false" aria-label="Size for '
+    return '<button type="button" class="lld-dd' + (cls ? ' ' + cls : '') + '" aria-haspopup="dialog" aria-expanded="false" aria-label="Size for '
       + esc(x.p.name) + ': ' + esc(s.label) + ', ' + money(s.price) + '. ' + x.sz.length + ' sizes in stock">'
       + '<span class="lld-dd-l"><b>' + esc(s.label) + '</b><small>' + money(s.price) + (g ? ' · ' + money(g) + '/g' : '') + '</small></span>'
       + '<span class="lld-dd-n">' + x.sz.length + ' sizes</span>' + CHEV + '</button>';
@@ -658,7 +662,7 @@
     if (t.isConnected) t.setAttribute('aria-expanded', 'false');
     if (refocus) {
       var again = t.isConnected ? t : mount.querySelector('[data-kind="' + item.kind + '"][data-i="' + item.i + '"] .lld-dd');
-      if (again) again.focus();
+      if (again) again.focus({ preventScroll: true });
     }
   }
   function ddOpen(trigger) {
@@ -675,9 +679,11 @@
     if (!sheet && (tr.top < 0 || tr.bottom > window.innerHeight - 120)) trigger.scrollIntoView({ block: 'center' });
     var panel = document.createElement('div');
     panel.className = 'lld-ddp' + (sheet ? ' sheet' : '');
-    panel.setAttribute('role', 'listbox');
-    panel.setAttribute('aria-label', 'Sizes for ' + x.p.name);
-    panel.innerHTML = '<div class="lld-ddp-h"><span>' + esc(x.p.name) + '</span><span>' + x.sz.length + ' in stock</span></div>'
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-label', 'Choose a size');
+    if (sheet) panel.setAttribute('aria-modal', 'true');
+    panel.innerHTML = '<div class="lld-ddp-h"><span>' + esc(x.p.name) + '</span><button type="button" class="lld-ddp-close" aria-label="Close size picker">×</button></div>'
+      + '<div class="lld-ddp-list" role="listbox" aria-label="Sizes for ' + esc(x.p.name) + '">'
       + x.sz.map(function (z, j) {
         var g = gs[j], on = j === (x.ci == null ? x.pick : x.ci);
         var save = z.compare && z.compare > z.price ? Math.round((1 - z.price / z.compare) * 100) : 0;
@@ -686,26 +692,31 @@
           + '<span class="lb"><b>' + esc(z.label) + (j === best && x.sz.length > 1 ? '<span class="tg">BEST $/G</span>' : '') + (save >= 5 ? '<span class="tg sv">' + save + '% OFF</span>' : '') + '</b>'
           + (z.grams && parseFloat(z.label) !== Math.round(z.grams * 100) / 100 ? '<small>' + (Math.round(z.grams * 100) / 100) + ' g</small>' : '') + '</span>'
           + '<span class="pr">' + (save ? '<s>' + money(z.compare) + '</s>' : '') + '<b>' + money(z.price) + '</b>' + (g != null ? '<small>' + money(g) + '/g</small>' : '') + '</span></button>';
-      }).join('');
+      }).join('') + '</div>';
     var bg = null;
     if (sheet) { bg = document.createElement('div'); bg.className = 'lld-ddbg'; bg.addEventListener('click', function () { ddClose(true); }); document.body.appendChild(bg); }
     document.body.appendChild(panel);
     if (!sheet) {
-      var r = trigger.getBoundingClientRect(), w = Math.max(r.width, 260);
-      var left = Math.min(Math.max(8, r.left), window.innerWidth - w - 8);
+      var r = trigger.getBoundingClientRect(), width = document.documentElement.clientWidth;
+      var w = Math.min(Math.max(r.width, 280), 380, width - 16);
+      var left = Math.min(Math.max(8, r.left), width - w - 8);
       panel.style.width = w + 'px'; panel.style.left = left + 'px';
-      var below = window.innerHeight - r.bottom - 8, h = panel.offsetHeight;
-      if (h > below && r.top > below) panel.style.top = Math.max(8, r.top - 6 - Math.min(h, r.top - 16)) + 'px', panel.style.maxHeight = (r.top - 16) + 'px';
-      else { panel.style.top = (r.bottom + 6) + 'px'; panel.style.maxHeight = Math.max(160, below - 6) + 'px'; }
+      var below = window.innerHeight - r.bottom - 14, above = r.top - 14, h = panel.offsetHeight;
+      var openAbove = h > below && above > below;
+      var room = Math.max(0, openAbove ? above : below);
+      panel.style.maxHeight = Math.min(h, room) + 'px';
+      panel.style.top = (openAbove ? r.top - 6 - Math.min(h, room) : r.bottom + 6) + 'px';
     }
     trigger.setAttribute('aria-expanded', 'true');
     dd = { panel: panel, bg: bg, trigger: trigger, item: { kind: el.getAttribute('data-kind'), i: i } };
     var sel = panel.querySelector('[aria-selected="true"]') || panel.querySelector('.lld-opt');
     sel.focus({ preventScroll: true });
     /* scroll the LIST, never the page: a page scroll is what closes it */
-    if (sel.offsetTop + sel.offsetHeight > panel.clientHeight) panel.scrollTop = sel.offsetTop - panel.clientHeight / 2;
+    var options = panel.querySelector('.lld-ddp-list');
+    if (sel.offsetTop + sel.offsetHeight > options.clientHeight) options.scrollTop = sel.offsetTop - options.clientHeight / 2;
     ddOpenedAt = Date.now();
     panel.addEventListener('click', function (e) {
+      if (e.target.closest('.lld-ddp-close')) { ddClose(true); return; }
       var o = e.target.closest('.lld-opt'); if (!o) return;
       var it = dd.item, xx = list[it.i];
       xx.pick = Number(o.getAttribute('data-j'));
@@ -715,10 +726,10 @@
     });
     panel.addEventListener('keydown', function (e) {
       var opts = [].slice.call(panel.querySelectorAll('.lld-opt')), k = opts.indexOf(document.activeElement);
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); opts[(k + (e.key === 'ArrowDown' ? 1 : opts.length - 1)) % opts.length].focus(); }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); opts[k < 0 ? (e.key === 'ArrowDown' ? 0 : opts.length - 1) : (k + (e.key === 'ArrowDown' ? 1 : opts.length - 1)) % opts.length].focus(); }
       else if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); opts[e.key === 'Home' ? 0 : opts.length - 1].focus(); }
       else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); ddClose(true); }
-      else if (e.key === 'Tab') { e.preventDefault(); ddClose(true); }
+      else if (e.key === 'Tab') { e.preventDefault(); (k < 0 ? sel : panel.querySelector('.lld-ddp-close')).focus(); }
     });
   }
   document.addEventListener('pointerdown', function (e) {

@@ -256,10 +256,10 @@
       : '';
     var imgs = p.images.length ? p.images : (p.image ? [p.image] : []);
     $('#product-body').innerHTML = '<div class="pd">'
-      + '<div><div class="main-img">' + (imgs[0] ? '<img id="pd-img" src="' + esc(sized(imgs[0], 900)) + '" alt="' + esc(p.title) + '">' : '') + '</div>'
+      + (imgs[0] ? '<div><div class="main-img"><img id="pd-img" src="' + esc(sized(imgs[0], 900)) + '" alt="' + esc(p.title) + '"></div>'
       + (imgs.length > 1 ? '<div class="thumbs">' + imgs.map(function (src, i) {
         return '<button type="button" data-src="' + esc(src) + '" aria-current="' + (i === 0) + '" aria-label="Photo ' + (i + 1) + '"><img src="' + esc(sized(src, 120)) + '" alt=""></button>';
-      }).join('') + '</div>' : '') + '</div>'
+      }).join('') + '</div>' : '') + '</div>' : '')
       + '<div>'
       + (p.brand ? '<div class="brand-name fine"><strong>' + esc(p.brand) + '</strong> · ' + esc(p.type) + '</div>' : '<div class="fine">' + esc(p.type) + '</div>')
       + '<h2 id="product-h">' + esc(p.title) + '</h2>'

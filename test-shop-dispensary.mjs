@@ -99,7 +99,7 @@ ok("cards carry size pickers", (await ev(`document.querySelectorAll('#ll-dispens
 ok("and no bare <select> is left on a card", !(await ev(`!!document.querySelector('#ll-dispensary .lld-card select')`)));
 const p0 = await openPicker("/Small Buds Strain 0$/");
 ok("the picker lists every in-stock size with its price", p0.length === 3 && p0.every((o) => /\$\d/.test(o)), JSON.stringify(p0));
-ok("it is a listbox with one option selected", (await ev(`document.querySelector('.lld-ddp').getAttribute('role')==='listbox'&&document.querySelectorAll('.lld-ddp [aria-selected=true]').length===1`)));
+ok("it has a size listbox and a close button", (await ev(`!!document.querySelector('.lld-ddp [role=listbox]')&&document.querySelectorAll('.lld-ddp [aria-selected=true]').length===1&&!!document.querySelector('.lld-ddp-close')`)));
 ok("focus moves into the list", await ev(`document.activeElement.classList.contains('lld-opt')`));
 ok("the best $/g row is tagged", await ev(`!!document.querySelector('.lld-ddp .tg')`));
 await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
