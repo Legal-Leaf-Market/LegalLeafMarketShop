@@ -318,7 +318,7 @@
         + '<div class="q"><button type="button" data-i="' + i + '" data-d="-1" aria-label="One fewer">-</button><span>' + l.qty + '</span><button type="button" data-i="' + i + '" data-d="1" aria-label="One more">+</button>'
         + '<button type="button" class="rm" data-i="' + i + '">Remove</button></div></div>'
         + '<div><strong>' + usd(l.v.price * l.qty) + '</strong></div></li>';
-    }).join('') : '<li style="display:block;border:0">Your cart is empty.</li>';
+    }).join('') : '<li class="cart-empty">Your cart is empty.</li>';
     $('#cart-totals').innerHTML = lines.length
       ? (t.discount ? '<div><span>Pack price</span><span>-' + usd(t.discount) + '</span></div>' : '')
         + '<div><span>Subtotal</span><span>' + usd(t.sub) + '</span></div>'
@@ -328,6 +328,7 @@
         + '<div class="grand"><span>Total</span><span>' + usd(t.total) + '</span></div>'
       : '';
     $('#to-checkout').disabled = !lines.length;
+    $('#to-checkout').hidden = !lines.length;
   }
   $('#cart-lines').addEventListener('click', function (e) {
     var b = e.target.closest('button');
@@ -463,7 +464,9 @@
     if (c) openProduct(c.getAttribute('data-id'));
   });
   $('#cart-open').addEventListener('click', openCart);
+  $('#cart-continue').addEventListener('click', function () { drawer.close(); });
   $('#to-checkout').addEventListener('click', openCheckout);
+  $('#back-to-cart').addEventListener('click', function () { cdlg.close(); openCart(); });
   Array.prototype.forEach.call(document.querySelectorAll('dialog .x'), function (b) {
     b.addEventListener('click', function () { b.closest('dialog').close(); });
   });

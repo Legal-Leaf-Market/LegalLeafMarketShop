@@ -15,9 +15,9 @@
 <!-- 21+ attestation gate, shared with the rest of the site. -->
 <script src="/js/age-gate.js"></script>
 </head>
-<body>
+<body class="shop-page">
 <a class="skip" href="#main">Skip to content</a>
-<header class="top">
+<header class="top store-top">
   <div class="wrap">
     <a class="brand" href="/shop">Legal-Leaf Market</a>
     <nav aria-label="Site">
@@ -27,8 +27,8 @@
       <a href="/dispensary" class="ext">Dispensary</a>
       <a href="/delivery">Delivery</a>
       <a href="/contact">Contact</a>
-      <button type="button" class="cart-btn" id="cart-open" aria-label="Open cart">Cart <span class="count" id="cart-count">0</span></button>
     </nav>
+    <button type="button" class="cart-btn" id="cart-open" aria-label="Open cart" aria-haspopup="dialog" aria-controls="cart">Cart <span class="count" id="cart-count">0</span></button>
   </div>
 </header>
 <div class="kiosk-bar" role="status"><div class="wrap"><span>Ordering at <span id="kiosk-name">our partner shop</span>. Delivered to you, pay cash at delivery.</span><button type="button" id="kiosk-reset">Start over</button></div></div>
@@ -104,7 +104,8 @@
     <h2 id="cart-h">Your cart</h2>
     <ul class="lines" id="cart-lines"></ul>
     <div class="totals" id="cart-totals"></div>
-    <button type="button" class="btn wide" id="to-checkout" disabled>Check out</button>
+    <button type="button" class="btn wide" id="to-checkout" disabled>Continue to delivery details</button>
+    <button type="button" class="btn alt wide" id="cart-continue">Keep shopping</button>
     <p class="fine">Pay in cash at delivery. Delivery is in Indiana only, and we check a valid photo ID (21+) at the door.</p>
   </div>
 </dialog>
@@ -114,6 +115,7 @@
     <button type="button" class="x" aria-label="Close">&times;</button>
     <form id="order-form" novalidate>
       <h2 id="co-h" style="margin:0 0 4px;font:700 26px/1.2 var(--serif)">Delivery details</h2>
+      <button type="button" class="back-to-cart" id="back-to-cart">Back to cart</button>
       <p class="fine" style="margin:0 0 14px">Total <strong id="co-total">$0.00</strong> including 7% Indiana sales tax, paid in cash at delivery. We'll call or email to confirm a time.</p>
       <div class="formerr" id="formerr" role="alert"></div>
       <div class="row2">

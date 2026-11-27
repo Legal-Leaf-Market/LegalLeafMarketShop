@@ -132,7 +132,7 @@
     '#ll-dispensary .lld-st b{font-size:13px;line-height:1.2}',
     '#ll-dispensary .lld-st small{color:var(--muted);font-size:12px}',
     /* size picker: the jar row */
-    '#ll-dispensary .lld-sizes{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:thin}',
+    '#ll-dispensary .lld-sizes{display:flex;justify-content:safe center;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:thin}',
     '#ll-dispensary .lld-jar{all:unset;cursor:pointer;flex:none;min-width:84px;padding:9px 12px 8px;border-radius:12px 12px 16px 16px;text-align:center;',
     'background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid var(--line);border-top:4px solid #33444f}',
     '#ll-dispensary .lld-jar b{display:block;font-size:15px;font-weight:800;color:#fff}',
@@ -350,26 +350,27 @@
     '.llc-fab{position:fixed;right:16px;bottom:16px;z-index:2147483600;display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:999px;border:0;cursor:pointer;',
     'font:700 15px "Segoe UI",system-ui,sans-serif;color:#fff;background:linear-gradient(90deg,#1787c4,#4ec9ff);box-shadow:0 8px 24px rgba(0,0,0,.35)}',
     '.llc-fab span{background:#fff;color:#1787c4;border-radius:999px;min-width:22px;padding:1px 7px;font-size:13px;text-align:center}',
-    '.llc-ov{position:fixed;inset:0;z-index:2147483601;background:rgba(4,8,11,.6);display:none}.llc-ov.on{display:block}',
-    '.llc-dr{position:fixed;top:0;right:0;bottom:0;z-index:2147483602;width:min(420px,100vw);background:#0d1820;color:#eef6fb;display:flex;flex-direction:column;',
-    'font-family:"Segoe UI",system-ui,sans-serif;transform:translateX(100%);transition:transform .2s;box-shadow:-8px 0 24px rgba(0,0,0,.4)}.llc-dr.on{transform:none}',
+    '.llc-dr{position:fixed;inset:0 0 0 auto;margin:0;width:min(440px,100%);max-width:none;height:100dvh;max-height:none;padding:0;border:0;border-radius:0;background:#0d1820;color:#eef6fb;',
+    'font-family:"Segoe UI",system-ui,sans-serif;box-shadow:-8px 0 24px rgba(0,0,0,.4)}.llc-dr[open]{display:flex;flex-direction:column}',
+    '.llc-dr::backdrop{background:rgba(4,8,11,.6)}',
     '.llc-dr *{box-sizing:border-box}',
     '.llc-hd{display:flex;justify-content:space-between;align-items:flex-start;padding:16px;border-bottom:1px solid #22303a}',
     '.llc-hd h2{margin:0;font-size:20px;color:#fff}.llc-hd p{margin:2px 0 0;color:#9fb4c2;font-size:12px}',
-    '.llc-x{all:unset;cursor:pointer;font-size:26px;line-height:1;color:#9fb4c2;padding:0 4px}',
-    '.llc-bd{flex:1;overflow:auto;padding:12px 16px}',
+    '.llc-x{all:unset;display:grid;place-items:center;min-width:44px;min-height:44px;cursor:pointer;font-size:26px;line-height:1;color:#eef6fb;border-radius:8px;background:#182833}',
+    '.llc-bd{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:12px 16px}',
     '.llc-st{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#f0b93c;margin:12px 0 6px}',
     '.llc-it{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #22303a}',
     '.llc-it img{width:52px;height:52px;object-fit:cover;border-radius:8px;background:#0b141a;flex:none}',
     '.llc-it .t{font-size:13px;font-weight:600;line-height:1.3}.llc-it .s{font-size:12px;color:#9fb4c2}',
-    '.llc-row{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:13px}',
+    '.llc-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:4px;font-size:13px}',
     '.llc-row b{color:#4ec9ff;margin-right:auto}',
-    '.llc-row button{all:unset;cursor:pointer;border:1px solid #22303a;border-radius:6px;padding:1px 8px;color:#eef6fb}',
+    '.llc-row button{all:unset;display:inline-grid;place-items:center;min-width:34px;min-height:38px;cursor:pointer;border:1px solid #475c69;border-radius:6px;color:#eef6fb}',
     '.llc-row .rm{border:0;color:#9fb4c2;text-decoration:underline;font-size:12px}',
     '.llc-go{display:block;margin:8px 0 6px;padding:11px;border-radius:10px;text-align:center;font-weight:700;color:#fff!important;text-decoration:none!important;',
     'background:linear-gradient(90deg,#1787c4,#4ec9ff)}',
     '.llc-nt{font-size:11px;color:#9fb4c2;margin:0 0 6px}',
-    '.llc-ft{padding:12px 16px;border-top:1px solid #22303a}',
+    '.llc-ft{padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid #22303a}.llc-ft:empty{display:none}',
+    '.llc-dr :focus-visible{outline:2px solid #4ec9ff;outline-offset:2px}',
     '.llc-ft div{display:flex;justify-content:space-between;font-weight:700}.llc-ft div span{color:#4ec9ff}',
     '.llc-ft p{font-size:11px;color:#9fb4c2;margin:6px 0 0}',
     '.llc-empty{color:#9fb4c2;text-align:center;padding:30px 10px;font-size:14px;line-height:1.5}',
@@ -1006,6 +1007,11 @@
       if (state.sort !== 'pg') u.searchParams.set('sort', state.sort);
       if (state.view !== 'cards') u.searchParams.set('view', state.view);
       if (state.ship) u.searchParams.set('ship', state.ship);
+      document.querySelectorAll('.partner-filters a').forEach(function (link) {
+        var shop = new URL(link.href).searchParams.get('shop');
+        if (shop === u.searchParams.get('shop')) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
       if (u.href !== location.href) history.replaceState(history.state, '', u.href);
     } catch (e) { /* an old browser without URL: the shelf still works, it just is not linkable */ }
   }
@@ -1160,21 +1166,35 @@
   function saveCart() { try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) { /* private mode: lives for this visit */ } }
   function enc(s) { return encodeURIComponent(String(s)); }
 
-  var fab = document.createElement('button');
-  fab.type = 'button'; fab.className = 'llc-fab'; fab.setAttribute('aria-label', 'Open Legal-Leaf Cart');
-  var ov = document.createElement('div'); ov.className = 'llc-ov';
-  var dr = document.createElement('aside'); dr.className = 'llc-dr'; dr.setAttribute('aria-label', 'Legal-Leaf Cart');
+  var headerCart = document.getElementById('partner-cart-open');
+  var fab = headerCart || document.createElement('button');
+  if (!headerCart) {
+    fab.type = 'button'; fab.className = 'llc-fab'; fab.setAttribute('aria-label', 'Open Legal-Leaf Cart');
+    document.body.appendChild(fab);
+  }
+  var dr = document.createElement('dialog'); dr.className = 'llc-dr'; dr.id = 'partner-cart'; dr.setAttribute('aria-label', 'Dispensary cart');
   dr.innerHTML = '<div class="llc-hd"><div><h2>Legal-Leaf Cart</h2><p>Build here \u00b7 checkout at each store</p></div>'
     + '<button type="button" class="llc-x" aria-label="Close">\u00d7</button></div><div class="llc-bd"></div><div class="llc-ft"></div>';
-  document.body.appendChild(fab); document.body.appendChild(ov); document.body.appendChild(dr);
-  function openCart() { renderCart(); ov.classList.add('on'); dr.classList.add('on'); }
-  function closeCart() { ov.classList.remove('on'); dr.classList.remove('on'); }
-  fab.onclick = openCart; ov.onclick = closeCart; dr.querySelector('.llc-x').onclick = closeCart;
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCart(); });
+  document.body.appendChild(dr);
+  function openCart() {
+    renderCart();
+    if (!dr.open) dr.showModal();
+    dr.classList.add('on');
+  }
+  function closeCart() { dr.close(); }
+  fab.onclick = openCart;
+  dr.querySelector('.llc-x').onclick = closeCart;
+  dr.addEventListener('click', function (e) { if (e.target === dr) closeCart(); });
+  dr.addEventListener('close', function () {
+    dr.classList.remove('on');
+    if (document.activeElement === document.body) fab.focus();
+  });
+  if (headerCart) headerCart.hidden = false;
 
   function badge() {
     var n = cart.reduce(function (a, i) { return a + (i.qty || 1); }, 0);
-    fab.innerHTML = '\uD83D\uDED2 Legal-Leaf Cart <span>' + n + '</span>';
+    if (headerCart) document.getElementById('partner-cart-count').textContent = String(n);
+    else fab.innerHTML = '\uD83D\uDED2 Legal-Leaf Cart <span>' + n + '</span>';
   }
   var toastT = null;
   function toast(msg, action) {
