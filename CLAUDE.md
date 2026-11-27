@@ -941,9 +941,13 @@ Columbus with no storefront, paid in cash at the door.
   when it answers JSON `{ok:true}`, because Apps Script answers 200 even when the script throws.
   To change the script, edit it in the sheet's Extensions > Apps Script and publish a **new
   version of the same deployment** (Deploy > Manage deployments), or the URL changes.
-- **`commerce/` (Medusa + the NMI provider) and `render.yaml` are PARKED.** Merged in #27, never
-  deployed, nothing on the live site reads them. No Render service exists; do not create one, and
-  do not point `/shop` at `MEDUSA_URL`, without the owner reversing this decision.
+- **`commerce/` (Medusa) runs on Render as a FREE TEST, and nothing on the live site reads it.**
+  Owner, 27 Nov 2026: put it on Render's free plans to try it. `render.yaml` asks for `plan: free`
+  for the web service and the database, and `commerce/render-build.sh` does the database work and
+  the first admin invite at the end of the build, because free services have no pre-deploy step and
+  no Shell (`commerce/DEPLOY.md`). The free database expires 30 days after creation. Still do not
+  point `/shop` at `MEDUSA_URL`, move to paid plans or wire the NMI provider back in without the
+  owner deciding so: `/shop` stays cash at delivery through `api/order.js`.
 
 ## 9. Environment variables (all optional; site works without them)
 
