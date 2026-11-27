@@ -110,7 +110,7 @@
      internal navigation across the family and must never be counted as an
      affiliate handoff, or cross-links between the sister sites would look
      like revenue events. */
-  var FAMILY = /(^|\.)((legal-leafmarket|nicotiamarket|herballeafmarket|kawaiikatz)\.com|legalleafmarket\.shop)$/i;
+  var FAMILY = /(^|\.)((legal-leafmarket|nicotiamarket|herballeafmarket|kawaiikatz)\.com|(legalleafmarket|heartofcolumbus|crossroadsweddingco)\.shop)$/i;
   var SOCIAL = /(^|\.)(facebook|instagram|x|twitter|reddit|youtube|tiktok|pinterest|linkedin)\.com$/i;
 
   /* ---- identity ----------------------------------------------------------
