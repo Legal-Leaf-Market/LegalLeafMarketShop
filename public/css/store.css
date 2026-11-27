@@ -69,6 +69,13 @@ label { display: block; font-weight: 700; font-size: 14px; margin: 0 0 4px; }
 .affiliate-panel p { margin: 0; }
 .affiliate-panel ul { display: grid; gap: 10px; list-style: none; padding: 0; margin: 16px 0; }
 .affiliate-panel .btn { display: block; padding: 10px 12px; }
+.affiliate-panel .dispensary-partners { gap: 4px; margin: 8px 0 0 12px; padding-left: 12px; border-left: 1px solid var(--line); }
+.dispensary-partners a { display: block; padding-block: 4px; }
+.dispensary-page #main { padding-block: 24px 36px; }
+.dispensary-page h1 { margin: 0 0 6px; font: 700 clamp(32px, 5vw, 46px)/1.1 var(--serif); }
+.dispensary-page .dispensary-intro { margin: 0 0 16px; color: var(--muted); }
+.dispensary-page #ll-dispensary .lld-sign h2 { display: none; }
+.dispensary-page #ll-dispensary .lld-bar input[type=checkbox] { width: auto; }
 .kiosk .affiliate-panel, .kiosk .affiliate-jump { display: none; }
 .kiosk .shop-layout { grid-template-columns: minmax(0, 1fr); }
 

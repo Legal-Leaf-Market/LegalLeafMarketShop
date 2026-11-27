@@ -1,7 +1,7 @@
-/* public/shop-dispensary.js -- the dispensary shelf on the Shopify storefront.
+/* public/shop-dispensary.js -- the dispensary shelf on /dispensary.
  *
- * WHERE IT RUNS. shop.legalleafmarket.shop/pages/dispensary (template "dispensary") carries a
- * Custom Liquid section with two lines in it:
+ * The Netlify page and the legacy Shopify page both mount the same widget.
+ * The legacy Custom Liquid section uses:
  *
  *   <div id="ll-dispensary" data-stores="thcasmallbuds,puffweiser,blacktiecbd"></div>
  *   <script src="https://legalleafmarket.shop/shop-dispensary.js" defer></script>
@@ -556,7 +556,7 @@
         var img = '';
         for (var i = 0; i < r.list.length && !img; i++) if (r.list[i].inStock !== false) img = safeUrl(r.list[i].image);
         state.stores[r.key] = { key: r.key, ok: r.ok, name: first.store || r.key, img: img || safeUrl(first.image) };
-        state.on[r.key] = r.ok;
+        state.on[r.key] = true;
         r.list.forEach(function (p) {
           if (p.inStock === false) return;           /* sold out: never on the shelf */
           var sz = sizesOf(p);
@@ -918,7 +918,7 @@
     var storesHTML = storeKeys.map(function (k) {
       var s = state.stores[k];
       if (!s) return '';
-      return '<button type="button" class="lld-st" data-store="' + esc(k) + '" aria-pressed="' + (!!state.on[k]) + '"' + (s.ok ? '' : ' disabled') + '>'
+      return '<button type="button" class="lld-st" data-store="' + esc(k) + '" aria-pressed="' + (s.ok && !!state.on[k]) + '"' + (s.ok ? '' : ' disabled') + '>'
         + (s.img ? '<img src="' + esc(s.img) + '" alt="" loading="lazy">' : '')
         + '<b>' + esc(s.name) + '</b><small>' + (!s.ok ? 'unavailable right now' : (state.ship && !(sc[k] || 0) && !shipsTo(k, state.ship) ? 'doesn\u2019t ship to ' + state.ship : (sc[k] || 0) + ' in stock')) + '</small></button>';
     }).join('');
@@ -939,7 +939,11 @@
     var now = new Date();
     var body;
     var active = filtersActive();
-    if (!list.length) body = '<div class="lld-empty">Nothing on the shelf matches' + (state.q ? ' “' + esc(state.q) + '”' : '') + '. Try another size, turn a store back on, or clear the search.'
+    var selected = storeKeys.filter(function (k) { return state.on[k]; });
+    var selectedUnavailable = selected.length === 1 && !state.stores[selected[0]].ok;
+    if (!list.length) body = '<div class="lld-empty">' + (selectedUnavailable
+      ? 'This partner’s menu is unavailable right now. Try again shortly or choose another store.'
+      : 'Nothing on the shelf matches' + (state.q ? ' “' + esc(state.q) + '”' : '') + '. Try another size, turn a store back on, or clear the search.')
       + (active ? '<br><button type="button" class="lld-clear">Clear all filters</button>' : '') + '</div>';
     else if (state.view === 'board') body = boardHTML();
     else if (state.view === 'table') body = tableHTML();
@@ -981,11 +985,11 @@
      Every filter is mirrored into the query string (replaceState, so Back still leaves the page), which
      makes a filtered shelf a link someone can send: ?size=28&cat=THCA+Flower. Shopify's canonical tag
      carries no query string, so these never compete with the page in search. */
-  function storesOff() { return storeKeys.filter(function (k) { return state.stores[k] && state.stores[k].ok && !state.on[k]; }); }
+  function storesOff() { return storeKeys.filter(function (k) { return !state.on[k]; }); }
   function filtersActive() { return !!(state.size || state.cat || state.q || state.trim || state.sort !== 'pg' || storesOff().length); }
   function clearAll() {
     state.size = ''; state.cat = ''; state.q = ''; state.trim = false; state.sort = 'pg'; state.dir = 1; state.shown = PAGE; state.colShown = {};
-    storeKeys.forEach(function (k) { if (state.stores[k] && state.stores[k].ok) state.on[k] = true; });
+    storeKeys.forEach(function (k) { state.on[k] = true; });
     savePref();
   }
   var URL_KEYS = ['size', 'cat', 'q', 'shop', 'sort', 'view', 'ship'];
@@ -1016,7 +1020,7 @@
     if (US_STATES[(v.get('ship') || '').toUpperCase()]) state.ship = v.get('ship').toUpperCase();
     if (v.get('shop')) {
       var want = v.get('shop').toLowerCase().split(',');
-      var hit = storeKeys.filter(function (k) { return want.indexOf(k) >= 0 && state.stores[k] && state.stores[k].ok; });
+      var hit = storeKeys.filter(function (k) { return want.indexOf(k) >= 0; });
       if (hit.length) storeKeys.forEach(function (k) { state.on[k] = hit.indexOf(k) >= 0; });
     }
   }
@@ -1081,7 +1085,7 @@
     } else if (t.classList.contains('lld-st')) {
       var k = t.getAttribute('data-store');
       state.on[k] = !state.on[k];
-      if (!storeKeys.some(function (s) { return state.on[s]; })) state.on[k] = true; /* never toggle to an empty shelf */
+      if (!storeKeys.some(function (s) { return state.on[s] && state.stores[s].ok; })) state.on[k] = true;
       state.shown = PAGE; keepScroll(render);
     } else if (t.classList.contains('lld-chip') && t.hasAttribute('data-cat')) {
       state.cat = t.getAttribute('data-cat'); state.shown = PAGE; keepScroll(render);
