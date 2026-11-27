@@ -77,6 +77,8 @@ console.log('\nCATALOGUE');
   ok('...at $30, any 2 for $50, tax included, 21+', gob.every((p) => p.price === 30 && p.pack.qty === 2 && p.pack.price === 50 && p.taxIncluded && p.ageRestricted));
   ok('...and lead the catalogue, so Featured shows them first', ids.slice(0, 3).every((i) => /^gob-/.test(i)), ids.slice(0, 3).join(','));
   ok('...with their own photos', gob.every((p) => /^\/img\/gob\/.+-packshot\.jpg$/.test(p.image) && p.images.length === 4));
+  const locallyStocked = res.body.products.filter((p) => p.localStock);
+  ok('only the three house disposables are marked locally stocked', locallyStocked.length === 3 && locallyStocked.every((p) => gob.includes(p)));
   ok('THCa flower is not', !ids.includes('thca-flower'));
   ok('delta-8 is not', !ids.includes('delta8-gummies'));
   ok('a $0 row is not', !ids.includes('free-sample'));

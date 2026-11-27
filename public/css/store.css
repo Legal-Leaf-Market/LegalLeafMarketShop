@@ -58,6 +58,19 @@ label { display: block; font-weight: 700; font-size: 14px; margin: 0 0 4px; }
 .chip { flex: none; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font: 600 14px/1.2 var(--sans); cursor: pointer; white-space: nowrap; }
 .chip[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: #fff; }
 .status { margin: 10px 0 0; color: var(--muted); font-size: 15px; }
+.shop-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 290px); gap: 28px; align-items: start; padding-block: 18px 36px; }
+.shop-layout h2 { margin: 0 0 12px; font: 700 28px/1.15 var(--serif); }
+.stock-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.stock-label { color: var(--muted); font-size: 14px; font-weight: 700; }
+.stock-label.in-stock { color: var(--ok); }
+.shop-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.shop-filters > * { min-width: 0; }
+.affiliate-panel { padding: 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+.affiliate-panel p { margin: 0; }
+.affiliate-panel ul { display: grid; gap: 10px; list-style: none; padding: 0; margin: 16px 0; }
+.affiliate-panel .btn { display: block; padding: 10px 12px; }
+.kiosk .affiliate-panel, .kiosk .affiliate-jump { display: none; }
+.kiosk .shop-layout { grid-template-columns: minmax(0, 1fr); }
 
 /* grid */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px; padding: 16px 0 48px; }
@@ -140,6 +153,7 @@ pre.ordertext { white-space: pre-wrap; text-align: left; background: #fff; borde
 .kiosk .kiosk-bar button { background: var(--ink); color: #fff; border: 0; border-radius: 6px; padding: 8px 14px; font: 700 15px/1 var(--sans); cursor: pointer; }
 
 @media (max-width: 760px) {
+  .shop-layout { grid-template-columns: minmax(0, 1fr); }
   .toolbar .wrap { grid-template-columns: 1fr 1fr; }
   .toolbar .wrap .search { grid-column: 1 / -1; }
   .pd { grid-template-columns: 1fr; }
