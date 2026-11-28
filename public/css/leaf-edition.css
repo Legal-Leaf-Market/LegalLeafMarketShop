@@ -1,0 +1,84 @@
+/* Print palette shared by the café, shelf, market counter and service pages. */
+:root {
+  --teal: #183e3c;
+  --teal-dk: #102e2c;
+  --cream: #faf5ea;
+  --paper: #fffaf1;
+  --parchment: #f3e6cf;
+  --amber: #c68c42;
+  --amber-ink: #85442f;
+  --ink: #292521;
+  --walnut: #54392b;
+  --muted: #585348;
+  --line: #d3c5ad;
+  --serif: "Fraunces", Georgia, serif;
+  --reading: "Lora", Georgia, serif;
+  --sans: "DM Sans", system-ui, sans-serif;
+}
+.topbar .leaf-nav, .top .leaf-nav, .leaf-footnav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1rem;
+  font-family: var(--sans);
+}
+.leaf-nav a, .leaf-footnav a { display: inline-flex; align-items: center; min-height: 44px; }
+.leaf-nav a[aria-current], .leaf-footnav a[aria-current] { text-decoration: underline; text-underline-offset: 5px; }
+.leaf-footnav { margin-bottom: 1rem; }
+.leaf-footnav a { color: inherit; }
+.doc p, .doc li, .dispensary-intro, .shelf-guide p, .shop-page .hero p, .shelf-page .lede { font-family: var(--reading); }
+.doc .short { background: var(--parchment); border-radius: 0; border-left: 4px solid var(--amber); }
+.policy-scope { max-width: 66ch; line-height: 1.65; }
+.foot, .shelf-page footer { background: var(--teal); color: var(--cream); }
+.shelf-guide { background: var(--paper); padding: clamp(2rem, 5vw, 4rem) 0; }
+.shelf-guide .wrap { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 2rem; }
+.shelf-guide article { border-top: 3px solid var(--amber); padding-top: .9rem; }
+.shelf-guide article:last-child { border-color: var(--walnut); }
+.shelf-guide h2 { font-size: clamp(1.35rem, 2.5vw, 2rem); }
+.shelf-guide p { font-size: 1rem; margin: .6rem 0 0; }
+@media (max-width: 760px) {
+  .topbar:has(.leaf-nav) { flex-direction: column; align-items: flex-start; gap: 0; }
+  .topbar .leaf-nav, .top .leaf-nav { justify-content: flex-start; gap: 0 .9rem; }
+  .shelf-guide .wrap { grid-template-columns: 1fr; gap: 1.2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+.shelf-page .sky { background: linear-gradient(150deg, var(--cream), var(--parchment)); }
+.shop-page .hero {
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(120deg, var(--cream), var(--parchment));
+  padding-block: clamp(2rem, 5vw, 4rem);
+}
+.shop-page .hero .wrap { position: relative; }
+.shop-page .hero h1 { color: var(--teal); }
+@media (min-width: 900px) {
+  .shop-page .hero .wrap { padding-right: min(29vw, 310px); }
+  .shop-page .hero .wrap::after {
+    position: absolute;
+    content: "";
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: min(25vw, 275px);
+    border: 4px solid var(--paper);
+    outline: 1px solid var(--line);
+    background: url("/art/cafe/14-market-shelf-alternate-800.webp") center 48% / cover;
+    transform: rotate(1deg);
+  }
+}
+/* The first visit uses the same paper, lettering and ink as the room behind it. */
+body #ll-age, body #gate { background: rgb(16 38 36 / 90%); }
+body #ll-age .llg-card, body #gate .card {
+  color: var(--ink);
+  background: var(--cream);
+  border: 3px double var(--walnut);
+  outline: 5px solid var(--parchment);
+  border-radius: 4px;
+  font-family: var(--sans);
+}
+body #ll-age h2, body #gate h2 { font-family: var(--serif); color: var(--teal); }
+body #ll-age p, body #ll-age .llg-fine, body #ll-age .llg-fine a { color: var(--muted); }
+body #ll-age .llg-yes, body #gate .yes { color: white; background: var(--teal); }
+body #ll-age .llg-no, body #gate .no { color: var(--teal); border-color: var(--teal); }
+body #ll-age button:focus-visible, body #gate button:focus-visible { outline-color: var(--amber-ink); }

@@ -1,0 +1,49 @@
+:root {
+  --cream:#f3e6cf; --paper:#faf5ea; --teal:#183e3c; --ink:#292521;
+  --amber:#c68c42; --amber-ink:#883e29; --plum:#8c7898; --sans:"DM Sans",sans-serif;
+}
+.hero.sky { background:#f3e6cf; }
+.hero .ridge { display:none; }
+.hero .window { background:#183e3c; padding-block:clamp(12px,2vw,28px); }
+.hero .window img { border-radius:45% 45% 3px 3px / 10% 10% 3px 3px; }
+.hero .lede, .card-copy p, .split p:not(.kicker), .press p:not(.kicker,.pencil) { font-family:Lora,Georgia,serif; }
+.topbar { border-bottom:1px solid #54392b55; }
+.topbar nav { flex-wrap:wrap; }
+.press { background:#faf5ea; color:#292521; }
+.press h2 { color:#183e3c; font-size:clamp(48px,8vw,100px); border-block:4px double #54392b; padding-block:10px; }
+.press-spread,.listening { display:grid;grid-template-columns:1.2fr 1fr; gap:clamp(22px,6vw,90px); padding-block:32px; align-items:start; }
+.board { background:#f3e6cf; border-top:7px solid #aa593e; padding:24px; }
+.pencil { font:600 28px Caveat,cursive; color:#77412d; }
+.listening { border-top:1px solid #54392b; }
+.press a { color:#183e3c; font-weight:700; text-underline-offset:4px; }
+.sleeves details { border-bottom:1px solid #89745c; }
+.sleeves summary { padding:14px 4px; cursor:pointer; font-weight:700; }
+.sleeves p { margin-top:0; }
+summary:focus-visible { outline:3px solid #aa593e; }
+@media(max-width:700px){
+  .topbar { flex-direction:column;align-items:flex-start; }
+  .topbar nav { gap:0 15px;max-width:100%; }
+  .topbar nav a { padding-block:12px; }
+  .press-spread,.listening { grid-template-columns:1fr;gap:15px; }
+  .hero .window img { aspect-ratio:5/4;object-fit:cover; }
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.doorway { display:grid; grid-template-columns:0.85fr 1.15fr; align-items:center; gap:clamp(28px,4vw,64px); padding:clamp(38px,6vw,88px) 0; }
+.door-copy h1 { color:var(--teal); font-size:clamp(45px,5.3vw,78px); letter-spacing:-.046em; }
+.door-copy .soon { margin-top:0; font:600 26px Caveat,cursive; }
+.door-art { margin:0; }
+.door-art img.art { border:5px solid #faf5ea; outline:1px solid #79583f; box-shadow:6px 7px 0 #c68c42; border-radius:48% 48% 2px 2px / 19% 19% 2px 2px; }
+.door-art figcaption { margin-top:12px; font:italic 14px/1.4 Lora,Georgia,serif; color:#54392b; }
+.pinewall { background:#faf5ea; }
+.offer { padding-top:clamp(35px,6vw,76px); border-top:6px double #c68c42; }
+.card { border:1px solid #b39c7c; outline:none; box-shadow:none; }
+.press + .final { padding-top:60px !important; }
+@media(max-width:760px){
+  .doorway {display:flex;flex-direction:column;align-items:stretch;gap:20px;padding:30px 0;}
+  .door-art img.art {aspect-ratio:1.6;object-fit:cover;}
+  .hero .actions {margin-top:18px;}
+  .offer .cards {gap:12px;}
+  .offer .card {display:grid;grid-template-columns:34% 1fr;align-items:stretch;}
+  .offer .card img.art {height:100%;object-fit:cover;border-bottom:0;}
+  .offer .card-copy {padding:14px;}
+}
